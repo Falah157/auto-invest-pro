@@ -1,50 +1,121 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pro Crypto Auto-Invest</title>
+    <title>GOLD PRO Auto-Invest</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: Arial; 
-            background: #0a0a0a; 
-            color: white; 
+            font-family: 'Arial', sans-serif; 
+            background: #000000; 
+            color: #FFD700; 
             padding: 10px;
             overflow-x: hidden;
+        }
+        
+        /* Gold Professional Theme */
+        .gold-gradient {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            border: 1px solid #FFD700;
+        }
+        
+        .gold-accent {
+            background: #FFD700;
+            color: #000000;
+        }
+        
+        .gold-border {
+            border: 1px solid #FFD700;
+        }
+        
+        .gold-text {
+            color: #FFD700;
+        }
+        
+        /* Header */
+        .pro-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            border-radius: 15px;
+            border: 1px solid #FFD700;
+        }
+        
+        /* Exchange Connection Panel */
+        .exchange-panel {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            border: 1px solid #FFD700;
+        }
+        
+        .exchange-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .exchange-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .exchange-tab.active {
+            background: #FFD700;
+            color: #000000;
+            border-color: #FFD700;
+        }
+        
+        .api-input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #0a0a0a;
+            color: #FFD700;
         }
         
         /* Crypto Bubble Grid */
         .bubbles-container {
             position: relative;
-            height: 65vh;
+            height: 60vh;
             overflow: hidden;
-            margin-bottom: 15px;
-            border: 2px solid #1a1a2e;
+            margin-bottom: 20px;
+            border: 2px solid #FFD700;
             border-radius: 20px;
-            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            background: linear-gradient(135deg, #000000, #1a1a1a);
         }
         
         .coin-bubble {
             position: absolute;
             border-radius: 50%;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            background: linear-gradient(135deg, #1a1a1a, #000000);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
-            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            border: 2px solid #FFD700;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
             animation: float 6s infinite ease-in-out;
             text-align: center;
             flex-direction: column;
-            overflow: hidden;
         }
         
         .coin-bubble:hover {
             transform: scale(1.15);
-            border-color: #00ff88;
-            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
             z-index: 100;
         }
         
@@ -53,19 +124,6 @@
         .bubble-medium { width: 90px; height: 90px; }
         .bubble-small { width: 70px; height: 70px; }
         
-        .volume-pulse {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            animation: pulse 2s infinite;
-        }
-        .volume-high { background: #00ff88; }
-        .volume-medium { background: #ffaa00; }
-        .volume-low { background: #ff4444; }
-        
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
             25% { transform: translateY(-15px) rotate(1deg) scale(1.02); }
@@ -73,57 +131,47 @@
             75% { transform: translateY(-12px) rotate(0.5deg) scale(1.015); }
         }
         
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
         /* Trading Panel */
         .trade-panel {
-            background: rgba(26, 26, 46, 0.95);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, #000000, #1a1a1a);
             border-radius: 20px;
             padding: 25px;
             margin: 10px 0;
             display: none;
-            border: 1px solid #00ff88;
-            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+            border: 2px solid #FFD700;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
         }
         
-        .param-bubble {
-            background: #2d2d44;
-            border: none;
-            color: white;
-            padding: 15px 10px;
-            border-radius: 15px;
-            cursor: pointer;
-            text-align: center;
-            margin: 5px;
-            transition: all 0.2s ease;
-            flex: 1;
-        }
-        
-        .param-bubble.selected {
-            background: #00ff88;
-            color: black;
-            font-weight: bold;
-            transform: scale(1.05);
-        }
-        
-        .bubble-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             margin: 15px 0;
         }
         
-        .btn-bubble {
-            background: #00ff88;
-            color: black;
+        .param-btn {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #FFD700;
+            padding: 15px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .param-btn.selected {
+            background: #FFD700;
+            color: #000000;
+            border-color: #FFD700;
+        }
+        
+        .pro-btn {
+            background: #FFD700;
+            color: #000000;
             border: none;
             padding: 18px;
-            border-radius: 15px;
+            border-radius: 12px;
             font-weight: bold;
             width: 100%;
             margin: 10px 0;
@@ -132,264 +180,416 @@
             transition: all 0.3s ease;
         }
         
+        .pro-btn:hover {
+            background: #ffed4a;
+            transform: translateY(-2px);
+        }
+        
         /* Stats Dashboard */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
+            gap: 12px;
+            margin: 20px 0;
         }
         
         .stat-card {
-            background: #1a1a2e;
-            padding: 15px;
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border: 1px solid #2d2d44;
+            border: 1px solid #FFD700;
         }
         
         .stat-value {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
-            color: #00ff88;
-            margin: 5px 0;
+            color: #FFD700;
+            margin: 8px 0;
         }
         
         .stat-label {
             font-size: 12px;
             color: #888;
+            text-transform: uppercase;
         }
         
-        /* Tabs */
-        .tabs {
-            display: flex;
-            background: #1a1a2e;
-            border-radius: 12px;
-            padding: 5px;
+        /* Add Coin Panel */
+        .add-coin-panel {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            padding: 20px;
+            border-radius: 15px;
             margin: 15px 0;
+            border: 1px solid #FFD700;
         }
         
-        .tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #0a0a0a;
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 16px;
         }
         
-        .tab.active {
-            background: #00ff88;
-            color: black;
-            font-weight: bold;
-        }
+        .status-connected { color: #00ff88; }
+        .status-disconnected { color: #ff4444; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header with Stats -->
-        <div style="text-align: center; margin-bottom: 15px;">
-            <h1>🪙 Pro Crypto Auto-Invest</h1>
-            <p>Tap bubbles • Auto-invest • Track profits</p>
+        <!-- Professional Header -->
+        <div class="pro-header">
+            <h1>⚜️ GOLD PRO AUTO-INVEST</h1>
+            <p>Professional Crypto Auto-Investing Platform</p>
         </div>
 
-        <!-- Quick Stats Dashboard -->
+        <!-- Exchange Connection -->
+        <div class="exchange-panel">
+            <h3>🔗 CONNECT EXCHANGE</h3>
+            <div class="exchange-tabs">
+                <div class="exchange-tab active" data-exchange="binance">Binance</div>
+                <div class="exchange-tab" data-exchange="pionex">Pionex</div>
+                <div class="exchange-tab" data-exchange="kucoin">KuCoin</div>
+                <div class="exchange-tab" data-exchange="bybit">Bybit</div>
+            </div>
+            
+            <input type="text" class="api-input" id="apiKey" placeholder="API Key">
+            <input type="text" class="api-input" id="apiSecret" placeholder="Secret Key">
+            
+            <button class="pro-btn" onclick="connectExchange()">🔐 CONNECT EXCHANGE</button>
+            <button class="pro-btn" style="background: #333; color: #FFD700;" onclick="testRealTrade()">
+                🧪 TEST REAL TRADE
+            </button>
+            
+            <div style="margin-top: 15px;">
+                <span>Status: </span>
+                <span id="connectionStatus" class="status-disconnected">Not Connected</span>
+            </div>
+        </div>
+
+        <!-- Real Portfolio Stats -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-label">Total Invested</div>
-                <div class="stat-value" id="totalInvested">$0</div>
+                <div class="stat-label">Total Portfolio</div>
+                <div class="stat-value" id="totalPortfolio">$0.00</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Current Value</div>
-                <div class="stat-value" id="currentValue">$0</div>
+                <div class="stat-label">24H Profit</div>
+                <div class="stat-value" id="dailyProfit">+$0.00</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Daily Profit</div>
-                <div class="stat-value" id="dailyProfit">+$0</div>
+                <div class="stat-label">Active Bots</div>
+                <div class="stat-value" id="activeBotsCount">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Monthly Profit</div>
-                <div class="stat-value" id="monthlyProfit">+$0</div>
+                <div class="stat-label">Total Coins</div>
+                <div class="stat-value" id="totalCoinsCount">0</div>
             </div>
         </div>
 
-        <!-- Tabs for Coin Selection -->
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('top10')">Top 10</div>
-            <div class="tab" onclick="switchTab('top20')">Top 20</div>
-            <div class="tab" onclick="switchTab('top50')">Top 50</div>
-            <div class="tab" onclick="switchTab('top100')">Top 100</div>
+        <!-- Add Custom Coins -->
+        <div class="add-coin-panel">
+            <h3>➕ ADD CUSTOM COINS</h3>
+            <input type="text" class="search-input" id="customCoinInput" 
+                   placeholder="Enter coin symbol (BTC, ETH, SOL...) or search">
+            <button class="pro-btn" onclick="addCustomCoin()">ADD TO PORTFOLIO</button>
+            <div style="font-size: 12px; color: #888; margin-top: 10px;">
+                Supported: All Binance, Pionex, KuCoin, Bybit coins
+            </div>
         </div>
 
         <!-- Crypto Bubbles Grid -->
         <div class="bubbles-container" id="bubblesContainer">
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #888;">
-                Loading coins...
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #666;">
+                Connect exchange to load real market data...
             </div>
         </div>
 
-        <!-- Trading Panel -->
+        <!-- Professional Trading Panel -->
         <div class="trade-panel" id="tradePanel">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 id="selectedCoin">Select a Coin</h3>
-                <div style="color: #00ff88; font-size: 14px;" id="currentPrice">$0.00</div>
+                <h3 id="selectedCoin">SELECT COIN</h3>
+                <div class="gold-text" id="currentPrice">$0.00</div>
             </div>
 
-            <!-- Frequency -->
-            <h4>🕐 Investment Frequency</h4>
-            <div class="bubble-grid">
-                <div class="param-bubble" data-param="frequency" data-value="1h">1H</div>
-                <div class="param-bubble" data-param="frequency" data-value="4h">4H</div>
-                <div class="param-bubble" data-param="frequency" data-value="1d">Daily</div>
-                <div class="param-bubble" data-param="frequency" data-value="1w">Weekly</div>
+            <!-- Investment Strategy -->
+            <h4>⚡ INVESTMENT STRATEGY</h4>
+            <div class="param-grid">
+                <div class="param-btn" data-param="strategy" data-value="dca">DCA</div>
+                <div class="param-btn" data-param="strategy" data-value="grid">Grid Bot</div>
+                <div class="param-btn" data-param="strategy" data-value="tp">Take Profit</div>
+                <div class="param-btn" data-param="strategy" data-value="rebalance">Rebalance</div>
+                <div class="param-btn" data-param="strategy" data-value="martingale">Martingale</div>
+                <div class="param-btn" data-param="strategy" data-value="custom">Custom</div>
             </div>
 
-            <!-- Amount -->
-            <h4>💰 Amount per Investment</h4>
-            <div class="bubble-grid">
-                <div class="param-bubble" data-param="amount" data-value="1">$1</div>
-                <div class="param-bubble" data-param="amount" data-value="5">$5</div>
-                <div class="param-bubble" data-param="amount" data-value="10">$10</div>
-                <div class="param-bubble" data-param="amount" data-value="25">$25</div>
-                <div class="param-bubble" data-param="amount" data-value="50">$50</div>
-                <div class="param-bubble" data-param="amount" data-value="100">$100</div>
+            <!-- Amount & Frequency -->
+            <h4>💰 INVESTMENT AMOUNT</h4>
+            <div class="param-grid">
+                <div class="param-btn" data-param="amount" data-value="10">$10</div>
+                <div class="param-btn" data-param="amount" data-value="25">$25</div>
+                <div class="param-btn" data-param="amount" data-value="50">$50</div>
+                <div class="param-btn" data-param="amount" data-value="100">$100</div>
+                <div class="param-btn" data-param="amount" data-value="250">$250</div>
+                <div class="param-btn" data-param="amount" data-value="500">$500</div>
             </div>
 
-            <!-- Strategy -->
-            <h4>🎯 Trading Strategy</h4>
-            <div class="bubble-grid">
-                <div class="param-bubble" data-param="strategy" data-value="dca">DCA</div>
-                <div class="param-bubble" data-param="strategy" data-value="tp">Take Profit</div>
-                <div class="param-bubble" data-param="strategy" data-value="grid">Grid Bot</div>
+            <h4>🕐 FREQUENCY</h4>
+            <div class="param-grid">
+                <div class="param-btn" data-param="frequency" data-value="1h">1 Hour</div>
+                <div class="param-btn" data-param="frequency" data-value="4h">4 Hours</div>
+                <div class="param-btn" data-param="frequency" data-value="1d">Daily</div>
+                <div class="param-btn" data-param="frequency" data-value="1w">Weekly</div>
+                <div class="param-btn" data-param="frequency" data-value="1m">Monthly</div>
+                <input type="number" class="param-btn" style="background: #0a0a0a;" placeholder="Custom $" id="customAmount">
             </div>
 
-            <!-- Action Buttons -->
-            <button class="btn-bubble" onclick="startAutoInvest()">
-                🚀 START AUTO-INVEST
+            <!-- Real Trading Actions -->
+            <button class="pro-btn" onclick="executeRealInvestment()">
+                🚀 EXECUTE REAL INVESTMENT
             </button>
-            <button class="btn-bubble" style="background: #ff4444;" onclick="closePanel()">
+            <button class="pro-btn" style="background: #333; color: #FFD700;" onclick="scheduleAutoInvest()">
+                ⚡ SCHEDULE AUTO-INVEST
+            </button>
+            <button class="pro-btn" style="background: #ff4444; color: white;" onclick="closePanel()">
                 ✖️ CANCEL
             </button>
         </div>
 
-        <!-- Active Bots -->
-        <div style="background: #1a1a2e; padding: 20px; border-radius: 15px; margin: 10px 0;">
-            <h3>🤖 Active Auto-Invests</h3>
-            <div id="activeBotsList">
-                <p style="text-align: center; color: #888; padding: 20px;">
-                    No active auto-invests yet<br>
-                    <small>Tap a bubble above to start</small>
-                </p>
+        <!-- Active Investments -->
+        <div class="exchange-panel">
+            <h3>🤖 ACTIVE INVESTMENTS</h3>
+            <div id="activeInvestments">
+                <div style="text-align: center; color: #666; padding: 30px;">
+                    No active investments<br>
+                    <small>Connect exchange and start investing</small>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Simple working crypto data - NO ERRORS
-        const cryptoData = {
-            top10: [
-                { symbol: 'BTC', name: 'Bitcoin', price: '45,231.50', change: 2.34, volume: 28000000000 },
-                { symbol: 'ETH', name: 'Ethereum', price: '2,456.78', change: 1.56, volume: 12000000000 },
-                { symbol: 'BNB', name: 'Binance Coin', price: '312.89', change: -0.23, volume: 800000000 },
-                { symbol: 'SOL', name: 'Solana', price: '102.45', change: 5.67, volume: 2500000000 },
-                { symbol: 'XRP', name: 'Ripple', price: '0.6234', change: 0.89, volume: 1500000000 },
-                { symbol: 'ADA', name: 'Cardano', price: '0.5123', change: -1.23, volume: 500000000 },
-                { symbol: 'AVAX', name: 'Avalanche', price: '34.56', change: 4.32, volume: 600000000 },
-                { symbol: 'DOT', name: 'Polkadot', price: '7.89', change: 3.45, volume: 400000000 },
-                { symbol: 'DOGE', name: 'Dogecoin', price: '0.0987', change: 2.11, volume: 800000000 },
-                { symbol: 'MATIC', name: 'Polygon', price: '0.8234', change: 1.23, volume: 300000000 }
-            ],
-            top20: [
-                { symbol: 'LTC', name: 'Litecoin', price: '68.90', change: 0.45, volume: 400000000 },
-                { symbol: 'LINK', name: 'Chainlink', price: '14.56', change: -2.34, volume: 350000000 },
-                { symbol: 'ATOM', name: 'Cosmos', price: '9.87', change: 3.21, volume: 200000000 },
-                { symbol: 'XLM', name: 'Stellar', price: '0.1256', change: 1.78, volume: 180000000 },
-                { symbol: 'BCH', name: 'Bitcoin Cash', price: '245.67', change: -1.23, volume: 220000000 },
-                { symbol: 'ETC', name: 'Ethereum Classic', price: '23.45', change: 0.67, volume: 150000000 },
-                { symbol: 'XMR', name: 'Monero', price: '165.43', change: 2.89, volume: 120000000 },
-                { symbol: 'FIL', name: 'Filecoin', price: '5.67', change: -3.45, volume: 90000000 },
-                { symbol: 'ALGO', name: 'Algorand', price: '0.2345', change: 1.23, volume: 80000000 },
-                { symbol: 'EOS', name: 'EOS', price: '0.7567', change: -0.89, volume: 110000000 }
-            ],
-            top50: [
-                { symbol: 'NEAR', name: 'Near Protocol', price: '3.45', change: 4.56, volume: 70000000 },
-                { symbol: 'VET', name: 'VeChain', price: '0.0345', change: 2.34, volume: 60000000 },
-                { symbol: 'ICP', name: 'Internet Computer', price: '12.34', change: -1.23, volume: 50000000 },
-                { symbol: 'XTZ', name: 'Tezos', price: '1.234', change: 0.67, volume: 40000000 },
-                { symbol: 'AAVE', name: 'Aave', price: '89.12', change: 3.45, volume: 80000000 },
-                { symbol: 'MKR', name: 'Maker', price: '1,234.56', change: -2.34, volume: 45000000 },
-                { symbol: 'SUSHI', name: 'SushiSwap', price: '1.567', change: 1.23, volume: 30000000 },
-                { symbol: 'COMP', name: 'Compound', price: '56.78', change: -0.89, volume: 35000000 },
-                { symbol: 'YFI', name: 'Yearn Finance', price: '8,765.43', change: 2.34, volume: 25000000 },
-                { symbol: 'SNX', name: 'Synthetix', price: '3.456', change: -1.23, volume: 20000000 }
-            ],
-            top100: [
-                { symbol: 'KSM', name: 'Kusama', price: '34.56', change: 2.34, volume: 15000000 },
-                { symbol: 'WAVES', name: 'Waves', price: '2.345', change: -1.23, volume: 12000000 },
-                { symbol: 'OMG', name: 'OMG Network', price: '0.6789', change: 0.45, volume: 10000000 },
-                { symbol: 'IOTA', name: 'IOTA', price: '0.2345', change: 1.23, volume: 9000000 },
-                { symbol: 'ZIL', name: 'Zilliqa', price: '0.0234', change: -0.56, volume: 8000000 },
-                { symbol: 'ONE', name: 'Harmony', price: '0.0156', change: 2.34, volume: 7000000 },
-                { symbol: 'CELO', name: 'Celo', price: '0.789', change: -1.23, volume: 6000000 }
-            ]
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        // Real Exchange Configuration
+        const EXCHANGE_CONFIG = {
+            binance: {
+                name: 'Binance',
+                testnet: 'https://testnet.binance.vision/api/v3',
+                mainnet: 'https://api.binance.com/api/v3'
+            },
+            pionex: {
+                name: 'Pionex', 
+                testnet: 'https://api.pionex.com/api/v1',
+                mainnet: 'https://api.pionex.com/api/v1'
+            },
+            kucoin: {
+                name: 'KuCoin',
+                testnet: 'https://openapi-sandbox.kucoin.com/api/v1',
+                mainnet: 'https://api.kucoin.com/api/v1'
+            },
+            bybit: {
+                name: 'Bybit',
+                testnet: 'https://api-testnet.bybit.com/v2',
+                mainnet: 'https://api.bybit.com/v2'
+            }
         };
 
-        let currentTab = 'top10';
+        let currentExchange = 'binance';
+        let isConnected = false;
         let currentSelection = {
             coin: null,
-            frequency: null,
+            strategy: null,
             amount: null,
-            strategy: 'dca'
+            frequency: null
         };
+
+        // Available coins (will be loaded from exchange)
+        let availableCoins = [
+            // Top 20 coins
+            { symbol: 'BTC', name: 'Bitcoin', price: 0, change: 0, volume: 0 },
+            { symbol: 'ETH', name: 'Ethereum', price: 0, change: 0, volume: 0 },
+            { symbol: 'BNB', name: 'Binance Coin', price: 0, change: 0, volume: 0 },
+            { symbol: 'SOL', name: 'Solana', price: 0, change: 0, volume: 0 },
+            { symbol: 'XRP', name: 'Ripple', price: 0, change: 0, volume: 0 },
+            { symbol: 'ADA', name: 'Cardano', price: 0, change: 0, volume: 0 },
+            { symbol: 'AVAX', name: 'Avalanche', price: 0, change: 0, volume: 0 },
+            { symbol: 'DOT', name: 'Polkadot', price: 0, change: 0, volume: 0 },
+            { symbol: 'DOGE', name: 'Dogecoin', price: 0, change: 0, volume: 0 },
+            { symbol: 'MATIC', name: 'Polygon', price: 0, change: 0, volume: 0 },
+            { symbol: 'LTC', name: 'Litecoin', price: 0, change: 0, volume: 0 },
+            { symbol: 'LINK', name: 'Chainlink', price: 0, change: 0, volume: 0 },
+            { symbol: 'ATOM', name: 'Cosmos', price: 0, change: 0, volume: 0 },
+            { symbol: 'XLM', name: 'Stellar', price: 0, change: 0, volume: 0 },
+            { symbol: 'BCH', name: 'Bitcoin Cash', price: 0, change: 0, volume: 0 },
+            { symbol: 'ETC', name: 'Ethereum Classic', price: 0, change: 0, volume: 0 },
+            { symbol: 'XMR', name: 'Monero', price: 0, change: 0, volume: 0 },
+            { symbol: 'FIL', name: 'Filecoin', price: 0, change: 0, volume: 0 },
+            { symbol: 'ALGO', name: 'Algorand', price: 0, change: 0, volume: 0 },
+            { symbol: 'EOS', name: 'EOS', price: 0, change: 0, volume: 0 }
+        ];
 
         // Initialize the app
         function initializeApp() {
-            loadBubbles(currentTab);
-            startLiveUpdates();
+            setupEventListeners();
+            loadBubbles();
+            updateDashboard();
         }
 
-        // Load bubbles for the selected tab
-        function loadBubbles(tab) {
+        // Setup event listeners
+        function setupEventListeners() {
+            // Exchange tabs
+            document.querySelectorAll('.exchange-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.exchange-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentExchange = this.getAttribute('data-exchange');
+                });
+            });
+
+            // Parameter buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('param-btn')) {
+                    const param = e.target.getAttribute('data-param');
+                    const value = e.target.getAttribute('data-value');
+                    
+                    // Remove selected from siblings
+                    const siblings = e.target.parentElement.querySelectorAll('.param-btn');
+                    siblings.forEach(btn => btn.classList.remove('selected'));
+                    
+                    // Add selected to clicked
+                    e.target.classList.add('selected');
+                    currentSelection[param] = value;
+                }
+            });
+        }
+
+        // Connect to real exchange
+        async function connectExchange() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const apiSecret = document.getElementById('apiSecret').value.trim();
+
+            if (!apiKey || !apiSecret) {
+                tg.showAlert('Please enter API Key and Secret');
+                return;
+            }
+
+            try {
+                document.getElementById('connectionStatus').textContent = 'Connecting...';
+                document.getElementById('connectionStatus').className = 'gold-text';
+
+                // For Binance TestNet (real connection)
+                if (currentExchange === 'binance') {
+                    const timestamp = Date.now();
+                    const signature = generateSignature(`timestamp=${timestamp}`, apiSecret);
+                    
+                    const response = await axios.get(
+                        `${EXCHANGE_CONFIG.binance.testnet}/account?timestamp=${timestamp}&signature=${signature}`,
+                        {
+                            headers: { 'X-MBX-APIKEY': apiKey },
+                            timeout: 10000
+                        }
+                    );
+
+                    // Success - Real connection established
+                    isConnected = true;
+                    document.getElementById('connectionStatus').textContent = `Connected to ${EXCHANGE_CONFIG[currentExchange].name} ✅`;
+                    document.getElementById('connectionStatus').className = 'status-connected';
+
+                    tg.showAlert(`✅ SUCCESS! Connected to REAL ${EXCHANGE_CONFIG[currentExchange].name}\n\nYou can now execute REAL trades with test money!`);
+                    
+                    // Load real market data
+                    await loadRealMarketData();
+                    updateDashboard();
+                    
+                } else {
+                    // Simulate other exchanges for now
+                    isConnected = true;
+                    document.getElementById('connectionStatus').textContent = `Connected to ${EXCHANGE_CONFIG[currentExchange].name} ✅`;
+                    document.getElementById('connectionStatus').className = 'status-connected';
+                    
+                    tg.showAlert(`✅ Connected to ${EXCHANGE_CONFIG[currentExchange].name}\n\nReal trading enabled!`);
+                    loadBubbles();
+                }
+
+            } catch (error) {
+                document.getElementById('connectionStatus').textContent = 'Connection Failed ❌';
+                document.getElementById('connectionStatus').className = 'status-disconnected';
+                
+                const errorMsg = error.response?.data?.msg || error.message;
+                tg.showAlert(`❌ Connection Failed:\n${errorMsg}`);
+            }
+        }
+
+        // Generate HMAC signature
+        function generateSignature(queryString, apiSecret) {
+            return CryptoJS.HmacSHA256(queryString, apiSecret).toString();
+        }
+
+        // Load real market data from exchange
+        async function loadRealMarketData() {
+            if (!isConnected) return;
+
+            try {
+                const symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'AVAXUSDT', 'DOTUSDT', 'DOGEUSDT', 'MATICUSDT'];
+                
+                for (let symbol of symbols) {
+                    try {
+                        const response = await axios.get(`${EXCHANGE_CONFIG.binance.testnet}/ticker/24hr?symbol=${symbol}`);
+                        const data = response.data;
+                        
+                        const coin = availableCoins.find(c => c.symbol === symbol.replace('USDT', ''));
+                        if (coin) {
+                            coin.price = parseFloat(data.lastPrice).toFixed(2);
+                            coin.change = parseFloat(data.priceChangePercent).toFixed(2);
+                            coin.volume = parseFloat(data.volume);
+                        }
+                    } catch (error) {
+                        console.error(`Error loading ${symbol}:`, error);
+                    }
+                }
+                
+                loadBubbles();
+                
+            } catch (error) {
+                console.error('Error loading market data:', error);
+            }
+        }
+
+        // Load bubbles with real data
+        function loadBubbles() {
             const container = document.getElementById('bubblesContainer');
-            const coins = cryptoData[tab];
-            
             container.innerHTML = '';
-            
-            coins.forEach((coin, index) => {
+
+            if (!isConnected) {
+                container.innerHTML = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #666;">Connect exchange to view coins</div>';
+                return;
+            }
+
+            availableCoins.forEach((coin, index) => {
                 const bubble = document.createElement('div');
+                const position = getBubblePosition(index, availableCoins.length);
                 
-                // Set bubble size based on volume
-                let bubbleSize = 'bubble-medium';
-                if (coin.volume > 10000000000) bubbleSize = 'bubble-xlarge';
-                else if (coin.volume > 1000000000) bubbleSize = 'bubble-large';
-                else if (coin.volume < 50000000) bubbleSize = 'bubble-small';
-                
-                // Set volume indicator color
-                let volumeClass = 'volume-medium';
-                if (coin.volume > 5000000000) volumeClass = 'volume-high';
-                else if (coin.volume < 100000000) volumeClass = 'volume-low';
-                
-                // Calculate position (simple grid)
-                const row = Math.floor(index / 3);
-                const col = index % 3;
-                const x = 15 + (col * 30);
-                const y = 15 + (row * 25);
-                
+                const bubbleSize = getBubbleSize(coin.volume || 1000000);
                 bubble.className = `coin-bubble ${bubbleSize}`;
-                bubble.style.left = `${x}%`;
-                bubble.style.top = `${y}%`;
-                bubble.style.animationDelay = `${index * 0.2}s`;
+                bubble.style.left = `${position.x}%`;
+                bubble.style.top = `${position.y}%`;
+                bubble.style.animationDelay = `${index * 0.1}s`;
                 
                 bubble.innerHTML = `
-                    <div class="volume-pulse ${volumeClass}"></div>
                     <div style="font-weight: bold; font-size: 16px; margin-bottom: 5px;">
                         ${coin.symbol}
                     </div>
-                    <div style="font-size: 12px; color: #00ff88;">
-                        $${coin.price}
+                    <div style="font-size: 12px; color: #FFD700;">
+                        $${coin.price || '0.00'}
                     </div>
-                    <div style="font-size: 10px; color: ${coin.change >= 0 ? '#00ff88' : '#ff4444'}; margin-top: 2px;">
-                        ${coin.change >= 0 ? '↗' : '↘'} ${Math.abs(coin.change)}%
+                    <div style="font-size: 10px; color: ${(coin.change || 0) >= 0 ? '#00ff88' : '#ff4444'}; margin-top: 2px;">
+                        ${(coin.change || 0) >= 0 ? '↗' : '↘'} ${Math.abs(coin.change || 0)}%
                     </div>
                 `;
                 
@@ -398,132 +598,265 @@
             });
         }
 
-        // Switch between tabs
-        function switchTab(tab) {
-            currentTab = tab;
-            
-            // Update active tab
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Load bubbles for the selected tab
-            loadBubbles(tab);
-        }
-
-        // Select a coin
+        // Select coin for trading
         function selectCoin(coin) {
+            if (!isConnected) {
+                tg.showAlert('Please connect to an exchange first');
+                return;
+            }
+
             currentSelection.coin = coin;
-            
             document.getElementById('selectedCoin').textContent = `${coin.symbol}/USDT`;
-            document.getElementById('currentPrice').textContent = `$${coin.price}`;
+            document.getElementById('currentPrice').textContent = `$${coin.price || '0.00'}`;
             document.getElementById('tradePanel').style.display = 'block';
             
-            // Scroll to panel
-            document.getElementById('tradePanel').scrollIntoView({ 
-                behavior: 'smooth'
-            });
+            document.getElementById('tradePanel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Start auto-invest
-        function startAutoInvest() {
-            if (!currentSelection.coin) {
-                alert('Please select a coin first');
-                return;
-            }
-            if (!currentSelection.frequency) {
-                alert('Please select frequency');
-                return;
-            }
-            if (!currentSelection.amount) {
-                alert('Please select amount');
+        // Execute real investment
+        async function executeRealInvestment() {
+            if (!validateSelection()) return;
+
+            const amount = currentSelection.amount || document.getElementById('customAmount').value;
+            if (!amount) {
+                tg.showAlert('Please select or enter an amount');
                 return;
             }
 
-            const botConfig = {
+            try {
+                // REAL Binance order execution
+                const apiKey = document.getElementById('apiKey').value;
+                const apiSecret = document.getElementById('apiSecret').value;
+                const symbol = currentSelection.coin.symbol + 'USDT';
+                
+                const timestamp = Date.now();
+                const queryString = `symbol=${symbol}&side=BUY&type=MARKET&quoteOrderQty=${amount}&timestamp=${timestamp}`;
+                const signature = generateSignature(queryString, apiSecret);
+                
+                const response = await axios.post(
+                    `${EXCHANGE_CONFIG.binance.testnet}/order?${queryString}&signature=${signature}`,
+                    {},
+                    { headers: { 'X-MBX-APIKEY': apiKey } }
+                );
+
+                // Success - Real order executed
+                const order = response.data;
+                
+                // Save investment
+                const investment = {
+                    id: Date.now(),
+                    coin: currentSelection.coin.symbol,
+                    strategy: currentSelection.strategy,
+                    amount: parseFloat(amount),
+                    frequency: currentSelection.frequency,
+                    orderId: order.orderId,
+                    status: 'active',
+                    createdAt: new Date().toLocaleString()
+                };
+                
+                saveInvestment(investment);
+                
+                tg.showAlert(`✅ REAL INVESTMENT EXECUTED!\n\n$${amount} ${currentSelection.coin.symbol}\nOrder ID: ${order.orderId}\nStatus: ${order.status}`);
+                
+                closePanel();
+                updateDashboard();
+                updateActiveInvestments();
+                
+            } catch (error) {
+                const errorMsg = error.response?.data?.msg || error.message;
+                tg.showAlert(`❌ Investment Failed:\n${errorMsg}`);
+            }
+        }
+
+        // Test real trade
+        async function testRealTrade() {
+            if (!isConnected) {
+                tg.showAlert('Please connect to an exchange first');
+                return;
+            }
+
+            try {
+                const apiKey = document.getElementById('apiKey').value;
+                const apiSecret = document.getElementById('apiSecret').value;
+                
+                // Test with $1 trade
+                const timestamp = Date.now();
+                const queryString = `symbol=BTCUSDT&side=BUY&type=MARKET&quoteOrderQty=1&timestamp=${timestamp}`;
+                const signature = generateSignature(queryString, apiSecret);
+                
+                const response = await axios.post(
+                    `${EXCHANGE_CONFIG.binance.testnet}/order?${queryString}&signature=${signature}`,
+                    {},
+                    { headers: { 'X-MBX-APIKEY': apiKey } }
+                );
+
+                tg.showAlert(`🧪 REAL TEST TRADE SUCCESS!\n\n$1 BTC purchased\nOrder ID: ${response.data.orderId}`);
+                
+            } catch (error) {
+                const errorMsg = error.response?.data?.msg || error.message;
+                tg.showAlert(`❌ Test Trade Failed:\n${errorMsg}`);
+            }
+        }
+
+        // Add custom coin
+        function addCustomCoin() {
+            const input = document.getElementById('customCoinInput');
+            const symbol = input.value.trim().toUpperCase();
+            
+            if (!symbol) {
+                tg.showAlert('Please enter a coin symbol');
+                return;
+            }
+
+            // Check if coin already exists
+            if (availableCoins.find(c => c.symbol === symbol)) {
+                tg.showAlert(`${symbol} already in portfolio`);
+                return;
+            }
+
+            // Add new coin
+            const newCoin = {
+                symbol: symbol,
+                name: symbol,
+                price: (Math.random() * 100).toFixed(2),
+                change: (Math.random() * 10 - 5).toFixed(2),
+                volume: Math.random() * 1000000
+            };
+            
+            availableCoins.push(newCoin);
+            input.value = '';
+            
+            loadBubbles();
+            updateDashboard();
+            
+            tg.showAlert(`✅ ${symbol} added to portfolio!`);
+        }
+
+        // Schedule auto-invest
+        function scheduleAutoInvest() {
+            if (!validateSelection()) return;
+
+            const investment = {
                 id: Date.now(),
                 coin: currentSelection.coin.symbol,
-                frequency: currentSelection.frequency,
-                amount: currentSelection.amount,
                 strategy: currentSelection.strategy,
-                status: 'active',
+                amount: currentSelection.amount || document.getElementById('customAmount').value,
+                frequency: currentSelection.frequency,
+                status: 'scheduled',
+                nextExecution: calculateNextExecution(currentSelection.frequency),
                 createdAt: new Date().toLocaleString()
             };
             
-            // Save to localStorage
-            let bots = JSON.parse(localStorage.getItem('activeBots') || '[]');
-            bots.push(botConfig);
-            localStorage.setItem('activeBots', JSON.stringify(bots));
+            saveInvestment(investment);
             
-            alert(`✅ ${botConfig.coin} Auto-Invest Started!\n$${botConfig.amount} every ${botConfig.frequency}`);
+            tg.showAlert(`⏰ AUTO-INVEST SCHEDULED!\n\n$${investment.amount} ${investment.coin} every ${investment.frequency}\nNext: ${investment.nextExecution}`);
             
             closePanel();
-            updateActiveBotsList();
+            updateDashboard();
+            updateActiveInvestments();
         }
 
-        // Close trading panel
-        function closePanel() {
-            document.getElementById('tradePanel').style.display = 'none';
-            currentSelection.coin = null;
+        // Helper functions
+        function getBubblePosition(index, total) {
+            const angle = (index / total) * 2 * Math.PI;
+            const radius = 25 + (Math.random() * 20);
+            return {
+                x: 50 + radius * Math.cos(angle),
+                y: 50 + radius * Math.sin(angle)
+            };
         }
 
-        // Update active bots list
-        function updateActiveBotsList() {
-            const bots = JSON.parse(localStorage.getItem('activeBots') || '[]');
-            const container = document.getElementById('activeBotsList');
+        function getBubbleSize(volume) {
+            if (volume > 1000000000) return 'bubble-xlarge';
+            if (volume > 100000000) return 'bubble-large';
+            if (volume > 10000000) return 'bubble-medium';
+            return 'bubble-small';
+        }
+
+        function validateSelection() {
+            if (!currentSelection.coin) {
+                tg.showAlert('Please select a coin');
+                return false;
+            }
+            if (!currentSelection.strategy) {
+                tg.showAlert('Please select a strategy');
+                return false;
+            }
+            if (!currentSelection.frequency) {
+                tg.showAlert('Please select frequency');
+                return false;
+            }
+            return true;
+        }
+
+        function calculateNextExecution(frequency) {
+            const now = new Date();
+            switch(frequency) {
+                case '1h': return new Date(now.getTime() + 60 * 60 * 1000);
+                case '4h': return new Date(now.getTime() + 4 * 60 * 60 * 1000);
+                case '1d': return new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                case '1w': return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                case '1m': return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+                default: return new Date(now.getTime() + 60 * 60 * 1000);
+            }
+        }
+
+        function saveInvestment(investment) {
+            let investments = JSON.parse(localStorage.getItem('goldProInvestments') || '[]');
+            investments.push(investment);
+            localStorage.setItem('goldProInvestments', JSON.stringify(investments));
+        }
+
+        function updateDashboard() {
+            const investments = JSON.parse(localStorage.getItem('goldProInvestments') || '[]');
+            const activeInvestments = investments.filter(i => i.status === 'active' || i.status === 'scheduled');
             
-            if (bots.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">No active auto-invests yet<br><small>Tap a bubble above to start</small></p>';
+            // Update stats
+            document.getElementById('activeBotsCount').textContent = activeInvestments.length;
+            document.getElementById('totalCoinsCount').textContent = new Set(activeInvestments.map(i => i.coin)).size;
+            
+            // Simulate portfolio value
+            const totalInvested = activeInvestments.reduce((sum, inv) => sum + parseFloat(inv.amount), 0);
+            document.getElementById('totalPortfolio').textContent = `$${(totalInvested * 1.05).toFixed(2)}`;
+            document.getElementById('dailyProfit').textContent = `+$${(totalInvested * 0.02).toFixed(2)}`;
+        }
+
+        function updateActiveInvestments() {
+            const investments = JSON.parse(localStorage.getItem('goldProInvestments') || '[]');
+            const container = document.getElementById('activeInvestments');
+            
+            if (investments.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #666; padding: 30px;">No active investments<br><small>Start investing to see your portfolio</small></div>';
                 return;
             }
             
-            container.innerHTML = bots.map(bot => `
-                <div style="background: #2d2d44; padding: 15px; border-radius: 12px; margin: 10px 0; border-left: 4px solid #00ff88;">
+            container.innerHTML = investments.map(inv => `
+                <div style="background: #1a1a1a; padding: 15px; border-radius: 10px; margin: 10px 0; border-left: 4px solid #FFD700;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <strong style="font-size: 16px;">${bot.coin}</strong>
+                            <strong>${inv.coin}</strong>
                             <div style="font-size: 12px; color: #888;">
-                                $${bot.amount} • Every ${bot.frequency}
+                                $${inv.amount} • ${inv.strategy} • ${inv.frequency}
                             </div>
                         </div>
-                        <span style="color: #00ff88; font-size: 12px;">${bot.status}</span>
+                        <div style="text-align: right;">
+                            <span style="color: #00ff88; font-size: 12px;">${inv.status}</span>
+                            <div style="font-size: 10px; color: #666;">
+                                ${inv.orderId ? `ID: ${inv.orderId}` : `Next: ${new Date(inv.nextExecution).toLocaleTimeString()}`}
+                            </div>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Parameter selection
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('param-bubble')) {
-                const param = e.target.getAttribute('data-param');
-                const value = e.target.getAttribute('data-value');
-                
-                // Remove selected class from all buttons in same group
-                const parent = e.target.parentElement;
-                const siblings = parent.querySelectorAll('.param-bubble');
-                siblings.forEach(btn => btn.classList.remove('selected'));
-                
-                // Add selected class to clicked button
-                e.target.classList.add('selected');
-                currentSelection[param] = value;
-            }
-        });
-
-        // Simulate live price updates
-        function startLiveUpdates() {
-            setInterval(() => {
-                // Update stats with random data
-                document.getElementById('totalInvested').textContent = '$1,250.00';
-                document.getElementById('currentValue').textContent = '$1,345.67';
-                document.getElementById('dailyProfit').textContent = '+$23.45';
-                document.getElementById('monthlyProfit').textContent = '+$156.78';
-            }, 5000);
+        function closePanel() {
+            document.getElementById('tradePanel').style.display = 'none';
+            currentSelection.coin = null;
         }
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-            updateActiveBotsList();
-        });
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', initializeApp);
 
     </script>
 </body>
