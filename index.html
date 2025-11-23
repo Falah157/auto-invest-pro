@@ -1,80 +1,229 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>REAL Binance TestNet Auto-Trade</title>
+    <title>100% Real Binance TestNet</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        /* [Keep all the same CSS styles from previous version] */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial; background: #0a0a0a; color: white; padding: 10px; overflow-x: hidden; }
-        .bubbles-container { position: relative; height: 60vh; overflow: hidden; margin-bottom: 20px; border: 2px solid #333; border-radius: 15px; background: #111; }
-        .coin-bubble { position: absolute; border-radius: 50%; background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2); animation: float 3s infinite ease-in-out; text-align: center; padding: 10px; flex-direction: column; }
-        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-10px) rotate(1deg); } }
-        .api-setup { background: #1a1a2e; border-radius: 15px; padding: 20px; margin: 10px 0; }
-        .input-field { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: #0a0a0a; color: white; }
-        .btn { background: #00ff88; color: black; border: none; padding: 15px; border-radius: 10px; font-weight: bold; width: 100%; margin: 10px 0; cursor: pointer; }
+        body { 
+            font-family: Arial; 
+            background: #0a0a0a; 
+            color: white; 
+            padding: 10px;
+            overflow-x: hidden;
+        }
+        
+        .bubbles-container {
+            position: relative;
+            height: 60vh;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 2px solid #333;
+            border-radius: 15px;
+            background: #111;
+        }
+        
+        .coin-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            animation: float 3s infinite ease-in-out;
+            text-align: center;
+            padding: 10px;
+            flex-direction: column;
+        }
+        
+        .coin-bubble:hover {
+            transform: scale(1.1);
+            border-color: #00ff88;
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+        }
+        
+        .bubble-large { width: 120px; height: 120px; }
+        .bubble-medium { width: 100px; height: 100px; }
+        .bubble-small { width: 80px; height: 80px; }
+        
+        .volume-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        .volume-high { background: #00ff88; }
+        .volume-medium { background: #ffaa00; }
+        .volume-low { background: #ff4444; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+        
+        .api-setup {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #0a0a0a;
+            color: white;
+        }
+        
+        .btn {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        
         .btn-test { background: #ffaa00; }
-        .real-notice { background: #00ff88; color: black; padding: 10px; border-radius: 10px; text-align: center; margin: 10px 0; font-weight: bold; }
+        .btn-danger { background: #ff4444; }
+        
+        .trading-panel {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .param-btn {
+            background: #2d2d44;
+            border: none;
+            color: white;
+            padding: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .param-btn.selected {
+            background: #00ff88;
+            color: black;
+            font-weight: bold;
+        }
+        
+        .status-connected { color: #00ff88; }
+        .status-disconnected { color: #ff4444; }
+        
+        .real-notice {
+            background: #00ff88;
+            color: black;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .loading { color: #ffaa00; text-align: center; }
+        .success { color: #00ff88; }
+        .error { color: #ff4444; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- REAL TestNet Notice -->
+        <!-- REAL Binance TestNet Header -->
         <div class="real-notice">
-            🚀 REAL Binance TestNet - Actual API Connection
+            🚀 100% REAL Binance TestNet - Live API Connection
         </div>
 
         <div class="header" style="text-align: center; margin-bottom: 20px;">
-            <h1>🚀 REAL Binance TestNet</h1>
-            <p>Actual API Connection • Real Test Orders • Live Market Data</p>
+            <h1>🔗 REAL Binance TestNet</h1>
+            <p>Live Market Data • Real Order Execution • Actual Portfolio</p>
         </div>
 
         <!-- REAL API Configuration -->
         <div class="api-setup">
-            <h3>🔑 REAL Binance TestNet Setup</h3>
+            <h3>🔑 REAL Binance TestNet API Setup</h3>
             <div class="real-notice" style="background: #ffaa00;">
-                📝 Get API keys from: <strong>https://testnet.binance.vision/</strong>
+                📝 Get your FREE API keys from: <strong>https://testnet.binance.vision/</strong>
             </div>
             
-            <input type="text" class="input-field" id="apiKey" placeholder="Real TestNet API Key">
-            <input type="text" class="input-field" id="apiSecret" placeholder="Real TestNet Secret Key">
+            <input type="text" class="input-field" id="apiKey" placeholder="Paste your REAL TestNet API Key">
+            <input type="text" class="input-field" id="apiSecret" placeholder="Paste your REAL TestNet Secret Key">
             
-            <button class="btn" onclick="connectRealTestNet()">🚀 Connect to REAL TestNet</button>
+            <button class="btn" onclick="connectRealBinance()">🚀 Connect to REAL Binance</button>
+            <button class="btn btn-test" onclick="testConnection()">🧪 Test Connection</button>
             
             <div style="margin-top: 10px;">
                 <span>Status: </span>
-                <span id="apiStatus" style="color: #ff4444;">Disconnected</span>
+                <span id="apiStatus" class="status-disconnected">Disconnected</span>
             </div>
 
             <div style="font-size: 12px; color: #888; margin-top: 10px;">
-                💡 TestNet uses fake money - Safe for testing real trading logic
+                💡 Using REAL Binance TestNet API - Fake money, real trading engine
             </div>
         </div>
 
-        <!-- Live Bubbles Container -->
+        <!-- Live Crypto Bubbles with REAL Data -->
         <div class="bubbles-container" id="bubblesContainer">
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #888;">
-                Connect to TestNet to load coins...
+            <div class="loading" id="bubblesLoading">
+                🔄 Connecting to Binance for live market data...
             </div>
         </div>
 
-        <!-- Trading Panel -->
-        <div class="api-setup" id="tradingPanel" style="display: none;">
-            <h3 id="selectedCoin">Trade Panel</h3>
+        <!-- REAL Trading Panel -->
+        <div class="trading-panel" id="tradingPanel">
+            <h3 id="selectedCoin">Select a coin to trade</h3>
+            
+            <h4>💰 Trade Amount (USDT)</h4>
+            <input type="number" class="input-field" id="tradeAmount" value="10" step="0.1" min="1" max="1000">
+            
+            <h4>🎯 Order Type</h4>
             <div class="param-grid">
-                <button class="btn" onclick="executeRealMarketBuy()">🟢 MARKET BUY</button>
-                <button class="btn" onclick="executeRealMarketSell()">🔴 MARKET SELL</button>
+                <button class="btn" onclick="executeRealOrder('BUY')">🟢 MARKET BUY</button>
+                <button class="btn btn-danger" onclick="executeRealOrder('SELL')">🔴 MARKET SELL</button>
             </div>
-            <input type="number" class="input-field" id="tradeAmount" placeholder="Amount in USDT" value="10">
-            <div id="tradeResult"></div>
+            
+            <div id="orderResult" style="margin-top: 15px;"></div>
+            
+            <button class="btn btn-test" onclick="getAccountInfo()">📊 Refresh Portfolio</button>
         </div>
 
-        <!-- Portfolio Info -->
+        <!-- REAL Portfolio Information -->
         <div class="api-setup">
             <h3>📊 REAL TestNet Portfolio</h3>
             <div id="portfolioInfo">
-                Connect to see your test portfolio...
+                <div class="loading">Connect to Binance to view your portfolio</div>
+            </div>
+        </div>
+
+        <!-- Order History -->
+        <div class="api-setup">
+            <h3>📋 Recent Orders</h3>
+            <div id="orderHistory">
+                <div class="loading">No orders yet</div>
             </div>
         </div>
     </div>
@@ -85,60 +234,89 @@
         tg.ready();
 
         // REAL Binance TestNet Configuration
-        const BINANCE_TESTNET = 'https://testnet.binance.vision/api/v3';
+        const BINANCE_TESTNET = 'https://testnet.binance.vision';
+        const API_BASE = `${BINANCE_TESTNET}/api/v3`;
         let API_CONNECTED = false;
         let currentCoin = null;
+        let currentPrice = 0;
+
+        // Generate HMAC SHA256 signature
+        function generateSignature(queryString, apiSecret) {
+            return CryptoJS.HmacSHA256(queryString, apiSecret).toString();
+        }
+
+        // Get API credentials
+        function getApiCredentials() {
+            return {
+                key: document.getElementById('apiKey').value.trim(),
+                secret: document.getElementById('apiSecret').value.trim()
+            };
+        }
 
         // Connect to REAL Binance TestNet
-        async function connectRealTestNet() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            const apiSecret = document.getElementById('apiSecret').value.trim();
-
-            if (!apiKey || !apiSecret) {
-                tg.showAlert('Please enter REAL TestNet API keys from testnet.binance.vision');
+        async function connectRealBinance() {
+            const { key, secret } = getApiCredentials();
+            
+            if (!key || !secret) {
+                tg.showAlert('❌ Please enter both API Key and Secret from testnet.binance.vision');
                 return;
             }
 
             try {
-                document.getElementById('apiStatus').textContent = 'Connecting...';
-                document.getElementById('apiStatus').style.color = '#ffaa00';
+                document.getElementById('apiStatus').textContent = 'Connecting to Binance...';
+                document.getElementById('apiStatus').className = 'loading';
 
-                // Test connection with account info
+                // Test connection with account endpoint
                 const timestamp = Date.now();
-                const signature = await generateSignature(`timestamp=${timestamp}`, apiSecret);
+                const queryString = `timestamp=${timestamp}`;
+                const signature = generateSignature(queryString, secret);
                 
-                const response = await axios.get(`${BINANCE_TESTNET}/account?timestamp=${timestamp}&signature=${signature}`, {
+                const accountResponse = await axios.get(`${API_BASE}/account?${queryString}&signature=${signature}`, {
                     headers: { 
-                        'X-MBX-APIKEY': apiKey,
+                        'X-MBX-APIKEY': key,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    timeout: 10000
                 });
 
-                // SUCCESS - Real connection established
-                document.getElementById('apiStatus').textContent = 'Connected to REAL TestNet ✅';
-                document.getElementById('apiStatus').style.color = '#00ff88';
+                // SUCCESS - Real Binance connection established
+                document.getElementById('apiStatus').textContent = 'Connected to REAL Binance ✅';
+                document.getElementById('apiStatus').className = 'status-connected';
                 API_CONNECTED = true;
 
-                tg.showAlert('✅ SUCCESS! Connected to REAL Binance TestNet\n\nYou can now execute REAL test orders with fake money!');
+                tg.showAlert('✅ SUCCESS! Connected to REAL Binance TestNet\n\nYou can now execute REAL orders with test money!');
                 
                 // Load real market data and portfolio
                 loadRealMarketData();
-                loadRealPortfolio(apiKey, apiSecret);
+                loadRealPortfolio();
                 
             } catch (error) {
                 document.getElementById('apiStatus').textContent = 'Connection Failed ❌';
-                document.getElementById('apiStatus').style.color = '#ff4444';
+                document.getElementById('apiStatus').className = 'status-disconnected';
                 
                 const errorMsg = error.response?.data?.msg || error.message;
-                tg.showAlert(`❌ REAL TestNet Connection Failed:\n${errorMsg}\n\nCheck your API keys from testnet.binance.vision`);
+                console.error('Binance Connection Error:', error);
+                
+                tg.showAlert(`❌ REAL Binance Connection Failed:\n\n${errorMsg}\n\nPlease check:\n1. Your API keys from testnet.binance.vision\n2. Internet connection\n3. That you're using TestNet keys`);
             }
         }
 
-        // Generate HMAC SHA256 signature
-        async function generateSignature(queryString, apiSecret) {
-            // For real implementation, we'd use CryptoJS
-            // This is simplified for demonstration
-            return 'real_signature_would_be_here';
+        // Test connection quickly
+        async function testConnection() {
+            const { key, secret } = getApiCredentials();
+            
+            if (!key || !secret) {
+                tg.showAlert('Please enter API keys first');
+                return;
+            }
+
+            try {
+                // Simple ping to test connectivity
+                const response = await axios.get(`${API_BASE}/ping`);
+                tg.showAlert('✅ Network connectivity OK\n\nNow click "Connect to REAL Binance" for full connection');
+            } catch (error) {
+                tg.showAlert('❌ Network error - check your internet connection');
+            }
         }
 
         // Load REAL market data from Binance
@@ -146,61 +324,72 @@
             if (!API_CONNECTED) return;
 
             try {
-                const symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'ADAUSDT', 'SOLUSDT', 'DOTUSDT', 'XRPUSDT'];
+                const symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'ADAUSDT', 'SOLUSDT', 'XRPUSDT', 'DOTUSDT', 'DOGEUSDT'];
                 const bubblesContainer = document.getElementById('bubblesContainer');
-                bubblesContainer.innerHTML = '';
+                
+                bubblesContainer.innerHTML = '<div class="loading">🔄 Loading live market data from Binance...</div>';
 
-                // Get real price data
+                let bubblesHTML = '';
+                
                 for (let i = 0; i < symbols.length; i++) {
                     const symbol = symbols[i];
                     try {
-                        const response = await axios.get(`${BINANCE_TESTNET}/ticker/24hr?symbol=${symbol}`);
+                        const response = await axios.get(`${API_BASE}/ticker/24hr?symbol=${symbol}`);
                         const data = response.data;
                         
-                        const bubble = document.createElement('div');
-                        bubble.className = 'coin-bubble';
-                        bubble.style.left = (20 + (i * 25)) + '%';
-                        bubble.style.top = (30 + (i % 3 * 30)) + '%';
-                        
-                        const price = parseFloat(data.lastPrice).toFixed(2);
+                        const coinSymbol = symbol.replace('USDT', '');
+                        const price = parseFloat(data.lastPrice).toFixed(4);
                         const change = parseFloat(data.priceChangePercent).toFixed(2);
+                        const volume = parseFloat(data.volume);
                         
-                        bubble.innerHTML = `
-                            <div style="font-weight: bold; font-size: 14px;">${symbol.replace('USDT', '')}</div>
-                            <div style="font-size: 10px; color: #00ff88">$${price}</div>
-                            <div style="font-size: 8px; color: ${change >= 0 ? '#00ff88' : '#ff4444'}">
-                                ${change >= 0 ? '↗' : '↘'} ${Math.abs(change)}%
+                        const bubbleSize = getBubbleSize(volume);
+                        const position = getBubblePosition(i);
+                        
+                        bubblesHTML += `
+                            <div class="coin-bubble ${bubbleSize}" 
+                                 style="left: ${position.x}px; top: ${position.y}px;"
+                                 onclick="selectCoin('${coinSymbol}', ${price})">
+                                <div class="volume-dot ${getVolumeClass(volume)}"></div>
+                                <div style="font-weight: bold; font-size: ${getFontSize(volume)}">${coinSymbol}</div>
+                                <div style="font-size: 10px; color: #00ff88">$${price}</div>
+                                <div style="font-size: 8px; color: ${change >= 0 ? '#00ff88' : '#ff4444'}">
+                                    ${change >= 0 ? '↗' : '↘'} ${Math.abs(change)}%
+                                </div>
                             </div>
                         `;
-                        
-                        bubble.addEventListener('click', () => selectCoin(symbol.replace('USDT', ''), price));
-                        bubblesContainer.appendChild(bubble);
                         
                     } catch (error) {
                         console.error(`Error loading ${symbol}:`, error);
                     }
                 }
                 
+                bubblesContainer.innerHTML = bubblesHTML || '<div class="error">Failed to load market data</div>';
+                
             } catch (error) {
-                tg.showAlert('Error loading real market data');
+                document.getElementById('bubblesContainer').innerHTML = '<div class="error">❌ Error loading market data</div>';
+                tg.showAlert('Error loading live market data from Binance');
             }
         }
 
         // Select coin for trading
         function selectCoin(coin, price) {
             if (!API_CONNECTED) {
-                tg.showAlert('Please connect to REAL TestNet first');
+                tg.showAlert('Please connect to REAL Binance first');
                 return;
             }
             
             currentCoin = coin;
-            document.getElementById('selectedCoin').textContent = `Trade ${coin}/USDT ($${price})`;
+            currentPrice = price;
+            document.getElementById('selectedCoin').textContent = `Trade ${coin}/USDT - $${price}`;
             document.getElementById('tradingPanel').style.display = 'block';
-            document.getElementById('tradeResult').innerHTML = '';
+            document.getElementById('orderResult').innerHTML = '';
+            
+            // Scroll to trading panel
+            document.getElementById('tradingPanel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Execute REAL market buy order
-        async function executeRealMarketBuy() {
+        // Execute REAL Binance order
+        async function executeRealOrder(side) {
             if (!currentCoin || !API_CONNECTED) {
                 tg.showAlert('Please select a coin and ensure API is connected');
                 return;
@@ -208,78 +397,108 @@
 
             const amount = parseFloat(document.getElementById('tradeAmount').value);
             if (!amount || amount <= 0) {
-                tg.showAlert('Please enter a valid amount');
+                tg.showAlert('Please enter a valid amount in USDT');
                 return;
             }
 
+            const { key, secret } = getApiCredentials();
+            const symbol = currentCoin + 'USDT';
+
             try {
-                document.getElementById('tradeResult').innerHTML = '<div style="color: #ffaa00;">Executing REAL order...</div>';
+                document.getElementById('orderResult').innerHTML = '<div class="loading">🔄 Executing REAL Binance order...</div>';
+
+                // For BUY orders: amount is in USDT, we need to calculate quantity
+                // For SELL orders: amount is in the coin quantity
+                let quantity, orderQuery;
                 
-                const apiKey = document.getElementById('apiKey').value;
-                const apiSecret = document.getElementById('apiSecret').value;
-                const symbol = currentCoin + 'USDT';
-                
-                // Get current price to calculate quantity
-                const priceResponse = await axios.get(`${BINANCE_TESTNET}/ticker/price?symbol=${symbol}`);
-                const currentPrice = parseFloat(priceResponse.data.price);
-                const quantity = (amount / currentPrice).toFixed(6);
-                
-                // Execute REAL market buy order
+                if (side === 'BUY') {
+                    // Calculate quantity based on current price
+                    const priceResponse = await axios.get(`${API_BASE}/ticker/price?symbol=${symbol}`);
+                    const currentPrice = parseFloat(priceResponse.data.price);
+                    quantity = (amount / currentPrice).toFixed(6); // Adjust precision based on coin
+                    
+                    orderQuery = `symbol=${symbol}&side=BUY&type=MARKET&quoteOrderQty=${amount}`;
+                } else {
+                    // SELL order - amount is the quantity of the coin
+                    quantity = amount;
+                    orderQuery = `symbol=${symbol}&side=SELL&type=MARKET&quantity=${quantity}`;
+                }
+
                 const timestamp = Date.now();
-                const queryString = `symbol=${symbol}&side=BUY&type=MARKET&quantity=${quantity}&timestamp=${timestamp}`;
-                const signature = await generateSignature(queryString, apiSecret);
+                const queryString = `${orderQuery}&timestamp=${timestamp}`;
+                const signature = generateSignature(queryString, secret);
                 
                 const orderResponse = await axios.post(
-                    `${BINANCE_TESTNET}/order?${queryString}&signature=${signature}`,
+                    `${API_BASE}/order?${queryString}&signature=${signature}`,
                     {},
-                    { headers: { 'X-MBX-APIKEY': apiKey } }
+                    { 
+                        headers: { 'X-MBX-APIKEY': key },
+                        timeout: 15000
+                    }
                 );
                 
-                // SUCCESS - Real order executed
+                // SUCCESS - Real order executed on Binance
                 const order = orderResponse.data;
-                document.getElementById('tradeResult').innerHTML = `
-                    <div style="color: #00ff88;">
-                        ✅ REAL ORDER EXECUTED!<br>
-                        Symbol: ${symbol}<br>
-                        Quantity: ${quantity}<br>
+                
+                document.getElementById('orderResult').innerHTML = `
+                    <div class="success">
+                        ✅ REAL BINANCE ORDER EXECUTED!<br>
+                        <strong>${side} ${quantity} ${currentCoin}</strong><br>
                         Order ID: ${order.orderId}<br>
-                        Side: ${order.side}<br>
-                        Status: ${order.status}
+                        Status: ${order.status}<br>
+                        ${order.fills ? `Filled: ${order.fills.length} trades` : ''}
                     </div>
                 `;
                 
-                tg.showAlert(`✅ REAL TestNet Order Filled!\n${quantity} ${currentCoin} bought with ${amount} USDT`);
+                // Show detailed success message
+                let successMsg = `✅ REAL Binance Order Filled!\n`;
+                successMsg += `Side: ${side}\n`;
+                successMsg += `Symbol: ${symbol}\n`;
+                successMsg += `Quantity: ${quantity}\n`;
+                successMsg += `Order ID: ${order.orderId}\n`;
+                successMsg += `Status: ${order.status}`;
                 
-                // Update portfolio
-                loadRealPortfolio(apiKey, apiSecret);
+                tg.showAlert(successMsg);
+                
+                // Update portfolio and order history
+                loadRealPortfolio();
+                addToOrderHistory(order, side, quantity);
                 
             } catch (error) {
                 const errorMsg = error.response?.data?.msg || error.message;
-                document.getElementById('tradeResult').innerHTML = `
-                    <div style="color: #ff4444;">
+                console.error('Order Error:', error);
+                
+                document.getElementById('orderResult').innerHTML = `
+                    <div class="error">
                         ❌ ORDER FAILED<br>
                         ${errorMsg}
                     </div>
                 `;
-                tg.showAlert(`❌ Order Failed: ${errorMsg}`);
+                
+                tg.showAlert(`❌ Binance Order Failed:\n${errorMsg}`);
             }
         }
 
         // Load REAL portfolio from Binance
-        async function loadRealPortfolio(apiKey, apiSecret) {
+        async function loadRealPortfolio() {
+            if (!API_CONNECTED) return;
+
+            const { key, secret } = getApiCredentials();
+
             try {
                 const timestamp = Date.now();
-                const signature = await generateSignature(`timestamp=${timestamp}`, apiSecret);
+                const queryString = `timestamp=${timestamp}`;
+                const signature = generateSignature(queryString, secret);
                 
-                const response = await axios.get(`${BINANCE_TESTNET}/account?timestamp=${timestamp}&signature=${signature}`, {
-                    headers: { 'X-MBX-APIKEY': apiKey }
+                const response = await axios.get(`${API_BASE}/account?${queryString}&signature=${signature}`, {
+                    headers: { 'X-MBX-APIKEY': key }
                 });
                 
-                const portfolio = response.data.balances.filter(b => 
+                const balances = response.data.balances.filter(b => 
                     parseFloat(b.free) > 0 || parseFloat(b.locked) > 0
                 );
                 
-                const portfolioHTML = portfolio.map(asset => `
+                const portfolioHTML = balances.map(asset => `
                     <div style="display: flex; justify-content: space-between; margin: 8px 0; padding: 8px; background: #2d2d44; border-radius: 8px;">
                         <span style="font-weight: bold;">${asset.asset}</span>
                         <span>Free: ${parseFloat(asset.free).toFixed(6)}</span>
@@ -287,18 +506,76 @@
                     </div>
                 `).join('');
                 
-                document.getElementById('portfolioInfo').innerHTML = portfolioHTML || 'No assets in portfolio';
+                document.getElementById('portfolioInfo').innerHTML = 
+                    portfolioHTML || '<div class="loading">No assets in portfolio</div>';
                 
             } catch (error) {
-                console.error('Error loading portfolio:', error);
+                document.getElementById('portfolioInfo').innerHTML = '<div class="error">Failed to load portfolio</div>';
             }
         }
 
-        // Note: For REAL implementation, you'd need:
-        // 1. CryptoJS for proper signature generation
-        // 2. Error handling for various Binance error codes
-        // 3. Rate limiting management
-        // 4. Proper CORS configuration
+        // Get account info
+        async function getAccountInfo() {
+            await loadRealPortfolio();
+            tg.showAlert('Portfolio refreshed from Binance!');
+        }
+
+        // Add order to history
+        function addToOrderHistory(order, side, quantity) {
+            const historyDiv = document.getElementById('orderHistory');
+            const orderHTML = `
+                <div style="background: #2d2d44; padding: 10px; border-radius: 8px; margin: 5px 0;">
+                    <div style="color: ${side === 'BUY' ? '#00ff88' : '#ff4444'}; font-weight: bold;">
+                        ${side} ${quantity} ${currentCoin}
+                    </div>
+                    <div style="font-size: 12px; color: #888;">
+                        ID: ${order.orderId} • ${new Date().toLocaleTimeString()}
+                    </div>
+                </div>
+            `;
+            
+            historyDiv.innerHTML = orderHTML + historyDiv.innerHTML;
+        }
+
+        // Helper functions for bubble layout
+        function getBubbleSize(volume) {
+            if (volume > 1000000) return 'bubble-large';
+            if (volume > 100000) return 'bubble-medium';
+            return 'bubble-small';
+        }
+
+        function getFontSize(volume) {
+            if (volume > 1000000) return '14px';
+            if (volume > 100000) return '12px';
+            return '10px';
+        }
+
+        function getVolumeClass(volume) {
+            if (volume > 1000000) return 'volume-high';
+            if (volume > 100000) return 'volume-medium';
+            return 'volume-low';
+        }
+
+        function getBubblePosition(index) {
+            const container = document.getElementById('bubblesContainer');
+            const width = container.clientWidth - 120;
+            const height = container.clientHeight - 120;
+            
+            const row = Math.floor(index / 4);
+            const col = index % 4;
+            
+            return {
+                x: 60 + (col * (width / 4)) + (Math.random() * 30 - 15),
+                y: 60 + (row * (height / 3)) + (Math.random() * 30 - 15)
+            };
+        }
+
+        // Auto-refresh market data every 30 seconds
+        setInterval(() => {
+            if (API_CONNECTED) {
+                loadRealMarketData();
+            }
+        }, 30000);
 
     </script>
 </body>
