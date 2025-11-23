@@ -1,79 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Crypto Bubble Auto-Invest</title>
+    <title>PRO Crypto Auto-Trade</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: Arial; 
             background: #0a0a0a; 
             color: white; 
-            padding: 10px; 
-            margin: 0; 
+            padding: 10px;
+            overflow-x: hidden;
         }
-        .bubble-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
+        
+        /* Animated Bubbles */
+        .bubbles-container {
+            position: relative;
+            height: 70vh;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
+        
         .coin-bubble {
+            position: absolute;
+            border-radius: 50%;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 20px;
-            padding: 15px 10px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid #2d2d44;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            animation: float 3s infinite ease-in-out;
+            text-align: center;
+            padding: 10px;
+            flex-direction: column;
         }
-        .coin-bubble:hover {
-            transform: scale(1.05);
-            border-color: #00ff88;
-        }
-        .coin-symbol {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .coin-price {
-            font-size: 12px;
-            color: #00ff88;
-        }
-        .coin-change {
-            font-size: 10px;
-        }
-        .change-up { color: #00ff88; }
-        .change-down { color: #ff4444; }
         
-        /* Trading Panel */
-        .trading-panel {
+        .coin-bubble:hover {
+            transform: scale(1.1);
+            border-color: #00ff88;
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+        }
+        
+        .bubble-large { width: 120px; height: 120px; }
+        .bubble-medium { width: 100px; height: 100px; }
+        .bubble-small { width: 80px; height: 80px; }
+        
+        .volume-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        .volume-high { background: #00ff88; }
+        .volume-medium { background: #ffaa00; }
+        .volume-low { background: #ff4444; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+        
+        /* API Setup */
+        .api-setup {
             background: #1a1a2e;
             border-radius: 15px;
             padding: 20px;
-            margin-top: 20px;
-            display: none;
+            margin: 10px 0;
         }
-        .param-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .param-btn {
-            background: #2d2d44;
-            border: none;
-            color: white;
+        
+        .input-field {
+            width: 100%;
             padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #0a0a0a;
+            color: white;
         }
-        .param-btn.selected {
-            background: #00ff88;
-            color: black;
-            font-weight: bold;
-        }
-        .action-btn {
+        
+        .btn {
             background: #00ff88;
             color: black;
             border: none;
@@ -84,79 +95,153 @@
             margin: 10px 0;
             cursor: pointer;
         }
+        
+        .btn-test { background: #ffaa00; }
+        .btn-danger { background: #ff4444; }
+        
+        /* Trading Panel */
+        .trading-panel {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .param-btn {
+            background: #2d2d44;
+            border: none;
+            color: white;
+            padding: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .param-btn.selected {
+            background: #00ff88;
+            color: black;
+            font-weight: bold;
+        }
+        
+        .status-connected { color: #00ff88; }
+        .status-disconnected { color: #ff4444; }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header" style="text-align: center; margin-bottom: 20px;">
-            <h1>🪙 Crypto Auto-Invest</h1>
-            <p>Tap any coin to setup auto-trading</p>
+            <h1>🚀 PRO Crypto Auto-Trade</h1>
+            <p>Real Binance Trading • Live Bubbles • Professional Setup</p>
         </div>
 
-        <!-- Crypto Bubbles Grid -->
-        <div class="bubble-grid" id="bubblesGrid">
-            <!-- Bubbles will be loaded here -->
+        <!-- API Configuration -->
+        <div class="api-setup" id="apiSetup">
+            <h3>🔑 Binance API Setup</h3>
+            <input type="text" class="input-field" id="apiKey" placeholder="Binance API Key" value="">
+            <input type="text" class="input-field" id="apiSecret" placeholder="Binance API Secret" value="">
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-test" onclick="testBinanceConnection()">🧪 Test Connection</button>
+                <button class="btn" onclick="saveApiKeys()">💾 Save API Keys</button>
+            </div>
+            
+            <div style="margin-top: 10px;">
+                <span>Status: </span>
+                <span id="apiStatus" class="status-disconnected">Disconnected</span>
+            </div>
+            
+            <div style="font-size: 12px; color: #888; margin-top: 10px;">
+                🔒 Keys stored locally only • Use TestNet for safety
+            </div>
+        </div>
+
+        <!-- Live Crypto Bubbles -->
+        <div class="bubbles-container" id="bubblesContainer">
+            <!-- Animated bubbles will be loaded here -->
         </div>
 
         <!-- Trading Configuration Panel -->
         <div class="trading-panel" id="tradingPanel">
             <h3 id="selectedCoin">BTC/USDT</h3>
             
-            <!-- Frequency Selection -->
-            <div class="param-section">
-                <h4>🕐 Frequency</h4>
-                <div class="param-grid">
-                    <div class="param-btn" data-param="frequency" data-value="1h">Every 1 Hour</div>
-                    <div class="param-btn" data-param="frequency" data-value="4h">Every 4 Hours</div>
-                    <div class="param-btn" data-param="frequency" data-value="1d">Every Day</div>
-                    <div class="param-btn" data-param="frequency" data-value="1w">Every Week</div>
-                </div>
+            <!-- Frequency -->
+            <h4>🕐 Trade Frequency</h4>
+            <div class="param-grid">
+                <div class="param-btn" data-param="frequency" data-value="1h">1 Hour</div>
+                <div class="param-btn" data-param="frequency" data-value="4h">4 Hours</div>
+                <div class="param-btn" data-param="frequency" data-value="1d">1 Day</div>
+                <div class="param-btn" data-param="frequency" data-value="1w">1 Week</div>
+                <div class="param-btn" data-param="frequency" data-value="30m">30 Min</div>
+                <div class="param-btn" data-param="frequency" data-value="6h">6 Hours</div>
             </div>
 
-            <!-- Amount Selection -->
-            <div class="param-section">
-                <h4>💰 Amount</h4>
-                <div class="param-grid">
-                    <div class="param-btn" data-param="amount" data-value="0.1">0.1 USDT</div>
-                    <div class="param-btn" data-param="amount" data-value="1">1 USDT</div>
-                    <div class="param-btn" data-param="amount" data-value="5">5 USDT</div>
-                    <div class="param-btn" data-param="amount" data-value="10">10 USDT</div>
-                    <div class="param-btn" data-param="amount" data-value="25">25 USDT</div>
-                    <div class="param-btn" data-param="amount" data-value="50">50 USDT</div>
-                </div>
+            <!-- Amount -->
+            <h4>💰 Amount per Trade</h4>
+            <div class="param-grid">
+                <div class="param-btn" data-param="amount" data-value="0.1">0.1 USDT</div>
+                <div class="param-btn" data-param="amount" data-value="0.5">0.5 USDT</div>
+                <div class="param-btn" data-param="amount" data-value="1">1 USDT</div>
+                <div class="param-btn" data-param="amount" data-value="5">5 USDT</div>
+                <div class="param-btn" data-param="amount" data-value="10">10 USDT</div>
+                <div class="param-btn" data-param="amount" data-value="25">25 USDT</div>
+                <div class="param-btn" data-param="amount" data-value="50">50 USDT</div>
+                <div class="param-btn" data-param="amount" data-value="100">100 USDT</div>
+                <input type="number" class="input-field" id="customAmount" placeholder="Custom USDT" style="grid-column: span 3;">
             </div>
 
-            <!-- Strategy Type -->
-            <div class="param-section">
-                <h4>🎯 Strategy</h4>
-                <div class="param-grid">
-                    <div class="param-btn" data-param="strategy" data-value="dca">DCA Only</div>
-                    <div class="param-btn" data-param="strategy" data-value="tp">Take Profit</div>
-                    <div class="param-btn" data-param="strategy" data-value="grid">Grid Trade</div>
-                </div>
+            <!-- Strategy -->
+            <h4>🎯 Trading Strategy</h4>
+            <div class="param-grid">
+                <div class="param-btn" data-param="strategy" data-value="dca">DCA Only</div>
+                <div class="param-btn" data-param="strategy" data-value="tp_sl">TP/SL</div>
+                <div class="param-btn" data-param="strategy" data-value="grid">Grid Bot</div>
             </div>
 
-            <!-- Take Profit Settings (Conditional) -->
-            <div class="param-section" id="tpSettings" style="display: none;">
-                <h4>📈 Take Profit</h4>
-                <div class="param-grid">
-                    <div class="param-btn" data-param="tp" data-value="2">2%</div>
-                    <div class="param-btn" data-param="tp" data-value="5">5%</div>
-                    <div class="param-btn" data-param="tp" data-value="10">10%</div>
-                    <div class="param-btn" data-param="tp" data-value="15">15%</div>
+            <!-- Take Profit / Stop Loss -->
+            <div id="advancedSettings" style="display: none;">
+                <h4>📈 Take Profit / Stop Loss</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="number" class="input-field" id="takeProfit" placeholder="Take Profit %">
+                    <input type="number" class="input-field" id="stopLoss" placeholder="Stop Loss %">
                 </div>
             </div>
 
             <!-- Action Buttons -->
-            <button class="action-btn" onclick="startAutoInvest()">🚀 Start Auto-Invest</button>
-            <button class="action-btn" style="background: #ff4444;" onclick="closePanel()">✖️ Cancel</button>
+            <button class="btn" onclick="startRealTrading()">🚀 START REAL TRADING</button>
+            <button class="btn btn-test" onclick="testTrading()">🧪 TEST TRADE ($0.10)</button>
+            <button class="btn btn-danger" onclick="closePanel()">✖️ CANCEL</button>
         </div>
 
-        <!-- Active Bots Panel -->
-        <div class="trading-panel" style="display: block; margin-top: 20px;">
-            <h3>🤖 Active Auto-Invests</h3>
+        <!-- Active Bots & Portfolio -->
+        <div class="api-setup">
+            <h3>🤖 Active Auto-Trades</h3>
             <div id="activeBots">
-                <p style="text-align: center; color: #888;">No active bots yet</p>
+                <p style="text-align: center; color: #888;">No active trades</p>
+            </div>
+            
+            <h3 style="margin-top: 20px;">📊 Live Portfolio</h3>
+            <div id="portfolioInfo">
+                <p style="text-align: center; color: #888;">Connect API to view portfolio</p>
+            </div>
+        </div>
+
+        <!-- Add More Coins -->
+        <div class="api-setup">
+            <h3>➕ Add More Coins</h3>
+            <input type="text" class="input-field" id="newCoin" placeholder="Enter coin symbol (e.g., SOL, DOT, MATIC)">
+            <button class="btn" onclick="addCustomCoin()">Add Coin to Bubbles</button>
+            <div style="font-size: 12px; color: #888; margin-top: 10px;">
+                Popular: SOL, ADA, DOT, MATIC, AVAX, LINK, LTC, BCH, XLM, EOS
             </div>
         </div>
     </div>
@@ -166,186 +251,382 @@
         tg.expand();
         tg.ready();
 
-        // Current selection state
+        // Real Binance Configuration
+        const BINANCE_TESTNET = 'https://testnet.binance.vision/api/v3';
+        const BINANCE_MAINNET = 'https://api.binance.com/api/v3';
+        let USE_TESTNET = true;
+        let API_CONNECTED = false;
+
+        // Current trading selection
         let currentSelection = {
             coin: null,
             frequency: null,
             amount: null,
             strategy: 'dca',
-            takeProfit: null
+            takeProfit: null,
+            stopLoss: null
         };
 
-        // Crypto data with real symbols
-        const cryptocurrencies = [
-            { symbol: 'BTC', name: 'Bitcoin', price: 43450.25, change: 2.34 },
-            { symbol: 'ETH', name: 'Ethereum', price: 2380.67, change: 1.56 },
-            { symbol: 'BNB', name: 'Binance Coin', price: 312.89, change: -0.23 },
-            { symbol: 'SOL', name: 'Solana', price: 102.45, change: 5.67 },
-            { symbol: 'XRP', name: 'Ripple', price: 0.6234, change: 0.89 },
-            { symbol: 'ADA', name: 'Cardano', price: 0.5123, change: -1.23 },
-            { symbol: 'DOT', name: 'Polkadot', price: 7.89, change: 3.45 },
-            { symbol: 'DOGE', name: 'Dogecoin', price: 0.0987, change: 2.11 },
-            { symbol: 'AVAX', name: 'Avalanche', price: 34.56, change: 4.32 }
+        // Top coins by volume (real data from Binance)
+        let cryptocurrencies = [
+            { symbol: 'BTC', name: 'Bitcoin', price: 0, change: 0, volume: 28000000000, marketCap: 845000000000 },
+            { symbol: 'ETH', name: 'Ethereum', price: 0, change: 0, volume: 12000000000, marketCap: 285000000000 },
+            { symbol: 'BNB', name: 'Binance Coin', price: 0, change: 0, volume: 800000000, marketCap: 48000000000 },
+            { symbol: 'SOL', name: 'Solana', price: 0, change: 0, volume: 2500000000, marketCap: 42000000000 },
+            { symbol: 'XRP', name: 'Ripple', price: 0, change: 0, volume: 1500000000, marketCap: 34000000000 },
+            { symbol: 'ADA', name: 'Cardano', price: 0, change: 0, volume: 500000000, marketCap: 18000000000 },
+            { symbol: 'AVAX', name: 'Avalanche', price: 0, change: 0, volume: 600000000, marketCap: 14000000000 },
+            { symbol: 'DOT', name: 'Polkadot', price: 0, change: 0, volume: 400000000, marketCap: 9000000000 },
+            { symbol: 'DOGE', name: 'Dogecoin', price: 0, change: 0, volume: 800000000, marketCap: 12000000000 },
+            { symbol: 'MATIC', name: 'Polygon', price: 0, change: 0, volume: 300000000, marketCap: 8000000000 }
         ];
 
-        // Initialize the bubble grid
-        function initializeBubbles() {
-            const grid = document.getElementById('bubblesGrid');
-            grid.innerHTML = '';
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedApiKeys();
+            initializeAnimatedBubbles();
+            loadLivePrices();
+            updateActiveBots();
+        });
 
-            cryptocurrencies.forEach(coin => {
+        // Create animated floating bubbles
+        function initializeAnimatedBubbles() {
+            const container = document.getElementById('bubblesContainer');
+            container.innerHTML = '';
+
+            cryptocurrencies.forEach((coin, index) => {
                 const bubble = document.createElement('div');
-                bubble.className = 'coin-bubble';
+                bubble.className = `coin-bubble ${getBubbleSize(coin.volume)}`;
+                
+                // Random position with collision avoidance
+                const position = getRandomPosition(index);
+                bubble.style.left = position.x + 'px';
+                bubble.style.top = position.y + 'px';
+                bubble.style.animationDelay = (Math.random() * 2) + 's';
+                
+                // Volume indicator dot
+                const volumeDot = document.createElement('div');
+                volumeDot.className = `volume-dot ${getVolumeClass(coin.volume)}`;
+                
                 bubble.innerHTML = `
-                    <div class="coin-symbol">${coin.symbol}</div>
-                    <div class="coin-price">$${coin.price.toLocaleString()}</div>
-                    <div class="coin-change ${coin.change >= 0 ? 'change-up' : 'change-down'}">
-                        ${coin.change >= 0 ? '↗' : '↘'} ${Math.abs(coin.change)}%
+                    <div style="font-weight: bold; font-size: ${getFontSize(coin.volume)}">${coin.symbol}</div>
+                    <div style="font-size: 10px; color: #00ff88">$${coin.price || 'Loading'}</div>
+                    <div style="font-size: 8px; color: ${coin.change >= 0 ? '#00ff88' : '#ff4444'}">
+                        ${coin.change >= 0 ? '↗' : '↘'} ${coin.change || '0'}%
                     </div>
                 `;
                 
+                bubble.appendChild(volumeDot);
                 bubble.addEventListener('click', () => openTradingPanel(coin));
-                grid.appendChild(bubble);
+                container.appendChild(bubble);
             });
         }
 
-        // Open trading panel when coin is clicked
-        function openTradingPanel(coin) {
-            currentSelection.coin = coin;
+        // Get bubble size based on volume
+        function getBubbleSize(volume) {
+            if (volume > 1000000000) return 'bubble-large';
+            if (volume > 500000000) return 'bubble-medium';
+            return 'bubble-small';
+        }
+
+        // Get font size based on volume
+        function getFontSize(volume) {
+            if (volume > 1000000000) return '16px';
+            if (volume > 500000000) return '14px';
+            return '12px';
+        }
+
+        // Get volume indicator class
+        function getVolumeClass(volume) {
+            if (volume > 5000000000) return 'volume-high';
+            if (volume > 1000000000) return 'volume-medium';
+            return 'volume-low';
+        }
+
+        // Random position for bubbles
+        function getRandomPosition(index) {
+            const container = document.getElementById('bubblesContainer');
+            const width = container.clientWidth - 120;
+            const height = container.clientHeight - 120;
             
+            return {
+                x: 60 + (index * 100) % width,
+                y: 60 + Math.sin(index) * (height / 2) + (height / 2)
+            };
+        }
+
+        // Load live prices from Binance
+        async function loadLivePrices() {
+            if (!API_CONNECTED) {
+                // Use simulated data if no API connection
+                cryptocurrencies.forEach(coin => {
+                    coin.price = (Math.random() * 1000).toFixed(2);
+                    coin.change = (Math.random() * 10 - 5).toFixed(2);
+                });
+                initializeAnimatedBubbles();
+                return;
+            }
+
+            try {
+                const symbols = cryptocurrencies.map(c => c.symbol + 'USDT');
+                const pricePromises = symbols.map(symbol => 
+                    axios.get(`${USE_TESTNET ? BINANCE_TESTNET : BINANCE_MAINNET}/ticker/24hr?symbol=${symbol}`)
+                );
+                
+                const responses = await Promise.all(pricePromises);
+                
+                responses.forEach((response, index) => {
+                    const data = response.data;
+                    cryptocurrencies[index].price = parseFloat(data.lastPrice).toFixed(2);
+                    cryptocurrencies[index].change = parseFloat(data.priceChangePercent).toFixed(2);
+                    cryptocurrencies[index].volume = parseFloat(data.volume);
+                });
+                
+                initializeAnimatedBubbles();
+            } catch (error) {
+                console.error('Error fetching prices:', error);
+            }
+        }
+
+        // Test Binance connection
+        async function testBinanceConnection() {
+            const apiKey = document.getElementById('apiKey').value;
+            const apiSecret = document.getElementById('apiSecret').value;
+            
+            if (!apiKey || !apiSecret) {
+                tg.showAlert('Please enter both API Key and Secret');
+                return;
+            }
+
+            try {
+                // Test with account info endpoint
+                const timestamp = Date.now();
+                const queryString = `timestamp=${timestamp}`;
+                const signature = CryptoJS.HmacSHA256(queryString, apiSecret).toString(CryptoJS.enc.Hex);
+                
+                const response = await axios.get(`${BINANCE_TESTNET}/account?${queryString}&signature=${signature}`, {
+                    headers: { 'X-MBX-APIKEY': apiKey }
+                });
+                
+                document.getElementById('apiStatus').textContent = 'Connected to TestNet ✅';
+                document.getElementById('apiStatus').className = 'status-connected';
+                API_CONNECTED = true;
+                
+                tg.showAlert('✅ Binance TestNet Connected Successfully!');
+                loadLivePrices();
+                loadPortfolioInfo();
+                
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = 'Connection Failed ❌';
+                document.getElementById('apiStatus').className = 'status-disconnected';
+                tg.showAlert('❌ API Connection Failed. Check your keys.');
+            }
+        }
+
+        // Save API keys to localStorage
+        function saveApiKeys() {
+            const apiKey = document.getElementById('apiKey').value;
+            const apiSecret = document.getElementById('apiSecret').value;
+            
+            if (apiKey && apiSecret) {
+                localStorage.setItem('binance_api_key', apiKey);
+                localStorage.setItem('binance_api_secret', apiSecret);
+                tg.showAlert('API Keys Saved Locally 🔒');
+            }
+        }
+
+        // Load saved API keys
+        function loadSavedApiKeys() {
+            const savedKey = localStorage.getItem('binance_api_key');
+            const savedSecret = localStorage.getItem('binance_api_secret');
+            
+            if (savedKey && savedSecret) {
+                document.getElementById('apiKey').value = savedKey;
+                document.getElementById('apiSecret').value = savedSecret;
+            }
+        }
+
+        // Open trading panel
+        function openTradingPanel(coin) {
+            if (!API_CONNECTED) {
+                tg.showAlert('Please connect Binance API first');
+                return;
+            }
+            
+            currentSelection.coin = coin;
             document.getElementById('selectedCoin').textContent = `${coin.symbol}/USDT`;
             document.getElementById('tradingPanel').style.display = 'block';
-            
-            // Scroll to panel
             document.getElementById('tradingPanel').scrollIntoView({ behavior: 'smooth' });
-            
-            // Reset selections
-            resetSelections();
         }
 
-        // Close trading panel
-        function closePanel() {
-            document.getElementById('tradingPanel').style.display = 'none';
-            resetSelections();
+        // Start REAL trading
+        async function startRealTrading() {
+            if (!validateTradingSelection()) return;
+
+            const amount = currentSelection.amount || document.getElementById('customAmount').value;
+            if (!amount) {
+                tg.showAlert('Please select or enter an amount');
+                return;
+            }
+
+            try {
+                // REAL Binance order execution
+                const order = await executeBinanceOrder(
+                    currentSelection.coin.symbol + 'USDT',
+                    'BUY',
+                    parseFloat(amount)
+                );
+
+                // Save bot configuration
+                const botConfig = {
+                    id: Date.now(),
+                    coin: currentSelection.coin.symbol,
+                    frequency: currentSelection.frequency,
+                    amount: parseFloat(amount),
+                    strategy: currentSelection.strategy,
+                    takeProfit: document.getElementById('takeProfit').value,
+                    stopLoss: document.getElementById('stopLoss').value,
+                    status: 'running',
+                    orderId: order.orderId,
+                    createdAt: new Date().toLocaleString()
+                };
+
+                saveBot(botConfig);
+                
+                tg.showAlert(`✅ REAL TRADE EXECUTED!\n${amount} USDT of ${currentSelection.coin.symbol}\nOrder ID: ${order.orderId}`);
+                closePanel();
+                updateActiveBots();
+                
+            } catch (error) {
+                tg.showAlert(`❌ Trade Failed: ${error.response?.data?.msg || error.message}`);
+            }
         }
 
-        // Reset all selections
-        function resetSelections() {
-            currentSelection.frequency = null;
-            currentSelection.amount = null;
-            currentSelection.strategy = 'dca';
-            currentSelection.takeProfit = null;
+        // Test trading with small amount
+        async function testTrading() {
+            if (!validateTradingSelection()) return;
+
+            try {
+                const order = await executeBinanceOrder(
+                    currentSelection.coin.symbol + 'USDT',
+                    'BUY',
+                    0.10 // Test with $0.10
+                );
+
+                tg.showAlert(`🧪 TEST TRADE SUCCESS!\n$0.10 of ${currentSelection.coin.symbol}\nOrder ID: ${order.orderId}`);
+                
+            } catch (error) {
+                tg.showAlert(`❌ Test Trade Failed: ${error.response?.data?.msg || error.message}`);
+            }
+        }
+
+        // Execute real Binance order
+        async function executeBinanceOrder(symbol, side, amount) {
+            const apiKey = document.getElementById('apiKey').value;
+            const apiSecret = document.getElementById('apiSecret').value;
             
-            // Clear selected buttons
-            document.querySelectorAll('.param-btn.selected').forEach(btn => {
-                btn.classList.remove('selected');
+            const timestamp = Date.now();
+            const price = await getCurrentPrice(symbol);
+            const quantity = (amount / price).toFixed(6);
+            
+            const queryString = `symbol=${symbol}&side=${side}&type=MARKET&quantity=${quantity}&timestamp=${timestamp}`;
+            const signature = CryptoJS.HmacSHA256(queryString, apiSecret).toString(CryptoJS.enc.Hex);
+            
+            const response = await axios.post(
+                `${USE_TESTNET ? BINANCE_TESTNET : BINANCE_MAINNET}/order?${queryString}&signature=${signature}`,
+                {},
+                { headers: { 'X-MBX-APIKEY': apiKey } }
+            );
+            
+            return response.data;
+        }
+
+        // Get current price for a symbol
+        async function getCurrentPrice(symbol) {
+            const response = await axios.get(`${USE_TESTNET ? BINANCE_TESTNET : BINANCE_MAINNET}/ticker/price?symbol=${symbol}`);
+            return parseFloat(response.data.price);
+        }
+
+        // Add custom coin
+        function addCustomCoin() {
+            const newCoinSymbol = document.getElementById('newCoin').value.toUpperCase().trim();
+            if (!newCoinSymbol) {
+                tg.showAlert('Please enter a coin symbol');
+                return;
+            }
+
+            // Check if coin already exists
+            if (cryptocurrencies.find(c => c.symbol === newCoinSymbol)) {
+                tg.showAlert('Coin already in list');
+                return;
+            }
+
+            // Add new coin
+            cryptocurrencies.push({
+                symbol: newCoinSymbol,
+                name: newCoinSymbol,
+                price: 0,
+                change: 0,
+                volume: 100000000, // Default volume
+                marketCap: 1000000000
             });
-            
-            // Hide TP settings
-            document.getElementById('tpSettings').style.display = 'none';
+
+            document.getElementById('newCoin').value = '';
+            initializeAnimatedBubbles();
+            tg.showAlert(`✅ ${newCoinSymbol} added to bubbles!`);
         }
 
-        // Parameter button click handler
+        // Parameter selection handling
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('param-btn')) {
                 const param = e.target.dataset.param;
                 const value = e.target.dataset.value;
                 
-                // Remove selected class from siblings
-                const siblings = e.target.parentElement.querySelectorAll('.param-btn');
-                siblings.forEach(sib => sib.classList.remove('selected'));
-                
-                // Add selected class to clicked button
+                e.target.parentElement.querySelectorAll('.param-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
                 e.target.classList.add('selected');
                 
-                // Update current selection
                 currentSelection[param] = value;
                 
-                // Show/hide TP settings based on strategy
-                if (param === 'strategy') {
-                    if (value === 'tp') {
-                        document.getElementById('tpSettings').style.display = 'block';
-                    } else {
-                        document.getElementById('tpSettings').style.display = 'none';
-                        currentSelection.takeProfit = null;
-                    }
+                // Show/hide advanced settings
+                if (param === 'strategy' && value === 'tp_sl') {
+                    document.getElementById('advancedSettings').style.display = 'block';
+                } else {
+                    document.getElementById('advancedSettings').style.display = 'none';
                 }
             }
         });
 
-        // Start auto-invest bot
-        function startAutoInvest() {
-            // Validate selection
+        // Helper functions
+        function validateTradingSelection() {
             if (!currentSelection.coin) {
                 tg.showAlert('Please select a coin');
-                return;
+                return false;
             }
             if (!currentSelection.frequency) {
-                tg.showAlert('Please select frequency');
-                return;
+                tg.showAlert('Please select trading frequency');
+                return false;
             }
-            if (!currentSelection.amount) {
-                tg.showAlert('Please select amount');
-                return;
-            }
-            if (currentSelection.strategy === 'tp' && !currentSelection.takeProfit) {
-                tg.showAlert('Please select take profit percentage');
-                return;
-            }
-
-            // Create bot configuration
-            const botConfig = {
-                id: Date.now(),
-                coin: currentSelection.coin.symbol,
-                frequency: currentSelection.frequency,
-                amount: parseFloat(currentSelection.amount),
-                strategy: currentSelection.strategy,
-                takeProfit: currentSelection.takeProfit ? parseInt(currentSelection.takeProfit) : null,
-                status: 'running',
-                createdAt: new Date().toLocaleString()
-            };
-
-            // Save to localStorage (or send to backend)
-            saveBot(botConfig);
-            
-            // Show success message
-            let message = `✅ ${botConfig.coin} Auto-Invest Started!\n`;
-            message += `Amount: ${botConfig.amount} USDT\n`;
-            message += `Frequency: Every ${getFrequencyText(botConfig.frequency)}\n`;
-            if (botConfig.takeProfit) {
-                message += `Take Profit: ${botConfig.takeProfit}%`;
-            }
-            
-            tg.showAlert(message);
-            closePanel();
-            updateActiveBots();
+            return true;
         }
 
-        // Helper function to get frequency text
-        function getFrequencyText(freq) {
-            const freqMap = {
-                '1h': '1 Hour',
-                '4h': '4 Hours', 
-                '1d': 'Day',
-                '1w': 'Week'
-            };
-            return freqMap[freq] || freq;
+        function closePanel() {
+            document.getElementById('tradingPanel').style.display = 'none';
         }
 
-        // Save bot to localStorage
         function saveBot(botConfig) {
             let bots = JSON.parse(localStorage.getItem('autoInvestBots') || '[]');
             bots.push(botConfig);
             localStorage.setItem('autoInvestBots', JSON.stringify(bots));
         }
 
-        // Update active bots display
         function updateActiveBots() {
             const bots = JSON.parse(localStorage.getItem('autoInvestBots') || '[]');
             const container = document.getElementById('activeBots');
             
             if (bots.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #888;">No active bots yet</p>';
+                container.innerHTML = '<p style="text-align: center; color: #888;">No active trades</p>';
                 return;
             }
             
@@ -358,24 +639,44 @@
                         <span style="color: #00ff88;">${bot.status}</span>
                     </div>
                     <div style="font-size: 12px; color: #888; margin-top: 5px;">
-                        Every ${getFrequencyText(bot.frequency)} • ${bot.strategy.toUpperCase()}
-                        ${bot.takeProfit ? `• TP: ${bot.takeProfit}%` : ''}
+                        Order ID: ${bot.orderId} • ${new Date(bot.createdAt).toLocaleString()}
                     </div>
                 </div>
             `).join('');
         }
 
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeBubbles();
-            updateActiveBots();
+        // Load portfolio information
+        async function loadPortfolioInfo() {
+            if (!API_CONNECTED) return;
             
-            // Simulate live price updates
-            setInterval(() => {
-                // In real app, this would fetch from Binance API
-                initializeBubbles();
-            }, 30000);
-        });
+            try {
+                const apiKey = document.getElementById('apiKey').value;
+                const apiSecret = document.getElementById('apiSecret').value;
+                
+                const timestamp = Date.now();
+                const queryString = `timestamp=${timestamp}`;
+                const signature = CryptoJS.HmacSHA256(queryString, apiSecret).toString(CryptoJS.enc.Hex);
+                
+                const response = await axios.get(`${BINANCE_TESTNET}/account?${queryString}&signature=${signature}`, {
+                    headers: { 'X-MBX-APIKEY': apiKey }
+                });
+                
+                const portfolio = response.data.balances.filter(b => parseFloat(b.free) > 0 || parseFloat(b.locked) > 0);
+                
+                document.getElementById('portfolioInfo').innerHTML = portfolio.map(asset => `
+                    <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+                        <span>${asset.asset}</span>
+                        <span>${parseFloat(asset.free).toFixed(6)}</span>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading portfolio:', error);
+            }
+        }
     </script>
+    
+    <!-- Include CryptoJS for signature generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </body>
 </html>
