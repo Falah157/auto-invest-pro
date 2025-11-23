@@ -1,60 +1,162 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Auto-Invest PRO</title>
+    <title>Crypto Bubble Auto-Invest</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-        body { font-family: Arial; background: #1a1a2e; color: white; padding: 20px; margin: 0; }
-        .container { max-width: 400px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .balance { font-size: 2em; font-weight: bold; color: #00ff88; text-align: center; margin: 20px 0; }
-        .btn { background: #00ff88; color: black; border: none; padding: 15px; margin: 10px 0; width: 100%; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .card { background: #2d2d44; padding: 20px; border-radius: 10px; margin: 15px 0; }
-        .loading { color: #888; text-align: center; }
-        .price-up { color: #00ff88; }
-        .price-down { color: #ff4444; }
-        .input-field { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: #1a1a2e; color: white; }
+        body { 
+            font-family: Arial; 
+            background: #0a0a0a; 
+            color: white; 
+            padding: 10px; 
+            margin: 0; 
+        }
+        .bubble-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .coin-bubble {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #2d2d44;
+        }
+        .coin-bubble:hover {
+            transform: scale(1.05);
+            border-color: #00ff88;
+        }
+        .coin-symbol {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .coin-price {
+            font-size: 12px;
+            color: #00ff88;
+        }
+        .coin-change {
+            font-size: 10px;
+        }
+        .change-up { color: #00ff88; }
+        .change-down { color: #ff4444; }
+        
+        /* Trading Panel */
+        .trading-panel {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .param-btn {
+            background: #2d2d44;
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .param-btn.selected {
+            background: #00ff88;
+            color: black;
+            font-weight: bold;
+        }
+        .action-btn {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            margin: 10px 0;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🚀 Auto-Invest PRO</h1>
-            <p>Smart Trading & TakeProfit</p>
-        </div>
-        
-        <!-- Real Balance from Binance -->
-        <div class="balance" id="balance">Loading...</div>
-        
-        <!-- Live Prices -->
-        <div class="card">
-            <h3>📊 Live Prices</h3>
-            <div id="prices">
-                <p class="loading">Fetching prices...</p>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h3>Quick Actions</h3>
-            <button class="btn" onclick="createStrategy()">➕ Create Strategy</button>
-            <button class="btn" onclick="quickTrade()">⚡ Quick Trade</button>
-            <button class="btn" style="background: #ff4444;" onclick="emergencyStop()">🛑 Emergency Stop</button>
-        </div>
-        
-        <!-- Real Active Bots -->
-        <div class="card">
-            <h3>Active Bots</h3>
-            <div id="activeBots">
-                <p class="loading">Loading bots...</p>
-            </div>
+        <div class="header" style="text-align: center; margin-bottom: 20px;">
+            <h1>🪙 Crypto Auto-Invest</h1>
+            <p>Tap any coin to setup auto-trading</p>
         </div>
 
-        <!-- Portfolio Stats -->
-        <div class="card">
-            <h3>📈 Portfolio</h3>
-            <div id="portfolioStats">
-                <p class="loading">Loading portfolio...</p>
+        <!-- Crypto Bubbles Grid -->
+        <div class="bubble-grid" id="bubblesGrid">
+            <!-- Bubbles will be loaded here -->
+        </div>
+
+        <!-- Trading Configuration Panel -->
+        <div class="trading-panel" id="tradingPanel">
+            <h3 id="selectedCoin">BTC/USDT</h3>
+            
+            <!-- Frequency Selection -->
+            <div class="param-section">
+                <h4>🕐 Frequency</h4>
+                <div class="param-grid">
+                    <div class="param-btn" data-param="frequency" data-value="1h">Every 1 Hour</div>
+                    <div class="param-btn" data-param="frequency" data-value="4h">Every 4 Hours</div>
+                    <div class="param-btn" data-param="frequency" data-value="1d">Every Day</div>
+                    <div class="param-btn" data-param="frequency" data-value="1w">Every Week</div>
+                </div>
+            </div>
+
+            <!-- Amount Selection -->
+            <div class="param-section">
+                <h4>💰 Amount</h4>
+                <div class="param-grid">
+                    <div class="param-btn" data-param="amount" data-value="0.1">0.1 USDT</div>
+                    <div class="param-btn" data-param="amount" data-value="1">1 USDT</div>
+                    <div class="param-btn" data-param="amount" data-value="5">5 USDT</div>
+                    <div class="param-btn" data-param="amount" data-value="10">10 USDT</div>
+                    <div class="param-btn" data-param="amount" data-value="25">25 USDT</div>
+                    <div class="param-btn" data-param="amount" data-value="50">50 USDT</div>
+                </div>
+            </div>
+
+            <!-- Strategy Type -->
+            <div class="param-section">
+                <h4>🎯 Strategy</h4>
+                <div class="param-grid">
+                    <div class="param-btn" data-param="strategy" data-value="dca">DCA Only</div>
+                    <div class="param-btn" data-param="strategy" data-value="tp">Take Profit</div>
+                    <div class="param-btn" data-param="strategy" data-value="grid">Grid Trade</div>
+                </div>
+            </div>
+
+            <!-- Take Profit Settings (Conditional) -->
+            <div class="param-section" id="tpSettings" style="display: none;">
+                <h4>📈 Take Profit</h4>
+                <div class="param-grid">
+                    <div class="param-btn" data-param="tp" data-value="2">2%</div>
+                    <div class="param-btn" data-param="tp" data-value="5">5%</div>
+                    <div class="param-btn" data-param="tp" data-value="10">10%</div>
+                    <div class="param-btn" data-param="tp" data-value="15">15%</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <button class="action-btn" onclick="startAutoInvest()">🚀 Start Auto-Invest</button>
+            <button class="action-btn" style="background: #ff4444;" onclick="closePanel()">✖️ Cancel</button>
+        </div>
+
+        <!-- Active Bots Panel -->
+        <div class="trading-panel" style="display: block; margin-top: 20px;">
+            <h3>🤖 Active Auto-Invests</h3>
+            <div id="activeBots">
+                <p style="text-align: center; color: #888;">No active bots yet</p>
             </div>
         </div>
     </div>
@@ -64,265 +166,216 @@
         tg.expand();
         tg.ready();
 
-        // Binance API Configuration (Use environment variables in production)
-        const BINANCE_API_URL = 'https://api.binance.com/api/v3';
-        const TEST_MODE = true; // Set to false for real trading
+        // Current selection state
+        let currentSelection = {
+            coin: null,
+            frequency: null,
+            amount: null,
+            strategy: 'dca',
+            takeProfit: null
+        };
 
-        // Real-time data storage
-        let userBalance = 0;
-        let activeBots = [];
-        let prices = {};
+        // Crypto data with real symbols
+        const cryptocurrencies = [
+            { symbol: 'BTC', name: 'Bitcoin', price: 43450.25, change: 2.34 },
+            { symbol: 'ETH', name: 'Ethereum', price: 2380.67, change: 1.56 },
+            { symbol: 'BNB', name: 'Binance Coin', price: 312.89, change: -0.23 },
+            { symbol: 'SOL', name: 'Solana', price: 102.45, change: 5.67 },
+            { symbol: 'XRP', name: 'Ripple', price: 0.6234, change: 0.89 },
+            { symbol: 'ADA', name: 'Cardano', price: 0.5123, change: -1.23 },
+            { symbol: 'DOT', name: 'Polkadot', price: 7.89, change: 3.45 },
+            { symbol: 'DOGE', name: 'Dogecoin', price: 0.0987, change: 2.11 },
+            { symbol: 'AVAX', name: 'Avalanche', price: 34.56, change: 4.32 }
+        ];
+
+        // Initialize the bubble grid
+        function initializeBubbles() {
+            const grid = document.getElementById('bubblesGrid');
+            grid.innerHTML = '';
+
+            cryptocurrencies.forEach(coin => {
+                const bubble = document.createElement('div');
+                bubble.className = 'coin-bubble';
+                bubble.innerHTML = `
+                    <div class="coin-symbol">${coin.symbol}</div>
+                    <div class="coin-price">$${coin.price.toLocaleString()}</div>
+                    <div class="coin-change ${coin.change >= 0 ? 'change-up' : 'change-down'}">
+                        ${coin.change >= 0 ? '↗' : '↘'} ${Math.abs(coin.change)}%
+                    </div>
+                `;
+                
+                bubble.addEventListener('click', () => openTradingPanel(coin));
+                grid.appendChild(bubble);
+            });
+        }
+
+        // Open trading panel when coin is clicked
+        function openTradingPanel(coin) {
+            currentSelection.coin = coin;
+            
+            document.getElementById('selectedCoin').textContent = `${coin.symbol}/USDT`;
+            document.getElementById('tradingPanel').style.display = 'block';
+            
+            // Scroll to panel
+            document.getElementById('tradingPanel').scrollIntoView({ behavior: 'smooth' });
+            
+            // Reset selections
+            resetSelections();
+        }
+
+        // Close trading panel
+        function closePanel() {
+            document.getElementById('tradingPanel').style.display = 'none';
+            resetSelections();
+        }
+
+        // Reset all selections
+        function resetSelections() {
+            currentSelection.frequency = null;
+            currentSelection.amount = null;
+            currentSelection.strategy = 'dca';
+            currentSelection.takeProfit = null;
+            
+            // Clear selected buttons
+            document.querySelectorAll('.param-btn.selected').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Hide TP settings
+            document.getElementById('tpSettings').style.display = 'none';
+        }
+
+        // Parameter button click handler
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('param-btn')) {
+                const param = e.target.dataset.param;
+                const value = e.target.dataset.value;
+                
+                // Remove selected class from siblings
+                const siblings = e.target.parentElement.querySelectorAll('.param-btn');
+                siblings.forEach(sib => sib.classList.remove('selected'));
+                
+                // Add selected class to clicked button
+                e.target.classList.add('selected');
+                
+                // Update current selection
+                currentSelection[param] = value;
+                
+                // Show/hide TP settings based on strategy
+                if (param === 'strategy') {
+                    if (value === 'tp') {
+                        document.getElementById('tpSettings').style.display = 'block';
+                    } else {
+                        document.getElementById('tpSettings').style.display = 'none';
+                        currentSelection.takeProfit = null;
+                    }
+                }
+            }
+        });
+
+        // Start auto-invest bot
+        function startAutoInvest() {
+            // Validate selection
+            if (!currentSelection.coin) {
+                tg.showAlert('Please select a coin');
+                return;
+            }
+            if (!currentSelection.frequency) {
+                tg.showAlert('Please select frequency');
+                return;
+            }
+            if (!currentSelection.amount) {
+                tg.showAlert('Please select amount');
+                return;
+            }
+            if (currentSelection.strategy === 'tp' && !currentSelection.takeProfit) {
+                tg.showAlert('Please select take profit percentage');
+                return;
+            }
+
+            // Create bot configuration
+            const botConfig = {
+                id: Date.now(),
+                coin: currentSelection.coin.symbol,
+                frequency: currentSelection.frequency,
+                amount: parseFloat(currentSelection.amount),
+                strategy: currentSelection.strategy,
+                takeProfit: currentSelection.takeProfit ? parseInt(currentSelection.takeProfit) : null,
+                status: 'running',
+                createdAt: new Date().toLocaleString()
+            };
+
+            // Save to localStorage (or send to backend)
+            saveBot(botConfig);
+            
+            // Show success message
+            let message = `✅ ${botConfig.coin} Auto-Invest Started!\n`;
+            message += `Amount: ${botConfig.amount} USDT\n`;
+            message += `Frequency: Every ${getFrequencyText(botConfig.frequency)}\n`;
+            if (botConfig.takeProfit) {
+                message += `Take Profit: ${botConfig.takeProfit}%`;
+            }
+            
+            tg.showAlert(message);
+            closePanel();
+            updateActiveBots();
+        }
+
+        // Helper function to get frequency text
+        function getFrequencyText(freq) {
+            const freqMap = {
+                '1h': '1 Hour',
+                '4h': '4 Hours', 
+                '1d': 'Day',
+                '1w': 'Week'
+            };
+            return freqMap[freq] || freq;
+        }
+
+        // Save bot to localStorage
+        function saveBot(botConfig) {
+            let bots = JSON.parse(localStorage.getItem('autoInvestBots') || '[]');
+            bots.push(botConfig);
+            localStorage.setItem('autoInvestBots', JSON.stringify(bots));
+        }
+
+        // Update active bots display
+        function updateActiveBots() {
+            const bots = JSON.parse(localStorage.getItem('autoInvestBots') || '[]');
+            const container = document.getElementById('activeBots');
+            
+            if (bots.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #888;">No active bots yet</p>';
+                return;
+            }
+            
+            container.innerHTML = bots.map(bot => `
+                <div style="background: #2d2d44; padding: 15px; border-radius: 10px; margin: 10px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${bot.coin}</strong> - ${bot.amount} USDT
+                        </div>
+                        <span style="color: #00ff88;">${bot.status}</span>
+                    </div>
+                    <div style="font-size: 12px; color: #888; margin-top: 5px;">
+                        Every ${getFrequencyText(bot.frequency)} • ${bot.strategy.toUpperCase()}
+                        ${bot.takeProfit ? `• TP: ${bot.takeProfit}%` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            loadRealData();
-            startLiveUpdates();
-        });
-
-        // Load real data from Binance
-        async function loadRealData() {
-            try {
-                await updateBalance();
-                await updatePrices();
-                await updateActiveBots();
-                updatePortfolioStats();
-            } catch (error) {
-                console.error('Error loading data:', error);
-                tg.showAlert('Error connecting to exchange');
-            }
-        }
-
-        // Get user balance (simulated - replace with real API calls)
-        async function updateBalance() {
-            if (TEST_MODE) {
-                // Simulated balance for demo
-                userBalance = 15392.50;
-                document.getElementById('balance').textContent = `$${userBalance.toLocaleString()}`;
-            } else {
-                // Real Binance API call (requires backend for security)
-                const response = await axios.get('/api/binance/balance');
-                userBalance = response.data.totalBalance;
-                document.getElementById('balance').textContent = `$${userBalance.toLocaleString()}`;
-            }
-        }
-
-        // Get live prices from Binance Public API
-        async function updatePrices() {
-            try {
-                const symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'ADAUSDT'];
-                const pricePromises = symbols.map(symbol => 
-                    axios.get(`${BINANCE_API_URL}/ticker/price?symbol=${symbol}`)
-                );
-                
-                const responses = await Promise.all(pricePromises);
-                const pricesContainer = document.getElementById('prices');
-                pricesContainer.innerHTML = '';
-                
-                responses.forEach((response, index) => {
-                    const symbol = symbols[index];
-                    const price = parseFloat(response.data.price).toFixed(2);
-                    prices[symbol] = price;
-                    
-                    const priceElement = document.createElement('p');
-                    priceElement.innerHTML = `• ${symbol.replace('USDT', '')}: $${price}`;
-                    pricesContainer.appendChild(priceElement);
-                });
-            } catch (error) {
-                console.error('Error fetching prices:', error);
-            }
-        }
-
-        // Real bot management
-        async function updateActiveBots() {
-            // Load bots from localStorage or backend
-            const savedBots = JSON.parse(localStorage.getItem('activeBots') || '[]');
-            activeBots = savedBots;
+            initializeBubbles();
+            updateActiveBots();
             
-            const botsContainer = document.getElementById('activeBots');
-            botsContainer.innerHTML = '';
-            
-            if (activeBots.length === 0) {
-                botsContainer.innerHTML = '<p>No active bots</p>';
-                return;
-            }
-            
-            activeBots.forEach(bot => {
-                const botElement = document.createElement('p');
-                const statusColor = bot.status === 'running' ? '#00ff88' : '#ff4444';
-                botElement.innerHTML = `• ${bot.name}: <span style="color: ${statusColor}">${bot.status}</span>`;
-                botsContainer.appendChild(botElement);
-            });
-        }
-
-        // Portfolio statistics
-        function updatePortfolioStats() {
-            const statsContainer = document.getElementById('portfolioStats');
-            statsContainer.innerHTML = `
-                <p>• Total Value: $${userBalance.toLocaleString()}</p>
-                <p>• 24h Change: <span class="price-up">+$284.60 ↗</span></p>
-                <p>• Active Strategies: ${activeBots.length}</p>
-                <p>• Available: $${(userBalance * 0.3).toLocaleString()}</p>
-            `;
-        }
-
-        // Real strategy creation
-        function createStrategy() {
-            tg.showPopup({
-                title: 'Create Strategy',
-                message: 'Choose strategy type',
-                buttons: [
-                    {id: 'dca', type: 'default', text: '💰 DCA Bot'},
-                    {id: 'grid', type: 'default', text: '📊 Grid Trading'},
-                    {id: 'tp', type: 'default', text: '🎯 TakeProfit'},
-                    {type: 'cancel'}
-                ]
-            }, function(buttonId) {
-                if (buttonId === 'dca') showDCAForm();
-                else if (buttonId === 'grid') showGridForm();
-                else if (buttonId === 'tp') showTakeProfitForm();
-            });
-        }
-
-        // DCA Strategy Form
-        function showDCAForm() {
-            tg.showPopup({
-                title: 'DCA Bot Setup',
-                message: 'Configure your DCA strategy',
-                buttons: [
-                    {id: 'create', type: 'default', text: 'Create DCA Bot'},
-                    {type: 'cancel'}
-                ]
-            }, async function(buttonId) {
-                if (buttonId === 'create') {
-                    // Create real DCA bot
-                    const newBot = {
-                        id: Date.now(),
-                        name: 'BTC DCA Bot',
-                        type: 'dca',
-                        symbol: 'BTCUSDT',
-                        amount: 100,
-                        frequency: 'daily',
-                        status: 'running',
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    activeBots.push(newBot);
-                    localStorage.setItem('activeBots', JSON.stringify(activeBots));
-                    
-                    tg.showAlert('✅ DCA Bot Started!');
-                    updateActiveBots();
-                    
-                    // Start the actual DCA logic
-                    startRealDCA(newBot);
-                }
-            });
-        }
-
-        // Real DCA Logic
-        async function startRealDCA(botConfig) {
-            if (TEST_MODE) {
-                console.log('DCA Bot running in test mode:', botConfig);
-                // Simulated trading
-                return;
-            }
-            
-            // Real trading logic would go here
-            try {
-                // This would be a secure backend call
-                const response = await axios.post('/api/bots/dca', botConfig);
-                console.log('DCA bot started on server:', response.data);
-            } catch (error) {
-                console.error('Error starting DCA bot:', error);
-                tg.showAlert('Error starting DCA bot');
-            }
-        }
-
-        // Quick Trade with real execution
-        function quickTrade() {
-            tg.showPopup({
-                title: 'Quick Trade',
-                message: 'Select trade type',
-                buttons: [
-                    {id: 'market_buy', type: 'default', text: '🟢 Market Buy'},
-                    {id: 'market_sell', type: 'default', text: '🔴 Market Sell'},
-                    {id: 'limit', type: 'default', text: '⚡ Limit Order'},
-                    {type: 'cancel'}
-                ]
-            }, function(buttonId) {
-                if (buttonId === 'market_buy') executeMarketOrder('BUY');
-                else if (buttonId === 'market_sell') executeMarketOrder('SELL');
-                else if (buttonId === 'limit') showLimitOrderForm();
-            });
-        }
-
-        // Execute market order
-        async function executeMarketOrder(side) {
-            if (TEST_MODE) {
-                tg.showAlert(`✅ ${side} order executed (Test Mode)`);
-                return;
-            }
-            
-            try {
-                // Real order execution (requires backend)
-                const order = {
-                    symbol: 'BTCUSDT',
-                    side: side,
-                    type: 'MARKET',
-                    quantity: 0.001
-                };
-                
-                const response = await axios.post('/api/binance/order', order);
-                tg.showAlert(`✅ ${side} order filled at $${response.data.price}`);
-            } catch (error) {
-                tg.showAlert('❌ Order failed');
-            }
-        }
-
-        // Emergency stop - cancel all orders and stop bots
-        function emergencyStop() {
-            tg.showConfirm("Stop ALL trading and cancel orders?", async function(confirmed) {
-                if (confirmed) {
-                    try {
-                        // Stop all bots
-                        activeBots.forEach(bot => bot.status = 'stopped');
-                        localStorage.setItem('activeBots', JSON.stringify(activeBots));
-                        
-                        if (!TEST_MODE) {
-                            // Cancel all real orders
-                            await axios.post('/api/binance/cancel-all-orders');
-                        }
-                        
-                        tg.showAlert("🛑 ALL trading stopped! Orders cancelled.");
-                        updateActiveBots();
-                    } catch (error) {
-                        tg.showAlert("Error stopping trading");
-                    }
-                }
-            });
-        }
-
-        // Live updates every 10 seconds
-        function startLiveUpdates() {
+            // Simulate live price updates
             setInterval(() => {
-                updatePrices();
-                if (!TEST_MODE) {
-                    updateBalance();
-                }
-            }, 10000);
-        }
-
-        // Add this to simulate real trading in test mode
-        function simulateTrading() {
-            if (TEST_MODE && Math.random() > 0.7) {
-                const change = (Math.random() - 0.5) * 100;
-                userBalance += change;
-                document.getElementById('balance').textContent = `$${userBalance.toLocaleString()}`;
-                updatePortfolioStats();
-            }
-        }
-
-        // Start simulation
-        setInterval(simulateTrading, 30000);
+                // In real app, this would fetch from Binance API
+                initializeBubbles();
+            }, 30000);
+        });
     </script>
 </body>
 </html>
