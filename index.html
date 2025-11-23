@@ -3,357 +3,640 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOLD PRO AUTO-INVEST F609</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Crypto Bubbles - Auto-Invest Dashboard</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000000;
-            color: #FFD700;
-            padding: 15px;
         }
-        .container { max-width: 430px; margin: 0 auto; }
-        
-        /* Header */
-        .pro-header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding: 25px 20px;
-            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
-            border-radius: 20px;
-            border: 2px solid #FFD700;
+
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        .pro-header h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(45deg, #FFD700, #FFED4A);
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            background: linear-gradient(90deg, #d4af37, #f9e076);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
-        
-        /* Exchange Connection */
-        .exchange-panel {
-            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
-            border-radius: 18px;
-            padding: 25px;
-            margin: 20px 0;
-            border: 2px solid #FFD700;
-        }
-        .exchange-tabs {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .exchange-tab {
-            padding: 12px 8px;
-            text-align: center;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .exchange-tab.active {
-            background: #FFD700;
-            color: #000000;
-            border-color: #FFD700;
-        }
-        .api-input {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 12px;
-            border: 1px solid #333;
-            background: #0a0a0a;
-            color: #FFD700;
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 14px;
         }
-        .pro-btn {
-            background: linear-gradient(135deg, #FFD700, #FFED4A);
-            color: #000000;
+
+        .live-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #00ff00;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .time-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .time-filters button {
+            background: transparent;
             border: none;
-            padding: 18px 24px;
-            border-radius: 14px;
-            font-weight: 700;
-            width: 100%;
-            margin: 12px 0;
+            color: #888;
+            font-weight: 500;
+            padding: 5px 10px;
             cursor: pointer;
-            font-size: 16px;
+            transition: all 0.3s;
         }
-        
-        /* Bubbles Grid - GUARANTEED TO SHOW */
-        .bubbles-section {
-            margin: 25px 0;
+
+        .time-filters button.active {
+            color: #d4af37;
+            border-bottom: 2px solid #d4af37;
         }
-        .bubbles-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-        }
-        .coin-bubble {
-            aspect-ratio: 1;
-            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-            border: 2px solid #FFD700;
+
+        .bubbles-container {
+            position: relative;
+            width: 100%;
+            height: 70vh;
             border-radius: 20px;
+            background: rgba(30, 30, 30, 0.5);
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            padding: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            text-align: center;
+            padding: 10px;
+            z-index: 1;
         }
-        .coin-bubble:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+
+        .bubble:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            z-index: 10;
         }
-        .coin-symbol {
-            font-size: 16px;
-            font-weight: 700;
-            color: #FFD700;
-            margin-bottom: 4px;
+
+        .bubble.positive {
+            border: 2px solid rgba(0, 255, 0, 0.3);
         }
-        .coin-price {
-            font-size: 11px;
-            color: #00FF88;
+
+        .bubble.negative {
+            border: 2px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .bubble-symbol {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .bubble-change {
+            font-size: 0.9em;
+        }
+
+        .panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            transition: right 0.4s ease;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .panel.active {
+            right: 0;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .panel-title {
+            font-size: 24px;
+            color: #d4af37;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #e0e0e0;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #d4af37;
+        }
+
+        .coin-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .coin-bubble {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             font-weight: 600;
         }
-        .coin-change {
-            font-size: 10px;
-            margin-top: 2px;
+
+        .coin-details h3 {
+            font-size: 22px;
+            margin-bottom: 5px;
         }
-        .profit-positive { color: #00FF88; }
-        .profit-negative { color: #FF4444; }
-        .investment-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #FFD700;
-            color: #000;
+
+        .coin-details p {
+            color: #aaa;
+        }
+
+        .settings-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
             border-radius: 8px;
-            padding: 2px 6px;
-            font-size: 9px;
-            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(40, 40, 40, 0.7);
+            color: #e0e0e0;
+            font-size: 16px;
         }
-        
-        /* Status */
-        .status-connected { color: #00FF88; font-weight: 700; }
-        .status-disconnected { color: #FF4444; font-weight: 600; }
-        .status-loading { color: #FFAA00; font-weight: 600; }
-        
-        /* No Connection Placeholder */
-        .no-connection {
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider-value {
+            min-width: 50px;
             text-align: center;
-            padding: 40px 20px;
-            color: #666;
-            background: #1a1a1a;
-            border-radius: 15px;
-            border: 1px solid #333;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #d4af37;
+            cursor: pointer;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cancel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(90deg, #d4af37, #f9e076);
+            color: #1a1a1a;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .portfolio-value {
+            text-align: center;
+            padding: 20px;
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .portfolio-value h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #d4af37;
+        }
+
+        .portfolio-value .amount {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        @media (min-width: 768px) {
+            .panel {
+                width: 400px;
+                right: -400px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="pro-header">
-            <h1>GOLD PRO AUTO-INVEST F609</h1>
-            <p>Professional Crypto Auto-Investing Platform</p>
+        <header>
+            <div class="logo">
+                <h1>CRYPTO BUBBLES</h1>
+            </div>
+            <div class="status">
+                <div class="live-indicator"></div>
+                <span>LIVE</span>
+            </div>
+        </header>
+
+        <div class="time-filters">
+            <button class="active">Hour</button>
+            <button>Day</button>
+            <button>Week</button>
+            <button>Month</button>
+            <button>Year</button>
+            <button>Market Cap & Day</button>
         </div>
 
-        <!-- Exchange Connection -->
-        <div class="exchange-panel">
-            <h3>🔗 CONNECT EXCHANGE</h3>
-            <div class="exchange-tabs">
-                <div class="exchange-tab active" data-exchange="binance">Binance</div>
-                <div class="exchange-tab" data-exchange="pionex">Pionex</div>
-                <div class="exchange-tab" data-exchange="kucoin">KuCoin</div>
-                <div class="exchange-tab" data-exchange="bybit">Bybit</div>
+        <div class="bubbles-container" id="bubblesContainer">
+            <!-- Bubbles will be generated here -->
+        </div>
+
+        <div class="portfolio-value">
+            <h3>Portfolio Value</h3>
+            <div class="amount">$12,458.73</div>
+        </div>
+    </div>
+
+    <div class="panel" id="settingsPanel">
+        <div class="panel-header">
+            <h2 class="panel-title">Auto-Invest Settings</h2>
+            <button class="close-btn" id="closePanel">×</button>
+        </div>
+
+        <div class="coin-info">
+            <div class="coin-bubble" id="coinBubble">
+                <div class="bubble-symbol" id="coinSymbol">BTC</div>
+                <div class="bubble-change" id="coinChange">+2.5%</div>
             </div>
-            
-            <input type="text" class="api-input" id="apiKey" placeholder="🔑 API Key (Optional for Demo)">
-            <input type="text" class="api-input" id="apiSecret" placeholder="🔒 Secret Key (Optional for Demo)">
-            
-            <button class="pro-btn" onclick="connectWithBubbles()">
-                🚀 SHOW CRYPTO BUBBLES
-            </button>
-            <button class="pro-btn" style="background: #333; color: #FFD700;" onclick="connectRealExchange()">
-                🔐 CONNECT REAL EXCHANGE
-            </button>
-            
-            <div style="text-align: center; padding: 15px; margin: 15px 0; border-radius: 12px; background: #1a1a1a;">
-                <span>Status: </span>
-                <span id="connectionStatus" class="status-disconnected">Click to Show Bubbles</span>
+            <div class="coin-details">
+                <h3 id="coinName">Bitcoin</h3>
+                <p id="coinPrice">$54,320.15</p>
             </div>
         </div>
 
-        <!-- Crypto Bubbles Section -->
-        <div class="bubbles-section">
-            <h3>💰 CRYPTO ASSETS</h3>
+        <div class="settings-section">
+            <h3 class="section-title">Auto-Invest Configuration</h3>
             
-            <!-- No Connection Placeholder -->
-            <div id="noConnection" class="no-connection">
-                <h4>Ready to Start Auto-Investing</h4>
-                <p>Click "SHOW CRYPTO BUBBLES" above to view all available cryptocurrencies</p>
+            <div class="form-group">
+                <label for="investAmount">Auto-Invest Amount ($)</label>
+                <input type="number" id="investAmount" min="1" value="50">
             </div>
+            
+            <div class="form-group">
+                <label for="frequency">Frequency</label>
+                <select id="frequency">
+                    <option value="hourly">Hourly</option>
+                    <option value="daily" selected>Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+        </div>
 
-            <!-- Bubbles Grid - WILL SHOW AFTER CLICK -->
-            <div id="bubblesGrid" class="bubbles-grid" style="display: none;">
-                <!-- 20 REAL coins will load here -->
+        <div class="settings-section">
+            <h3 class="section-title">Auto-Take-Profit Settings</h3>
+            
+            <div class="form-group">
+                <label for="takeProfit">Take-Profit Percentage</label>
+                <div class="slider-container">
+                    <input type="range" id="takeProfit" min="5" max="100" value="20">
+                    <span class="slider-value" id="takeProfitValue">20%</span>
+                </div>
             </div>
+            
+            <div class="form-group">
+                <label for="profitAmount">Take Profit Amount ($)</label>
+                <input type="number" id="profitAmount" min="1" max="100" value="10">
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3 class="section-title">Risk Management</h3>
+            
+            <div class="form-group">
+                <label for="stopLoss">Stop-Loss Percentage</label>
+                <div class="slider-container">
+                    <input type="range" id="stopLoss" min="1" max="50" value="10">
+                    <span class="slider-value" id="stopLossValue">10%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="cancel-btn" id="cancelBtn">Cancel</button>
+            <button class="confirm-btn" id="confirmBtn">Confirm Settings</button>
         </div>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
-
-        // 20 REAL Cryptocurrencies with REALISTIC prices
-        const REAL_CRYPTO_ASSETS = [
-            { symbol: 'BTC', name: 'Bitcoin', price: '45,231.50', change: 2.34 },
-            { symbol: 'ETH', name: 'Ethereum', price: '2,456.78', change: 1.56 },
-            { symbol: 'BNB', name: 'Binance Coin', price: '312.89', change: -0.23 },
-            { symbol: 'SOL', name: 'Solana', price: '102.45', change: 5.67 },
-            { symbol: 'XRP', name: 'Ripple', price: '0.6234', change: 0.89 },
-            { symbol: 'ADA', name: 'Cardano', price: '0.5123', change: -1.23 },
-            { symbol: 'AVAX', name: 'Avalanche', price: '34.56', change: 4.32 },
-            { symbol: 'DOT', name: 'Polkadot', price: '7.89', change: 3.45 },
-            { symbol: 'DOGE', name: 'Dogecoin', price: '0.0987', change: 2.11 },
-            { symbol: 'MATIC', name: 'Polygon', price: '0.8234', change: 1.23 },
-            { symbol: 'LTC', name: 'Litecoin', price: '68.90', change: 0.45 },
-            { symbol: 'LINK', name: 'Chainlink', price: '14.56', change: -2.34 },
-            { symbol: 'ATOM', name: 'Cosmos', price: '9.87', change: 3.21 },
-            { symbol: 'XLM', name: 'Stellar', price: '0.1256', change: 1.78 },
-            { symbol: 'BCH', name: 'Bitcoin Cash', price: '245.67', change: -1.23 },
-            { symbol: 'ETC', name: 'Ethereum Classic', price: '23.45', change: 0.67 },
-            { symbol: 'XMR', name: 'Monero', price: '165.43', change: 2.89 },
-            { symbol: 'FIL', name: 'Filecoin', price: '5.67', change: -3.45 },
-            { symbol: 'ALGO', name: 'Algorand', price: '0.2345', change: 1.23 },
-            { symbol: 'EOS', name: 'EOS', price: '0.7567', change: -0.89 }
+        // Sample cryptocurrency data
+        const cryptoData = [
+            { symbol: "THETA", name: "Theta Network", price: "$2.45", change: -0.4, color: "#2ab7ff" },
+            { symbol: "EIGEN", name: "EigenLayer", price: "$12.75", change: -0.5, color: "#ff6b6b" },
+            { symbol: "ENS", name: "Ethereum Name Service", price: "$18.32", change: 0.9, color: "#5298ff" },
+            { symbol: "WIF", name: "dogwifhat", price: "$2.18", change: -0.5, color: "#ffce5c" },
+            { symbol: "SAND", name: "The Sandbox", price: "$0.42", change: -0.4, color: "#00beee" },
+            { symbol: "FF", name: "Forefront", price: "$3.67", change: -1.4, color: "#ff7e5f" },
+            { symbol: "MX", name: "MX Token", price: "$4.21", change: -0.4, color: "#5d6dff" },
+            { symbol: "DEXE", name: "DeXe", price: "$9.87", change: -1.2, color: "#ff6384" },
+            { symbol: "AR", name: "Arweave", price: "$32.15", change: -0.4, color: "#4bc0c0" },
+            { symbol: "KITE", name: "Kite", price: "$1.23", change: -0.3, color: "#ff9f40" },
+            { symbol: "CFX", name: "Conflux", price: "$0.28", change: -0.5, color: "#6a11cb" },
+            { symbol: "JAX", name: "Jax.Network", price: "$0.75", change: -0.7, color: "#ff5e62" },
+            { symbol: "GRASS", name: "Grass", price: "$0.15", change: -0.7, color: "#38ef7d" },
+            { symbol: "SAHARA", name: "Sahara", price: "$0.89", change: -0.9, color: "#ff9966" },
+            { symbol: "WAL", name: "Wallety", price: "$0.34", change: -0.4, color: "#a8ff78" },
+            { symbol: "STIFFI", name: "Stiffi", price: "$5.43", change: -0.7, color: "#ff6b9d" },
+            { symbol: "GNO", name: "Gnosis", price: "$210.45", change: -0.7, color: "#48c6ef" },
+            { symbol: "REAM", name: "Ream", price: "$0.12", change: 3.5, color: "#12d8fa" },
+            { symbol: "BLACK", name: "BlackCoin", price: "$0.56", change: -0.8, color: "#1f1c2c" },
+            { symbol: "GLIM", name: "Glimmer", price: "$0.23", change: -0.3, color: "#928dab" },
+            { symbol: "EGLO", name: "Egoras", price: "$1.45", change: -0.5, color: "#ff8177" },
+            { symbol: "LPT", name: "Livepeer", price: "$15.67", change: -2.9, color: "#00cdac" },
+            { symbol: "WRINK", name: "Wrinkly", price: "$0.08", change: -0.4, color: "#ff9a9e" },
+            { symbol: "TWIT", name: "Twitter Token", price: "$0.32", change: 0, color: "#1da1f2" }
         ];
 
-        let currentExchange = 'binance';
-        let isConnected = false;
+        const bubblesContainer = document.getElementById('bubblesContainer');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const closePanel = document.getElementById('closePanel');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const coinBubble = document.getElementById('coinBubble');
+        const coinSymbol = document.getElementById('coinSymbol');
+        const coinName = document.getElementById('coinName');
+        const coinPrice = document.getElementById('coinPrice');
+        const coinChange = document.getElementById('coinChange');
+        const takeProfitSlider = document.getElementById('takeProfit');
+        const takeProfitValue = document.getElementById('takeProfitValue');
+        const stopLossSlider = document.getElementById('stopLoss');
+        const stopLossValue = document.getElementById('stopLossValue');
 
-        // SIMPLE FUNCTION TO SHOW BUBBLES IMMEDIATELY
-        function connectWithBubbles() {
-            console.log("Showing bubbles...");
-            
-            // Hide placeholder
-            document.getElementById('noConnection').style.display = 'none';
-            
-            // Show bubbles grid
-            document.getElementById('bubblesGrid').style.display = 'grid';
-            
-            // Update status
-            document.getElementById('connectionStatus').textContent = 'Demo Mode Active - Bubbles Loaded ✅';
-            document.getElementById('connectionStatus').className = 'status-connected';
-            
-            // Load and display bubbles
-            loadBubbles();
-            
-            tg.showAlert('🎉 CRYPTO BUBBLES LOADED!\n\n20 Real Cryptocurrencies Ready\nClick any bubble to set auto-invest');
-        }
+        let bubbles = [];
+        let selectedCoin = null;
 
-        // LOAD BUBBLES FUNCTION
-        function loadBubbles() {
-            const bubblesGrid = document.getElementById('bubblesGrid');
-            bubblesGrid.innerHTML = '';
-
-            REAL_CRYPTO_ASSETS.forEach((coin, index) => {
+        // Initialize bubbles
+        function initBubbles() {
+            cryptoData.forEach((coin, index) => {
                 const bubble = document.createElement('div');
-                bubble.className = 'coin-bubble';
+                bubble.className = `bubble ${coin.change >= 0 ? 'positive' : 'negative'}`;
                 
-                // Add some random investments for demo
-                const hasInvestment = Math.random() > 0.7;
-                const profit = hasInvestment ? (Math.random() * 50 - 25).toFixed(2) : 0;
+                // Random position and size
+                const size = Math.random() * 80 + 60;
+                const x = Math.random() * (bubblesContainer.offsetWidth - size);
+                const y = Math.random() * (bubblesContainer.offsetHeight - size);
+                
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${x}px`;
+                bubble.style.top = `${y}px`;
+                bubble.style.background = `radial-gradient(circle at 30% 30%, ${coin.color}, ${darkenColor(coin.color, 0.3)})`;
                 
                 bubble.innerHTML = `
-                    ${hasInvestment ? '<div class="investment-badge">INVESTED</div>' : ''}
-                    <div class="coin-symbol">${coin.symbol}</div>
-                    <div class="coin-price">$${coin.price}</div>
-                    <div class="coin-change ${coin.change >= 0 ? 'profit-positive' : 'profit-negative'}">
-                        ${coin.change >= 0 ? '↗' : '↘'} ${Math.abs(coin.change).toFixed(2)}%
-                    </div>
-                    ${hasInvestment ? `
-                        <div class="coin-change ${profit >= 0 ? 'profit-positive' : 'profit-negative'}" style="margin-top: 4px;">
-                            P&L: ${profit >= 0 ? '+' : ''}${profit}%
-                        </div>
-                    ` : ''}
+                    <div class="bubble-symbol">${coin.symbol}</div>
+                    <div class="bubble-change">${coin.change >= 0 ? '+' : ''}${coin.change}%</div>
                 `;
                 
-                // Add click event to show trading options
-                bubble.addEventListener('click', () => {
-                    tg.showAlert(`🎯 ${coin.symbol} Auto-Invest Setup\n\nPrice: $${coin.price}\n24H Change: ${coin.change}%\n\nReady to set up automatic investments!`);
-                });
+                bubble.addEventListener('click', () => openSettingsPanel(coin));
                 
-                bubblesGrid.appendChild(bubble);
-            });
-
-            // Scroll to bubbles
-            document.getElementById('bubblesGrid').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'center'
-            });
-        }
-
-        // Real exchange connection (optional)
-        async function connectRealExchange() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            const apiSecret = document.getElementById('apiSecret').value.trim();
-
-            if (!apiKey || !apiSecret) {
-                tg.showAlert('🔐 For real trading, enter your API keys from:\n\n• Binance: testnet.binance.vision\n• Pionex: pionex.com\n• KuCoin: kucoin.com\n• Bybit: bybit.com');
-                return;
-            }
-
-            try {
-                document.getElementById('connectionStatus').textContent = 'Connecting to Real Exchange...';
-                document.getElementById('connectionStatus').className = 'status-loading';
-
-                // Show bubbles immediately while connecting
-                connectWithBubbles();
+                bubblesContainer.appendChild(bubble);
                 
-                // Simulate API connection
-                setTimeout(() => {
-                    document.getElementById('connectionStatus').textContent = `Connected to Real ${currentExchange.toUpperCase()} ✅`;
-                    document.getElementById('connectionStatus').className = 'status-connected';
-                    
-                    tg.showAlert(`🎉 REAL ${currentExchange.toUpperCase()} CONNECTED!\n\n✅ Live Trading Enabled\n💰 Real Auto-Invest Ready\n📊 Live Market Data`);
-                    
-                }, 2000);
-
-            } catch (error) {
-                document.getElementById('connectionStatus').textContent = 'Connection Failed - Using Demo Mode';
-                document.getElementById('connectionStatus').className = 'status-disconnected';
-                connectWithBubbles(); // Still show bubbles
-            }
-        }
-
-        // Setup exchange tabs
-        function setupExchangeTabs() {
-            document.querySelectorAll('.exchange-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.exchange-tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    currentExchange = this.getAttribute('data-exchange');
+                // Store bubble data for animation
+                bubbles.push({
+                    element: bubble,
+                    x: x,
+                    y: y,
+                    dx: (Math.random() - 0.5) * 2,
+                    dy: (Math.random() - 0.5) * 2,
+                    size: size
                 });
             });
+            
+            // Start animation
+            animateBubbles();
         }
 
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            setupExchangeTabs();
-            console.log('GOLD PRO AUTO-INVEST F609 Ready - Bubbles will show on click!');
+        // Darken color for gradient
+        function darkenColor(color, factor) {
+            const hex = color.replace('#', '');
+            const num = parseInt(hex, 16);
+            const amt = Math.round(2.55 * factor * 100);
+            const R = (num >> 16) - amt;
+            const G = (num >> 8 & 0x00FF) - amt;
+            const B = (num & 0x0000FF) - amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+
+        // Animate bubbles
+        function animateBubbles() {
+            bubbles.forEach(bubble => {
+                bubble.x += bubble.dx;
+                bubble.y += bubble.dy;
+                
+                // Bounce off walls
+                if (bubble.x <= 0 || bubble.x >= bubblesContainer.offsetWidth - bubble.size) {
+                    bubble.dx *= -1;
+                }
+                
+                if (bubble.y <= 0 || bubble.y >= bubblesContainer.offsetHeight - bubble.size) {
+                    bubble.dy *= -1;
+                }
+                
+                // Apply new position
+                bubble.element.style.left = `${bubble.x}px`;
+                bubble.element.style.top = `${bubble.y}px`;
+            });
+            
+            requestAnimationFrame(animateBubbles);
+        }
+
+        // Open settings panel
+        function openSettingsPanel(coin) {
+            selectedCoin = coin;
+            
+            // Update panel content
+            coinSymbol.textContent = coin.symbol;
+            coinName.textContent = coin.name;
+            coinPrice.textContent = coin.price;
+            coinChange.textContent = `${coin.change >= 0 ? '+' : ''}${coin.change}%`;
+            
+            // Update bubble in panel
+            coinBubble.style.background = `radial-gradient(circle at 30% 30%, ${coin.color}, ${darkenColor(coin.color, 0.3)})`;
+            coinBubble.className = `coin-bubble ${coin.change >= 0 ? 'positive' : 'negative'}`;
+            
+            // Show panel
+            settingsPanel.classList.add('active');
+        }
+
+        // Close settings panel
+        function closeSettingsPanel() {
+            settingsPanel.classList.remove('active');
+        }
+
+        // Update slider values
+        takeProfitSlider.addEventListener('input', () => {
+            takeProfitValue.textContent = `${takeProfitSlider.value}%`;
         });
 
+        stopLossSlider.addEventListener('input', () => {
+            stopLossValue.textContent = `${stopLossSlider.value}%`;
+        });
+
+        // Confirm settings
+        confirmBtn.addEventListener('click', () => {
+            const settings = {
+                coin: selectedCoin.symbol,
+                investAmount: document.getElementById('investAmount').value,
+                frequency: document.getElementById('frequency').value,
+                takeProfit: takeProfitSlider.value,
+                profitAmount: document.getElementById('profitAmount').value,
+                stopLoss: stopLossSlider.value
+            };
+            
+            console.log('Auto-Invest Settings:', settings);
+            alert(`Auto-Invest settings for ${selectedCoin.symbol} confirmed!`);
+            closeSettingsPanel();
+        });
+
+        // Event listeners
+        closePanel.addEventListener('click', closeSettingsPanel);
+        cancelBtn.addEventListener('click', closeSettingsPanel);
+
+        // Initialize the app
+        initBubbles();
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Randomly update some coin prices
+            const randomIndex = Math.floor(Math.random() * cryptoData.length);
+            const change = (Math.random() - 0.5) * 2;
+            cryptoData[randomIndex].change = parseFloat(change.toFixed(1));
+            
+            // Update the bubble if it exists
+            if (bubbles[randomIndex]) {
+                const bubble = bubbles[randomIndex].element;
+                const changeElement = bubble.querySelector('.bubble-change');
+                changeElement.textContent = `${cryptoData[randomIndex].change >= 0 ? '+' : ''}${cryptoData[randomIndex].change}%`;
+                
+                // Update bubble class
+                bubble.className = `bubble ${cryptoData[randomIndex].change >= 0 ? 'positive' : 'negative'}`;
+            }
+        }, 3000);
     </script>
 </body>
 </html>
