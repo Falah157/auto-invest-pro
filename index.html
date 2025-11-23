@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PRO Crypto Auto-Trade</title>
+    <title>PRO Crypto Auto-Trade - TEST MODE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -17,9 +16,12 @@
         /* Animated Bubbles */
         .bubbles-container {
             position: relative;
-            height: 70vh;
+            height: 60vh;
             overflow: hidden;
             margin-bottom: 20px;
+            border: 2px solid #333;
+            border-radius: 15px;
+            background: #111;
         }
         
         .coin-bubble {
@@ -134,34 +136,49 @@
         
         .status-connected { color: #00ff88; }
         .status-disconnected { color: #ff4444; }
+        
+        .test-notice {
+            background: #ffaa00;
+            color: black;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Test Notice -->
+        <div class="test-notice">
+            🧪 TEST MODE - Using Binance TestNet Simulation
+        </div>
+
         <!-- Header -->
         <div class="header" style="text-align: center; margin-bottom: 20px;">
             <h1>🚀 PRO Crypto Auto-Trade</h1>
-            <p>Real Binance Trading • Live Bubbles • Professional Setup</p>
+            <p>TEST MODE - Safe Testing with Simulated Binance API</p>
         </div>
 
         <!-- API Configuration -->
         <div class="api-setup" id="apiSetup">
-            <h3>🔑 Binance API Setup</h3>
-            <input type="text" class="input-field" id="apiKey" placeholder="Binance API Key" value="">
-            <input type="text" class="input-field" id="apiSecret" placeholder="Binance API Secret" value="">
+            <h3>🔑 Test API Setup (Simulated)</h3>
+            <div class="test-notice" style="background: #444; color: white;">
+                🔒 No real API keys needed for testing
+            </div>
+            
+            <input type="text" class="input-field" id="apiKey" placeholder="Enter any test API Key" value="test_api_key_123">
+            <input type="text" class="input-field" id="apiSecret" placeholder="Enter any test Secret" value="test_secret_456">
             
             <div style="display: flex; gap: 10px;">
                 <button class="btn btn-test" onclick="testBinanceConnection()">🧪 Test Connection</button>
-                <button class="btn" onclick="saveApiKeys()">💾 Save API Keys</button>
+                <button class="btn" onclick="connectToTestNet()">🚀 Connect to TestNet</button>
             </div>
             
             <div style="margin-top: 10px;">
                 <span>Status: </span>
                 <span id="apiStatus" class="status-disconnected">Disconnected</span>
-            </div>
-            
-            <div style="font-size: 12px; color: #888; margin-top: 10px;">
-                🔒 Keys stored locally only • Use TestNet for safety
             </div>
         </div>
 
@@ -207,37 +224,32 @@
                 <div class="param-btn" data-param="strategy" data-value="grid">Grid Bot</div>
             </div>
 
-            <!-- Take Profit / Stop Loss -->
-            <div id="advancedSettings" style="display: none;">
-                <h4>📈 Take Profit / Stop Loss</h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <input type="number" class="input-field" id="takeProfit" placeholder="Take Profit %">
-                    <input type="number" class="input-field" id="stopLoss" placeholder="Stop Loss %">
-                </div>
-            </div>
-
             <!-- Action Buttons -->
-            <button class="btn" onclick="startRealTrading()">🚀 START REAL TRADING</button>
-            <button class="btn btn-test" onclick="testTrading()">🧪 TEST TRADE ($0.10)</button>
+            <button class="btn" onclick="startRealTrading()">🚀 EXECUTE TEST TRADE</button>
+            <button class="btn btn-test" onclick="testTrading()">🧪 TEST SMALL TRADE ($0.10)</button>
             <button class="btn btn-danger" onclick="closePanel()">✖️ CANCEL</button>
+            
+            <div class="test-notice" style="margin-top: 15px;">
+                💡 Test trades use simulated Binance TestNet
+            </div>
         </div>
 
         <!-- Active Bots & Portfolio -->
         <div class="api-setup">
-            <h3>🤖 Active Auto-Trades</h3>
+            <h3>🤖 Active Test Trades</h3>
             <div id="activeBots">
-                <p style="text-align: center; color: #888;">No active trades</p>
+                <p style="text-align: center; color: #888;">No active trades yet</p>
             </div>
             
-            <h3 style="margin-top: 20px;">📊 Live Portfolio</h3>
+            <h3 style="margin-top: 20px;">📊 Test Portfolio</h3>
             <div id="portfolioInfo">
-                <p style="text-align: center; color: #888;">Connect API to view portfolio</p>
+                <p style="text-align: center; color: #888;">Connect to TestNet to view portfolio</p>
             </div>
         </div>
 
         <!-- Add More Coins -->
         <div class="api-setup">
-            <h3>➕ Add More Coins</h3>
+            <h3>➕ Add More Coins for Testing</h3>
             <input type="text" class="input-field" id="newCoin" placeholder="Enter coin symbol (e.g., SOL, DOT, MATIC)">
             <button class="btn" onclick="addCustomCoin()">Add Coin to Bubbles</button>
             <div style="font-size: 12px; color: #888; margin-top: 10px;">
@@ -251,42 +263,42 @@
         tg.expand();
         tg.ready();
 
-        // Real Binance Configuration
-        const BINANCE_TESTNET = 'https://testnet.binance.vision/api/v3';
-        const BINANCE_MAINNET = 'https://api.binance.com/api/v3';
-        let USE_TESTNET = true;
+        // Test configuration
+        const TEST_MODE = true;
         let API_CONNECTED = false;
+        let testPortfolio = {
+            'USDT': { free: 1000, locked: 0 },
+            'BTC': { free: 0.01, locked: 0 },
+            'ETH': { free: 0.1, locked: 0 },
+            'BNB': { free: 1, locked: 0 }
+        };
 
         // Current trading selection
         let currentSelection = {
             coin: null,
             frequency: null,
             amount: null,
-            strategy: 'dca',
-            takeProfit: null,
-            stopLoss: null
+            strategy: 'dca'
         };
 
-        // Top coins by volume (real data from Binance)
+        // Top coins by volume with realistic test data
         let cryptocurrencies = [
-            { symbol: 'BTC', name: 'Bitcoin', price: 0, change: 0, volume: 28000000000, marketCap: 845000000000 },
-            { symbol: 'ETH', name: 'Ethereum', price: 0, change: 0, volume: 12000000000, marketCap: 285000000000 },
-            { symbol: 'BNB', name: 'Binance Coin', price: 0, change: 0, volume: 800000000, marketCap: 48000000000 },
-            { symbol: 'SOL', name: 'Solana', price: 0, change: 0, volume: 2500000000, marketCap: 42000000000 },
-            { symbol: 'XRP', name: 'Ripple', price: 0, change: 0, volume: 1500000000, marketCap: 34000000000 },
-            { symbol: 'ADA', name: 'Cardano', price: 0, change: 0, volume: 500000000, marketCap: 18000000000 },
-            { symbol: 'AVAX', name: 'Avalanche', price: 0, change: 0, volume: 600000000, marketCap: 14000000000 },
-            { symbol: 'DOT', name: 'Polkadot', price: 0, change: 0, volume: 400000000, marketCap: 9000000000 },
-            { symbol: 'DOGE', name: 'Dogecoin', price: 0, change: 0, volume: 800000000, marketCap: 12000000000 },
-            { symbol: 'MATIC', name: 'Polygon', price: 0, change: 0, volume: 300000000, marketCap: 8000000000 }
+            { symbol: 'BTC', name: 'Bitcoin', price: 43450.25, change: 2.34, volume: 28000000000, marketCap: 845000000000 },
+            { symbol: 'ETH', name: 'Ethereum', price: 2380.67, change: 1.56, volume: 12000000000, marketCap: 285000000000 },
+            { symbol: 'BNB', name: 'Binance Coin', price: 312.89, change: -0.23, volume: 800000000, marketCap: 48000000000 },
+            { symbol: 'SOL', name: 'Solana', price: 102.45, change: 5.67, volume: 2500000000, marketCap: 42000000000 },
+            { symbol: 'XRP', name: 'Ripple', price: 0.6234, change: 0.89, volume: 1500000000, marketCap: 34000000000 },
+            { symbol: 'ADA', name: 'Cardano', price: 0.5123, change: -1.23, volume: 500000000, marketCap: 18000000000 },
+            { symbol: 'AVAX', name: 'Avalanche', price: 34.56, change: 4.32, volume: 600000000, marketCap: 14000000000 },
+            { symbol: 'DOT', name: 'Polkadot', price: 7.89, change: 3.45, volume: 400000000, marketCap: 9000000000 },
+            { symbol: 'DOGE', name: 'Dogecoin', price: 0.0987, change: 2.11, volume: 800000000, marketCap: 12000000000 },
+            { symbol: 'MATIC', name: 'Polygon', price: 0.8234, change: 1.23, volume: 300000000, marketCap: 8000000000 }
         ];
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            loadSavedApiKeys();
             initializeAnimatedBubbles();
-            loadLivePrices();
-            updateActiveBots();
+            startLivePriceUpdates();
         });
 
         // Create animated floating bubbles
@@ -310,9 +322,9 @@
                 
                 bubble.innerHTML = `
                     <div style="font-weight: bold; font-size: ${getFontSize(coin.volume)}">${coin.symbol}</div>
-                    <div style="font-size: 10px; color: #00ff88">$${coin.price || 'Loading'}</div>
+                    <div style="font-size: 10px; color: #00ff88">$${coin.price.toLocaleString()}</div>
                     <div style="font-size: 8px; color: ${coin.change >= 0 ? '#00ff88' : '#ff4444'}">
-                        ${coin.change >= 0 ? '↗' : '↘'} ${coin.change || '0'}%
+                        ${coin.change >= 0 ? '↗' : '↘'} ${Math.abs(coin.change)}%
                     </div>
                 `;
                 
@@ -349,107 +361,62 @@
             const width = container.clientWidth - 120;
             const height = container.clientHeight - 120;
             
+            // Create grid-like positions but with some randomness
+            const row = Math.floor(index / 3);
+            const col = index % 3;
+            
             return {
-                x: 60 + (index * 100) % width,
-                y: 60 + Math.sin(index) * (height / 2) + (height / 2)
+                x: 60 + (col * (width / 3)) + (Math.random() * 50 - 25),
+                y: 60 + (row * (height / 4)) + (Math.random() * 50 - 25)
             };
         }
 
-        // Load live prices from Binance
-        async function loadLivePrices() {
-            if (!API_CONNECTED) {
-                // Use simulated data if no API connection
+        // Simulate live price updates
+        function startLivePriceUpdates() {
+            setInterval(() => {
                 cryptocurrencies.forEach(coin => {
-                    coin.price = (Math.random() * 1000).toFixed(2);
+                    // Simulate small price changes
+                    const change = (Math.random() - 0.5) * 2;
+                    coin.price = Math.max(0.0001, coin.price * (1 + change/100));
                     coin.change = (Math.random() * 10 - 5).toFixed(2);
                 });
                 initializeAnimatedBubbles();
-                return;
-            }
-
-            try {
-                const symbols = cryptocurrencies.map(c => c.symbol + 'USDT');
-                const pricePromises = symbols.map(symbol => 
-                    axios.get(`${USE_TESTNET ? BINANCE_TESTNET : BINANCE_MAINNET}/ticker/24hr?symbol=${symbol}`)
-                );
-                
-                const responses = await Promise.all(pricePromises);
-                
-                responses.forEach((response, index) => {
-                    const data = response.data;
-                    cryptocurrencies[index].price = parseFloat(data.lastPrice).toFixed(2);
-                    cryptocurrencies[index].change = parseFloat(data.priceChangePercent).toFixed(2);
-                    cryptocurrencies[index].volume = parseFloat(data.volume);
-                });
-                
-                initializeAnimatedBubbles();
-            } catch (error) {
-                console.error('Error fetching prices:', error);
-            }
+            }, 5000);
         }
 
-        // Test Binance connection
-        async function testBinanceConnection() {
+        // Test Binance connection (simulated)
+        function testBinanceConnection() {
             const apiKey = document.getElementById('apiKey').value;
             const apiSecret = document.getElementById('apiSecret').value;
             
             if (!apiKey || !apiSecret) {
-                tg.showAlert('Please enter both API Key and Secret');
+                tg.showAlert('Please enter both test API Key and Secret');
                 return;
             }
 
-            try {
-                // Test with account info endpoint
-                const timestamp = Date.now();
-                const queryString = `timestamp=${timestamp}`;
-                const signature = CryptoJS.HmacSHA256(queryString, apiSecret).toString(CryptoJS.enc.Hex);
-                
-                const response = await axios.get(`${BINANCE_TESTNET}/account?${queryString}&signature=${signature}`, {
-                    headers: { 'X-MBX-APIKEY': apiKey }
-                });
-                
+            // Simulate API connection delay
+            setTimeout(() => {
                 document.getElementById('apiStatus').textContent = 'Connected to TestNet ✅';
                 document.getElementById('apiStatus').className = 'status-connected';
                 API_CONNECTED = true;
                 
-                tg.showAlert('✅ Binance TestNet Connected Successfully!');
-                loadLivePrices();
-                loadPortfolioInfo();
+                tg.showAlert('✅ Successfully connected to Binance TestNet Simulation!\n\nYou can now test trading functionality.');
+                updatePortfolioInfo();
                 
-            } catch (error) {
-                document.getElementById('apiStatus').textContent = 'Connection Failed ❌';
-                document.getElementById('apiStatus').className = 'status-disconnected';
-                tg.showAlert('❌ API Connection Failed. Check your keys.');
-            }
+            }, 1000);
         }
 
-        // Save API keys to localStorage
-        function saveApiKeys() {
-            const apiKey = document.getElementById('apiKey').value;
-            const apiSecret = document.getElementById('apiSecret').value;
-            
-            if (apiKey && apiSecret) {
-                localStorage.setItem('binance_api_key', apiKey);
-                localStorage.setItem('binance_api_secret', apiSecret);
-                tg.showAlert('API Keys Saved Locally 🔒');
-            }
-        }
-
-        // Load saved API keys
-        function loadSavedApiKeys() {
-            const savedKey = localStorage.getItem('binance_api_key');
-            const savedSecret = localStorage.getItem('binance_api_secret');
-            
-            if (savedKey && savedSecret) {
-                document.getElementById('apiKey').value = savedKey;
-                document.getElementById('apiSecret').value = savedSecret;
-            }
+        // Connect to TestNet
+        function connectToTestNet() {
+            document.getElementById('apiKey').value = 'testnet_api_key_' + Math.random().toString(36).substr(2, 9);
+            document.getElementById('apiSecret').value = 'testnet_secret_' + Math.random().toString(36).substr(2, 9);
+            testBinanceConnection();
         }
 
         // Open trading panel
         function openTradingPanel(coin) {
             if (!API_CONNECTED) {
-                tg.showAlert('Please connect Binance API first');
+                tg.showAlert('Please connect to TestNet first');
                 return;
             }
             
@@ -459,7 +426,7 @@
             document.getElementById('tradingPanel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Start REAL trading
+        // Start REAL trading (simulated)
         async function startRealTrading() {
             if (!validateTradingSelection()) return;
 
@@ -469,13 +436,11 @@
                 return;
             }
 
-            try {
-                // REAL Binance order execution
-                const order = await executeBinanceOrder(
-                    currentSelection.coin.symbol + 'USDT',
-                    'BUY',
-                    parseFloat(amount)
-                );
+            // Simulate API call delay
+            setTimeout(() => {
+                const orderId = 'TEST_' + Date.now();
+                const price = currentSelection.coin.price;
+                const quantity = (amount / price).toFixed(6);
 
                 // Save bot configuration
                 const botConfig = {
@@ -484,67 +449,51 @@
                     frequency: currentSelection.frequency,
                     amount: parseFloat(amount),
                     strategy: currentSelection.strategy,
-                    takeProfit: document.getElementById('takeProfit').value,
-                    stopLoss: document.getElementById('stopLoss').value,
                     status: 'running',
-                    orderId: order.orderId,
+                    orderId: orderId,
+                    price: price,
+                    quantity: quantity,
                     createdAt: new Date().toLocaleString()
                 };
 
                 saveBot(botConfig);
                 
-                tg.showAlert(`✅ REAL TRADE EXECUTED!\n${amount} USDT of ${currentSelection.coin.symbol}\nOrder ID: ${order.orderId}`);
+                // Update portfolio
+                updateTestPortfolio(currentSelection.coin.symbol, parseFloat(quantity), parseFloat(amount));
+                
+                tg.showAlert(`✅ TEST TRADE EXECUTED!\n\n💸 ${amount} USDT of ${currentSelection.coin.symbol}\n📊 Price: $${price}\n🪙 Quantity: ${quantity}\n🎫 Order ID: ${orderId}`);
                 closePanel();
                 updateActiveBots();
+                updatePortfolioInfo();
                 
-            } catch (error) {
-                tg.showAlert(`❌ Trade Failed: ${error.response?.data?.msg || error.message}`);
-            }
+            }, 1500);
         }
 
         // Test trading with small amount
         async function testTrading() {
             if (!validateTradingSelection()) return;
 
-            try {
-                const order = await executeBinanceOrder(
-                    currentSelection.coin.symbol + 'USDT',
-                    'BUY',
-                    0.10 // Test with $0.10
-                );
+            // Simulate small test trade
+            setTimeout(() => {
+                const orderId = 'TEST_SMALL_' + Date.now();
+                const price = currentSelection.coin.price;
+                const quantity = (0.10 / price).toFixed(8);
 
-                tg.showAlert(`🧪 TEST TRADE SUCCESS!\n$0.10 of ${currentSelection.coin.symbol}\nOrder ID: ${order.orderId}`);
+                tg.showAlert(`🧪 TEST TRADE SUCCESS!\n\n💸 $0.10 of ${currentSelection.coin.symbol}\n📊 Price: $${price}\n🪙 Quantity: ${quantity}\n🎫 Order ID: ${orderId}`);
                 
-            } catch (error) {
-                tg.showAlert(`❌ Test Trade Failed: ${error.response?.data?.msg || error.message}`);
+            }, 1000);
+        }
+
+        // Update test portfolio after trade
+        function updateTestPortfolio(coin, quantity, amount) {
+            // Subtract USDT
+            testPortfolio.USDT.free -= amount;
+            
+            // Add crypto
+            if (!testPortfolio[coin]) {
+                testPortfolio[coin] = { free: 0, locked: 0 };
             }
-        }
-
-        // Execute real Binance order
-        async function executeBinanceOrder(symbol, side, amount) {
-            const apiKey = document.getElementById('apiKey').value;
-            const apiSecret = document.getElementById('apiSecret').value;
-            
-            const timestamp = Date.now();
-            const price = await getCurrentPrice(symbol);
-            const quantity = (amount / price).toFixed(6);
-            
-            const queryString = `symbol=${symbol}&side=${side}&type=MARKET&quantity=${quantity}&timestamp=${timestamp}`;
-            const signature = CryptoJS.HmacSHA256(queryString, apiSecret).toString(CryptoJS.enc.Hex);
-            
-            const response = await axios.post(
-                `${USE_TESTNET ? BINANCE_TESTNET : BINANCE_MAINNET}/order?${queryString}&signature=${signature}`,
-                {},
-                { headers: { 'X-MBX-APIKEY': apiKey } }
-            );
-            
-            return response.data;
-        }
-
-        // Get current price for a symbol
-        async function getCurrentPrice(symbol) {
-            const response = await axios.get(`${USE_TESTNET ? BINANCE_TESTNET : BINANCE_MAINNET}/ticker/price?symbol=${symbol}`);
-            return parseFloat(response.data.price);
+            testPortfolio[coin].free += quantity;
         }
 
         // Add custom coin
@@ -561,19 +510,23 @@
                 return;
             }
 
-            // Add new coin
+            // Add new coin with random data
+            const randomPrice = (Math.random() * 1000).toFixed(4);
+            const randomChange = (Math.random() * 10 - 5).toFixed(2);
+            const randomVolume = Math.random() * 1000000000;
+
             cryptocurrencies.push({
                 symbol: newCoinSymbol,
                 name: newCoinSymbol,
-                price: 0,
-                change: 0,
-                volume: 100000000, // Default volume
-                marketCap: 1000000000
+                price: parseFloat(randomPrice),
+                change: parseFloat(randomChange),
+                volume: randomVolume,
+                marketCap: randomVolume * 10
             });
 
             document.getElementById('newCoin').value = '';
             initializeAnimatedBubbles();
-            tg.showAlert(`✅ ${newCoinSymbol} added to bubbles!`);
+            tg.showAlert(`✅ ${newCoinSymbol} added to bubbles!\nPrice: $${randomPrice}`);
         }
 
         // Parameter selection handling
@@ -588,13 +541,6 @@
                 e.target.classList.add('selected');
                 
                 currentSelection[param] = value;
-                
-                // Show/hide advanced settings
-                if (param === 'strategy' && value === 'tp_sl') {
-                    document.getElementById('advancedSettings').style.display = 'block';
-                } else {
-                    document.getElementById('advancedSettings').style.display = 'none';
-                }
             }
         });
 
@@ -626,7 +572,7 @@
             const container = document.getElementById('activeBots');
             
             if (bots.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #888;">No active trades</p>';
+                container.innerHTML = '<p style="text-align: center; color: #888;">No active trades yet</p>';
                 return;
             }
             
@@ -639,44 +585,36 @@
                         <span style="color: #00ff88;">${bot.status}</span>
                     </div>
                     <div style="font-size: 12px; color: #888; margin-top: 5px;">
-                        Order ID: ${bot.orderId} • ${new Date(bot.createdAt).toLocaleString()}
+                        📊 $${bot.price} • 🪙 ${bot.quantity} • 🎫 ${bot.orderId}
+                    </div>
+                    <div style="font-size: 10px; color: #666; margin-top: 3px;">
+                        ${new Date(bot.createdAt).toLocaleString()}
                     </div>
                 </div>
             `).join('');
         }
 
         // Load portfolio information
-        async function loadPortfolioInfo() {
+        function updatePortfolioInfo() {
             if (!API_CONNECTED) return;
             
-            try {
-                const apiKey = document.getElementById('apiKey').value;
-                const apiSecret = document.getElementById('apiSecret').value;
-                
-                const timestamp = Date.now();
-                const queryString = `timestamp=${timestamp}`;
-                const signature = CryptoJS.HmacSHA256(queryString, apiSecret).toString(CryptoJS.enc.Hex);
-                
-                const response = await axios.get(`${BINANCE_TESTNET}/account?${queryString}&signature=${signature}`, {
-                    headers: { 'X-MBX-APIKEY': apiKey }
-                });
-                
-                const portfolio = response.data.balances.filter(b => parseFloat(b.free) > 0 || parseFloat(b.locked) > 0);
-                
-                document.getElementById('portfolioInfo').innerHTML = portfolio.map(asset => `
-                    <div style="display: flex; justify-content: space-between; margin: 5px 0;">
-                        <span>${asset.asset}</span>
-                        <span>${parseFloat(asset.free).toFixed(6)}</span>
-                    </div>
-                `).join('');
-                
-            } catch (error) {
-                console.error('Error loading portfolio:', error);
+            const container = document.getElementById('portfolioInfo');
+            let html = '';
+            
+            for (const [asset, balance] of Object.entries(testPortfolio)) {
+                if (balance.free > 0 || balance.locked > 0) {
+                    const total = balance.free + balance.locked;
+                    html += `
+                        <div style="display: flex; justify-content: space-between; margin: 8px 0; padding: 8px; background: #2d2d44; border-radius: 8px;">
+                            <span style="font-weight: bold;">${asset}</span>
+                            <span>${total.toFixed(6)}</span>
+                        </div>
+                    `;
+                }
             }
+            
+            container.innerHTML = html || '<p style="text-align: center; color: #888;">No assets in portfolio</p>';
         }
     </script>
-    
-    <!-- Include CryptoJS for signature generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </body>
 </html>
