@@ -1,105 +1,496 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Binance TestNet - No CORS Issues</title>
+    <title>Crypto Bubble Auto-Invest</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        body { font-family: Arial; background: #0a0a0a; color: white; padding: 20px; }
-        .btn { background: #00ff88; color: black; border: none; padding: 15px; border-radius: 10px; font-weight: bold; width: 100%; margin: 10px 0; cursor: pointer; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial; 
+            background: #0a0a0a; 
+            color: white; 
+            padding: 10px;
+            overflow-x: hidden;
+        }
+        
+        /* Crypto Bubble Grid */
+        .bubbles-container {
+            position: relative;
+            height: 70vh;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .coin-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            animation: float 6s infinite ease-in-out;
+            text-align: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .coin-bubble:hover {
+            transform: scale(1.15);
+            border-color: #00ff88;
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+            z-index: 100;
+        }
+        
+        .bubble-xlarge { width: 140px; height: 140px; }
+        .bubble-large { width: 110px; height: 110px; }
+        .bubble-medium { width: 90px; height: 90px; }
+        .bubble-small { width: 70px; height: 70px; }
+        
+        .volume-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            animation: pulse 2s infinite;
+        }
+        .volume-high { background: #00ff88; }
+        .volume-medium { background: #ffaa00; }
+        .volume-low { background: #ff4444; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            25% { transform: translateY(-15px) rotate(1deg) scale(1.02); }
+            50% { transform: translateY(-8px) rotate(-1deg) scale(1.01); }
+            75% { transform: translateY(-12px) rotate(0.5deg) scale(1.015); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Trading Panel - Crypto Bubble Style */
+        .trade-panel {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 10px 0;
+            display: none;
+            border: 1px solid #00ff88;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+        
+        .param-bubble {
+            background: #2d2d44;
+            border: none;
+            color: white;
+            padding: 15px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            text-align: center;
+            margin: 5px;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+        
+        .param-bubble.selected {
+            background: #00ff88;
+            color: black;
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+        
+        .param-bubble:hover {
+            background: #3d3d54;
+            transform: scale(1.03);
+        }
+        
+        .bubble-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .btn-bubble {
+            background: #00ff88;
+            color: black;
+            border: none;
+            padding: 18px;
+            border-radius: 15px;
+            font-weight: bold;
+            width: 100%;
+            margin: 10px 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-bubble:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
     </style>
 </head>
 <body>
-    <div style="text-align: center;">
-        <h1>🚀 Real Binance TestNet</h1>
-        <p>To avoid CORS issues, we need a simple backend.</p>
-        
-        <div style="background: #1a1a2e; padding: 20px; border-radius: 15px; margin: 20px 0;">
-            <h3>Quick Solutions:</h3>
-            
-            <button class="btn" onclick="window.open('https://testnet.binance.vision/', '_blank')">
-                1. Open Binance TestNet Directly
+    <div class="container">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h1>🪙 Crypto Auto-Invest</h1>
+            <p>Tap any bubble • Set auto-invest • Earn while you sleep</p>
+        </div>
+
+        <!-- API Setup (Hidden after connection) -->
+        <div id="apiSetup" style="background: #1a1a2e; padding: 20px; border-radius: 15px; margin: 10px 0;">
+            <h3>🔐 Connect Binance</h3>
+            <input type="password" class="input-field" id="apiKey" placeholder="TestNet API Key">
+            <input type="password" class="input-field" id="apiSecret" placeholder="TestNet Secret">
+            <button class="btn-bubble" onclick="connectBinance()">Connect to Binance</button>
+        </div>
+
+        <!-- Crypto Bubbles Grid -->
+        <div class="bubbles-container" id="bubblesContainer">
+            <!-- Bubbles will be dynamically created -->
+        </div>
+
+        <!-- Trading Panel - Crypto Bubble Style -->
+        <div class="trade-panel" id="tradePanel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 id="selectedCoin">BTC/USDT</h3>
+                <div style="color: #00ff88; font-size: 14px;" id="currentPrice">$0.00</div>
+            </div>
+
+            <!-- Frequency Bubbles -->
+            <h4>🕐 How often?</h4>
+            <div class="bubble-grid">
+                <div class="param-bubble" data-param="frequency" data-value="1h">1H</div>
+                <div class="param-bubble" data-param="frequency" data-value="4h">4H</div>
+                <div class="param-bubble" data-param="frequency" data-value="1d">1D</div>
+                <div class="param-bubble" data-param="frequency" data-value="1w">1W</div>
+            </div>
+
+            <!-- Amount Bubbles -->
+            <h4>💰 How much?</h4>
+            <div class="bubble-grid">
+                <div class="param-bubble" data-param="amount" data-value="1">$1</div>
+                <div class="param-bubble" data-param="amount" data-value="5">$5</div>
+                <div class="param-bubble" data-param="amount" data-value="10">$10</div>
+                <div class="param-bubble" data-param="amount" data-value="25">$25</div>
+                <div class="param-bubble" data-param="amount" data-value="50">$50</div>
+                <div class="param-bubble" data-param="amount" data-value="100">$100</div>
+            </div>
+
+            <!-- Strategy Bubbles -->
+            <h4>🎯 Strategy</h4>
+            <div class="bubble-grid">
+                <div class="param-bubble" data-param="strategy" data-value="dca">DCA</div>
+                <div class="param-bubble" data-param="strategy" data-value="tp">Take Profit</div>
+                <div class="param-bubble" data-param="strategy" data-value="grid">Grid</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <button class="btn-bubble" onclick="startAutoInvest()">
+                🚀 START AUTO-INVEST
             </button>
-            
-            <button class="btn" onclick="showLocalSolution()">
-                2. Local Development Solution
-            </button>
-            
-            <button class="btn" onclick="showBackendSolution()">
-                3. Simple Backend Setup
+            <button class="btn-bubble" style="background: #ff4444;" onclick="closePanel()">
+                ✖️ CANCEL
             </button>
         </div>
-        
-        <div id="solutionInfo" style="background: #2d2d44; padding: 15px; border-radius: 10px; margin-top: 20px;"></div>
+
+        <!-- Active Bots -->
+        <div style="background: #1a1a2e; padding: 20px; border-radius: 15px; margin: 10px 0;">
+            <h3>🤖 Active Auto-Invests</h3>
+            <div id="activeBots">
+                <p style="text-align: center; color: #888; padding: 20px;">
+                    No active auto-invests yet<br>
+                    <small>Tap a bubble above to start</small>
+                </p>
+            </div>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        
-        function showLocalSolution() {
-            document.getElementById('solutionInfo').innerHTML = `
-                <h4>🧪 Local Development Solution</h4>
-                <p>Run this locally to avoid CORS:</p>
-                <ol style="text-align: left;">
-                    <li>Install Node.js</li>
-                    <li>Create a simple Express server</li>
-                    <li>Run: <code>node server.js</code></li>
-                    <li>Access via: <code>http://localhost:3000</code></li>
-                </ol>
-                <button class="btn" onclick="copyServerCode()">Copy Server Code</button>
-            `;
+        tg.expand();
+        tg.ready();
+
+        // Crypto Bubble Data (Top 20 coins by volume)
+        const cryptoBubbles = [
+            { symbol: 'BTC', name: 'Bitcoin', volume: 28000000000, price: 0, change: 0 },
+            { symbol: 'ETH', name: 'Ethereum', volume: 12000000000, price: 0, change: 0 },
+            { symbol: 'BNB', name: 'Binance Coin', volume: 800000000, price: 0, change: 0 },
+            { symbol: 'SOL', name: 'Solana', volume: 2500000000, price: 0, change: 0 },
+            { symbol: 'XRP', name: 'Ripple', volume: 1500000000, price: 0, change: 0 },
+            { symbol: 'ADA', name: 'Cardano', volume: 500000000, price: 0, change: 0 },
+            { symbol: 'AVAX', name: 'Avalanche', volume: 600000000, price: 0, change: 0 },
+            { symbol: 'DOT', name: 'Polkadot', volume: 400000000, price: 0, change: 0 },
+            { symbol: 'DOGE', name: 'Dogecoin', volume: 800000000, price: 0, change: 0 },
+            { symbol: 'MATIC', name: 'Polygon', volume: 300000000, price: 0, change: 0 },
+            { symbol: 'LTC', name: 'Litecoin', volume: 400000000, price: 0, change: 0 },
+            { symbol: 'LINK', name: 'Chainlink', volume: 350000000, price: 0, change: 0 }
+        ];
+
+        let currentSelection = {
+            coin: null,
+            frequency: null,
+            amount: null,
+            strategy: 'dca'
+        };
+
+        // Initialize Crypto Bubbles
+        function initializeBubbles() {
+            const container = document.getElementById('bubblesContainer');
+            container.innerHTML = '';
+
+            cryptoBubbles.forEach((coin, index) => {
+                const bubble = document.createElement('div');
+                const bubbleSize = getBubbleSize(coin.volume);
+                const position = getBubblePosition(index);
+                
+                bubble.className = `coin-bubble ${bubbleSize}`;
+                bubble.style.left = `${position.x}%`;
+                bubble.style.top = `${position.y}%`;
+                bubble.style.animationDelay = `${index * 0.2}s`;
+                
+                // Volume indicator
+                const volumeDot = document.createElement('div');
+                volumeDot.className = `volume-pulse ${getVolumeClass(coin.volume)}`;
+                
+                bubble.innerHTML = `
+                    <div style="font-weight: bold; font-size: ${getFontSize(coin.volume)}; margin-bottom: 5px;">
+                        ${coin.symbol}
+                    </div>
+                    <div style="font-size: ${getPriceSize(coin.volume)}; color: #00ff88;">
+                        $${coin.price || '0.00'}
+                    </div>
+                    <div style="font-size: 10px; color: ${coin.change >= 0 ? '#00ff88' : '#ff4444'}; margin-top: 2px;">
+                        ${coin.change >= 0 ? '↗' : '↘'} ${Math.abs(coin.change || 0)}%
+                    </div>
+                `;
+                
+                bubble.appendChild(volumeDot);
+                bubble.addEventListener('click', () => selectCoin(coin));
+                container.appendChild(bubble);
+            });
         }
-        
-        function showBackendSolution() {
-            document.getElementById('solutionInfo').innerHTML = `
-                <h4>🌐 Simple Backend Setup</h4>
-                <p>Deploy to free hosting:</p>
-                <ul style="text-align: left;">
-                    <li>Vercel (easiest)</li>
-                    <li>Heroku</li>
-                    <li>Netlify Functions</li>
-                </ul>
-                <button class="btn" onclick="deployToVercel()">Deploy to Vercel</button>
-            `;
-        }
-        
-        function copyServerCode() {
-            const serverCode = `
-// server.js - Simple Binance Proxy
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
-const app = express();
 
-app.use(cors());
-app.use(express.json());
-
-// Binance proxy endpoint
-app.post('/api/binance', async (req, res) => {
-    try {
-        const { endpoint, params, apiKey, apiSecret } = req.body;
-        const response = await axios.get(\`https://testnet.binance.vision/api/v3/\${endpoint}\`, {
-            params,
-            headers: { 'X-MBX-APIKEY': apiKey }
-        });
-        res.json(response.data);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.listen(3000, () => {
-    console.log('Binance proxy running on port 3000');
-});
-            `;
+        // Select coin - Crypto Bubble style
+        function selectCoin(coin) {
+            currentSelection.coin = coin;
             
-            navigator.clipboard.writeText(serverCode);
-            tg.showAlert('Server code copied! Paste in server.js file.');
+            // Update panel
+            document.getElementById('selectedCoin').textContent = `${coin.symbol}/USDT`;
+            document.getElementById('currentPrice').textContent = `$${coin.price || '0.00'}`;
+            document.getElementById('tradePanel').style.display = 'block';
+            
+            // Scroll to panel
+            document.getElementById('tradePanel').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            // Reset selections
+            resetSelections();
         }
-        
-        function deployToVercel() {
-            window.open('https://vercel.com/new', '_blank');
-            tg.showAlert('Open Vercel and deploy your project there');
+
+        // Parameter bubble selection
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('param-bubble')) {
+                const param = e.target.dataset.param;
+                const value = e.target.dataset.value;
+                
+                // Remove selected from siblings
+                e.target.parentElement.querySelectorAll('.param-bubble').forEach(bubble => {
+                    bubble.classList.remove('selected');
+                });
+                
+                // Add selected to clicked bubble
+                e.target.classList.add('selected');
+                currentSelection[param] = value;
+                
+                // Visual feedback
+                e.target.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    e.target.style.transform = 'scale(1.05)';
+                }, 150);
+            }
+        });
+
+        // Start auto-invest
+        function startAutoInvest() {
+            if (!validateSelection()) return;
+            
+            const botConfig = {
+                id: Date.now(),
+                coin: currentSelection.coin.symbol,
+                frequency: currentSelection.frequency,
+                amount: currentSelection.amount,
+                strategy: currentSelection.strategy,
+                status: 'active',
+                nextTrade: calculateNextTradeTime(currentSelection.frequency),
+                createdAt: new Date().toLocaleString()
+            };
+            
+            saveBot(botConfig);
+            
+            // Crypto Bubble success animation
+            tg.showAlert(`🎉 ${botConfig.coin} Auto-Invest Started!\n\n$${botConfig.amount} every ${getFrequencyText(botConfig.frequency)}`);
+            
+            closePanel();
+            updateActiveBots();
         }
+
+        // Helper functions
+        function getBubbleSize(volume) {
+            if (volume > 10000000000) return 'bubble-xlarge';
+            if (volume > 1000000000) return 'bubble-large';
+            if (volume > 500000000) return 'bubble-medium';
+            return 'bubble-small';
+        }
+
+        function getFontSize(volume) {
+            if (volume > 10000000000) return '18px';
+            if (volume > 1000000000) return '16px';
+            if (volume > 500000000) return '14px';
+            return '12px';
+        }
+
+        function getPriceSize(volume) {
+            if (volume > 10000000000) return '12px';
+            if (volume > 1000000000) return '11px';
+            if (volume > 500000000) return '10px';
+            return '9px';
+        }
+
+        function getVolumeClass(volume) {
+            if (volume > 10000000000) return 'volume-high';
+            if (volume > 1000000000) return 'volume-medium';
+            return 'volume-low';
+        }
+
+        function getBubblePosition(index) {
+            const positions = [
+                { x: 10, y: 15 }, { x: 30, y: 25 }, { x: 50, y: 10 }, { x: 70, y: 30 },
+                { x: 20, y: 45 }, { x: 40, y: 60 }, { x: 60, y: 50 }, { x: 80, y: 70 },
+                { x: 15, y: 75 }, { x: 35, y: 85 }, { x: 55, y: 80 }, { x: 75, y: 90 }
+            ];
+            return positions[index % positions.length];
+        }
+
+        function getFrequencyText(freq) {
+            const freqMap = { '1h': '1 hour', '4h': '4 hours', '1d': 'day', '1w': 'week' };
+            return freqMap[freq] || freq;
+        }
+
+        function calculateNextTradeTime(frequency) {
+            const now = new Date();
+            switch(frequency) {
+                case '1h': return new Date(now.getTime() + 60 * 60 * 1000);
+                case '4h': return new Date(now.getTime() + 4 * 60 * 60 * 1000);
+                case '1d': return new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                case '1w': return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                default: return new Date(now.getTime() + 60 * 60 * 1000);
+            }
+        }
+
+        function validateSelection() {
+            if (!currentSelection.coin) {
+                tg.showAlert('Please select a coin');
+                return false;
+            }
+            if (!currentSelection.frequency) {
+                tg.showAlert('Please select frequency');
+                return false;
+            }
+            if (!currentSelection.amount) {
+                tg.showAlert('Please select amount');
+                return false;
+            }
+            return true;
+        }
+
+        function closePanel() {
+            document.getElementById('tradePanel').style.display = 'none';
+            resetSelections();
+        }
+
+        function resetSelections() {
+            currentSelection.frequency = null;
+            currentSelection.amount = null;
+            currentSelection.strategy = 'dca';
+            
+            document.querySelectorAll('.param-bubble.selected').forEach(bubble => {
+                bubble.classList.remove('selected');
+            });
+        }
+
+        function saveBot(botConfig) {
+            let bots = JSON.parse(localStorage.getItem('cryptoBubbleBots') || '[]');
+            bots.push(botConfig);
+            localStorage.setItem('cryptoBubbleBots', JSON.stringify(bots));
+        }
+
+        function updateActiveBots() {
+            const bots = JSON.parse(localStorage.getItem('cryptoBubbleBots') || '[]');
+            const container = document.getElementById('activeBots');
+            
+            if (bots.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">No active auto-invests yet<br><small>Tap a bubble above to start</small></p>';
+                return;
+            }
+            
+            container.innerHTML = bots.map(bot => `
+                <div style="background: #2d2d44; padding: 15px; border-radius: 12px; margin: 10px 0; border-left: 4px solid #00ff88;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="font-size: 16px;">${bot.coin}</strong>
+                            <div style="font-size: 12px; color: #888;">
+                                $${bot.amount} • Every ${getFrequencyText(bot.frequency)}
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="color: #00ff88; font-size: 12px;">${bot.status}</span>
+                            <div style="font-size: 10px; color: #666;">
+                                Next: ${new Date(bot.nextTrade).toLocaleTimeString()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Simulate live price updates
+        function simulatePriceUpdates() {
+            cryptoBubbles.forEach(coin => {
+                coin.price = (Math.random() * 1000).toFixed(2);
+                coin.change = (Math.random() * 10 - 5).toFixed(2);
+            });
+            initializeBubbles();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeBubbles();
+            updateActiveBots();
+            setInterval(simulatePriceUpdates, 5000);
+        });
+
+        // Binance connection (placeholder)
+        function connectBinance() {
+            tg.showAlert('🔗 Binance connection would be implemented here with real API');
+            document.getElementById('apiSetup').style.display = 'none';
+        }
+
     </script>
 </body>
 </html>
