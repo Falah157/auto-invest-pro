@@ -1,1 +1,76 @@
-<!-- PASTE THE ENTIRE HTML CODE HERE -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto-Invest PRO</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial; background: #1a1a2e; color: white; padding: 20px; margin: 0; }
+        .container { max-width: 400px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .balance { font-size: 2em; font-weight: bold; color: #00ff88; text-align: center; margin: 20px 0; }
+        .btn { background: #00ff88; color: black; border: none; padding: 15px; margin: 10px 0; width: 100%; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .card { background: #2d2d44; padding: 20px; border-radius: 10px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Auto-Invest PRO</h1>
+            <p>Smart Trading & TakeProfit</p>
+        </div>
+        
+        <div class="balance">$15,392.50</div>
+        
+        <div class="card">
+            <h3>Quick Actions</h3>
+            <button class="btn" onclick="createStrategy()">➕ Create Strategy</button>
+            <button class="btn" onclick="quickTrade()">⚡ Quick Trade</button>
+            <button class="btn" style="background: #ff4444;" onclick="emergencyStop()">🛑 Emergency Stop</button>
+        </div>
+        
+        <div class="card">
+            <h3>Active Bots</h3>
+            <p>• BTC DCA Bot: <span style="color: #00ff88">Running</span></p>
+            <p>• ETH Grid Bot: <span style="color: #00ff88">Running</span></p>
+            <p>• TakeProfit Bot: <span style="color: #00ff88">Running</span></p>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+        
+        function createStrategy() {
+            tg.showPopup({
+                title: 'Create Strategy',
+                message: 'Choose strategy type',
+                buttons: [
+                    {id: 'dca', type: 'default', text: 'DCA Bot'},
+                    {id: 'grid', type: 'default', text: 'Grid Trading'},
+                    {id: 'tp', type: 'default', text: 'TakeProfit'},
+                    {type: 'cancel'}
+                ]
+            });
+        }
+        
+        function quickTrade() {
+            tg.showPopup({
+                title: 'Quick Trade',
+                message: 'Buy or Sell?',
+                buttons: [
+                    {id: 'buy', type: 'default', text: '🟢 BUY'},
+                    {id: 'sell', type: 'default', text: '🔴 SELL'},
+                    {type: 'cancel'}
+                ]
+            });
+        }
+        
+        function emergencyStop() {
+            tg.showConfirm("Stop ALL trading?", function(confirmed) {
+                if (confirmed) tg.showAlert("🛑 ALL trading stopped!");
+            });
+        }
+    </script>
+</body>
+</html>
