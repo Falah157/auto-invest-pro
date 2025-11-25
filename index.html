@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F609 - Real Trading Platform</title>
+    <title>F609 - Universal POS System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,54 +14,107 @@
         }
 
         :root {
-            --primary: #00f3ff;
-            --profit: #00ff88;
-            --loss: #ff0066;
-            --bg-dark: #0a0a1a;
-            --card-bg: #1a1a2e;
+            --primary: #2563eb;
+            --secondary: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --success: #10b981;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
         }
 
         body {
-            background: var(--bg-dark);
-            color: white;
+            background: var(--bg-light);
+            color: var(--text-dark);
             min-height: 100vh;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 30px;
+            background: var(--bg-white);
             padding: 20px;
-            background: var(--card-bg);
             border-radius: 15px;
-            border: 2px solid var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .logo {
             font-size: 2.5em;
-            background: linear-gradient(90deg, var(--primary), #0099cc);
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
 
+        .business-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .business-type {
+            background: var(--bg-white);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid var(--border);
+        }
+
+        .business-type:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
+        }
+
+        .business-type.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #dbeafe, #d1fae5);
+        }
+
+        .business-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
         .dashboard {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 300px 1fr;
             gap: 20px;
-            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
         }
 
         .card {
-            background: var(--card-bg);
+            background: var(--bg-white);
+            border-radius: 15px;
             padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #333;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .card h3 {
@@ -73,6 +125,119 @@
             gap: 10px;
         }
 
+        .nav-item {
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-light);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .product-card {
+            background: var(--bg-light);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 10px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .cart {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cart-total {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid var(--border);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
         .form-group {
             margin-bottom: 15px;
         }
@@ -80,502 +245,431 @@
         label {
             display: block;
             margin-bottom: 5px;
-            color: #ccc;
+            color: var(--text-light);
+            font-weight: 500;
         }
 
-        input, select, button {
+        input, select, textarea {
             width: 100%;
-            padding: 12px;
-            border-radius: 5px;
-            border: 1px solid #333;
-            background: #2a2a3e;
-            color: white;
-            margin-bottom: 10px;
-        }
-
-        button {
-            background: linear-gradient(90deg, var(--primary), #0099cc);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 243, 255, 0.4);
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-buy {
-            background: linear-gradient(90deg, var(--profit), #00cc66);
-        }
-
-        .btn-sell {
-            background: linear-gradient(90deg, var(--loss), #cc0000);
-        }
-
-        .status {
             padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-white);
         }
 
-        .status.success {
-            background: rgba(0, 255, 136, 0.2);
-            border: 1px solid var(--profit);
-        }
-
-        .status.error {
-            background: rgba(255, 0, 102, 0.2);
-            border: 1px solid var(--loss);
-        }
-
-        .status.info {
-            background: rgba(0, 243, 255, 0.2);
-            border: 1px solid var(--primary);
-        }
-
-        .price-display {
-            font-size: 2em;
-            font-weight: bold;
-            text-align: center;
-            margin: 10px 0;
-        }
-
-        .positive {
-            color: var(--profit);
-        }
-
-        .negative {
-            color: var(--loss);
-        }
-
-        .trading-pairs {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
             margin: 15px 0;
         }
 
-        .pair {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #333;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .pair.active {
-            background: rgba(0, 243, 255, 0.2);
-            border-color: var(--primary);
-        }
-
-        .log {
-            background: #2a2a3e;
+        .stat-card {
+            background: var(--bg-light);
             padding: 15px;
-            border-radius: 5px;
-            height: 200px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 12px;
-            margin-top: 15px;
+            border-radius: 10px;
+            text-align: center;
         }
 
-        .log-entry {
-            margin-bottom: 5px;
-            padding: 5px;
-            border-radius: 3px;
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary);
         }
 
-        .log-success {
-            background: rgba(0, 255, 136, 0.1);
-            border-left: 3px solid var(--profit);
-        }
-
-        .log-error {
-            background: rgba(255, 0, 102, 0.1);
-            border-left: 3px solid var(--loss);
-        }
-
-        .log-info {
-            background: rgba(0, 243, 255, 0.1);
-            border-left: 3px solid var(--primary);
-        }
-
-        .balance-display {
+        .quick-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin: 15px 0;
         }
 
-        .balance-item {
-            text-align: center;
+        .action-btn {
             padding: 10px;
-            background: #2a2a3e;
-            border-radius: 5px;
+            background: var(--bg-light);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .business-presets {
+            display: none;
+        }
+
+        .business-presets.active {
+            display: block;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <div class="logo">F609 PRO TRADING</div>
-            <p>Real Trading Platform - Live Market Data & Order Execution</p>
+            <div class="logo">F609 POS</div>
+            <p>Universal Point of Sale System - Works for ANY Business</p>
+            
+            <!-- Business Type Selector -->
+            <div class="business-selector">
+                <div class="business-type active" onclick="selectBusiness('retail')">
+                    <div class="business-icon">🏪</div>
+                    <div>Retail Store</div>
+                </div>
+                <div class="business-type" onclick="selectBusiness('restaurant')">
+                    <div class="business-icon">🍽️</div>
+                    <div>Restaurant</div>
+                </div>
+                <div class="business-type" onclick="selectBusiness('services')">
+                    <div class="business-icon">💼</div>
+                    <div>Services</div>
+                </div>
+                <div class="business-type" onclick="selectBusiness('digital')">
+                    <div class="business-icon">💻</div>
+                    <div>Digital Products</div>
+                </div>
+                <div class="business-type" onclick="selectBusiness('custom')">
+                    <div class="business-icon">⚙️</div>
+                    <div>Custom Business</div>
+                </div>
+            </div>
         </div>
 
-        <!-- Connection Status -->
-        <div class="card">
-            <h3><i class="fas fa-plug"></i> Platform Status</h3>
-            <div id="platformStatus" class="status info">
-                🔄 Connecting to markets...
-            </div>
-            <div class="trading-pairs" id="tradingPairs">
-                <!-- Trading pairs will be loaded here -->
-            </div>
-        </div>
-
+        <!-- Main Dashboard -->
         <div class="dashboard">
-            <!-- Market Data -->
-            <div class="card">
-                <h3><i class="fas fa-chart-line"></i> Live Market Data</h3>
-                <div id="marketData">
-                    <div class="price-display">--</div>
-                    <div class="status info">Loading market data...</div>
+            <!-- Sidebar Navigation -->
+            <div class="sidebar">
+                <div class="nav-item active">
+                    <i class="fas fa-cash-register"></i>
+                    Point of Sale
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-box"></i>
+                    Products/Services
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-users"></i>
+                    Customers
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    Settings
                 </div>
                 
-                <div class="form-group">
-                    <label for="tradeAmount">Amount (USDT):</label>
-                    <input type="number" id="tradeAmount" value="100" min="10" step="10">
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">$1,245</div>
+                        <div>Today's Sales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">24</div>
+                        <div>Orders</div>
+                    </div>
                 </div>
-                
-                <button onclick="placeOrder('BUY')" class="btn-buy" id="buyBtn">
-                    <i class="fas fa-arrow-up"></i> BUY MARKET
-                </button>
-                <button onclick="placeOrder('SELL')" class="btn-sell" id="sellBtn">
-                    <i class="fas fa-arrow-down"></i> SELL MARKET
-                </button>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="action-btn">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-file-invoice"></i> New Invoice
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-user-plus"></i> Add Customer
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-chart-line"></i> Reports
+                    </button>
+                </div>
             </div>
 
-            <!-- Account Info -->
-            <div class="card">
-                <h3><i class="fas fa-wallet"></i> Account Summary</h3>
-                <div id="accountInfo">
-                    <div class="balance-display">
-                        <div class="balance-item">
-                            <div>Total Balance</div>
-                            <div id="totalBalance">--</div>
-                        </div>
-                        <div class="balance-item">
-                            <div>Available</div>
-                            <div id="availableBalance">--</div>
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Products/Services Area -->
+                <div class="card">
+                    <h3><i class="fas fa-shopping-cart"></i> Products & Services</h3>
+                    
+                    <!-- Business-specific product presets -->
+                    <div id="retailPreset" class="business-presets active">
+                        <div class="product-grid">
+                            <div class="product-card" onclick="addToCart('T-Shirt', 25)">
+                                <div class="product-image">👕</div>
+                                <div>T-Shirt</div>
+                                <div>$25.00</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Jeans', 45)">
+                                <div class="product-image">👖</div>
+                                <div>Jeans</div>
+                                <div>$45.00</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Shoes', 80)">
+                                <div class="product-image">👟</div>
+                                <div>Shoes</div>
+                                <div>$80.00</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Watch', 120)">
+                                <div class="product-image">⌚</div>
+                                <div>Watch</div>
+                                <div>$120.00</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="status info">Connect to see real balances</div>
+
+                    <div id="restaurantPreset" class="business-presets">
+                        <div class="product-grid">
+                            <div class="product-card" onclick="addToCart('Pizza', 15)">
+                                <div class="product-image">🍕</div>
+                                <div>Pizza</div>
+                                <div>$15.00</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Burger', 12)">
+                                <div class="product-image">🍔</div>
+                                <div>Burger</div>
+                                <div>$12.00</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Pasta', 18)">
+                                <div class="product-image">🍝</div>
+                                <div>Pasta</div>
+                                <div>$18.00</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Salad', 10)">
+                                <div class="product-image">🥗</div>
+                                <div>Salad</div>
+                                <div>$10.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="servicesPreset" class="business-presets">
+                        <div class="product-grid">
+                            <div class="product-card" onclick="addToCart('Haircut', 30)">
+                                <div class="product-image">💇</div>
+                                <div>Haircut</div>
+                                <div>$30.00</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Massage', 60)">
+                                <div class="product-image">💆</div>
+                                <div>Massage</div>
+                                <div>$60.00</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Consulting', 100)">
+                                <div class="product-image">💼</div>
+                                <div>Consulting</div>
+                                <div>$100.00</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Repair', 45)">
+                                <div class="product-image">🔧</div>
+                                <div>Repair Service</div>
+                                <div>$45.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="digitalPreset" class="business-presets">
+                        <div class="product-grid">
+                            <div class="product-card" onclick="addToCart('E-book', 9.99)">
+                                <div class="product-image">📚</div>
+                                <div>E-book</div>
+                                <div>$9.99</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Course', 49.99)">
+                                <div class="product-image">🎓</div>
+                                <div>Online Course</div>
+                                <div>$49.99</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Software', 29.99)">
+                                <div class="product-image">💻</div>
+                                <div>Software License</div>
+                                <div>$29.99</div>
+                            </div>
+                            <div class="product-card" onclick="addToCart('Template', 14.99)">
+                                <div class="product-image">🎨</div>
+                                <div>Design Template</div>
+                                <div>$14.99</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="customPreset" class="business-presets">
+                        <div class="form-group">
+                            <label>Add Custom Product/Service</label>
+                            <input type="text" id="customProduct" placeholder="Product/Service name">
+                        </div>
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input type="number" id="customPrice" placeholder="0.00">
+                        </div>
+                        <button class="btn btn-primary" onclick="addCustomProduct()">
+                            <i class="fas fa-plus"></i> Add to Catalog
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Shopping Cart -->
+                <div class="cart">
+                    <h3><i class="fas fa-receipt"></i> Current Order</h3>
+                    <div id="cartItems">
+                        <!-- Cart items will appear here -->
+                        <div class="cart-empty">Cart is empty</div>
+                    </div>
+                    <div class="cart-total" id="cartTotal">
+                        Total: $0.00
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Customer</label>
+                        <select>
+                            <option>Walk-in Customer</option>
+                            <option>John Doe</option>
+                            <option>Jane Smith</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select>
+                            <option>Cash</option>
+                            <option>Credit Card</option>
+                            <option>Telegram Pay</option>
+                            <option>Bank Transfer</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-success" style="width: 100%;" onclick="processPayment()">
+                        <i class="fas fa-credit-card"></i> Process Payment
+                    </button>
                 </div>
             </div>
-
-            <!-- Order Management -->
-            <div class="card">
-                <h3><i class="fas fa-list"></i> Active Orders</h3>
-                <div id="activeOrders">
-                    <div class="status info">No active orders</div>
-                </div>
-            </div>
-
-            <!-- Trading Bot -->
-            <div class="card">
-                <h3><i class="fas fa-robot"></i> Auto Trading</h3>
-                <div class="form-group">
-                    <label for="botAmount">Investment per trade (USDT):</label>
-                    <input type="number" id="botAmount" value="50" min="10">
-                </div>
-                <div class="form-group">
-                    <label for="botInterval">Trading Interval:</label>
-                    <select id="botInterval">
-                        <option value="30000">30 Seconds</option>
-                        <option value="60000">1 Minute</option>
-                        <option value="300000">5 Minutes</option>
-                        <option value="900000">15 Minutes</option>
-                    </select>
-                </div>
-                <button onclick="startTradingBot()" id="startBotBtn">
-                    <i class="fas fa-play"></i> Start Trading Bot
-                </button>
-                <button onclick="stopTradingBot()" id="stopBotBtn" disabled>
-                    <i class="fas fa-stop"></i> Stop Trading Bot
-                </button>
-            </div>
-        </div>
-
-        <!-- Trading Log -->
-        <div class="card">
-            <h3><i class="fas fa-terminal"></i> Trading Log</h3>
-            <div class="log" id="tradingLog"></div>
         </div>
     </div>
 
     <script>
-        // Trading Platform Core
-        class F609TradingPlatform {
-            constructor() {
-                this.currentSymbol = 'BTCUSDT';
-                this.isConnected = false;
-                this.tradingBot = null;
-                this.orders = [];
-                this.balances = { USDT: 1000, BTC: 0 };
-                this.marketData = {};
-                
-                this.initializePlatform();
-            }
+        // POS System Core
+        let currentCart = [];
+        let currentBusiness = 'retail';
 
-            async initializePlatform() {
-                this.addLog('🚀 F609 Trading Platform Initializing...', 'info');
-                
-                // Load trading pairs
-                this.loadTradingPairs();
-                
-                // Start market data stream
-                this.startMarketData();
-                
-                // Initialize with demo data
-                this.simulateMarketData();
-                
-                this.addLog('✅ Platform ready for trading', 'success');
-                this.updateStatus('✅ Connected to markets', 'success');
-            }
+        // Business Type Selection
+        function selectBusiness(type) {
+            currentBusiness = type;
+            
+            // Update UI
+            document.querySelectorAll('.business-type').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.target.closest('.business-type').classList.add('active');
+            
+            // Show relevant products
+            document.querySelectorAll('.business-presets').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById(type + 'Preset').classList.add('active');
+        }
 
-            loadTradingPairs() {
-                const pairs = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'ADAUSDT', 'SOLUSDT', 'DOTUSDT'];
-                const container = document.getElementById('tradingPairs');
-                
-                pairs.forEach(pair => {
-                    const pairElement = document.createElement('div');
-                    pairElement.className = `pair ${pair === this.currentSymbol ? 'active' : ''}`;
-                    pairElement.textContent = pair.replace('USDT', '/USDT');
-                    pairElement.onclick = () => this.selectPair(pair);
-                    container.appendChild(pairElement);
+        // Add to Cart
+        function addToCart(name, price) {
+            const existingItem = currentCart.find(item => item.name === name);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                currentCart.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
                 });
             }
+            
+            updateCartDisplay();
+        }
 
-            selectPair(symbol) {
-                this.currentSymbol = symbol;
-                document.querySelectorAll('.pair').forEach(p => p.classList.remove('active'));
-                event.target.classList.add('active');
-                this.addLog(`Selected trading pair: ${symbol}`, 'info');
-                this.updateMarketDisplay();
+        // Add Custom Product
+        function addCustomProduct() {
+            const name = document.getElementById('customProduct').value;
+            const price = parseFloat(document.getElementById('customPrice').value);
+            
+            if (name && price) {
+                addToCart(name, price);
+                document.getElementById('customProduct').value = '';
+                document.getElementById('customPrice').value = '';
             }
+        }
 
-            startMarketData() {
-                // Simulate real market data updates
-                setInterval(() => {
-                    this.simulateMarketData();
-                }, 2000);
+        // Update Cart Display
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            if (currentCart.length === 0) {
+                cartItems.innerHTML = '<div class="cart-empty">Cart is empty</div>';
+                cartTotal.textContent = 'Total: $0.00';
+                return;
             }
-
-            simulateMarketData() {
-                const basePrices = {
-                    'BTCUSDT': 43000,
-                    'ETHUSDT': 2300,
-                    'BNBUSDT': 320,
-                    'ADAUSDT': 0.45,
-                    'SOLUSDT': 95,
-                    'DOTUSDT': 7.2
-                };
-
-                const basePrice = basePrices[this.currentSymbol] || 43000;
-                const volatility = 0.02; // 2% volatility
+            
+            let total = 0;
+            let itemsHTML = '';
+            
+            currentCart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
                 
-                // Generate realistic price movement
-                const change = (Math.random() - 0.5) * volatility;
-                const newPrice = basePrice * (1 + change);
-                const priceChange = (change * 100);
-                
-                this.marketData[this.currentSymbol] = {
-                    price: newPrice,
-                    change: priceChange,
-                    high: newPrice * (1 + Math.random() * 0.01),
-                    low: newPrice * (1 - Math.random() * 0.01),
-                    volume: Math.random() * 1000
-                };
-
-                this.updateMarketDisplay();
-            }
-
-            updateMarketDisplay() {
-                const data = this.marketData[this.currentSymbol];
-                if (!data) return;
-
-                const marketDiv = document.getElementById('marketData');
-                const changeClass = data.change >= 0 ? 'positive' : 'negative';
-                const changeSymbol = data.change >= 0 ? '↗' : '↘';
-
-                marketDiv.innerHTML = `
-                    <div class="price-display">$${data.price.toFixed(2)}</div>
-                    <div class="${changeClass}">
-                        ${changeSymbol} ${data.change.toFixed(2)}% 
-                        (24h High: $${data.high.toFixed(2)} | Low: $${data.low.toFixed(2)})
+                itemsHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.name}</strong>
+                            <div>$${item.price} x ${item.quantity}</div>
+                        </div>
+                        <div>$${itemTotal.toFixed(2)}</div>
                     </div>
-                    <div>Volume: ${data.volume.toFixed(0)} ${this.currentSymbol.replace('USDT', '')}</div>
                 `;
-            }
-
-            async placeOrder(side) {
-                const amount = parseFloat(document.getElementById('tradeAmount').value);
-                const symbol = this.currentSymbol;
-                const price = this.marketData[symbol]?.price;
-
-                if (!price) {
-                    this.addLog('❌ Cannot place order: No market data', 'error');
-                    return;
-                }
-
-                if (side === 'BUY' && this.balances.USDT < amount) {
-                    this.addLog('❌ Insufficient USDT balance', 'error');
-                    return;
-                }
-
-                const asset = symbol.replace('USDT', '');
-                const quantity = amount / price;
-
-                if (side === 'SELL' && this.balances[asset] < quantity) {
-                    this.addLog(`❌ Insufficient ${asset} balance`, 'error');
-                    return;
-                }
-
-                // Simulate order execution
-                this.addLog(`🔄 Placing ${side} order: ${quantity.toFixed(6)} ${asset} at $${price.toFixed(2)}`, 'info');
-
-                // Simulate API delay
-                setTimeout(() => {
-                    if (side === 'BUY') {
-                        this.balances.USDT -= amount;
-                        this.balances[asset] = (this.balances[asset] || 0) + quantity;
-                    } else {
-                        this.balances[asset] -= quantity;
-                        this.balances.USDT += amount;
-                    }
-
-                    const order = {
-                        id: Date.now(),
-                        symbol,
-                        side,
-                        quantity,
-                        price,
-                        amount,
-                        status: 'FILLED',
-                        timestamp: new Date()
-                    };
-
-                    this.orders.unshift(order);
-                    this.updateBalances();
-                    this.updateOrders();
-
-                    this.addLog(`✅ ${side} order filled: ${quantity.toFixed(6)} ${asset} @ $${price.toFixed(2)}`, 'success');
-                }, 1000);
-            }
-
-            updateBalances() {
-                document.getElementById('totalBalance').textContent = 
-                    `$${(this.balances.USDT + (this.balances.BTC || 0) * (this.marketData['BTCUSDT']?.price || 43000)).toFixed(2)}`;
-                
-                document.getElementById('availableBalance').textContent = 
-                    `$${this.balances.USDT.toFixed(2)}`;
-            }
-
-            updateOrders() {
-                const ordersDiv = document.getElementById('activeOrders');
-                if (this.orders.length === 0) {
-                    ordersDiv.innerHTML = '<div class="status info">No active orders</div>';
-                    return;
-                }
-
-                const recentOrders = this.orders.slice(0, 5);
-                ordersDiv.innerHTML = recentOrders.map(order => `
-                    <div class="log-entry ${order.side === 'BUY' ? 'log-success' : 'log-error'}">
-                        ${order.side} ${order.quantity.toFixed(6)} ${order.symbol.replace('USDT', '')} 
-                        @ $${order.price.toFixed(2)} - ${order.status}
-                    </div>
-                `).join('');
-            }
-
-            startTradingBot() {
-                const amount = parseFloat(document.getElementById('botAmount').value);
-                const interval = parseInt(document.getElementById('botInterval').value);
-
-                this.addLog(`🤖 Starting trading bot: $${amount} every ${interval/1000}s`, 'info');
-
-                document.getElementById('startBotBtn').disabled = true;
-                document.getElementById('stopBotBtn').disabled = false;
-
-                this.tradingBot = setInterval(() => {
-                    // Simple bot logic: Buy when price is down, sell when up
-                    const data = this.marketData[this.currentSymbol];
-                    if (!data) return;
-
-                    const side = data.change < -1 ? 'BUY' : 'SELL'; // Buy on dips >1%
-                    
-                    // Only trade if we have balance
-                    if ((side === 'BUY' && this.balances.USDT >= amount) || 
-                        (side === 'SELL' && this.balances[this.currentSymbol.replace('USDT', '')] > 0)) {
-                        this.placeOrder(side);
-                    }
-                }, interval);
-            }
-
-            stopTradingBot() {
-                if (this.tradingBot) {
-                    clearInterval(this.tradingBot);
-                    this.tradingBot = null;
-                    this.addLog('🤖 Trading bot stopped', 'info');
-                    
-                    document.getElementById('startBotBtn').disabled = false;
-                    document.getElementById('stopBotBtn').disabled = true;
-                }
-            }
-
-            addLog(message, type = 'info') {
-                const log = document.getElementById('tradingLog');
-                const entry = document.createElement('div');
-                entry.className = `log-entry log-${type}`;
-                entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
-                log.appendChild(entry);
-                log.scrollTop = log.scrollHeight;
-            }
-
-            updateStatus(message, type = 'info') {
-                document.getElementById('platformStatus').className = `status ${type}`;
-                document.getElementById('platformStatus').textContent = message;
-            }
+            });
+            
+            cartItems.innerHTML = itemsHTML;
+            cartTotal.textContent = `Total: $${total.toFixed(2)}`;
         }
 
-        // Initialize the platform when page loads
-        let tradingPlatform;
-
-        window.addEventListener('load', () => {
-            tradingPlatform = new F609TradingPlatform();
-        });
-
-        // Global functions for buttons
-        function placeOrder(side) {
-            tradingPlatform.placeOrder(side);
+        // Process Payment
+        function processPayment() {
+            if (currentCart.length === 0) {
+                alert('Please add items to cart first!');
+                return;
+            }
+            
+            const total = currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Simulate payment processing
+            alert(`Payment processed successfully!\nTotal: $${total.toFixed(2)}\n\nOrder completed!`);
+            
+            // Reset cart
+            currentCart = [];
+            updateCartDisplay();
+            
+            // Show success message
+            document.getElementById('cartItems').innerHTML = `
+                <div class="cart-empty" style="color: var(--success);">
+                    <i class="fas fa-check-circle"></i> Payment Successful!
+                </div>
+            `;
         }
 
-        function startTradingBot() {
-            tradingPlatform.startTradingBot();
+        // Initialize POS
+        function initializePOS() {
+            updateCartDisplay();
+            console.log('F609 Universal POS System Ready!');
         }
 
-        function stopTradingBot() {
-            tradingPlatform.stopTradingBot();
-        }
+        // Start the system
+        window.addEventListener('load', initializePOS);
     </script>
 </body>
 </html>
