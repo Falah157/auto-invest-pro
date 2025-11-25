@@ -3,673 +3,517 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F609 - Universal POS System</title>
+    <title>F609 - Maldives Island Marketplace</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Dhivehi', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         :root {
-            --primary: #2563eb;
-            --secondary: #059669;
-            --warning: #d97706;
-            --danger: #dc2626;
-            --success: #10b981;
-            --bg-light: #f8fafc;
-            --bg-white: #ffffff;
-            --text-dark: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
+            --ocean-blue: #0077be;
+            --crystal-water: #00a8ff;
+            --coral: #ff6b6b;
+            --sand: #f7dc6f;
+            --palm-green: #27ae60;
+            --sunset: #e74c3c;
+            --white-sand: #fdfefe;
+            --deep-blue: #1a5276;
         }
 
         body {
-            background: var(--bg-light);
-            color: var(--text-dark);
+            background: linear-gradient(180deg, var(--crystal-water) 0%, var(--ocean-blue) 50%, var(--deep-blue) 100%);
+            color: white;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Maldives Ocean Waves Animation */
+        .waves {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="%230077be"/><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" fill="%230077be"/><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="%230077be"/></svg>');
+            background-size: 1200px 100px;
+            animation: wave 12s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes wave {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 1200px; }
+        }
+
+        /* Cloud Animation */
+        .clouds {
+            position: fixed;
+            top: 50px;
+            width: 100%;
+            height: 200px;
+            z-index: -1;
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+            opacity: 0.8;
+        }
+
+        .cloud:before, .cloud:after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+
+        /* Maldives Traditional Pattern */
+        .maldivian-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 2%, transparent 2.5%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 2%, transparent 2.5%),
+                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.1) 2%, transparent 2.5%);
+            background-size: 100px 100px;
+            z-index: -1;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 2;
         }
 
+        /* Header with Maldives Theme */
         .header {
-            background: var(--bg-white);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             text-align: center;
         }
 
         .logo {
-            font-size: 2.5em;
+            font-size: 3em;
             font-weight: bold;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--sand), var(--white-sand));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .business-selector {
+        .dhivehi-title {
+            font-size: 1.2em;
+            color: var(--white-sand);
+            margin-bottom: 10px;
+        }
+
+        /* Island-style Button Grid */
+        .button-islands {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
-            margin: 20px 0;
+            margin: 30px 0;
         }
 
-        .business-type {
-            background: var(--bg-white);
+        .island-button {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 20px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .business-type:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
+        .island-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
 
-        .business-type.active {
-            border-color: var(--primary);
-            background: linear-gradient(135deg, #dbeafe, #d1fae5);
+        .island-button:hover:before {
+            left: 100%;
         }
 
-        .business-icon {
-            font-size: 2em;
+        .island-button:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .button-icon {
+            font-size: 2.5em;
             margin-bottom: 10px;
-            color: var(--primary);
+            color: var(--white-sand);
         }
 
+        /* Maldives Traditional Art Elements */
+        .maldivian-art {
+            position: absolute;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .art-mosque {
+            top: 10%;
+            right: 5%;
+            font-size: 8em;
+        }
+
+        .art-dhoni {
+            bottom: 20%;
+            left: 5%;
+            font-size: 6em;
+        }
+
+        /* Main Dashboard */
         .dashboard {
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin-top: 20px;
         }
 
-        .sidebar {
-            background: var(--bg-white);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
         .card {
-            background: var(--bg-white);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .card h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
+            color: var(--white-sand);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 1.3em;
         }
 
-        .nav-item {
+        /* Live Chat Bubbles */
+        .chat-bubble {
+            background: rgba(255, 255, 255, 0.2);
             padding: 15px;
-            margin: 5px 0;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            border-radius: 20px;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        .nav-item:hover {
-            background: var(--bg-light);
+        .chat-bubble.seller {
+            background: rgba(247, 220, 111, 0.3);
+            margin-left: 20px;
         }
 
-        .nav-item.active {
-            background: var(--primary);
-            color: white;
+        .chat-bubble.buyer {
+            background: rgba(0, 168, 255, 0.3);
+            margin-right: 20px;
         }
 
-        .product-grid {
+        /* Bank Transfer Styles */
+        .bank-transfer {
+            background: rgba(39, 174, 96, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid var(--palm-green);
+        }
+
+        /* Product Grid - Island Style */
+        .product-islands {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        .product-card {
-            background: var(--bg-light);
-            padding: 15px;
-            border-radius: 10px;
+        .product-island {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 20px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        .product-card:hover {
+        .product-island:hover {
             transform: scale(1.05);
-            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .product-image {
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            border-radius: 10px;
-            margin: 0 auto 10px;
+            width: 80px;
+            height: 80px;
+            background: var(--coral);
+            border-radius: 50%;
+            margin: 0 auto 15px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 2em;
             color: white;
-            font-size: 1.5em;
         }
 
-        .cart {
-            background: var(--bg-white);
+        /* Language Toggle */
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px 10px;
             border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .cart-total {
-            font-size: 1.2em;
-            font-weight: bold;
-            text-align: right;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px solid var(--border);
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
+        .lang-btn.active {
+            background: rgba(255, 255, 255, 0.3);
         }
 
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--bg-white);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .stat-card {
-            background: var(--bg-light);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .action-btn {
-            padding: 10px;
-            background: var(--bg-light);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .action-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .business-presets {
-            display: none;
-        }
-
-        .business-presets.active {
-            display: block;
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .button-islands {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Maldives Background Elements -->
+    <div class="waves"></div>
+    <div class="maldivian-pattern"></div>
+    
+    <!-- Traditional Maldivian Art -->
+    <div class="maldivian-art art-mosque">🕌</div>
+    <div class="maldivian-art art-dhoni">⛵</div>
+
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button class="lang-btn active" onclick="changeLanguage('dv')">ދިވެހި</button>
+        <button class="lang-btn" onclick="changeLanguage('en')">English</button>
+    </div>
+
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="logo">F609 POS</div>
-            <p>Universal Point of Sale System - Works for ANY Business</p>
-            
-            <!-- Business Type Selector -->
-            <div class="business-selector">
-                <div class="business-type active" onclick="selectBusiness('retail')">
-                    <div class="business-icon">🏪</div>
-                    <div>Retail Store</div>
-                </div>
-                <div class="business-type" onclick="selectBusiness('restaurant')">
-                    <div class="business-icon">🍽️</div>
-                    <div>Restaurant</div>
-                </div>
-                <div class="business-type" onclick="selectBusiness('services')">
-                    <div class="business-icon">💼</div>
-                    <div>Services</div>
-                </div>
-                <div class="business-type" onclick="selectBusiness('digital')">
-                    <div class="business-icon">💻</div>
-                    <div>Digital Products</div>
-                </div>
-                <div class="business-type" onclick="selectBusiness('custom')">
-                    <div class="business-icon">⚙️</div>
-                    <div>Custom Business</div>
-                </div>
+            <div class="logo">F609 MARKET</div>
+            <div class="dhivehi-title" id="mainTitle">އެކުވެރި އަތޮޅު ވިޔަފާރި މަންޒަރު</div>
+            <p id="subTitle">Maldives Island Marketplace - Buy & Sell Across All Islands</p>
+        </div>
+
+        <!-- Island-style Button Grid -->
+        <div class="button-islands">
+            <div class="island-button" onclick="openSection('buy')">
+                <div class="button-icon">🛍️</div>
+                <div id="buyBtn">ކޮށްލާ</div>
+                <div>Buy Products</div>
+            </div>
+            <div class="island-button" onclick="openSection('sell')">
+                <div class="button-icon">💰</div>
+                <div id="sellBtn">ވިޔަފާރި</div>
+                <div>Sell Products</div>
+            </div>
+            <div class="island-button" onclick="openSection('chat')">
+                <div class="button-icon">💬</div>
+                <div id="chatBtn">މިންގަނޑު</div>
+                <div>Live Chat</div>
+            </div>
+            <div class="island-button" onclick="openSection('bank')">
+                <div class="button-icon">🏦</div>
+                <div id="bankBtn">ބޭންކު</div>
+                <div>Bank Transfer</div>
+            </div>
+            <div class="island-button" onclick="openSection('profile')">
+                <div class="button-icon">👤</div>
+                <div id="profileBtn">ޕްރޮފައިލް</div>
+                <div>My Profile</div>
+            </div>
+            <div class="island-button" onclick="openSection('orders')">
+                <div class="button-icon">📦</div>
+                <div id="ordersBtn">އަޑަރު</div>
+                <div>My Orders</div>
             </div>
         </div>
 
         <!-- Main Dashboard -->
         <div class="dashboard">
-            <!-- Sidebar Navigation -->
-            <div class="sidebar">
-                <div class="nav-item active">
-                    <i class="fas fa-cash-register"></i>
-                    Point of Sale
-                </div>
-                <div class="nav-item">
-                    <i class="fas fa-box"></i>
-                    Products/Services
-                </div>
-                <div class="nav-item">
-                    <i class="fas fa-users"></i>
-                    Customers
-                </div>
-                <div class="nav-item">
-                    <i class="fas fa-chart-bar"></i>
-                    Analytics
-                </div>
-                <div class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    Settings
-                </div>
-                
-                <!-- Quick Stats -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">$1,245</div>
-                        <div>Today's Sales</div>
+            <!-- Products Section -->
+            <div class="card">
+                <h3><i class="fas fa-shopping-bag"></i> <span id="featuredProducts">ވިޔަފާރި މައްސަލަތައް</span></h3>
+                <div class="product-islands">
+                    <div class="product-island">
+                        <div class="product-image">🐟</div>
+                        <div>ވަނދި މަސް</div>
+                        <div>MVR 85</div>
+                        <button class="island-button" style="padding: 8px 15px; margin-top: 10px;">Buy</button>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number">24</div>
-                        <div>Orders</div>
+                    <div class="product-island">
+                        <div class="product-image">🎨</div>
+                        <div>ދިވެހި އުފަ</div>
+                        <div>MVR 120</div>
+                        <button class="island-button" style="padding: 8px 15px; margin-top: 10px;">Buy</button>
                     </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <button class="action-btn">
-                        <i class="fas fa-plus"></i> Add Product
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-file-invoice"></i> New Invoice
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-user-plus"></i> Add Customer
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-chart-line"></i> Reports
-                    </button>
+                    <div class="product-island">
+                        <div class="product-image">🏝️</div>
+                        <div>ސަފަރު</div>
+                        <div>MVR 250</div>
+                        <button class="island-button" style="padding: 8px 15px; margin-top: 10px;">Buy</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="main-content">
-                <!-- Products/Services Area -->
-                <div class="card">
-                    <h3><i class="fas fa-shopping-cart"></i> Products & Services</h3>
-                    
-                    <!-- Business-specific product presets -->
-                    <div id="retailPreset" class="business-presets active">
-                        <div class="product-grid">
-                            <div class="product-card" onclick="addToCart('T-Shirt', 25)">
-                                <div class="product-image">👕</div>
-                                <div>T-Shirt</div>
-                                <div>$25.00</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Jeans', 45)">
-                                <div class="product-image">👖</div>
-                                <div>Jeans</div>
-                                <div>$45.00</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Shoes', 80)">
-                                <div class="product-image">👟</div>
-                                <div>Shoes</div>
-                                <div>$80.00</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Watch', 120)">
-                                <div class="product-image">⌚</div>
-                                <div>Watch</div>
-                                <div>$120.00</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="restaurantPreset" class="business-presets">
-                        <div class="product-grid">
-                            <div class="product-card" onclick="addToCart('Pizza', 15)">
-                                <div class="product-image">🍕</div>
-                                <div>Pizza</div>
-                                <div>$15.00</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Burger', 12)">
-                                <div class="product-image">🍔</div>
-                                <div>Burger</div>
-                                <div>$12.00</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Pasta', 18)">
-                                <div class="product-image">🍝</div>
-                                <div>Pasta</div>
-                                <div>$18.00</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Salad', 10)">
-                                <div class="product-image">🥗</div>
-                                <div>Salad</div>
-                                <div>$10.00</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="servicesPreset" class="business-presets">
-                        <div class="product-grid">
-                            <div class="product-card" onclick="addToCart('Haircut', 30)">
-                                <div class="product-image">💇</div>
-                                <div>Haircut</div>
-                                <div>$30.00</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Massage', 60)">
-                                <div class="product-image">💆</div>
-                                <div>Massage</div>
-                                <div>$60.00</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Consulting', 100)">
-                                <div class="product-image">💼</div>
-                                <div>Consulting</div>
-                                <div>$100.00</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Repair', 45)">
-                                <div class="product-image">🔧</div>
-                                <div>Repair Service</div>
-                                <div>$45.00</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="digitalPreset" class="business-presets">
-                        <div class="product-grid">
-                            <div class="product-card" onclick="addToCart('E-book', 9.99)">
-                                <div class="product-image">📚</div>
-                                <div>E-book</div>
-                                <div>$9.99</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Course', 49.99)">
-                                <div class="product-image">🎓</div>
-                                <div>Online Course</div>
-                                <div>$49.99</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Software', 29.99)">
-                                <div class="product-image">💻</div>
-                                <div>Software License</div>
-                                <div>$29.99</div>
-                            </div>
-                            <div class="product-card" onclick="addToCart('Template', 14.99)">
-                                <div class="product-image">🎨</div>
-                                <div>Design Template</div>
-                                <div>$14.99</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="customPreset" class="business-presets">
-                        <div class="form-group">
-                            <label>Add Custom Product/Service</label>
-                            <input type="text" id="customProduct" placeholder="Product/Service name">
-                        </div>
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input type="number" id="customPrice" placeholder="0.00">
-                        </div>
-                        <button class="btn btn-primary" onclick="addCustomProduct()">
-                            <i class="fas fa-plus"></i> Add to Catalog
-                        </button>
-                    </div>
+            <!-- Live Chat Section -->
+            <div class="card">
+                <h3><i class="fas fa-comments"></i> <span id="liveChat">ލައިވް ޗެޓް</span></h3>
+                <div class="chat-bubble seller">
+                    <strong>Ahmed - Seller:</strong> ހަމަކަށަވަރުން މިއަދަކީ ރަންމައެވެ
                 </div>
+                <div class="chat-bubble buyer">
+                    <strong>You:</strong> އަޅުގަނޑަށް ބައްޓަން ފެތުރެވޭނެތޯ؟
+                </div>
+                <input type="text" placeholder="Type your message..." style="width: 100%; padding: 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; margin-top: 10px;">
+            </div>
 
-                <!-- Shopping Cart -->
-                <div class="cart">
-                    <h3><i class="fas fa-receipt"></i> Current Order</h3>
-                    <div id="cartItems">
-                        <!-- Cart items will appear here -->
-                        <div class="cart-empty">Cart is empty</div>
-                    </div>
-                    <div class="cart-total" id="cartTotal">
-                        Total: $0.00
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Customer</label>
-                        <select>
-                            <option>Walk-in Customer</option>
-                            <option>John Doe</option>
-                            <option>Jane Smith</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Payment Method</label>
-                        <select>
-                            <option>Cash</option>
-                            <option>Credit Card</option>
-                            <option>Telegram Pay</option>
-                            <option>Bank Transfer</option>
-                        </select>
-                    </div>
+            <!-- Bank Transfer Section -->
+            <div class="card">
+                <h3><i class="fas fa-university"></i> <span id="bankTransfer">ބޭންކު ޓްރާންސްފަރު</span></h3>
+                <div class="bank-transfer">
+                    <h4 id="supportedBanks">ހިމެނޭ ބޭންކުތައް</h4>
+                    <div>• Bank of Maldives (BML)</div>
+                    <div>• Maldives Islamic Bank</div>
+                    <div>• Bank of Ceylon</div>
+                    <div style="margin-top: 15px; color: var(--sand);" id="transferNote">އެންމެ އަޑު ފަރުވާ ފޮތެވެ!</div>
+                </div>
+            </div>
 
-                    <button class="btn btn-success" style="width: 100%;" onclick="processPayment()">
-                        <i class="fas fa-credit-card"></i> Process Payment
-                    </button>
+            <!-- User Profile -->
+            <div class="card">
+                <h3><i class="fas fa-user"></i> <span id="myProfile">މަތި ޕްރޮފައިލް</span></h3>
+                <div style="text-align: center;">
+                    <div style="width: 80px; height: 80px; background: var(--coral); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2em;">👤</div>
+                    <div id="userName">އަހްމަދު (Male')</div>
+                    <div style="color: var(--sand); margin-top: 5px;" id="userStatus">ފަރުވާ ކުރަން ހުރި މީހެއް</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // POS System Core
-        let currentCart = [];
-        let currentBusiness = 'retail';
+        // Language Management
+        let currentLanguage = 'dv';
+        
+        const translations = {
+            dv: {
+                mainTitle: "އެކުވެރި އަތޮޅު ވިޔަފާރި މަންޒަރު",
+                subTitle: "މާލެ އަތޮޅުތަކަށް ވިޔަފާރި ކުރައްވާ މަންޒަރު",
+                buyBtn: "ކޮށްލާ",
+                sellBtn: "ވިޔަފާރި",
+                chatBtn: "މިންގަނޑު",
+                bankBtn: "ބޭންކު",
+                profileBtn: "ޕްރޮފައިލް",
+                ordersBtn: "އަޑަރު",
+                featuredProducts: "ވިޔަފާރި މައްސަލަތައް",
+                liveChat: "ލައިވް ޗެޓް",
+                bankTransfer: "ބޭންކު ޓްރާންސްފަރު",
+                supportedBanks: "ހިމެނޭ ބޭންކުތައް",
+                transferNote: "އެންމެ އަޑު ފަރުވާ ފޮތެވެ!",
+                myProfile: "މަތި ޕްރޮފައިލް",
+                userName: "އަހްމަދު (Male')",
+                userStatus: "ފަރުވާ ކުރަން ހުރި މީހެއް"
+            },
+            en: {
+                mainTitle: "United Islands Marketplace",
+                subTitle: "Maldives Island Marketplace - Buy & Sell Across All Islands",
+                buyBtn: "Buy",
+                sellBtn: "Sell",
+                chatBtn: "Chat",
+                bankBtn: "Bank",
+                profileBtn: "Profile",
+                ordersBtn: "Orders",
+                featuredProducts: "Featured Products",
+                liveChat: "Live Chat",
+                bankTransfer: "Bank Transfer",
+                supportedBanks: "Supported Banks",
+                transferNote: "Fastest Transfer Method!",
+                myProfile: "My Profile",
+                userName: "Ahmed (Male')",
+                userStatus: "Verified Seller"
+            }
+        };
 
-        // Business Type Selection
-        function selectBusiness(type) {
-            currentBusiness = type;
+        function changeLanguage(lang) {
+            currentLanguage = lang;
             
-            // Update UI
-            document.querySelectorAll('.business-type').forEach(el => {
-                el.classList.remove('active');
+            // Update buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
             });
-            event.target.closest('.business-type').classList.add('active');
+            event.target.classList.add('active');
             
-            // Show relevant products
-            document.querySelectorAll('.business-presets').forEach(el => {
-                el.classList.remove('active');
+            // Update all text
+            Object.keys(translations[lang]).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = translations[lang][key];
+                }
             });
-            document.getElementById(type + 'Preset').classList.add('active');
         }
 
-        // Add to Cart
-        function addToCart(name, price) {
-            const existingItem = currentCart.find(item => item.name === name);
-            
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                currentCart.push({
-                    name: name,
-                    price: price,
-                    quantity: 1
-                });
-            }
-            
-            updateCartDisplay();
+        // Section Navigation
+        function openSection(section) {
+            alert(`Opening ${section} section...`);
+            // In real implementation, this would show different content
         }
 
-        // Add Custom Product
-        function addCustomProduct() {
-            const name = document.getElementById('customProduct').value;
-            const price = parseFloat(document.getElementById('customPrice').value);
-            
-            if (name && price) {
-                addToCart(name, price);
-                document.getElementById('customProduct').value = '';
-                document.getElementById('customPrice').value = '';
-            }
+        // Initialize Maldives Theme
+        function initializeMaldivesTheme() {
+            console.log('🏝️ F609 Maldives Marketplace Ready!');
+            console.log('🌊 Crystal clear beach theme activated');
+            console.log('🕌 Maldivian traditional art loaded');
+            console.log('🏦 Bank transfer system ready');
+            console.log('💬 Live chat system initialized');
         }
 
-        // Update Cart Display
-        function updateCartDisplay() {
-            const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
-            
-            if (currentCart.length === 0) {
-                cartItems.innerHTML = '<div class="cart-empty">Cart is empty</div>';
-                cartTotal.textContent = 'Total: $0.00';
-                return;
-            }
-            
-            let total = 0;
-            let itemsHTML = '';
-            
-            currentCart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                itemsHTML += `
-                    <div class="cart-item">
-                        <div>
-                            <strong>${item.name}</strong>
-                            <div>$${item.price} x ${item.quantity}</div>
-                        </div>
-                        <div>$${itemTotal.toFixed(2)}</div>
-                    </div>
-                `;
-            });
-            
-            cartItems.innerHTML = itemsHTML;
-            cartTotal.textContent = `Total: $${total.toFixed(2)}`;
-        }
-
-        // Process Payment
-        function processPayment() {
-            if (currentCart.length === 0) {
-                alert('Please add items to cart first!');
-                return;
-            }
-            
-            const total = currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            // Simulate payment processing
-            alert(`Payment processed successfully!\nTotal: $${total.toFixed(2)}\n\nOrder completed!`);
-            
-            // Reset cart
-            currentCart = [];
-            updateCartDisplay();
-            
-            // Show success message
-            document.getElementById('cartItems').innerHTML = `
-                <div class="cart-empty" style="color: var(--success);">
-                    <i class="fas fa-check-circle"></i> Payment Successful!
-                </div>
-            `;
-        }
-
-        // Initialize POS
-        function initializePOS() {
-            updateCartDisplay();
-            console.log('F609 Universal POS System Ready!');
-        }
-
-        // Start the system
-        window.addEventListener('load', initializePOS);
+        // Start the platform
+        window.addEventListener('load', initializeMaldivesTheme);
     </script>
 </body>
 </html>
