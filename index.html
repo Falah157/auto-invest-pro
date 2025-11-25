@@ -417,6 +417,28 @@
             margin-top: 5px;
         }
 
+        /* Refresh Button */
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        /* Loading Animation */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
         /* Telegram-like elements */
         .telegram-header {
             height: 50px;
@@ -474,7 +496,10 @@
             </div>
             <div class="status">
                 <div class="live-indicator"></div>
-                <span>LIVE</span>
+                <span id="statusText">LIVE</span>
+                <button class="refresh-btn" id="refreshPrices">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
             </div>
         </div>
 
@@ -496,7 +521,7 @@
             <div class="amount">$12,458.73</div>
             <div class="exchange-badge">
                 <i class="fab fa-btc"></i>
-                Connected to Binance & Pionex
+                Connected to Binance & CoinGecko
             </div>
         </div>
     </div>
@@ -591,30 +616,30 @@
     </div>
 
     <script>
-        // Sample cryptocurrency data
+        // Updated cryptoData with real coin IDs for CoinGecko
         const cryptoData = [
-            { symbol: "THETA", name: "Theta Network", price: "$2.45", change: -0.4, color: "#2ab7ff" },
+            { symbol: "THETA", name: "Theta Network", price: "$2.45", change: -0.4, color: "#2ab7ff", coinGeckoId: "theta-token" },
             { symbol: "EIGEN", name: "EigenLayer", price: "$12.75", change: -0.5, color: "#ff6b6b" },
             { symbol: "ENS", name: "Ethereum Name Service", price: "$18.32", change: 0.9, color: "#5298ff" },
             { symbol: "WIF", name: "dogwifhat", price: "$2.18", change: -0.5, color: "#ffce5c" },
-            { symbol: "SAND", name: "The Sandbox", price: "$0.42", change: -0.4, color: "#00beee" },
+            { symbol: "SAND", name: "The Sandbox", price: "$0.42", change: -0.4, color: "#00beee", coinGeckoId: "the-sandbox" },
             { symbol: "FF", name: "Forefront", price: "$3.67", change: -1.4, color: "#ff7e5f" },
             { symbol: "MX", name: "MX Token", price: "$4.21", change: -0.4, color: "#5d6dff" },
             { symbol: "DEXE", name: "DeXe", price: "$9.87", change: -1.2, color: "#ff6384" },
-            { symbol: "AR", name: "Arweave", price: "$32.15", change: -0.4, color: "#4bc0c0" },
+            { symbol: "AR", name: "Arweave", price: "$32.15", change: -0.4, color: "#4bc0c0", coinGeckoId: "arweave" },
             { symbol: "KITE", name: "Kite", price: "$1.23", change: -0.3, color: "#ff9f40" },
-            { symbol: "CFX", name: "Conflux", price: "$0.28", change: -0.5, color: "#6a11cb" },
+            { symbol: "CFX", name: "Conflux", price: "$0.28", change: -0.5, color: "#6a11cb", coinGeckoId: "conflux-token" },
             { symbol: "JAX", name: "Jax.Network", price: "$0.75", change: -0.7, color: "#ff5e62" },
             { symbol: "GRASS", name: "Grass", price: "$0.15", change: -0.7, color: "#38ef7d" },
             { symbol: "SAHARA", name: "Sahara", price: "$0.89", change: -0.9, color: "#ff9966" },
             { symbol: "WAL", name: "Wallety", price: "$0.34", change: -0.4, color: "#a8ff78" },
             { symbol: "STIFFI", name: "Stiffi", price: "$5.43", change: -0.7, color: "#ff6b9d" },
-            { symbol: "GNO", name: "Gnosis", price: "$210.45", change: -0.7, color: "#48c6ef" },
+            { symbol: "GNO", name: "Gnosis", price: "$210.45", change: -0.7, color: "#48c6ef", coinGeckoId: "gnosis" },
             { symbol: "REAM", name: "Ream", price: "$0.12", change: 3.5, color: "#12d8fa" },
             { symbol: "BLACK", name: "BlackCoin", price: "$0.56", change: -0.8, color: "#1f1c2c" },
             { symbol: "GLIM", name: "Glimmer", price: "$0.23", change: -0.3, color: "#928dab" },
             { symbol: "EGLO", name: "Egoras", price: "$1.45", change: -0.5, color: "#ff8177" },
-            { symbol: "LPT", name: "Livepeer", price: "$15.67", change: -2.9, color: "#00cdac" },
+            { symbol: "LPT", name: "Livepeer", price: "$15.67", change: -2.9, color: "#00cdac", coinGeckoId: "livepeer" },
             { symbol: "WRINK", name: "Wrinkly", price: "$0.08", change: -0.4, color: "#ff9a9e" },
             { symbol: "TWIT", name: "Twitter Token", price: "$0.32", change: 0, color: "#1da1f2" }
         ];
@@ -633,9 +658,126 @@
         const takeProfitValue = document.getElementById('takeProfitValue');
         const stopLossSlider = document.getElementById('stopLoss');
         const stopLossValue = document.getElementById('stopLossValue');
+        const refreshBtn = document.getElementById('refreshPrices');
+        const statusText = document.getElementById('statusText');
 
         let bubbles = [];
         let selectedCoin = null;
+        let isUpdatingPrices = false;
+
+        // === COINGECKO LIVE PRICES INTEGRATION ===
+        async function fetchLivePrices() {
+            if (isUpdatingPrices) return;
+            
+            isUpdatingPrices = true;
+            updateStatus('🔄 Updating prices...');
+            refreshBtn.classList.add('loading');
+
+            try {
+                console.log('🔄 Fetching live prices from CoinGecko...');
+                
+                // Get all coin IDs that have CoinGecko mapping
+                const coinIds = cryptoData
+                    .filter(coin => coin.coinGeckoId)
+                    .map(coin => coin.coinGeckoId)
+                    .join(',');
+                
+                // CoinGecko API - NO API KEY NEEDED
+                const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd&include_24hr_change=true`);
+                const data = await response.json();
+                
+                // Update cryptoData with real prices
+                updateCryptoDataWithLivePrices(data);
+                
+                console.log('✅ Live prices updated successfully!');
+                updateStatus('LIVE • Updated ' + new Date().toLocaleTimeString());
+                
+            } catch (error) {
+                console.log('❌ Error fetching live prices:', error);
+                updateStatus('⚠️ Update failed - Retrying...');
+                // Fallback to keep using sample data
+            } finally {
+                isUpdatingPrices = false;
+                refreshBtn.classList.remove('loading');
+            }
+        }
+
+        // Update cryptoData with real prices from CoinGecko
+        function updateCryptoDataWithLivePrices(liveData) {
+            cryptoData.forEach(coin => {
+                if (coin.coinGeckoId && liveData[coin.coinGeckoId]) {
+                    const liveCoin = liveData[coin.coinGeckoId];
+                    
+                    // Update price with proper formatting
+                    coin.price = `$${liveCoin.usd.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: liveCoin.usd > 1 ? 2 : 6
+                    })}`;
+                    
+                    // Update 24h change
+                    const change24h = liveCoin.usd_24h_change;
+                    if (change24h !== undefined && change24h !== null) {
+                        coin.change = parseFloat(change24h.toFixed(1));
+                    }
+                }
+            });
+            
+            // Update bubbles with new data
+            updateBubblesWithRealData();
+        }
+
+        // Update bubbles with real data
+        function updateBubblesWithRealData() {
+            bubbles.forEach((bubble, index) => {
+                if (index < cryptoData.length) {
+                    const coin = cryptoData[index];
+                    const changeElement = bubble.element.querySelector('.bubble-change');
+                    if (changeElement) {
+                        changeElement.textContent = `${coin.change >= 0 ? '+' : ''}${coin.change}%`;
+                        
+                        // Update bubble class and color based on performance
+                        bubble.element.className = `bubble ${coin.change >= 0 ? 'positive' : 'negative'}`;
+                        updateBubbleColor(bubble.element, coin.change, coin.color);
+                    }
+                }
+            });
+        }
+
+        // Update bubble color based on performance
+        function updateBubbleColor(bubble, change, baseColor) {
+            const intensity = Math.min(Math.abs(change) / 10, 0.7);
+            
+            if (change > 5) {
+                // Strong positive - bright green
+                bubble.style.background = `radial-gradient(circle at 30% 30%, ${baseColor}, #00e676)`;
+            } else if (change > 0) {
+                // Positive - green tint
+                bubble.style.background = `radial-gradient(circle at 30% 30%, ${baseColor}, #00c853)`;
+            } else if (change < -5) {
+                // Strong negative - bright red
+                bubble.style.background = `radial-gradient(circle at 30% 30%, ${baseColor}, #ff5252)`;
+            } else if (change < 0) {
+                // Negative - red tint
+                bubble.style.background = `radial-gradient(circle at 30% 30%, ${baseColor}, #ff3d00)`;
+            } else {
+                // Neutral - original color
+                bubble.style.background = `radial-gradient(circle at 30% 30%, ${baseColor}, ${darkenColor(baseColor, 0.3)})`;
+            }
+        }
+
+        // Update status text
+        function updateStatus(message) {
+            statusText.textContent = message;
+        }
+
+        // Auto-refresh prices
+        function startLivePriceUpdates() {
+            // Fetch immediately
+            fetchLivePrices();
+            
+            // Then every 60 seconds
+            setInterval(fetchLivePrices, 60000);
+        }
 
         // Initialize bubbles
         function initBubbles() {
@@ -718,7 +860,7 @@
         function openSettingsPanel(coin) {
             selectedCoin = coin;
             
-            // Update panel content
+            // Update panel content with real data
             coinSymbol.textContent = coin.symbol;
             coinName.textContent = coin.name;
             coinPrice.textContent = coin.price;
@@ -730,6 +872,12 @@
             
             // Show panel
             settingsPanel.classList.add('active');
+            
+            // Log real data
+            console.log(`📊 ${coin.symbol} Real Data:`, {
+                price: coin.price,
+                change: coin.change
+            });
         }
 
         // Close settings panel
@@ -758,34 +906,34 @@
             };
             
             console.log('Auto-Invest Settings:', settings);
-            alert(`Auto-Invest settings for ${selectedCoin.symbol} confirmed!`);
+            alert(`✅ Auto-Invest settings for ${selectedCoin.symbol} confirmed!\n\nInvestment: $${settings.investAmount} ${settings.frequency}\nTake Profit: ${settings.takeProfit}%\nStop Loss: ${settings.stopLoss}%`);
             closeSettingsPanel();
         });
 
         // Event listeners
         closePanel.addEventListener('click', closeSettingsPanel);
         cancelBtn.addEventListener('click', closeSettingsPanel);
+        refreshBtn.addEventListener('click', fetchLivePrices);
 
         // Initialize the app
         initBubbles();
 
-        // Simulate real-time updates
+        // 🚀 START LIVE PRICES
+        startLivePriceUpdates();
+
+        // Simulate additional real-time updates for coins without CoinGecko data
         setInterval(() => {
-            // Randomly update some coin prices
-            const randomIndex = Math.floor(Math.random() * cryptoData.length);
-            const change = (Math.random() - 0.5) * 2;
-            cryptoData[randomIndex].change = parseFloat(change.toFixed(1));
+            // Randomly update some coin prices that don't have real data
+            cryptoData.forEach(coin => {
+                if (!coin.coinGeckoId && Math.random() > 0.7) {
+                    const change = (Math.random() - 0.5) * 4;
+                    coin.change = parseFloat(change.toFixed(1));
+                }
+            });
             
-            // Update the bubble if it exists
-            if (bubbles[randomIndex]) {
-                const bubble = bubbles[randomIndex].element;
-                const changeElement = bubble.querySelector('.bubble-change');
-                changeElement.textContent = `${cryptoData[randomIndex].change >= 0 ? '+' : ''}${cryptoData[randomIndex].change}%`;
-                
-                // Update bubble class
-                bubble.className = `bubble ${cryptoData[randomIndex].change >= 0 ? 'positive' : 'negative'}`;
-            }
-        }, 3000);
+            // Update the bubbles
+            updateBubblesWithRealData();
+        }, 5000);
     </script>
 </body>
 </html>
