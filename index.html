@@ -438,19 +438,19 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Inventory Value</div>
-                <div class="stat-value primary">$4,526</div>
+                <div class="stat-value primary" id="totalInventoryValue">$4,526</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Team Profit</div>
-                <div class="stat-value accent">$1,842</div>
+                <div class="stat-value accent" id="totalTeamProfit">$1,842</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Team Members</div>
-                <div class="stat-value secondary">8</div>
+                <div class="stat-value secondary" id="teamMembersCount">8</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">My Balance</div>
-                <div class="stat-value warning">$538</div>
+                <div class="stat-value warning" id="myBalance">$538</div>
             </div>
         </div>
 
@@ -498,7 +498,7 @@
             <div class="card">
                 <h3><i class="fas fa-table"></i> Current Inventory</h3>
                 <div class="swipe-container">
-                    <table class="mobile-table">
+                    <table class="mobile-table" id="inventoryTable">
                         <thead>
                             <tr>
                                 <th>Item</th>
@@ -506,37 +506,11 @@
                                 <th>Price</th>
                                 <th>Profit</th>
                                 <th>My Share</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>cigarette light</td>
-                                <td>5</td>
-                                <td>$145.00</td>
-                                <td class="positive">$130.00</td>
-                                <td class="accent">$65.00</td>
-                            </tr>
-                            <tr>
-                                <td>cigarette hard</td>
-                                <td>10</td>
-                                <td>$145.00</td>
-                                <td class="positive">$260.00</td>
-                                <td class="accent">$130.00</td>
-                            </tr>
-                            <tr>
-                                <td>paper</td>
-                                <td>0</td>
-                                <td>$0.00</td>
-                                <td>$0.00</td>
-                                <td>$0.00</td>
-                            </tr>
-                            <tr>
-                                <td>filter</td>
-                                <td>24</td>
-                                <td>$45.00</td>
-                                <td class="positive">$534.00</td>
-                                <td class="accent">$267.00</td>
-                            </tr>
+                        <tbody id="inventoryTableBody">
+                            <!-- Inventory items will be dynamically added here -->
                         </tbody>
                     </table>
                 </div>
@@ -579,29 +553,8 @@
 
             <div class="card">
                 <h3><i class="fas fa-users"></i> Team Members</h3>
-                <div class="team-member">
-                    <div class="member-avatar">JD</div>
-                    <div class="member-info">
-                        <div class="member-name">John Doe</div>
-                        <div class="member-role">Manager</div>
-                    </div>
-                    <div class="member-balance">$842.50</div>
-                </div>
-                <div class="team-member">
-                    <div class="member-avatar">SJ</div>
-                    <div class="member-info">
-                        <div class="member-name">Sarah Johnson</div>
-                        <div class="member-role">Assistant Manager</div>
-                    </div>
-                    <div class="member-balance">$638.25</div>
-                </div>
-                <div class="team-member">
-                    <div class="member-avatar">MB</div>
-                    <div class="member-info">
-                        <div class="member-name">Mike Brown</div>
-                        <div class="member-role">Sales</div>
-                    </div>
-                    <div class="member-balance">$362.00</div>
+                <div id="teamMembersList">
+                    <!-- Team members will be dynamically added here -->
                 </div>
             </div>
         </div>
@@ -611,7 +564,7 @@
             <div class="card">
                 <h3><i class="fas fa-exchange-alt"></i> Recent Transactions</h3>
                 <div class="swipe-container">
-                    <table class="mobile-table">
+                    <table class="mobile-table" id="transactionsTable">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -620,31 +573,8 @@
                                 <th>Balance</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>30/10/2025</td>
-                                <td><span class="accent">Income</span></td>
-                                <td class="positive">+$65.00</td>
-                                <td class="warning">$184.00</td>
-                            </tr>
-                            <tr>
-                                <td>30/10/2025</td>
-                                <td><span class="accent">Income</span></td>
-                                <td class="positive">+$130.00</td>
-                                <td class="warning">$314.00</td>
-                            </tr>
-                            <tr>
-                                <td>30/10/2025</td>
-                                <td><span class="accent">Income</span></td>
-                                <td class="positive">+$267.00</td>
-                                <td class="warning">$581.00</td>
-                            </tr>
-                            <tr>
-                                <td>28/10/2025</td>
-                                <td><span class="danger">Expense</span></td>
-                                <td class="negative">-$300.00</td>
-                                <td class="warning">$314.00</td>
-                            </tr>
+                        <tbody id="transactionsTableBody">
+                            <!-- Transactions will be dynamically added here -->
                         </tbody>
                     </table>
                 </div>
@@ -701,6 +631,35 @@
     </div>
 
     <script>
+        // Data storage
+        let inventory = [
+            { id: 1, name: 'cigarette light', quantity: 5, basePrice: 595, salePrice: 145, profit: 130, myShare: 65 },
+            { id: 2, name: 'cigarette hard', quantity: 10, basePrice: 1190, salePrice: 145, profit: 260, myShare: 130 },
+            { id: 3, name: 'paper', quantity: 0, basePrice: 0, salePrice: 0, profit: 0, myShare: 0 },
+            { id: 4, name: 'filter', quantity: 24, basePrice: 546, salePrice: 45, profit: 534, myShare: 267 }
+        ];
+
+        let teamMembers = [
+            { id: 1, name: 'John Doe', role: 'Manager', share: 20, balance: 842.50, initials: 'JD' },
+            { id: 2, name: 'Sarah Johnson', role: 'Assistant Manager', share: 15, balance: 638.25, initials: 'SJ' },
+            { id: 3, name: 'Mike Brown', role: 'Sales', share: 10, balance: 362.00, initials: 'MB' }
+        ];
+
+        let transactions = [
+            { id: 1, date: '30/10/2025', type: 'Income', description: 'Profit share - cigarette light', amount: 65.00, balance: 184.00 },
+            { id: 2, date: '30/10/2025', type: 'Income', description: 'Profit share - cigarette hard', amount: 130.00, balance: 314.00 },
+            { id: 3, date: '30/10/2025', type: 'Income', description: 'Profit share - filter', amount: 267.00, balance: 581.00 },
+            { id: 4, date: '28/10/2025', type: 'Expense', description: 'Withdrawal', amount: -300.00, balance: 314.00 }
+        ];
+
+        // Initialize the app
+        function initApp() {
+            updateInventoryTable();
+            updateTeamMembersList();
+            updateTransactionsTable();
+            updateStats();
+        }
+
         // Tab switching functionality
         function switchTab(tabName) {
             // Hide all tab contents
@@ -727,17 +686,35 @@
         // Add new item to inventory
         function addItem() {
             const name = document.getElementById('itemName').value;
-            const quantity = document.getElementById('itemQuantity').value;
-            const basePrice = document.getElementById('itemBasePrice').value;
-            const salePrice = document.getElementById('itemSalePrice').value;
+            const quantity = parseInt(document.getElementById('itemQuantity').value);
+            const basePrice = parseFloat(document.getElementById('itemBasePrice').value);
+            const salePrice = parseFloat(document.getElementById('itemSalePrice').value);
             
             if (!name || !quantity || !basePrice || !salePrice) {
                 alert('Please fill in all fields');
                 return;
             }
             
-            // In a real application, you would send this data to a server
-            alert(`Item "${name}" added successfully!`);
+            // Calculate profit and share (50/50 split)
+            const profit = (salePrice - (basePrice / quantity)) * quantity;
+            const myShare = profit / 2;
+            
+            // Add to inventory
+            const newItem = {
+                id: Date.now(),
+                name: name,
+                quantity: quantity,
+                basePrice: basePrice,
+                salePrice: salePrice,
+                profit: profit,
+                myShare: myShare
+            };
+            
+            inventory.push(newItem);
+            
+            // Update UI
+            updateInventoryTable();
+            updateStats();
             
             // Clear form
             document.getElementById('itemName').value = '';
@@ -746,39 +723,155 @@
             document.getElementById('itemSalePrice').value = '';
             
             // Add to log
-            addLog(`New item: ${name} (Qty: ${quantity})`, 'success');
+            addLog(`New item added: ${name} (Qty: ${quantity})`, 'success');
+            
+            alert(`Item "${name}" added successfully!`);
+        }
+
+        // Update inventory table
+        function updateInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+            
+            inventory.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${item.salePrice.toFixed(2)}</td>
+                    <td class="positive">$${item.profit.toFixed(2)}</td>
+                    <td class="accent">$${item.myShare.toFixed(2)}</td>
+                    <td>
+                        <button class="btn-danger btn-small" onclick="removeItem(${item.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Remove item from inventory
+        function removeItem(itemId) {
+            if (confirm('Are you sure you want to remove this item?')) {
+                inventory = inventory.filter(item => item.id !== itemId);
+                updateInventoryTable();
+                updateStats();
+                addLog('Item removed from inventory', 'info');
+            }
         }
 
         // Add new team member
         function addTeamMember() {
             const name = document.getElementById('memberName').value;
             const role = document.getElementById('memberRole').value;
-            const share = document.getElementById('memberShare').value;
+            const share = parseInt(document.getElementById('memberShare').value);
             
             if (!name) {
                 alert('Please enter a name for the team member');
                 return;
             }
             
-            // In a real application, you would send this data to a server
-            alert(`Team member "${name}" added successfully!`);
+            // Generate initials
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            // Add to team members
+            const newMember = {
+                id: Date.now(),
+                name: name,
+                role: role,
+                share: share,
+                balance: 0,
+                initials: initials
+            };
+            
+            teamMembers.push(newMember);
+            
+            // Update UI
+            updateTeamMembersList();
+            updateStats();
             
             // Clear form
             document.getElementById('memberName').value = '';
             
             // Add to log
-            addLog(`New team member: ${name}`, 'success');
+            addLog(`New team member added: ${name} (${role})`, 'success');
+            
+            alert(`Team member "${name}" added successfully!`);
+        }
+
+        // Update team members list
+        function updateTeamMembersList() {
+            const container = document.getElementById('teamMembersList');
+            container.innerHTML = '';
+            
+            teamMembers.forEach(member => {
+                const memberElement = document.createElement('div');
+                memberElement.className = 'team-member';
+                memberElement.innerHTML = `
+                    <div class="member-avatar">${member.initials}</div>
+                    <div class="member-info">
+                        <div class="member-name">${member.name}</div>
+                        <div class="member-role">${member.role} (${member.share}% share)</div>
+                    </div>
+                    <div class="member-balance">$${member.balance.toFixed(2)}</div>
+                `;
+                container.appendChild(memberElement);
+            });
+        }
+
+        // Update transactions table
+        function updateTransactionsTable() {
+            const tbody = document.getElementById('transactionsTableBody');
+            tbody.innerHTML = '';
+            
+            transactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${transaction.date}</td>
+                    <td><span class="${transaction.type === 'Income' ? 'accent' : 'danger'}">${transaction.type}</span></td>
+                    <td class="${transaction.amount >= 0 ? 'positive' : 'negative'}">${transaction.amount >= 0 ? '+' : ''}$${transaction.amount.toFixed(2)}</td>
+                    <td class="warning">$${transaction.balance.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update stats
+        function updateStats() {
+            // Calculate totals
+            const totalInventoryValue = inventory.reduce((sum, item) => sum + (item.salePrice * item.quantity), 0);
+            const totalTeamProfit = inventory.reduce((sum, item) => sum + item.profit, 0);
+            const myBalance = inventory.reduce((sum, item) => sum + item.myShare, 0);
+            
+            // Update UI
+            document.getElementById('totalInventoryValue').textContent = `$${totalInventoryValue.toFixed(0)}`;
+            document.getElementById('totalTeamProfit').textContent = `$${totalTeamProfit.toFixed(0)}`;
+            document.getElementById('teamMembersCount').textContent = teamMembers.length;
+            document.getElementById('myBalance').textContent = `$${myBalance.toFixed(0)}`;
         }
 
         // Update prices (demo function)
         function updatePrices() {
-            addLog('Prices updated', 'info');
+            // Increase all sale prices by 5%
+            inventory.forEach(item => {
+                if (item.salePrice > 0) {
+                    item.salePrice = item.salePrice * 1.05;
+                    // Recalculate profit
+                    item.profit = (item.salePrice - (item.basePrice / item.quantity)) * item.quantity;
+                    item.myShare = item.profit / 2;
+                }
+            });
+            
+            updateInventoryTable();
+            updateStats();
+            addLog('Prices updated by 5%', 'info');
             alert('Prices updated successfully!');
         }
 
         // Export data (demo function)
         function exportData() {
-            addLog('Data exported', 'info');
+            addLog('Data exported to CSV', 'info');
             alert('Data exported successfully!');
         }
 
@@ -795,9 +888,10 @@
             log.scrollTop = log.scrollHeight;
         }
 
-        // Initialize with some demo logs
+        // Initialize the app when page loads
         window.addEventListener('load', () => {
-            addLog('NEON INVENTORY started', 'info');
+            initApp();
+            addLog('NEON INVENTORY system started', 'info');
         });
     </script>
 </body>
