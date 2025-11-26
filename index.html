@@ -1121,4 +1121,907 @@
                 <div>Reports</div>
             </div>
         </div>
-    </
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div class="modal" id="resetModal">
+        <div class="modal-content">
+            <div class="reset-confirm">
+                <h3><i class="fas fa-exclamation-triangle warning"></i> Reset All Data</h3>
+                <p>Are you sure you want to reset all data? This action cannot be undone!</p>
+                <div class="reset-buttons">
+                    <button class="btn-danger" onclick="resetAllData()">Yes, Reset Everything</button>
+                    <button class="btn-success" onclick="closeResetModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentCart = [];
+        let currentPaymentMethod = 'cash';
+        let financialChart = null;
+        let analyticsChart = null;
+
+        // Login function
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const role = document.getElementById('userRole').value;
+            
+            // Simple validation - in real app, you'd check against a database
+            if (email && password) {
+                // Store user info
+                localStorage.setItem('currentUser', JSON.stringify({
+                    email: email,
+                    role: role,
+                    name: email.split('@')[0]
+                }));
+                
+                // Show main app
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                // Update UI with user info
+                document.getElementById('userGreeting').textContent = `Welcome, ${email.split('@')[0]}!`;
+                
+                // Initialize app data
+                initializeAppData();
+                loadAllData();
+                
+                addLogEntry(`User ${email} logged in as ${role}`, 'info');
+            } else {
+                alert('Please enter both email and password');
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+            
+            // Clear form fields
+            document.getElementById('loginEmail').value = 'admin@neonpos.com';
+            document.getElementById('loginPassword').value = 'password';
+            document.getElementById('userRole').value = 'admin';
+        }
+
+        // Check if user is already logged in
+        function checkLoginStatus() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const user = JSON.parse(currentUser);
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('userGreeting').textContent = `Welcome, ${user.name}!`;
+                initializeAppData();
+                loadAllData();
+            }
+        }
+
+        // Initialize app data structure
+        function initializeAppData() {
+            if (!localStorage.getItem('products')) {
+                const defaultProducts = [
+                    { id: 1, name: "Laptop", price: 999.99, cost: 650.00, stock: 10, barcode: "LP001" },
+                    { id: 2, name: "Smartphone", price: 699.99, cost: 450.00, stock: 25, barcode: "SP002" },
+                    { id: 3, name: "Headphones", price: 149.99, cost: 80.00, stock: 50, barcode: "HP003" },
+                    { id: 4, name: "Tablet", price: 449.99, cost: 280.00, stock: 15, barcode: "TB004" },
+                    { id: 5, name: "Smart Watch", price: 199.99, cost: 120.00, stock: 30, barcode: "SW005" },
+                    { id: 6, name: "Keyboard", price: 79.99, cost: 35.00, stock: 40, barcode: "KB006" }
+                ];
+                localStorage.setItem('products', JSON.stringify(defaultProducts));
+            }
+            
+            if (!localStorage.getItem('sellers')) {
+                const defaultSellers = [
+                    { id: 1, name: "John Smith", phone: "555-0101", email: "john@example.com", balance: 0 },
+                    { id: 2, name: "Sarah Johnson", phone: "555-0102", email: "sarah@example.com", balance: 0 },
+                    { id: 3, name: "Mike Davis", phone: "555-0103", email: "mike@example.com", balance: 0 }
+                ];
+                localStorage.setItem('sellers', JSON.stringify(defaultSellers));
+            }
+            
+            if (!localStorage.getItem('orders')) {
+                localStorage.setItem('orders', JSON.stringify([]));
+            }
+            
+            if (!localStorage.getItem('financials')) {
+                localStorage.setItem('financials', JSON.stringify({
+                    totalBuyingCost: 0,
+                    totalSellingValue: 0,
+                    totalProfit: 0,
+                    myProfit: 0,
+                    todaySales: 0,
+                    todayOrders: 0
+                }));
+            }
+        }
+
+        // Load all data into UI
+        function loadAllData() {
+            updateFinancialSummary();
+            loadProducts();
+            loadSellers();
+            loadOrders();
+            updateDashboard();
+            initializeCharts();
+        }
+
+        // Update financial summary
+        function updateFinancialSummary() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
+            
+            let totalBuyingCost = 0;
+            let totalSellingValue = 0;
+            let todaySales = 0;
+            let todayOrders = 0;
+            const today = new Date().toDateString();
+            
+            // Calculate inventory values
+            products.forEach(product => {
+                totalBuyingCost += product.cost * product.stock;
+                totalSellingValue += product.price * product.stock;
+            });
+            
+            // Calculate today's sales
+            orders.forEach(order => {
+                if (new Date(order.date).toDateString() === today) {
+                    todaySales += order.total;
+                    todayOrders++;
+                }
+            });
+            
+            const totalProfit = totalSellingValue - totalBuyingCost;
+            const myProfit = totalProfit * 0.5;
+            
+            // Update UI
+            document.getElementById('totalBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
+            document.getElementById('totalSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('totalProfit').textContent = `$${totalProfit.toFixed(2)}`;
+            document.getElementById('myProfit').textContent = `$${myProfit.toFixed(2)}`;
+            document.getElementById('todaySales').textContent = `$${todaySales.toFixed(2)}`;
+            document.getElementById('todayOrders').textContent = todayOrders;
+            document.getElementById('activeSellers').textContent = sellers.length;
+            
+            // Update profit distribution
+            document.getElementById('myTotalProfit').textContent = `$${(todaySales * 0.5).toFixed(2)}`;
+            document.getElementById('sellerTotalProfit').textContent = `$${(todaySales * 0.5).toFixed(2)}`;
+            
+            // Update financial details
+            document.getElementById('detailBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
+            document.getElementById('detailSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('detailSalesRevenue').textContent = `$${todaySales.toFixed(2)}`;
+            document.getElementById('detailMyProfit').textContent = `$${(todaySales * 0.5).toFixed(2)}`;
+            document.getElementById('detailSellerProfit').textContent = `$${(todaySales * 0.5).toFixed(2)}`;
+            
+            const profitMargin = totalBuyingCost > 0 ? ((totalSellingValue - totalBuyingCost) / totalBuyingCost * 100) : 0;
+            document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
+            
+            // Update low stock count
+            const lowStockCount = products.filter(p => p.stock < 10).length;
+            document.getElementById('lowStockCount').textContent = lowStockCount;
+            
+            // Update low stock alerts
+            updateLowStockAlerts();
+        }
+
+        // Update low stock alerts
+        function updateLowStockAlerts() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const lowStockProducts = products.filter(p => p.stock < 10);
+            const container = document.getElementById('lowStockAlerts');
+            
+            container.innerHTML = '';
+            
+            if (lowStockProducts.length === 0) {
+                container.innerHTML = '<div class="status info">No low stock items</div>';
+                return;
+            }
+            
+            lowStockProducts.forEach(product => {
+                const alert = document.createElement('div');
+                alert.className = 'status info';
+                alert.innerHTML = `<i class="fas fa-exclamation-triangle warning"></i> ${product.name} - Only ${product.stock} left in stock`;
+                container.appendChild(alert);
+            });
+        }
+
+        // Load products
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const productGrid = document.getElementById('productGrid');
+            const productsTableBody = document.getElementById('productsTableBody');
+            
+            // Clear existing content
+            productGrid.innerHTML = '';
+            productsTableBody.innerHTML = '';
+            
+            if (products.length === 0) {
+                productGrid.innerHTML = '<div class="status info">No products available</div>';
+                productsTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No products available</td></tr>';
+                return;
+            }
+            
+            // Populate product grid for POS
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => addToCart(product.id);
+                
+                productCard.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">$${product.price.toFixed(2)}</div>
+                    <div class="product-stock">Stock: ${product.stock}</div>
+                `;
+                
+                productGrid.appendChild(productCard);
+            });
+            
+            // Populate products table for inventory management
+            products.forEach(product => {
+                const profit = product.price - product.cost;
+                const profitMargin = product.cost > 0 ? (profit / product.cost * 100) : 0;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>$${product.cost.toFixed(2)}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td class="${profit >= 0 ? 'positive' : 'negative'}">$${profit.toFixed(2)} (${profitMargin.toFixed(1)}%)</td>
+                    <td>${product.stock}</td>
+                    <td>
+                        <button class="btn-small btn-warning" onclick="editProduct(${product.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-small btn-danger" onclick="deleteProduct(${product.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                productsTableBody.appendChild(row);
+            });
+        }
+
+        // Load sellers
+        function loadSellers() {
+            const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
+            const sellerList = document.getElementById('sellerList');
+            const sellerSelect = document.getElementById('sellerSelect');
+            
+            // Clear existing content
+            sellerList.innerHTML = '';
+            sellerSelect.innerHTML = '<option value="">Select Seller</option>';
+            
+            if (sellers.length === 0) {
+                sellerList.innerHTML = '<div class="status info">No sellers added yet</div>';
+                return;
+            }
+            
+            // Populate seller list
+            sellers.forEach(seller => {
+                // Add to seller list display
+                const member = document.createElement('div');
+                member.className = 'team-member';
+                member.innerHTML = `
+                    <div class="member-avatar">${seller.name.charAt(0)}</div>
+                    <div class="member-info">
+                        <div class="member-name">${seller.name}</div>
+                        <div class="member-role">Seller</div>
+                    </div>
+                    <div class="member-balance">$${seller.balance.toFixed(2)}</div>
+                `;
+                sellerList.appendChild(member);
+                
+                // Add to seller select dropdown
+                const option = document.createElement('option');
+                option.value = seller.id;
+                option.textContent = seller.name;
+                sellerSelect.appendChild(option);
+            });
+        }
+
+        // Load orders
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const ordersTableBody = document.getElementById('ordersTableBody');
+            
+            // Clear existing content
+            ordersTableBody.innerHTML = '';
+            
+            if (orders.length === 0) {
+                ordersTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No orders yet</td></tr>';
+                return;
+            }
+            
+            // Populate orders table
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+                const date = new Date(order.date).toLocaleDateString();
+                const itemsText = order.items.length === 1 
+                    ? order.items[0].name 
+                    : `${order.items[0].name} + ${order.items.length - 1} more`;
+                
+                row.innerHTML = `
+                    <td>${date}</td>
+                    <td>${itemsText}</td>
+                    <td>$${order.total.toFixed(2)}</td>
+                    <td>${order.sellerName || 'N/A'}</td>
+                    <td>
+                        <button class="btn-small" onclick="viewOrderDetails(${order.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                
+                ordersTableBody.appendChild(row);
+            });
+        }
+
+        // Add product to cart
+        function addToCart(productId) {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) return;
+            
+            // Check if product is already in cart
+            const existingItem = currentCart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                // Check if we have enough stock
+                if (existingItem.quantity >= product.stock) {
+                    alert(`Only ${product.stock} units of ${product.name} available in stock`);
+                    return;
+                }
+                existingItem.quantity++;
+            } else {
+                // Check if we have at least 1 in stock
+                if (product.stock < 1) {
+                    alert(`${product.name} is out of stock`);
+                    return;
+                }
+                currentCart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1
+                });
+            }
+            
+            updateCartDisplay();
+            addLogEntry(`Added ${product.name} to cart`, 'info');
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            // Clear existing content
+            cartItems.innerHTML = '';
+            
+            if (currentCart.length === 0) {
+                cartItems.innerHTML = '<div class="status info">Cart is empty</div>';
+                cartTotal.textContent = 'Total: $0.00';
+                return;
+            }
+            
+            let total = 0;
+            
+            // Populate cart items
+            currentCart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">$${item.price.toFixed(2)} x ${item.quantity}</div>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button class="btn-small btn-warning" onclick="decreaseQuantity(${item.id})">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span>${item.quantity}</span>
+                        <button class="btn-small btn-success" onclick="increaseQuantity(${item.id})">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="btn-small btn-danger" onclick="removeFromCart(${item.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItem);
+            });
+            
+            // Apply discount if any
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            if (discount > 0) {
+                const discountAmount = total * (discount / 100);
+                total -= discountAmount;
+                
+                const discountInfo = document.createElement('div');
+                discountInfo.className = 'status info';
+                discountInfo.innerHTML = `Discount (${discount}%): -$${discountAmount.toFixed(2)}`;
+                cartItems.appendChild(discountInfo);
+            }
+            
+            cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        // Increase item quantity in cart
+        function increaseQuantity(productId) {
+            const item = currentCart.find(item => item.id === productId);
+            if (item) {
+                // Check stock
+                const products = JSON.parse(localStorage.getItem('products') || '[]');
+                const product = products.find(p => p.id === productId);
+                
+                if (item.quantity >= product.stock) {
+                    alert(`Only ${product.stock} units of ${product.name} available in stock`);
+                    return;
+                }
+                
+                item.quantity++;
+                updateCartDisplay();
+            }
+        }
+
+        // Decrease item quantity in cart
+        function decreaseQuantity(productId) {
+            const item = currentCart.find(item => item.id === productId);
+            if (item) {
+                if (item.quantity > 1) {
+                    item.quantity--;
+                } else {
+                    removeFromCart(productId);
+                    return;
+                }
+                updateCartDisplay();
+            }
+        }
+
+        // Remove item from cart
+        function removeFromCart(productId) {
+            currentCart = currentCart.filter(item => item.id !== productId);
+            updateCartDisplay();
+            addLogEntry(`Removed item from cart`, 'info');
+        }
+
+        // Clear cart
+        function clearCart() {
+            currentCart = [];
+            updateCartDisplay();
+            addLogEntry(`Cart cleared`, 'info');
+        }
+
+        // Select payment method
+        function selectPayment(method) {
+            currentPaymentMethod = method;
+            
+            // Update UI
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.target.closest('.payment-method').classList.add('active');
+        }
+
+        // Process payment
+        function processPayment() {
+            if (currentCart.length === 0) {
+                alert('Cart is empty. Add products before processing payment.');
+                return;
+            }
+            
+            const sellerSelect = document.getElementById('sellerSelect');
+            const sellerId = sellerSelect.value;
+            
+            if (!sellerId) {
+                alert('Please select a seller for this sale.');
+                return;
+            }
+            
+            // Calculate total
+            let total = 0;
+            currentCart.forEach(item => {
+                total += item.price * item.quantity;
+            });
+            
+            // Apply discount
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            if (discount > 0) {
+                total -= total * (discount / 100);
+            }
+            
+            // Get seller info
+            const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
+            const seller = sellers.find(s => s.id === parseInt(sellerId));
+            
+            if (!seller) {
+                alert('Selected seller not found.');
+                return;
+            }
+            
+            // Update product stock
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            currentCart.forEach(cartItem => {
+                const product = products.find(p => p.id === cartItem.id);
+                if (product) {
+                    product.stock -= cartItem.quantity;
+                    if (product.stock < 0) product.stock = 0;
+                }
+            });
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            // Create order
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const newOrder = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                items: [...currentCart],
+                total: total,
+                sellerId: parseInt(sellerId),
+                sellerName: seller.name,
+                paymentMethod: currentPaymentMethod,
+                discount: discount
+            };
+            orders.unshift(newOrder);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            // Update seller balance (50% of sale)
+            seller.balance += total * 0.5;
+            localStorage.setItem('sellers', JSON.stringify(sellers));
+            
+            // Show success message
+            addLogEntry(`Sale processed: $${total.toFixed(2)} via ${currentPaymentMethod}`, 'success');
+            alert(`Payment processed successfully!\nTotal: $${total.toFixed(2)}\nSeller: ${seller.name}`);
+            
+            // Clear cart and reset
+            currentCart = [];
+            updateCartDisplay();
+            document.getElementById('discountAmount').value = 0;
+            
+            // Reload data to reflect changes
+            loadAllData();
+        }
+
+        // Add new product
+        function addProduct() {
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const cost = parseFloat(document.getElementById('productCost').value);
+            const stock = parseInt(document.getElementById('productStock').value);
+            const barcode = document.getElementById('productBarcode').value;
+            
+            if (!name || isNaN(price) || isNaN(cost) || isNaN(stock)) {
+                alert('Please fill in all required fields with valid values.');
+                return;
+            }
+            
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const newProduct = {
+                id: Date.now(),
+                name: name,
+                price: price,
+                cost: cost,
+                stock: stock,
+                barcode: barcode || ''
+            };
+            
+            products.push(newProduct);
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            // Clear form
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productCost').value = '';
+            document.getElementById('productStock').value = '';
+            document.getElementById('productBarcode').value = '';
+            
+            // Reload products
+            loadProducts();
+            updateFinancialSummary();
+            addLogEntry(`Added new product: ${name}`, 'success');
+        }
+
+        // Edit product (placeholder)
+        function editProduct(productId) {
+            alert(`Edit product ${productId} - This feature would open an edit form in a complete implementation.`);
+        }
+
+        // Delete product
+        function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product?')) {
+                return;
+            }
+            
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const updatedProducts = products.filter(p => p.id !== productId);
+            localStorage.setItem('products', JSON.stringify(updatedProducts));
+            
+            loadProducts();
+            updateFinancialSummary();
+            addLogEntry(`Deleted product`, 'info');
+        }
+
+        // Add new seller
+        function addSeller() {
+            const name = document.getElementById('sellerName').value;
+            const phone = document.getElementById('sellerPhone').value;
+            const email = document.getElementById('sellerEmail').value;
+            
+            if (!name || !phone) {
+                alert('Please fill in name and phone fields.');
+                return;
+            }
+            
+            const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
+            const newSeller = {
+                id: Date.now(),
+                name: name,
+                phone: phone,
+                email: email || '',
+                balance: 0
+            };
+            
+            sellers.push(newSeller);
+            localStorage.setItem('sellers', JSON.stringify(sellers));
+            
+            // Clear form
+            document.getElementById('sellerName').value = '';
+            document.getElementById('sellerPhone').value = '';
+            document.getElementById('sellerEmail').value = '';
+            
+            // Reload sellers
+            loadSellers();
+            updateFinancialSummary();
+            addLogEntry(`Added new seller: ${name}`, 'success');
+        }
+
+        // Filter products
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const productCards = document.querySelectorAll('.product-card');
+            
+            productCards.forEach(card => {
+                const productName = card.querySelector('.product-name').textContent.toLowerCase();
+                if (productName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Filter orders
+        function filterOrders() {
+            // This would filter orders by date in a complete implementation
+            loadOrders();
+        }
+
+        // View order details
+        function viewOrderDetails(orderId) {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const order = orders.find(o => o.id === orderId);
+            
+            if (!order) {
+                alert('Order not found.');
+                return;
+            }
+            
+            let details = `Order #${order.id}\n`;
+            details += `Date: ${new Date(order.date).toLocaleString()}\n`;
+            details += `Seller: ${order.sellerName}\n`;
+            details += `Payment: ${order.paymentMethod}\n`;
+            details += `Discount: ${order.discount}%\n\n`;
+            details += 'Items:\n';
+            
+            order.items.forEach(item => {
+                details += `- ${item.name} (${item.quantity} x $${item.price.toFixed(2)}) = $${(item.quantity * item.price).toFixed(2)}\n`;
+            });
+            
+            details += `\nTotal: $${order.total.toFixed(2)}`;
+            
+            alert(details);
+        }
+
+        // Delete all orders
+        function deleteAllOrders() {
+            if (!confirm('Are you sure you want to delete all order history? This cannot be undone.')) {
+                return;
+            }
+            
+            localStorage.setItem('orders', JSON.stringify([]));
+            loadOrders();
+            updateFinancialSummary();
+            addLogEntry(`Deleted all order history`, 'info');
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            const financialCtx = document.getElementById('financialChart').getContext('2d');
+            const analyticsCtx = document.getElementById('analyticsChart').getContext('2d');
+            
+            // Destroy existing charts if they exist
+            if (financialChart) {
+                financialChart.destroy();
+            }
+            if (analyticsChart) {
+                analyticsChart.destroy();
+            }
+            
+            // Financial chart
+            financialChart = new Chart(financialCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Revenue',
+                            data: [12000, 19000, 15000, 25000, 22000, 30000],
+                            borderColor: '#00f3ff',
+                            backgroundColor: 'rgba(0, 243, 255, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Profit',
+                            data: [5000, 7000, 5500, 9000, 8000, 11000],
+                            borderColor: '#00ff88',
+                            backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#aaa'
+                            },
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#aaa'
+                            },
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Analytics chart
+            analyticsChart = new Chart(analyticsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Electronics', 'Accessories', 'Computers', 'Other'],
+                    datasets: [{
+                        data: [40, 25, 20, 15],
+                        backgroundColor: [
+                            '#00f3ff',
+                            '#ff00ff',
+                            '#00ff88',
+                            '#ffcc00'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                padding: 15
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update chart period
+        function updateChartPeriod(period) {
+            // In a complete implementation, this would update the chart data based on the selected period
+            alert(`Chart updated to show ${period} data`);
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            // This would update various dashboard elements in a complete implementation
+        }
+
+        // Add log entry
+        function addLogEntry(message, type = 'info') {
+            const log = document.getElementById('activityLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Switch tab
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Update mobile tabs
+            document.querySelectorAll('.mobile-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update bottom nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Find the corresponding nav item and activate it
+            const navItems = document.querySelectorAll('.nav-item');
+            for (let i = 0; i < navItems.length; i++) {
+                if (navItems[i].textContent.includes(tabName.charAt(0).toUpperCase() + tabName.slice(1))) {
+                    navItems[i].classList.add('active');
+                    break;
+                }
+            }
+        }
+
+        // Show reset modal
+        function showResetModal() {
+            document.getElementById('resetModal').style.display = 'block';
+        }
+
+        // Close reset modal
+        function closeResetModal() {
+            document.getElementById('resetModal').style.display = 'none';
+        }
+
+        // Reset all data
+        function resetAllData() {
+            localStorage.clear();
+            initializeAppData();
+            loadAllData();
+            closeResetModal();
+            addLogEntry('All data has been reset to defaults', 'info');
+        }
+
+        // Initialize the app when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+        });
+    </script>
+</body>
+</html>
