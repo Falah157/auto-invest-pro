@@ -584,6 +584,22 @@
             margin: 0 auto;
         }
 
+        /* Reset Confirmation */
+        .reset-confirm {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .reset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .reset-buttons button {
+            flex: 1;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 380px) {
             .stats-grid {
@@ -646,9 +662,14 @@
             <div class="header">
                 <div class="logo">NEON POS</div>
                 <p class="tagline" id="userGreeting">Complete Point of Sale System</p>
-                <button class="btn-danger btn-small" onclick="logout()" style="margin-top: 10px;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                    <button class="btn-danger btn-small" onclick="showResetModal()">
+                        <i class="fas fa-trash"></i> Reset All Data
+                    </button>
+                    <button class="btn-danger btn-small" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
             </div>
 
             <!-- Stats Dashboard -->
@@ -875,12 +896,18 @@
                                     <th>Items</th>
                                     <th>Total</th>
                                     <th>Payment</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="ordersTableBody">
                                 <!-- Orders will be loaded here -->
                             </tbody>
                         </table>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-danger" onclick="deleteAllOrders()">
+                            <i class="fas fa-trash"></i> Delete All Orders
+                        </button>
                     </div>
                 </div>
                 
@@ -953,6 +980,77 @@
         </div>
     </div>
 
+    <!-- Edit Customer Modal -->
+    <div class="modal" id="editCustomerModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Customer</h3>
+            <div class="form-group">
+                <label for="editCustomerName">Full Name</label>
+                <input type="text" id="editCustomerName">
+            </div>
+            <div class="form-group">
+                <label for="editCustomerPhone">Phone Number</label>
+                <input type="text" id="editCustomerPhone">
+            </div>
+            <div class="form-group">
+                <label for="editCustomerEmail">Email</label>
+                <input type="email" id="editCustomerEmail">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-success" onclick="saveCustomerEdit()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn-warning" onclick="closeCustomerModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderDetailsModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-receipt"></i> Order Details</h3>
+            <div id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
+            </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+                <button class="btn-danger" onclick="deleteCurrentOrder()">
+                    <i class="fas fa-trash"></i> Delete This Order
+                </button>
+                <button class="btn-warning" onclick="closeOrderModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div class="modal" id="resetModal">
+        <div class="modal-content">
+            <div class="reset-confirm">
+                <h3><i class="fas fa-exclamation-triangle"></i> Reset All Data</h3>
+                <p>This will delete ALL data including:</p>
+                <ul style="text-align: left; margin: 15px 0;">
+                    <li>All products and inventory</li>
+                    <li>All customer records</li>
+                    <li>All sales orders and history</li>
+                    <li>All transaction records</li>
+                </ul>
+                <p style="color: var(--danger); font-weight: bold;">This action cannot be undone!</p>
+                
+                <div class="reset-buttons">
+                    <button class="btn-danger" onclick="resetAllData()">
+                        <i class="fas fa-trash"></i> Reset Everything
+                    </button>
+                    <button class="btn-warning" onclick="closeResetModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Receipt Modal -->
     <div class="modal" id="receiptModal">
         <div class="modal-content">
@@ -1006,6 +1104,8 @@
         let cart = [];
         let selectedPayment = 'cash';
         let editingProductId = null;
+        let editingCustomerId = null;
+        let viewingOrderId = null;
 
         // Initialize the app
         function initApp() {
@@ -1573,8 +1673,73 @@
                         <div class="member-role">${customer.phone} | Points: ${customer.points}</div>
                     </div>
                     <div class="member-balance">$${customer.totalSpent.toFixed(2)}</div>
+                    <div>
+                        <button class="btn-small" onclick="editCustomer(${customer.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteCustomer(${customer.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
             `).join('');
+        }
+
+        // Edit customer
+        function editCustomer(customerId) {
+            const customer = customers.find(c => c.id === customerId);
+            if (customer) {
+                editingCustomerId = customerId;
+                document.getElementById('editCustomerName').value = customer.name;
+                document.getElementById('editCustomerPhone').value = customer.phone;
+                document.getElementById('editCustomerEmail').value = customer.email || '';
+                document.getElementById('editCustomerModal').style.display = 'block';
+            }
+        }
+
+        // Save customer edit
+        function saveCustomerEdit() {
+            if (editingCustomerId === null) return;
+            
+            const name = document.getElementById('editCustomerName').value;
+            const phone = document.getElementById('editCustomerPhone').value;
+            const email = document.getElementById('editCustomerEmail').value;
+            
+            if (!name || !phone) {
+                alert('Please fill in name and phone fields');
+                return;
+            }
+            
+            const customerIndex = customers.findIndex(c => c.id === editingCustomerId);
+            if (customerIndex !== -1) {
+                customers[customerIndex] = {
+                    ...customers[customerIndex],
+                    name: name,
+                    phone: phone,
+                    email: email
+                };
+                
+                updateCustomerList();
+                closeCustomerModal();
+                
+                addLog(`Customer updated: ${name}`, 'success');
+                alert(`Customer "${name}" updated successfully!`);
+            }
+        }
+
+        // Close customer modal
+        function closeCustomerModal() {
+            document.getElementById('editCustomerModal').style.display = 'none';
+            editingCustomerId = null;
+        }
+
+        // Delete customer
+        function deleteCustomer(customerId) {
+            if (confirm('Are you sure you want to delete this customer?')) {
+                customers = customers.filter(c => c.id !== customerId);
+                updateCustomerList();
+                addLog('Customer deleted', 'info');
+            }
         }
 
         // Update orders table
@@ -1605,9 +1770,141 @@
                     <td>${order.items.length} items</td>
                     <td class="positive">$${order.total.toFixed(2)}</td>
                     <td>${order.payment}</td>
+                    <td>
+                        <button class="btn-small" onclick="viewOrderDetails(${order.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteOrder(${order.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        // View order details
+        function viewOrderDetails(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                viewingOrderId = orderId;
+                let detailsHtml = `
+                    <p><strong>Order #${order.id}</strong></p>
+                    <p>Date: ${new Date(order.date).toLocaleString()}</p>
+                    <p>Payment: ${order.payment}</p>
+                    <p>Total: $${order.total.toFixed(2)}</p>
+                    <p><strong>Items:</strong></p>
+                    <ul style="margin-left: 20px;">
+                `;
+                
+                order.items.forEach(item => {
+                    detailsHtml += `<li>${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}</li>`;
+                });
+                
+                detailsHtml += `</ul>`;
+                document.getElementById('orderDetailsContent').innerHTML = detailsHtml;
+                document.getElementById('orderDetailsModal').style.display = 'block';
+            }
+        }
+
+        // Delete order
+        function deleteOrder(orderId) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                // Restore product stock before deleting
+                const order = orders.find(o => o.id === orderId);
+                if (order) {
+                    order.items.forEach(item => {
+                        const product = products.find(p => p.id === item.productId);
+                        if (product) {
+                            product.stock += item.quantity;
+                        }
+                    });
+                }
+                
+                orders = orders.filter(o => o.id !== orderId);
+                updateOrdersTable();
+                updateProductsTable();
+                updateDashboard();
+                addLog(`Order #${orderId} deleted`, 'info');
+            }
+        }
+
+        // Delete current order from modal
+        function deleteCurrentOrder() {
+            if (viewingOrderId) {
+                deleteOrder(viewingOrderId);
+                closeOrderModal();
+            }
+        }
+
+        // Close order modal
+        function closeOrderModal() {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            viewingOrderId = null;
+        }
+
+        // Delete all orders
+        function deleteAllOrders() {
+            if (confirm('Are you sure you want to delete ALL orders? This cannot be undone!')) {
+                // Restore all product stock
+                orders.forEach(order => {
+                    order.items.forEach(item => {
+                        const product = products.find(p => p.id === item.productId);
+                        if (product) {
+                            product.stock += item.quantity;
+                        }
+                    });
+                });
+                
+                orders = [];
+                updateOrdersTable();
+                updateProductsTable();
+                updateDashboard();
+                addLog('All orders deleted', 'info');
+                alert('All orders have been deleted and product stock has been restored.');
+            }
+        }
+
+        // Show reset modal
+        function showResetModal() {
+            document.getElementById('resetModal').style.display = 'block';
+        }
+
+        // Close reset modal
+        function closeResetModal() {
+            document.getElementById('resetModal').style.display = 'none';
+        }
+
+        // Reset all data
+        function resetAllData() {
+            // Reset all data to initial state
+            products = [
+                { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
+                { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
+                { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
+                { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
+                { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
+                { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
+            ];
+            
+            customers = [
+                { id: 1, name: 'John Smith', phone: '+1234567890', email: 'john@example.com', points: 150, totalSpent: 450.00 },
+                { id: 2, name: 'Sarah Johnson', phone: '+1234567891', email: 'sarah@example.com', points: 75, totalSpent: 225.00 }
+            ];
+            
+            orders = [];
+            cart = [];
+            
+            // Update all UI components
+            updateProductGrid();
+            updateProductsTable();
+            updateCustomerList();
+            updateOrdersTable();
+            updateDashboard();
+            
+            closeResetModal();
+            addLog('All data reset to initial state', 'info');
+            alert('All data has been reset successfully!');
         }
 
         // Filter orders
