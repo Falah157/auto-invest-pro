@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -683,18 +684,6 @@
             border-color: var(--secondary);
         }
 
-        /* Chart Controls */
-        .chart-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .chart-controls button {
-            flex: 1;
-            padding: 10px;
-        }
-
         /* Responsive adjustments */
         @media (max-width: 380px) {
             .stats-grid {
@@ -855,14 +844,9 @@
             <!-- Dashboard Tab -->
             <div id="dashboard" class="tab-content active">
                 <div class="card">
-                    <h3><i class="fas fa-chart-line"></i> Financial Overview</h3>
-                    <div class="chart-controls">
-                        <button class="btn-small" onclick="updateChartPeriod('daily')">Daily</button>
-                        <button class="btn-small" onclick="updateChartPeriod('weekly')">Weekly</button>
-                        <button class="btn-small" onclick="updateChartPeriod('monthly')">Monthly</button>
-                    </div>
-                    <div style="height: 250px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
-                        <canvas id="financialChart" width="400" height="250"></canvas>
+                    <h3><i class="fas fa-chart-line"></i> Sales Overview</h3>
+                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
+                        <canvas id="salesChart" width="300" height="200"></canvas>
                     </div>
                 </div>
                 
@@ -991,7 +975,7 @@
                     </div>
                     <div class="form-group">
                         <label for="productStock">Stock Quantity</label>
-                        <input type="number" id="productStock" placeholder="Stock quantity" min="0">
+                        <input type="number" id="productStock" placeholder="Stock quantity">
                     </div>
                     <div class="form-group">
                         <label for="productBarcode">Barcode (Optional)</label>
@@ -1090,9 +1074,9 @@
                 </div>
                 
                 <div class="card">
-                    <h3><i class="fas fa-chart-pie"></i> Sales Analytics</h3>
-                    <div style="height: 250px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
-                        <canvas id="analyticsChart" width="400" height="250"></canvas>
+                    <h3><i class="fas fa-chart-pie"></i> Sales Reports</h3>
+                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
+                        <canvas id="reportsChart" width="300" height="200"></canvas>
                     </div>
                 </div>
             </div>
@@ -1123,26 +1107,246 @@
         </div>
     </div>
 
+    <!-- Edit Product Modal -->
+    <div class="modal" id="editProductModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Product</h3>
+            <div class="form-group">
+                <label for="editProductName">Product Name</label>
+                <input type="text" id="editProductName">
+            </div>
+            <div class="form-group">
+                <label for="editProductPrice">Selling Price ($)</label>
+                <input type="number" id="editProductPrice" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="editProductCost">Buying Price ($)</label>
+                <input type="number" id="editProductCost" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="editProductStock">Stock Quantity</label>
+                <input type="number" id="editProductStock">
+            </div>
+            <div class="form-group">
+                <label for="editProductBarcode">Barcode</label>
+                <input type="text" id="editProductBarcode">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-success" onclick="saveProductEdit()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn-warning" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Seller Modal -->
+    <div class="modal" id="editSellerModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Seller</h3>
+            <div class="form-group">
+                <label for="editSellerName">Full Name</label>
+                <input type="text" id="editSellerName">
+            </div>
+            <div class="form-group">
+                <label for="editSellerPhone">Phone Number</label>
+                <input type="text" id="editSellerPhone">
+            </div>
+            <div class="form-group">
+                <label for="editSellerEmail">Email</label>
+                <input type="email" id="editSellerEmail">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-success" onclick="saveSellerEdit()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn-warning" onclick="closeSellerModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderDetailsModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-receipt"></i> Order Details</h3>
+            <div id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
+            </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+                <button class="btn-danger" onclick="deleteCurrentOrder()">
+                    <i class="fas fa-trash"></i> Delete This Order
+                </button>
+                <button class="btn-warning" onclick="closeOrderModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Reset Confirmation Modal -->
     <div class="modal" id="resetModal">
         <div class="modal-content">
             <div class="reset-confirm">
-                <h3><i class="fas fa-exclamation-triangle warning"></i> Reset All Data</h3>
-                <p>Are you sure you want to reset all data? This action cannot be undone!</p>
+                <h3><i class="fas fa-exclamation-triangle"></i> Reset All Data</h3>
+                <p>This will delete ALL data including:</p>
+                <ul style="text-align: left; margin: 15px 0;">
+                    <li>All products and inventory</li>
+                    <li>All seller records</li>
+                    <li>All sales orders and history</li>
+                    <li>All transaction records</li>
+                </ul>
+                <p style="color: var(--danger); font-weight: bold;">This action cannot be undone!</p>
+                
                 <div class="reset-buttons">
-                    <button class="btn-danger" onclick="resetAllData()">Yes, Reset Everything</button>
-                    <button class="btn-success" onclick="closeResetModal()">Cancel</button>
+                    <button class="btn-danger" onclick="resetAllData()">
+                        <i class="fas fa-trash"></i> Reset Everything
+                    </button>
+                    <button class="btn-warning" onclick="closeResetModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Receipt Modal -->
+    <div class="modal" id="receiptModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-receipt"></i> Receipt</h3>
+            <div class="receipt" id="receiptContent">
+                <!-- Receipt content will be here -->
+            </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+                <button class="btn-warning" onclick="printReceipt()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button class="btn-success" onclick="saveReceipt()">
+                    <i class="fas fa-save"></i> Save PDF
+                </button>
+                <button class="btn-small" onclick="closeReceipt()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Global variables
-        let currentCart = [];
-        let currentPaymentMethod = 'cash';
-        let financialChart = null;
-        let analyticsChart = null;
+        // Data storage
+        let users = [
+            { id: 1, email: 'admin@neonpos.com', password: 'password', role: 'admin', name: 'Admin User' },
+            { id: 2, email: 'staff@neonpos.com', password: 'password', role: 'staff', name: 'Staff User' }
+        ];
+
+        let products = [
+            { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
+            { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
+            { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
+            { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
+            { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
+            { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
+        ];
+
+        let sellers = [
+            { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
+            { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
+        ];
+
+        let orders = [
+            { 
+                id: 1001, 
+                date: new Date(), 
+                items: [
+                    { productId: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, quantity: 2 },
+                    { productId: 3, name: 'Filter', price: 45.00, cost: 22.75, quantity: 1 }
+                ], 
+                total: 335.00, 
+                payment: 'cash', 
+                sellerId: 1,
+                myProfit: 67.125,
+                sellerProfit: 67.125
+            }
+        ];
+
+        let currentUser = null;
+        let cart = [];
+        let selectedPayment = 'cash';
+        let editingProductId = null;
+        let editingSellerId = null;
+        let viewingOrderId = null;
+
+        // Calculate financial totals with 50/50 profit sharing
+        function calculateFinancialTotals() {
+            // Calculate inventory totals
+            let totalBuyingCost = 0;
+            let totalSellingValue = 0;
+            let totalPotentialProfit = 0;
+            
+            products.forEach(product => {
+                totalBuyingCost += product.cost * product.stock;
+                totalSellingValue += product.price * product.stock;
+                totalPotentialProfit += (product.price - product.cost) * product.stock;
+            });
+            
+            // Calculate actual sales totals with 50/50 profit sharing
+            let totalSalesRevenue = 0;
+            let totalGrossProfit = 0;
+            let myTotalProfit = 0;
+            let sellerTotalProfit = 0;
+            
+            orders.forEach(order => {
+                totalSalesRevenue += order.total;
+                
+                // Calculate profit for this order (50/50 split)
+                let orderProfit = 0;
+                order.items.forEach(item => {
+                    orderProfit += (item.price - item.cost) * item.quantity;
+                });
+                
+                totalGrossProfit += orderProfit;
+                myTotalProfit += order.myProfit || (orderProfit / 2);
+                sellerTotalProfit += order.sellerProfit || (orderProfit / 2);
+            });
+            
+            // Calculate profit margin percentage
+            const profitMargin = totalSellingValue > 0 ? ((totalSellingValue - totalBuyingCost) / totalSellingValue * 100) : 0;
+            
+            // Update financial summary
+            document.getElementById('totalBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
+            document.getElementById('totalSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('totalProfit').textContent = `$${totalGrossProfit.toFixed(2)}`;
+            document.getElementById('myProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
+            
+            // Update profit distribution
+            document.getElementById('myTotalProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
+            document.getElementById('sellerTotalProfit').textContent = `$${sellerTotalProfit.toFixed(2)}`;
+            
+            // Update financial details
+            document.getElementById('detailBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
+            document.getElementById('detailSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
+            document.getElementById('detailSalesRevenue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
+            document.getElementById('detailMyProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
+            document.getElementById('detailSellerProfit').textContent = `$${sellerTotalProfit.toFixed(2)}`;
+            
+            // Update seller stats
+            document.getElementById('activeSellers').textContent = sellers.length;
+        }
+
+        // Initialize the app
+        function initApp() {
+            updateDashboard();
+            updateProductGrid();
+            updateProductsTable();
+            updateSellerList();
+            updateSellerSelect();
+            updateOrdersTable();
+            updateCharts();
+            calculateFinancialTotals();
+        }
 
         // Login function
         function login() {
@@ -1150,551 +1354,418 @@
             const password = document.getElementById('loginPassword').value;
             const role = document.getElementById('userRole').value;
             
-            // Simple validation - in real app, you'd check against a database
-            if (email && password) {
-                // Store user info
-                localStorage.setItem('currentUser', JSON.stringify({
-                    email: email,
-                    role: role,
-                    name: email.split('@')[0]
-                }));
-                
-                // Show main app
+            // Find user
+            const user = users.find(u => u.email === email && u.password === password && u.role === role);
+            
+            if (user) {
+                currentUser = user;
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
-                
-                // Update UI with user info
-                document.getElementById('userGreeting').textContent = `Welcome, ${email.split('@')[0]}!`;
-                
-                // Initialize app data
-                initializeAppData();
-                loadAllData();
-                
-                addLogEntry(`User ${email} logged in as ${role}`, 'info');
+                document.getElementById('userGreeting').textContent = `Welcome, ${user.name}`;
+                initApp();
+                addLog(`User ${user.name} logged in`, 'info');
             } else {
-                alert('Please enter both email and password');
+                alert('Invalid login credentials. Please try again.');
             }
         }
 
         // Logout function
         function logout() {
-            localStorage.removeItem('currentUser');
-            document.getElementById('loginScreen').style.display = 'flex';
+            currentUser = null;
             document.getElementById('mainApp').style.display = 'none';
-            
-            // Clear form fields
-            document.getElementById('loginEmail').value = 'admin@neonpos.com';
-            document.getElementById('loginPassword').value = 'password';
-            document.getElementById('userRole').value = 'admin';
+            document.getElementById('loginScreen').style.display = 'flex';
+            addLog('User logged out', 'info');
         }
 
-        // Check if user is already logged in
-        function checkLoginStatus() {
-            const currentUser = localStorage.getItem('currentUser');
-            if (currentUser) {
-                const user = JSON.parse(currentUser);
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                document.getElementById('userGreeting').textContent = `Welcome, ${user.name}!`;
-                initializeAppData();
-                loadAllData();
-            }
-        }
-
-        // Initialize app data structure
-        function initializeAppData() {
-            if (!localStorage.getItem('products')) {
-                const defaultProducts = [
-                    { id: 1, name: "Laptop", price: 999.99, cost: 650.00, stock: 10, barcode: "LP001" },
-                    { id: 2, name: "Smartphone", price: 699.99, cost: 450.00, stock: 25, barcode: "SP002" },
-                    { id: 3, name: "Headphones", price: 149.99, cost: 80.00, stock: 50, barcode: "HP003" },
-                    { id: 4, name: "Tablet", price: 449.99, cost: 280.00, stock: 15, barcode: "TB004" },
-                    { id: 5, name: "Smart Watch", price: 199.99, cost: 120.00, stock: 30, barcode: "SW005" },
-                    { id: 6, name: "Keyboard", price: 79.99, cost: 35.00, stock: 40, barcode: "KB006" }
-                ];
-                localStorage.setItem('products', JSON.stringify(defaultProducts));
-            }
-            
-            if (!localStorage.getItem('sellers')) {
-                const defaultSellers = [
-                    { id: 1, name: "John Smith", phone: "555-0101", email: "john@example.com", balance: 0 },
-                    { id: 2, name: "Sarah Johnson", phone: "555-0102", email: "sarah@example.com", balance: 0 },
-                    { id: 3, name: "Mike Davis", phone: "555-0103", email: "mike@example.com", balance: 0 }
-                ];
-                localStorage.setItem('sellers', JSON.stringify(defaultSellers));
-            }
-            
-            if (!localStorage.getItem('orders')) {
-                localStorage.setItem('orders', JSON.stringify([]));
-            }
-            
-            if (!localStorage.getItem('financials')) {
-                localStorage.setItem('financials', JSON.stringify({
-                    totalBuyingCost: 0,
-                    totalSellingValue: 0,
-                    totalProfit: 0,
-                    myProfit: 0,
-                    todaySales: 0,
-                    todayOrders: 0
-                }));
-            }
-        }
-
-        // Load all data into UI
-        function loadAllData() {
-            updateFinancialSummary();
-            loadProducts();
-            loadSellers();
-            loadOrders();
-            updateDashboard();
-            initializeCharts();
-        }
-
-        // Update financial summary
-        function updateFinancialSummary() {
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-            const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
-            
-            let totalBuyingCost = 0;
-            let totalSellingValue = 0;
-            let todaySales = 0;
-            let todayOrders = 0;
-            const today = new Date().toDateString();
-            
-            // Calculate inventory values
-            products.forEach(product => {
-                totalBuyingCost += product.cost * product.stock;
-                totalSellingValue += product.price * product.stock;
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
             
+            // Remove active class from all tabs
+            document.querySelectorAll('.mobile-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-item').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.currentTarget.classList.add('active');
+            
+            // Refresh data if needed
+            if (tabName === 'dashboard') {
+                updateDashboard();
+            } else if (tabName === 'pos') {
+                updateProductGrid();
+            } else if (tabName === 'products') {
+                updateProductsTable();
+            } else if (tabName === 'sellers') {
+                updateSellerList();
+            } else if (tabName === 'reports') {
+                updateOrdersTable();
+                updateReportsChart();
+            }
+        }
+
+        // Update dashboard
+        function updateDashboard() {
             // Calculate today's sales
-            orders.forEach(order => {
-                if (new Date(order.date).toDateString() === today) {
-                    todaySales += order.total;
-                    todayOrders++;
-                }
-            });
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(order => new Date(order.date).toDateString() === today);
+            const todaySales = todayOrders.reduce((sum, order) => sum + order.total, 0);
             
-            const totalProfit = totalSellingValue - totalBuyingCost;
-            const myProfit = totalProfit * 0.5;
-            
-            // Update UI
-            document.getElementById('totalBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
-            document.getElementById('totalSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
-            document.getElementById('totalProfit').textContent = `$${totalProfit.toFixed(2)}`;
-            document.getElementById('myProfit').textContent = `$${myProfit.toFixed(2)}`;
+            // Update stats
             document.getElementById('todaySales').textContent = `$${todaySales.toFixed(2)}`;
-            document.getElementById('todayOrders').textContent = todayOrders;
-            document.getElementById('activeSellers').textContent = sellers.length;
+            document.getElementById('todayOrders').textContent = todayOrders.length;
             
-            // Update profit distribution
-            document.getElementById('myTotalProfit').textContent = `$${(todaySales * 0.5).toFixed(2)}`;
-            document.getElementById('sellerTotalProfit').textContent = `$${(todaySales * 0.5).toFixed(2)}`;
-            
-            // Update financial details
-            document.getElementById('detailBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
-            document.getElementById('detailSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
-            document.getElementById('detailSalesRevenue').textContent = `$${todaySales.toFixed(2)}`;
-            document.getElementById('detailMyProfit').textContent = `$${(todaySales * 0.5).toFixed(2)}`;
-            document.getElementById('detailSellerProfit').textContent = `$${(todaySales * 0.5).toFixed(2)}`;
-            
-            const profitMargin = totalBuyingCost > 0 ? ((totalSellingValue - totalBuyingCost) / totalBuyingCost * 100) : 0;
-            document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
-            
-            // Update low stock count
-            const lowStockCount = products.filter(p => p.stock < 10).length;
-            document.getElementById('lowStockCount').textContent = lowStockCount;
+            // Check low stock
+            const lowStockItems = products.filter(p => p.stock < 5);
+            document.getElementById('lowStockCount').textContent = lowStockItems.length;
             
             // Update low stock alerts
-            updateLowStockAlerts();
+            const alertsContainer = document.getElementById('lowStockAlerts');
+            if (lowStockItems.length === 0) {
+                alertsContainer.innerHTML = '<div class="status info">No low stock items</div>';
+            } else {
+                alertsContainer.innerHTML = lowStockItems.map(item => 
+                    `<div class="status warning">${item.name} - Only ${item.stock} left</div>`
+                ).join('');
+            }
+            
+            // Update financial totals
+            calculateFinancialTotals();
+            
+            updateSalesChart();
         }
 
-        // Update low stock alerts
-        function updateLowStockAlerts() {
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            const lowStockProducts = products.filter(p => p.stock < 10);
-            const container = document.getElementById('lowStockAlerts');
-            
+        // Update product grid for POS
+        function updateProductGrid() {
+            const container = document.getElementById('productGrid');
             container.innerHTML = '';
             
-            if (lowStockProducts.length === 0) {
-                container.innerHTML = '<div class="status info">No low stock items</div>';
-                return;
-            }
-            
-            lowStockProducts.forEach(product => {
-                const alert = document.createElement('div');
-                alert.className = 'status info';
-                alert.innerHTML = `<i class="fas fa-exclamation-triangle warning"></i> ${product.name} - Only ${product.stock} left in stock`;
-                container.appendChild(alert);
-            });
-        }
-
-        // Load products
-        function loadProducts() {
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            const productGrid = document.getElementById('productGrid');
-            const productsTableBody = document.getElementById('productsTableBody');
-            
-            // Clear existing content
-            productGrid.innerHTML = '';
-            productsTableBody.innerHTML = '';
-            
-            if (products.length === 0) {
-                productGrid.innerHTML = '<div class="status info">No products available</div>';
-                productsTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No products available</td></tr>';
-                return;
-            }
-            
-            // Populate product grid for POS
             products.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
-                productCard.onclick = () => addToCart(product.id);
-                
+                productCard.onclick = () => addToCart(product);
                 productCard.innerHTML = `
                     <div class="product-name">${product.name}</div>
                     <div class="product-price">$${product.price.toFixed(2)}</div>
                     <div class="product-stock">Stock: ${product.stock}</div>
                 `;
-                
-                productGrid.appendChild(productCard);
-            });
-            
-            // Populate products table for inventory management
-            products.forEach(product => {
-                const profit = product.price - product.cost;
-                const profitMargin = product.cost > 0 ? (profit / product.cost * 100) : 0;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>$${product.cost.toFixed(2)}</td>
-                    <td>$${product.price.toFixed(2)}</td>
-                    <td class="${profit >= 0 ? 'positive' : 'negative'}">$${profit.toFixed(2)} (${profitMargin.toFixed(1)}%)</td>
-                    <td>${product.stock}</td>
-                    <td>
-                        <button class="btn-small btn-warning" onclick="editProduct(${product.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-small btn-danger" onclick="deleteProduct(${product.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                
-                productsTableBody.appendChild(row);
+                container.appendChild(productCard);
             });
         }
 
-        // Load sellers
-        function loadSellers() {
-            const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
-            const sellerList = document.getElementById('sellerList');
-            const sellerSelect = document.getElementById('sellerSelect');
+        // Update seller select dropdown
+        function updateSellerSelect() {
+            const select = document.getElementById('sellerSelect');
+            select.innerHTML = '<option value="">Select Seller</option>';
             
-            // Clear existing content
-            sellerList.innerHTML = '';
-            sellerSelect.innerHTML = '<option value="">Select Seller</option>';
-            
-            if (sellers.length === 0) {
-                sellerList.innerHTML = '<div class="status info">No sellers added yet</div>';
-                return;
-            }
-            
-            // Populate seller list
             sellers.forEach(seller => {
-                // Add to seller list display
-                const member = document.createElement('div');
-                member.className = 'team-member';
-                member.innerHTML = `
-                    <div class="member-avatar">${seller.name.charAt(0)}</div>
-                    <div class="member-info">
-                        <div class="member-name">${seller.name}</div>
-                        <div class="member-role">Seller</div>
-                    </div>
-                    <div class="member-balance">$${seller.balance.toFixed(2)}</div>
-                `;
-                sellerList.appendChild(member);
-                
-                // Add to seller select dropdown
                 const option = document.createElement('option');
                 option.value = seller.id;
                 option.textContent = seller.name;
-                sellerSelect.appendChild(option);
+                select.appendChild(option);
             });
         }
 
-        // Load orders
-        function loadOrders() {
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-            const ordersTableBody = document.getElementById('ordersTableBody');
+        // Filter products
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const filteredProducts = products.filter(p => 
+                p.name.toLowerCase().includes(searchTerm)
+            );
             
-            // Clear existing content
-            ordersTableBody.innerHTML = '';
+            const container = document.getElementById('productGrid');
+            container.innerHTML = '';
             
-            if (orders.length === 0) {
-                ordersTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No orders yet</td></tr>';
-                return;
-            }
-            
-            // Populate orders table
-            orders.forEach(order => {
-                const row = document.createElement('tr');
-                const date = new Date(order.date).toLocaleDateString();
-                const itemsText = order.items.length === 1 
-                    ? order.items[0].name 
-                    : `${order.items[0].name} + ${order.items.length - 1} more`;
-                
-                row.innerHTML = `
-                    <td>${date}</td>
-                    <td>${itemsText}</td>
-                    <td>$${order.total.toFixed(2)}</td>
-                    <td>${order.sellerName || 'N/A'}</td>
-                    <td>
-                        <button class="btn-small" onclick="viewOrderDetails(${order.id})">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </td>
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => addToCart(product);
+                productCard.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">$${product.price.toFixed(2)}</div>
+                    <div class="product-stock">Stock: ${product.stock}</div>
                 `;
-                
-                ordersTableBody.appendChild(row);
+                container.appendChild(productCard);
             });
         }
 
-        // Add product to cart
-        function addToCart(productId) {
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            const product = products.find(p => p.id === productId);
-            
-            if (!product) return;
-            
-            // Check if product is already in cart
-            const existingItem = currentCart.find(item => item.id === productId);
+        // Add to cart
+        function addToCart(product) {
+            // Check if product already in cart
+            const existingItem = cart.find(item => item.id === product.id);
             
             if (existingItem) {
-                // Check if we have enough stock
-                if (existingItem.quantity >= product.stock) {
-                    alert(`Only ${product.stock} units of ${product.name} available in stock`);
+                if (existingItem.quantity < product.stock) {
+                    existingItem.quantity += 1;
+                } else {
+                    alert(`Only ${product.stock} items available in stock`);
                     return;
                 }
-                existingItem.quantity++;
             } else {
-                // Check if we have at least 1 in stock
-                if (product.stock < 1) {
-                    alert(`${product.name} is out of stock`);
+                if (product.stock > 0) {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        cost: product.cost,
+                        quantity: 1
+                    });
+                } else {
+                    alert('Product out of stock');
                     return;
                 }
-                currentCart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    quantity: 1
-                });
             }
             
             updateCartDisplay();
-            addLogEntry(`Added ${product.name} to cart`, 'info');
+            addLog(`Added ${product.name} to cart`, 'info');
         }
 
         // Update cart display
         function updateCartDisplay() {
-            const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
+            const cartContainer = document.getElementById('cartItems');
+            const totalElement = document.getElementById('cartTotal');
             
-            // Clear existing content
-            cartItems.innerHTML = '';
-            
-            if (currentCart.length === 0) {
-                cartItems.innerHTML = '<div class="status info">Cart is empty</div>';
-                cartTotal.textContent = 'Total: $0.00';
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<div class="status info">Cart is empty</div>';
+                totalElement.textContent = 'Total: $0.00';
                 return;
             }
             
             let total = 0;
-            
-            // Populate cart items
-            currentCart.forEach(item => {
+            cartContainer.innerHTML = cart.map(item => {
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
                 
-                const cartItem = document.createElement('div');
-                cartItem.className = 'cart-item';
-                cartItem.innerHTML = `
-                    <div class="cart-item-info">
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price">$${item.price.toFixed(2)} x ${item.quantity}</div>
-                    </div>
-                    <div class="cart-item-controls">
-                        <button class="btn-small btn-warning" onclick="decreaseQuantity(${item.id})">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <span>${item.quantity}</span>
-                        <button class="btn-small btn-success" onclick="increaseQuantity(${item.id})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <button class="btn-small btn-danger" onclick="removeFromCart(${item.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">$${item.price.toFixed(2)} each</div>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, 1)">+</button>
+                            <span>$${itemTotal.toFixed(2)}</span>
+                            <button class="btn-danger btn-small" onclick="removeFromCart(${item.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                 `;
-                
-                cartItems.appendChild(cartItem);
-            });
+            }).join('');
             
-            // Apply discount if any
+            // Apply discount
             const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
             if (discount > 0) {
                 const discountAmount = total * (discount / 100);
                 total -= discountAmount;
-                
-                const discountInfo = document.createElement('div');
-                discountInfo.className = 'status info';
-                discountInfo.innerHTML = `Discount (${discount}%): -$${discountAmount.toFixed(2)}`;
-                cartItems.appendChild(discountInfo);
+                totalElement.innerHTML = `Subtotal: $${(total + discountAmount).toFixed(2)}<br>Discount: -$${discountAmount.toFixed(2)}<br>Total: $${total.toFixed(2)}`;
+            } else {
+                totalElement.textContent = `Total: $${total.toFixed(2)}`;
             }
-            
-            cartTotal.textContent = `Total: $${total.toFixed(2)}`;
         }
 
-        // Increase item quantity in cart
-        function increaseQuantity(productId) {
-            const item = currentCart.find(item => item.id === productId);
+        // Update cart quantity
+        function updateCartQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
             if (item) {
-                // Check stock
-                const products = JSON.parse(localStorage.getItem('products') || '[]');
                 const product = products.find(p => p.id === productId);
+                item.quantity += change;
                 
-                if (item.quantity >= product.stock) {
-                    alert(`Only ${product.stock} units of ${product.name} available in stock`);
-                    return;
-                }
-                
-                item.quantity++;
-                updateCartDisplay();
-            }
-        }
-
-        // Decrease item quantity in cart
-        function decreaseQuantity(productId) {
-            const item = currentCart.find(item => item.id === productId);
-            if (item) {
-                if (item.quantity > 1) {
-                    item.quantity--;
-                } else {
+                if (item.quantity <= 0) {
                     removeFromCart(productId);
-                    return;
+                } else if (item.quantity > product.stock) {
+                    item.quantity = product.stock;
+                    alert(`Only ${product.stock} items available in stock`);
+                } else {
+                    updateCartDisplay();
                 }
-                updateCartDisplay();
             }
         }
 
-        // Remove item from cart
+        // Remove from cart
         function removeFromCart(productId) {
-            currentCart = currentCart.filter(item => item.id !== productId);
+            cart = cart.filter(item => item.id !== productId);
             updateCartDisplay();
-            addLogEntry(`Removed item from cart`, 'info');
+            addLog('Item removed from cart', 'info');
         }
 
         // Clear cart
         function clearCart() {
-            currentCart = [];
+            cart = [];
             updateCartDisplay();
-            addLogEntry(`Cart cleared`, 'info');
+            addLog('Cart cleared', 'info');
         }
 
         // Select payment method
         function selectPayment(method) {
-            currentPaymentMethod = method;
-            
-            // Update UI
-            document.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('active');
-            });
-            event.target.closest('.payment-method').classList.add('active');
+            selectedPayment = method;
+            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+            event.currentTarget.classList.add('active');
         }
 
-        // Process payment
+        // Process payment with 50/50 profit sharing
         function processPayment() {
-            if (currentCart.length === 0) {
-                alert('Cart is empty. Add products before processing payment.');
+            if (cart.length === 0) {
+                alert('Cart is empty. Add items before checkout.');
                 return;
             }
             
-            const sellerSelect = document.getElementById('sellerSelect');
-            const sellerId = sellerSelect.value;
-            
+            const sellerId = document.getElementById('sellerSelect').value;
             if (!sellerId) {
-                alert('Please select a seller for this sale.');
+                alert('Please select a seller for this sale');
                 return;
             }
             
             // Calculate total
-            let total = 0;
-            currentCart.forEach(item => {
-                total += item.price * item.quantity;
-            });
-            
-            // Apply discount
+            let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
             if (discount > 0) {
                 total -= total * (discount / 100);
             }
             
-            // Get seller info
-            const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
-            const seller = sellers.find(s => s.id === parseInt(sellerId));
+            // Calculate profit (50/50 split)
+            let totalProfit = 0;
+            cart.forEach(item => {
+                totalProfit += (item.price - item.cost) * item.quantity;
+            });
             
-            if (!seller) {
-                alert('Selected seller not found.');
-                return;
+            const myProfit = totalProfit / 2;
+            const sellerProfit = totalProfit / 2;
+            
+            // Create order
+            const order = {
+                id: Math.floor(1000 + Math.random() * 9000),
+                date: new Date(),
+                items: [...cart],
+                total: total,
+                payment: selectedPayment,
+                sellerId: parseInt(sellerId),
+                myProfit: myProfit,
+                sellerProfit: sellerProfit
+            };
+            
+            orders.unshift(order);
+            
+            // Update seller's totals
+            const seller = sellers.find(s => s.id === parseInt(sellerId));
+            if (seller) {
+                seller.totalSales += total;
+                seller.totalProfit += sellerProfit;
             }
             
             // Update product stock
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            currentCart.forEach(cartItem => {
+            cart.forEach(cartItem => {
                 const product = products.find(p => p.id === cartItem.id);
                 if (product) {
                     product.stock -= cartItem.quantity;
-                    if (product.stock < 0) product.stock = 0;
                 }
             });
-            localStorage.setItem('products', JSON.stringify(products));
             
-            // Create order
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-            const newOrder = {
-                id: Date.now(),
-                date: new Date().toISOString(),
-                items: [...currentCart],
-                total: total,
-                sellerId: parseInt(sellerId),
-                sellerName: seller.name,
-                paymentMethod: currentPaymentMethod,
-                discount: discount
-            };
-            orders.unshift(newOrder);
-            localStorage.setItem('orders', JSON.stringify(orders));
+            // Generate receipt
+            generateReceipt(order);
             
-            // Update seller balance (50% of sale)
-            seller.balance += total * 0.5;
-            localStorage.setItem('sellers', JSON.stringify(sellers));
-            
-            // Show success message
-            addLogEntry(`Sale processed: $${total.toFixed(2)} via ${currentPaymentMethod}`, 'success');
-            alert(`Payment processed successfully!\nTotal: $${total.toFixed(2)}\nSeller: ${seller.name}`);
-            
-            // Clear cart and reset
-            currentCart = [];
+            // Clear cart
+            cart = [];
             updateCartDisplay();
-            document.getElementById('discountAmount').value = 0;
+            document.getElementById('discountAmount').value = '0';
             
-            // Reload data to reflect changes
-            loadAllData();
+            // Update dashboard and financial totals
+            updateDashboard();
+            updateProductsTable();
+            updateSellerList();
+            
+            addLog(`Order #${order.id} completed - $${total.toFixed(2)} (My Profit: $${myProfit.toFixed(2)})`, 'success');
         }
 
-        // Add new product
+        // Generate receipt
+        function generateReceipt(order) {
+            const seller = sellers.find(s => s.id === order.sellerId);
+            let receiptText = `=== NEON POS RECEIPT ===\n`;
+            receiptText += `Date: ${order.date.toLocaleString()}\n`;
+            receiptText += `Order: #${order.id}\n`;
+            receiptText += `Seller: ${seller ? seller.name : 'Unknown'}\n`;
+            receiptText += `Cashier: ${currentUser.name}\n`;
+            receiptText += `----------------------------\n`;
+            
+            order.items.forEach(item => {
+                receiptText += `${item.name} x${item.quantity} $${(item.price * item.quantity).toFixed(2)}\n`;
+            });
+            
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            if (discount > 0) {
+                const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const discountAmount = subtotal * (discount / 100);
+                receiptText += `----------------------------\n`;
+                receiptText += `Subtotal: $${subtotal.toFixed(2)}\n`;
+                receiptText += `Discount: -$${discountAmount.toFixed(2)}\n`;
+            }
+            
+            receiptText += `----------------------------\n`;
+            receiptText += `TOTAL: $${order.total.toFixed(2)}\n`;
+            receiptText += `Payment: ${order.payment.toUpperCase()}\n`;
+            receiptText += `Profit Split: 50/50\n`;
+            receiptText += `My Share: $${order.myProfit.toFixed(2)}\n`;
+            receiptText += `Seller Share: $${order.sellerProfit.toFixed(2)}\n`;
+            receiptText += `============================\n`;
+            receiptText += `Thank you for your business!\n`;
+            
+            document.getElementById('receiptContent').textContent = receiptText;
+            document.getElementById('receiptModal').style.display = 'block';
+        }
+
+        // Close receipt
+        function closeReceipt() {
+            document.getElementById('receiptModal').style.display = 'none';
+        }
+
+        // Print receipt
+        function printReceipt() {
+            const receiptContent = document.getElementById('receiptContent').textContent;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Receipt #${orders[0].id}</title>
+                        <style>
+                            body { font-family: monospace; padding: 20px; }
+                            pre { white-space: pre-wrap; }
+                        </style>
+                    </head>
+                    <body>
+                        <pre>${receiptContent}</pre>
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 500);
+                            };
+                        <\/script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // Save receipt as PDF
+        function saveReceipt() {
+            alert('Receipt saved as PDF (simulated)');
+            // In a real app, you would use a library like jsPDF here
+        }
+
+        // Add product
         function addProduct() {
             const name = document.getElementById('productName').value;
             const price = parseFloat(document.getElementById('productPrice').value);
@@ -1702,23 +1773,26 @@
             const stock = parseInt(document.getElementById('productStock').value);
             const barcode = document.getElementById('productBarcode').value;
             
-            if (!name || isNaN(price) || isNaN(cost) || isNaN(stock)) {
-                alert('Please fill in all required fields with valid values.');
+            if (!name || !price || !cost || !stock) {
+                alert('Please fill in all required fields');
                 return;
             }
             
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
             const newProduct = {
                 id: Date.now(),
                 name: name,
                 price: price,
                 cost: cost,
                 stock: stock,
-                barcode: barcode || ''
+                barcode: barcode
             };
             
             products.push(newProduct);
-            localStorage.setItem('products', JSON.stringify(products));
+            
+            // Update UI
+            updateProductGrid();
+            updateProductsTable();
+            calculateFinancialTotals();
             
             // Clear form
             document.getElementById('productName').value = '';
@@ -1727,275 +1801,373 @@
             document.getElementById('productStock').value = '';
             document.getElementById('productBarcode').value = '';
             
-            // Reload products
-            loadProducts();
-            updateFinancialSummary();
-            addLogEntry(`Added new product: ${name}`, 'success');
+            addLog(`Product added: ${name}`, 'success');
+            alert(`Product "${name}" added successfully!`);
         }
 
-        // Edit product (placeholder)
+        // Update products table
+        function updateProductsTable() {
+            const tbody = document.getElementById('productsTableBody');
+            tbody.innerHTML = '';
+            
+            products.forEach(product => {
+                const profit = product.price - product.cost;
+                const profitMargin = (profit / product.price) * 100;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>$${product.cost.toFixed(2)}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td class="positive">$${profit.toFixed(2)}</td>
+                    <td class="${product.stock < 5 ? 'negative' : 'positive'}">${product.stock}</td>
+                    <td>
+                        <button class="btn-small" onclick="editProduct(${product.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteProduct(${product.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Edit product
         function editProduct(productId) {
-            alert(`Edit product ${productId} - This feature would open an edit form in a complete implementation.`);
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                editingProductId = productId;
+                document.getElementById('editProductName').value = product.name;
+                document.getElementById('editProductPrice').value = product.price;
+                document.getElementById('editProductCost').value = product.cost;
+                document.getElementById('editProductStock').value = product.stock;
+                document.getElementById('editProductBarcode').value = product.barcode;
+                document.getElementById('editProductModal').style.display = 'block';
+            }
+        }
+
+        // Save product edit
+        function saveProductEdit() {
+            if (editingProductId === null) return;
+            
+            const name = document.getElementById('editProductName').value;
+            const price = parseFloat(document.getElementById('editProductPrice').value);
+            const cost = parseFloat(document.getElementById('editProductCost').value);
+            const stock = parseInt(document.getElementById('editProductStock').value);
+            const barcode = document.getElementById('editProductBarcode').value;
+            
+            if (!name || !price || !cost || !stock) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const productIndex = products.findIndex(p => p.id === editingProductId);
+            if (productIndex !== -1) {
+                products[productIndex] = {
+                    ...products[productIndex],
+                    name: name,
+                    price: price,
+                    cost: cost,
+                    stock: stock,
+                    barcode: barcode
+                };
+                
+                updateProductGrid();
+                updateProductsTable();
+                calculateFinancialTotals();
+                closeEditModal();
+                
+                addLog(`Product updated: ${name}`, 'success');
+                alert(`Product "${name}" updated successfully!`);
+            }
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editProductModal').style.display = 'none';
+            editingProductId = null;
         }
 
         // Delete product
         function deleteProduct(productId) {
-            if (!confirm('Are you sure you want to delete this product?')) {
-                return;
+            if (confirm('Are you sure you want to delete this product?')) {
+                products = products.filter(p => p.id !== productId);
+                updateProductGrid();
+                updateProductsTable();
+                calculateFinancialTotals();
+                addLog('Product deleted', 'info');
             }
-            
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            const updatedProducts = products.filter(p => p.id !== productId);
-            localStorage.setItem('products', JSON.stringify(updatedProducts));
-            
-            loadProducts();
-            updateFinancialSummary();
-            addLogEntry(`Deleted product`, 'info');
         }
 
-        // Add new seller
+        // Add seller
         function addSeller() {
             const name = document.getElementById('sellerName').value;
             const phone = document.getElementById('sellerPhone').value;
             const email = document.getElementById('sellerEmail').value;
             
             if (!name || !phone) {
-                alert('Please fill in name and phone fields.');
+                alert('Please fill in name and phone fields');
                 return;
             }
             
-            const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
             const newSeller = {
                 id: Date.now(),
                 name: name,
                 phone: phone,
-                email: email || '',
-                balance: 0
+                email: email,
+                totalSales: 0,
+                totalProfit: 0
             };
             
             sellers.push(newSeller);
-            localStorage.setItem('sellers', JSON.stringify(sellers));
+            
+            // Update UI
+            updateSellerList();
+            updateSellerSelect();
             
             // Clear form
             document.getElementById('sellerName').value = '';
             document.getElementById('sellerPhone').value = '';
             document.getElementById('sellerEmail').value = '';
             
-            // Reload sellers
-            loadSellers();
-            updateFinancialSummary();
-            addLogEntry(`Added new seller: ${name}`, 'success');
+            addLog(`Seller added: ${name}`, 'success');
+            alert(`Seller "${name}" added successfully!`);
         }
 
-        // Filter products
-        function filterProducts() {
-            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-            const productCards = document.querySelectorAll('.product-card');
+        // Update seller list
+        function updateSellerList() {
+            const container = document.getElementById('sellerList');
             
-            productCards.forEach(card => {
-                const productName = card.querySelector('.product-name').textContent.toLowerCase();
-                if (productName.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            if (sellers.length === 0) {
+                container.innerHTML = '<div class="status info">No sellers added yet</div>';
+                return;
+            }
+            
+            container.innerHTML = sellers.map(seller => `
+                <div class="team-member">
+                    <div class="member-avatar">${seller.name.split(' ').map(n => n[0]).join('').toUpperCase()}</div>
+                    <div class="member-info">
+                        <div class="member-name">${seller.name}</div>
+                        <div class="member-role">${seller.phone} | Total Sales: $${seller.totalSales.toFixed(2)}</div>
+                    </div>
+                    <div class="member-balance">$${seller.totalProfit.toFixed(2)}</div>
+                    <div>
+                        <button class="btn-small" onclick="editSeller(${seller.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteSeller(${seller.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Filter orders
-        function filterOrders() {
-            // This would filter orders by date in a complete implementation
-            loadOrders();
+        // Edit seller
+        function editSeller(sellerId) {
+            const seller = sellers.find(s => s.id === sellerId);
+            if (seller) {
+                editingSellerId = sellerId;
+                document.getElementById('editSellerName').value = seller.name;
+                document.getElementById('editSellerPhone').value = seller.phone;
+                document.getElementById('editSellerEmail').value = seller.email || '';
+                document.getElementById('editSellerModal').style.display = 'block';
+            }
+        }
+
+        // Save seller edit
+        function saveSellerEdit() {
+            if (editingSellerId === null) return;
+            
+            const name = document.getElementById('editSellerName').value;
+            const phone = document.getElementById('editSellerPhone').value;
+            const email = document.getElementById('editSellerEmail').value;
+            
+            if (!name || !phone) {
+                alert('Please fill in name and phone fields');
+                return;
+            }
+            
+            const sellerIndex = sellers.findIndex(s => s.id === editingSellerId);
+            if (sellerIndex !== -1) {
+                sellers[sellerIndex] = {
+                    ...sellers[sellerIndex],
+                    name: name,
+                    phone: phone,
+                    email: email
+                };
+                
+                updateSellerList();
+                updateSellerSelect();
+                closeSellerModal();
+                
+                addLog(`Seller updated: ${name}`, 'success');
+                alert(`Seller "${name}" updated successfully!`);
+            }
+        }
+
+        // Close seller modal
+        function closeSellerModal() {
+            document.getElementById('editSellerModal').style.display = 'none';
+            editingSellerId = null;
+        }
+
+        // Delete seller
+        function deleteSeller(sellerId) {
+            if (confirm('Are you sure you want to delete this seller?')) {
+                sellers = sellers.filter(s => s.id !== sellerId);
+                updateSellerList();
+                updateSellerSelect();
+                addLog('Seller deleted', 'info');
+            }
+        }
+
+        // Update orders table
+        function updateOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            
+            // Filter orders based on selection
+            const filter = document.getElementById('reportDate').value;
+            let filteredOrders = [...orders];
+            
+            const now = new Date();
+            if (filter === 'today') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                filteredOrders = orders.filter(order => new Date(order.date) >= today);
+            } else if (filter === 'week') {
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filteredOrders = orders.filter(order => new Date(order.date) >= weekAgo);
+            } else if (filter === 'month') {
+                const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                filteredOrders = orders.filter(order => new Date(order.date) >= monthAgo);
+            }
+            
+            filteredOrders.forEach(order => {
+                const seller = sellers.find(s => s.id === order.sellerId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(order.date).toLocaleDateString()}</td>
+                    <td>${order.items.length} items</td>
+                    <td class="positive">$${order.total.toFixed(2)}</td>
+                    <td>${seller ? seller.name : 'Unknown'}</td>
+                    <td>
+                        <button class="btn-small" onclick="viewOrderDetails(${order.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteOrder(${order.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
         }
 
         // View order details
         function viewOrderDetails(orderId) {
-            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
             const order = orders.find(o => o.id === orderId);
-            
-            if (!order) {
-                alert('Order not found.');
-                return;
+            if (order) {
+                const seller = sellers.find(s => s.id === order.sellerId);
+                viewingOrderId = orderId;
+                let detailsHtml = `
+                    <p><strong>Order #${order.id}</strong></p>
+                    <p>Date: ${new Date(order.date).toLocaleString()}</p>
+                    <p>Seller: ${seller ? seller.name : 'Unknown'}</p>
+                    <p>Payment: ${order.payment}</p>
+                    <p>Total: $${order.total.toFixed(2)}</p>
+                    <p><strong>Profit Distribution (50/50):</strong></p>
+                    <p>My Share: $${order.myProfit.toFixed(2)}</p>
+                    <p>Seller Share: $${order.sellerProfit.toFixed(2)}</p>
+                    <p><strong>Items:</strong></p>
+                    <ul style="margin-left: 20px;">
+                `;
+                
+                order.items.forEach(item => {
+                    detailsHtml += `<li>${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}</li>`;
+                });
+                
+                detailsHtml += `</ul>`;
+                document.getElementById('orderDetailsContent').innerHTML = detailsHtml;
+                document.getElementById('orderDetailsModal').style.display = 'block';
             }
-            
-            let details = `Order #${order.id}\n`;
-            details += `Date: ${new Date(order.date).toLocaleString()}\n`;
-            details += `Seller: ${order.sellerName}\n`;
-            details += `Payment: ${order.paymentMethod}\n`;
-            details += `Discount: ${order.discount}%\n\n`;
-            details += 'Items:\n';
-            
-            order.items.forEach(item => {
-                details += `- ${item.name} (${item.quantity} x $${item.price.toFixed(2)}) = $${(item.quantity * item.price).toFixed(2)}\n`;
-            });
-            
-            details += `\nTotal: $${order.total.toFixed(2)}`;
-            
-            alert(details);
+        }
+
+        // Delete order
+        function deleteOrder(orderId) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                // Restore product stock and seller profits before deleting
+                const order = orders.find(o => o.id === orderId);
+                if (order) {
+                    // Restore product stock
+                    order.items.forEach(item => {
+                        const product = products.find(p => p.id === item.productId);
+                        if (product) {
+                            product.stock += item.quantity;
+                        }
+                    });
+                    
+                    // Remove seller profits
+                    const seller = sellers.find(s => s.id === order.sellerId);
+                    if (seller) {
+                        seller.totalSales -= order.total;
+                        seller.totalProfit -= order.sellerProfit;
+                    }
+                }
+                
+                orders = orders.filter(o => o.id !== orderId);
+                updateOrdersTable();
+                updateProductsTable();
+                updateSellerList();
+                updateDashboard();
+                calculateFinancialTotals();
+                addLog(`Order #${orderId} deleted`, 'info');
+            }
+        }
+
+        // Delete current order from modal
+        function deleteCurrentOrder() {
+            if (viewingOrderId) {
+                deleteOrder(viewingOrderId);
+                closeOrderModal();
+            }
+        }
+
+        // Close order modal
+        function closeOrderModal() {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            viewingOrderId = null;
         }
 
         // Delete all orders
         function deleteAllOrders() {
-            if (!confirm('Are you sure you want to delete all order history? This cannot be undone.')) {
-                return;
-            }
-            
-            localStorage.setItem('orders', JSON.stringify([]));
-            loadOrders();
-            updateFinancialSummary();
-            addLogEntry(`Deleted all order history`, 'info');
-        }
-
-        // Initialize charts
-        function initializeCharts() {
-            const financialCtx = document.getElementById('financialChart').getContext('2d');
-            const analyticsCtx = document.getElementById('analyticsChart').getContext('2d');
-            
-            // Destroy existing charts if they exist
-            if (financialChart) {
-                financialChart.destroy();
-            }
-            if (analyticsChart) {
-                analyticsChart.destroy();
-            }
-            
-            // Financial chart
-            financialChart = new Chart(financialCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [
-                        {
-                            label: 'Revenue',
-                            data: [12000, 19000, 15000, 25000, 22000, 30000],
-                            borderColor: '#00f3ff',
-                            backgroundColor: 'rgba(0, 243, 255, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'Profit',
-                            data: [5000, 7000, 5500, 9000, 8000, 11000],
-                            borderColor: '#00ff88',
-                            backgroundColor: 'rgba(0, 255, 136, 0.1)',
-                            tension: 0.4,
-                            fill: true
+            if (confirm('Are you sure you want to delete ALL orders? This cannot be undone!')) {
+                // Restore all product stock and reset seller profits
+                orders.forEach(order => {
+                    order.items.forEach(item => {
+                        const product = products.find(p => p.id === item.productId);
+                        if (product) {
+                            product.stock += item.quantity;
                         }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: 'white'
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: {
-                                color: '#aaa'
-                            },
-                            grid: {
-                                color: 'rgba(255,255,255,0.1)'
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                color: '#aaa'
-                            },
-                            grid: {
-                                color: 'rgba(255,255,255,0.1)'
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Analytics chart
-            analyticsChart = new Chart(analyticsCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Electronics', 'Accessories', 'Computers', 'Other'],
-                    datasets: [{
-                        data: [40, 25, 20, 15],
-                        backgroundColor: [
-                            '#00f3ff',
-                            '#ff00ff',
-                            '#00ff88',
-                            '#ffcc00'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: 'white',
-                                padding: 15
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Update chart period
-        function updateChartPeriod(period) {
-            // In a complete implementation, this would update the chart data based on the selected period
-            alert(`Chart updated to show ${period} data`);
-        }
-
-        // Update dashboard
-        function updateDashboard() {
-            // This would update various dashboard elements in a complete implementation
-        }
-
-        // Add log entry
-        function addLogEntry(message, type = 'info') {
-            const log = document.getElementById('activityLog');
-            const timestamp = new Date().toLocaleTimeString();
-            const entry = document.createElement('div');
-            entry.className = `log-entry log-${type}`;
-            entry.textContent = `[${timestamp}] ${message}`;
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        // Switch tab
-        function switchTab(tabName) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected tab content
-            document.getElementById(tabName).classList.add('active');
-            
-            // Update mobile tabs
-            document.querySelectorAll('.mobile-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
-            
-            // Update bottom nav
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Find the corresponding nav item and activate it
-            const navItems = document.querySelectorAll('.nav-item');
-            for (let i = 0; i < navItems.length; i++) {
-                if (navItems[i].textContent.includes(tabName.charAt(0).toUpperCase() + tabName.slice(1))) {
-                    navItems[i].classList.add('active');
-                    break;
-                }
+                    });
+                });
+                
+                // Reset all seller profits
+                sellers.forEach(seller => {
+                    seller.totalSales = 0;
+                    seller.totalProfit = 0;
+                });
+                
+                orders = [];
+                updateOrdersTable();
+                updateProductsTable();
+                updateSellerList();
+                updateDashboard();
+                calculateFinancialTotals();
+                addLog('All orders deleted', 'info');
+                alert('All orders have been deleted and product stock has been restored.');
             }
         }
 
@@ -2011,16 +2183,172 @@
 
         // Reset all data
         function resetAllData() {
-            localStorage.clear();
-            initializeAppData();
-            loadAllData();
+            // Reset all data to initial state
+            products = [
+                { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
+                { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
+                { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
+                { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
+                { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
+                { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
+            ];
+            
+            sellers = [
+                { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
+                { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
+            ];
+            
+            orders = [];
+            cart = [];
+            
+            // Update all UI components
+            updateProductGrid();
+            updateProductsTable();
+            updateSellerList();
+            updateSellerSelect();
+            updateOrdersTable();
+            updateDashboard();
+            calculateFinancialTotals();
+            
             closeResetModal();
-            addLogEntry('All data has been reset to defaults', 'info');
+            addLog('All data reset to initial state', 'info');
+            alert('All data has been reset successfully!');
+        }
+
+        // Filter orders
+        function filterOrders() {
+            updateOrdersTable();
+        }
+
+        // Update charts
+        function updateCharts() {
+            updateSalesChart();
+            updateReportsChart();
+        }
+
+        // Update sales chart
+        function updateSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            // Sample data for the chart
+            const data = {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Daily Sales',
+                    data: [120, 190, 300, 250, 200, 350, 400],
+                    backgroundColor: 'rgba(0, 243, 255, 0.2)',
+                    borderColor: 'rgba(0, 243, 255, 1)',
+                    borderWidth: 2,
+                    tension: 0.4
+                }]
+            };
+            
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
+            };
+            
+            // Destroy existing chart if it exists
+            if (window.salesChartInstance) {
+                window.salesChartInstance.destroy();
+            }
+            
+            window.salesChartInstance = new Chart(ctx, config);
+        }
+
+        // Update reports chart
+        function updateReportsChart() {
+            const ctx = document.getElementById('reportsChart').getContext('2d');
+            
+            // Sample data for the chart
+            const data = {
+                labels: ['Cigarettes', 'Filters', 'Paper', 'Lighters', 'Other'],
+                datasets: [{
+                    label: 'Sales by Category',
+                    data: [45, 25, 15, 10, 5],
+                    backgroundColor: [
+                        'rgba(0, 243, 255, 0.7)',
+                        'rgba(255, 0, 255, 0.7)',
+                        'rgba(0, 255, 136, 0.7)',
+                        'rgba(255, 204, 0, 0.7)',
+                        'rgba(255, 0, 102, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            // Destroy existing chart if it exists
+            if (window.reportsChartInstance) {
+                window.reportsChartInstance.destroy();
+            }
+            
+            window.reportsChartInstance = new Chart(ctx, config);
+        }
+
+        // Add entry to system log
+        function addLog(message, type) {
+            const log = document.getElementById('activityLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            entry.innerHTML = `[${timestamp}] ${message}`;
+            
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
         }
 
         // Initialize the app when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLoginStatus();
+        window.addEventListener('load', () => {
+            addLog('NEON POS system ready. Please login.', 'info');
         });
     </script>
 </body>
