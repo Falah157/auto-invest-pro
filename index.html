@@ -1,251 +1,144 @@
-souk-al-rahma/
-├── package.json
-├── server.js
-├── .gitignore
-├── .env.example
-└── public/
-    └── index.html{
+{
   "name": "souk-al-rahma",
   "version": "1.0.0",
   "description": "Halal Marketplace - بسم الله الرحمن الرحيم",
-  "main": "server.js",
+  "main": "bot.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node bot.js",
+    "dev": "nodemon bot.js"
   },
-  "keywords": ["islamic", "halal", "marketplace", "telegram", "bot"],
-  "author": "Serving the Ummah",
-  "license": "MIT",
   "dependencies": {
     "telegraf": "^4.12.2",
     "express": "^4.18.2"
   }
-}// بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-// Souk Al-Rahma - Halal Marketplace
+}
+// بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+// Souk Al-Rahma - Complete Halal Marketplace
 // REPLACE "YOUR_BOT_TOKEN_HERE" with your actual bot token!
 
-const express = require('express');
 const { Telegraf } = require('telegraf');
-const path = require('path');
+const express = require('express');
 
 const app = express();
 const bot = new Telegraf('YOUR_BOT_TOKEN_HERE'); // ← REPLACE THIS!
 
-// Middleware
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Quranic Verses for Daily Inspiration
+// Quranic Foundation
 const quranicVerses = [
-    {
-        arabic: "يَا أَيُّهَا الَّذِينَ آمَنُوا إِذَا تَدَايَنتُم بِدَيْنٍ إِلَىٰ أَجَلٍ مُّسَمًّى فَاكْتُبُوهُ",
-        translation: "O you who have believed, when you contract a debt for a specified term, write it down."
-    },
-    {
-        arabic: "وَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَا",
-        translation: "Allah has permitted trade and has forbidden interest."
-    },
-    {
-        arabic: "إِنَّ اللَّهَ يَأْمُرُكُمْ أَن تُؤَدُّوا الْأَمَانَاتِ إِلَىٰ أَهْلِهَا",
-        translation: "Indeed, Allah commands you to render trusts to whom they are due."
-    }
+    "وَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَا - Allah has permitted trade and has forbidden interest (2:275)",
+    "يَا أَيُّهَا الَّذِينَ آمَنُوا إِذَا تَدَايَنتُم بِدَيْنٍ إِلَىٰ أَجَلٍ مُّسَمًّى فَاكْتُبُوهُ - O believers! When you contract a loan for a fixed period, put it in writing (2:282)",
+    "إِنَّ اللَّهَ يَأْمُرُكُمْ أَن تُؤَدُّوا الْأَمَانَاتِ إِلَىٰ أَهْلِهَا - Allah commands you to return trusts to their rightful owners (4:58)"
 ];
 
-// Simple Database (Replace with real database later)
-const users = new Map();
-const products = [];
-const conversations = new Map();
+// Database
+let users = {};
+let products = [];
+let categories = ['books', 'clothing', 'electronics', 'home', 'islamic', 'other'];
 
-// Islamic Marketplace Class
+// Islamic Marketplace Engine
 class HalalMarketplace {
-    constructor() {
-        this.verseOfTheDay = quranicVerses[Math.floor(Math.random() * quranicVerses.length)];
+    static verseOfTheDay() {
+        return quranicVerses[Math.floor(Math.random() * quranicVerses.length)];
     }
 
-    addUser(telegramUser) {
-        const user = {
-            id: telegramUser.id,
-            username: telegramUser.username,
-            firstName: telegramUser.first_name,
-            lastName: telegramUser.last_name || '',
-            joinDate: new Date(),
-            trustScore: 5.0,
-            isVerified: false,
-            productsListed: 0,
-            successfulTransactions: 0
-        };
-        users.set(telegramUser.id, user);
-        return user;
-    }
-
-    addProduct(sellerId, productData) {
-        if (this.isProductHalal(productData)) {
-            const product = {
-                id: Date.now().toString(),
-                sellerId,
-                sellerName: users.get(sellerId)?.firstName || 'Anonymous',
-                ...productData,
-                status: 'active',
-                createdAt: new Date(),
-                views: 0
-            };
-            products.push(product);
-            
-            // Update user stats
-            const user = users.get(sellerId);
-            if (user) user.productsListed++;
-            
-            return product;
-        }
-        throw new Error('Product does not meet halal requirements');
-    }
-
-    isProductHalal(product) {
-        const haramCategories = ['alcohol', 'pork', 'haram', 'interest', 'riba', 'gambling', 'casino', 'lottery'];
-        const productText = (product.title + ' ' + product.description + ' ' + product.category).toLowerCase();
-        
-        return !haramCategories.some(haram => productText.includes(haram));
-    }
-
-    getProducts() {
-        return products.filter(p => p.status === 'active');
-    }
-
-    getProductsByCategory(category) {
-        return this.getProducts().filter(p => 
-            p.category.toLowerCase().includes(category.toLowerCase())
-        );
-    }
-
-    calculateZakat(amount) {
-        // 2.5% Zakat calculation
+    static calculateZakat(amount) {
         return (amount * 0.025).toFixed(2);
+    }
+
+    static isHalal(product) {
+        const haram = ['alcohol', 'pork', 'haram', 'riba', 'interest', 'gambling', 'casino'];
+        const text = (product.title + ' ' + product.description).toLowerCase();
+        return !haram.some(word => text.includes(word));
     }
 }
 
-const marketplace = new HalalMarketplace();
-
-// ==================== TELEGRAM BOT COMMANDS ====================
+// ==================== BOT COMMANDS ====================
 
 bot.start((ctx) => {
-    const user = marketplace.addUser(ctx.from);
-    
-    const welcomeMessage = `
+    const user = ctx.from;
+    users[user.id] = {
+        name: user.first_name,
+        username: user.username,
+        joined: new Date(),
+        trust: 5.0,
+        products: 0
+    };
+
+    ctx.reply(`
 🕌 *Welcome to Souk Al-Rahma!*
 
 *بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ*
 
-Assalamu Alaikum *${user.firstName}*! 
+Assalamu Alaikum *${user.first_name}*!
 
-Your journey in halal commerce begins here. May Allah bless your transactions and make them a means of barakah for you.
-
-*📖 Today's Quranic Guidance:*
-${marketplace.verseOfTheDay.arabic}
-*${marketplace.verseOfTheDay.translation}*
+📖 *Quranic Guidance:*
+${HalalMarketplace.verseOfTheDay()}
 
 *🛍️ Available Commands:*
-/products - Browse all halal products
-/sell - List your product for sale  
-/categories - View by category
-/profile - Your seller profile
-/help - Islamic trading guidance
-/zakat - Calculate Zakat on amount
+/products - Browse halal products
+/sell - List your product  
+/categories - View categories
+/zakat [amount] - Calculate Zakat
+/profile - Your profile
+/help - Islamic guidelines
 
-*Remember:* Trade with honesty and fear Allah in all your transactions.
-    `.trim();
-
-    ctx.reply(welcomeMessage, { parse_mode: 'Markdown' });
+*💫 Trade with honesty and fear Allah*
+    `.trim(), { parse_mode: 'Markdown' });
 });
 
 bot.command('help', (ctx) => {
-    const helpMessage = `
+    ctx.reply(`
 *🤲 Islamic Trading Guidelines*
 
-*Principles to Follow:*
-• Be honest about product condition
-• Disclose all defects clearly  
-• Price items fairly without greed
-• Fulfill your promises and agreements
-• Treat buyers with respect and patience
+*Quranic Principles:*
+• Be truthful in business
+• Honor your contracts
+• Give full measure
+• Avoid fraud and deception
 
-*Quranic Reminder:*
-"يَا أَيُّهَا الَّذِينَ آمَنُوا لَا تَأْكُلُوا أَمْوَالَكُم بَيْنَكُم بِالْبَاطِلِ"
-"O you who believe, do not consume one another's wealth unjustly."
+*Hadith Reminder:*
+"The truthful and honest merchant will be with the prophets, the truthful, and the martyrs." (Tirmidhi)
 
-*Need help?* Contact support through our community.
-    `.trim();
-    
-    ctx.reply(helpMessage, { parse_mode: 'Markdown' });
+*Commands:*
+/products - Browse items
+/sell - List products
+/zakat 1000 - Calculate Zakat
+    `.trim(), { parse_mode: 'Markdown' });
 });
 
 bot.command('products', (ctx) => {
-    const allProducts = marketplace.getProducts();
-    
-    if (allProducts.length === 0) {
-        ctx.reply('📦 *No products available yet!*\n\nBe the first to list something using /sell', { 
-            parse_mode: 'Markdown' 
-        });
-        return;
+    if (products.length === 0) {
+        return ctx.reply('📦 *No products yet!*\nBe the first to /sell', { parse_mode: 'Markdown' });
     }
 
-    let message = `📦 *Available Products (${allProducts.length})*\n\n`;
-    
-    allProducts.slice(0, 10).forEach((product, index) => {
-        message += `*${index + 1}. ${product.title}*\n`;
-        message += `💰 Price: $${product.price}\n`;
-        message += `📁 Category: ${product.category}\n`;
-        message += `👤 Seller: ${product.sellerName}\n`;
-        message += `📝 ${product.description}\n\n`;
+    let message = `📦 *Halal Products (${products.length})*\n\n`;
+    products.forEach((p, i) => {
+        message += `*${i+1}. ${p.title}*\n💰 $${p.price} | 📁 ${p.category}\n👤 ${p.seller} | 📝 ${p.description}\n\n`;
     });
-
-    if (allProducts.length > 10) {
-        message += `... and ${allProducts.length - 10} more products!`;
-    }
-
-    message += `\n💫 *Use /sell to list your own product*`;
 
     ctx.reply(message, { parse_mode: 'Markdown' });
 });
 
 bot.command('categories', (ctx) => {
-    const categories = [...new Set(products.map(p => p.category))];
-    
-    if (categories.length === 0) {
-        ctx.reply('📁 *No categories yet!*\n\nStart by listing products with /sell', {
-            parse_mode: 'Markdown'
-        });
-        return;
-    }
-
     let message = `📁 *Product Categories*\n\n`;
-    categories.forEach(category => {
-        const count = marketplace.getProductsByCategory(category).length;
-        message += `• ${category} (${count} items)\n`;
+    categories.forEach(cat => {
+        const count = products.filter(p => p.category === cat).length;
+        message += `• ${cat.charAt(0).toUpperCase() + cat.slice(1)} (${count} items)\n`;
     });
-
-    message += `\n*Use:* /products_<category> to browse a category\n*Example:* /products_books for Islamic books`;
-
+    message += `\nUse: /products_<category> to browse`;
     ctx.reply(message, { parse_mode: 'Markdown' });
 });
 
-// Dynamic category commands
-categories.forEach(category => {
-    bot.command(`products_${category.toLowerCase()}`, (ctx) => {
-        const categoryProducts = marketplace.getProductsByCategory(category);
-        
+// Category commands
+categories.forEach(cat => {
+    bot.command(`products_${cat}`, (ctx) => {
+        const categoryProducts = products.filter(p => p.category === cat);
         if (categoryProducts.length === 0) {
-            ctx.reply(`📦 No products in *${category}* category yet!\n\nBe the first to list with /sell`, {
-                parse_mode: 'Markdown'
-            });
-            return;
+            return ctx.reply(`📦 No products in *${cat}* category!\nUse /sell to list first.`, { parse_mode: 'Markdown' });
         }
 
-        let message = `📦 *${category} Products (${categoryProducts.length})*\n\n`;
-        
-        categoryProducts.forEach((product, index) => {
-            message += `*${index + 1}. ${product.title}*\n`;
-            message += `💰 $${product.price} | 👤 ${product.sellerName}\n`;
-            message += `📝 ${product.description}\n\n`;
+        let message = `📦 *${cat.toUpperCase()} Products (${categoryProducts.length})*\n\n`;
+        categoryProducts.forEach((p, i) => {
+            message += `*${i+1}. ${p.title}*\n💰 $${p.price} | 👤 ${p.seller}\n📝 ${p.description}\n\n`;
         });
 
         ctx.reply(message, { parse_mode: 'Markdown' });
@@ -253,119 +146,109 @@ categories.forEach(category => {
 });
 
 bot.command('sell', (ctx) => {
-    conversations.set(ctx.from.id, 'awaiting_product');
-    
     ctx.reply(`
 📦 *List Your Product*
 
-Please send your product details in *EXACTLY* this format:
+Send product details in this format:
 
 *Product Title*
 Price: $amount
-Category: books/electronics/clothing/etc.
-Description: Halal, condition, details...
+Category: ${categories.join('/')}
+Description: Halal details...
 
 *Example:*
 Islamic Prayer Rug
 Price: $25
-Category: religious
-Description: Brand new, beautiful design, perfect for salah
+Category: islamic
+Description: New, beautiful design for salah
 
-*🕌 Islamic Reminder:*
-"إنَّ اللَّهَ طَيِّبٌ لَا يَقْبَلُ إِلَّا طَيِّبًا"
-"Allah is Good and accepts only that which is good."
+*🕌 Allah loves those who are honest in trade*
     `.trim(), { parse_mode: 'Markdown' });
 });
 
 bot.command('profile', (ctx) => {
-    const user = users.get(ctx.from.id);
-    
-    if (!user) {
-        ctx.reply('Please use /start first to create your profile.');
-        return;
-    }
+    const user = users[ctx.from.id];
+    if (!user) return ctx.reply('Please /start first');
 
-    const profileMessage = `
-👤 *Your Seller Profile*
+    ctx.reply(`
+👤 *Your Profile*
 
-*Name:* ${user.firstName} ${user.lastName}
+*Name:* ${user.name}
 *Username:* ${user.username || 'Not set'}
-*Member Since:* ${user.joinDate.toLocaleDateString()}
-*Trust Score:* ⭐ ${user.trustScore}/5.0
-*Products Listed:* ${user.productsListed}
-*Successful Transactions:* ${user.successfulTransactions}
+*Member Since:* ${user.joined.toLocaleDateString()}
+*Trust Score:* ⭐ ${user.trust}/5.0
+*Products Listed:* ${user.products}
 
-*💫 Tips to Improve Trust:*
-• Be responsive to buyers
-• Describe products accurately  
-• Resolve issues fairly
-• Fulfill promises promptly
-    `.trim();
-
-    ctx.reply(profileMessage, { parse_mode: 'Markdown' });
+*💫 Keep your trust high by:*
+• Being honest
+• Responding quickly
+• Describing accurately
+    `.trim(), { parse_mode: 'Markdown' });
 });
 
 bot.command('zakat', (ctx) => {
-    conversations.set(ctx.from.id, 'awaiting_zakat_amount');
+    const amount = ctx.message.text.split(' ')[1];
+    if (!amount || isNaN(amount)) {
+        return ctx.reply('🤲 *Usage:* /zakat <amount>\n*Example:* /zakat 1000', { parse_mode: 'Markdown' });
+    }
+
+    const zakat = HalalMarketplace.calculateZakat(parseFloat(amount));
     
     ctx.reply(`
-🤲 *Zakat Calculator*
+🤲 *Zakat Calculation*
 
-Please enter the amount you want to calculate Zakat for:
+*Amount:* $${amount}
+*Zakat (2.5%):* $${zakat}
 
-*Example:* 1000 (for $1000)
+*📖 Quran 9:103:*
+"Take from their wealth charity to purify them."
 
-*Zakat Rate:* 2.5% of savings above Nisab
-*Quranic Basis:* "Take from their wealth charity to purify them" (9:103)
+*💫 Recommended Distribution:*
+• Poor and needy Muslims
+• Those in debt
+• Islamic causes
+• Stranded travelers
 
-*Note:* This is for educational purposes. Consult local scholars for precise Zakat calculation.
+*Consult local scholars for precise calculation.*
     `.trim(), { parse_mode: 'Markdown' });
 });
 
 // Handle product creation
 bot.on('text', (ctx) => {
-    const userId = ctx.from.id;
-    const conversationState = conversations.get(userId);
-    const messageText = ctx.message.text;
+    const text = ctx.message.text;
+    const user = ctx.from;
 
-    if (conversationState === 'awaiting_product') {
-        conversations.delete(userId);
-        
+    // Check if it's a product listing
+    if (text.includes('Price: $') && text.includes('Category:') && text.includes('Description:')) {
         try {
-            // Simple parsing - in real app, use proper NLP
-            const lines = messageText.split('\n');
+            const lines = text.split('\n');
             const title = lines[0].trim();
-            const priceLine = lines.find(line => line.toLowerCase().includes('price:'));
-            const categoryLine = lines.find(line => line.toLowerCase().includes('category:'));
-            const descriptionLine = lines.find(line => line.toLowerCase().includes('description:'));
+            const price = lines[1].match(/\$(\d+)/)[1];
+            const category = lines[2].split(':')[1].trim().toLowerCase();
+            const description = lines[3].split(':')[1].trim();
 
-            if (!title || !priceLine) {
-                ctx.reply('❌ *Invalid format!* Please use the exact format shown in /sell', {
-                    parse_mode: 'Markdown'
-                });
-                return;
+            if (!categories.includes(category)) {
+                return ctx.reply(`❌ *Invalid category!* Use: ${categories.join(', ')}`, { parse_mode: 'Markdown' });
             }
 
-            const price = priceLine.match(/\$?(\d+)/)?.[1];
-            const category = categoryLine?.split(':')[1]?.trim() || 'general';
-            const description = descriptionLine?.split(':')[1]?.trim() || 'No description provided';
-
-            if (!price) {
-                ctx.reply('❌ *Price not found!* Please include "Price: $amount"', {
-                    parse_mode: 'Markdown'
-                });
-                return;
-            }
-
-            const productData = {
+            const product = {
+                id: Date.now(),
                 title,
                 price: parseInt(price),
                 category,
-                description
+                description,
+                seller: user.first_name,
+                sellerId: user.id,
+                timestamp: new Date()
             };
 
-            const product = marketplace.addProduct(userId, productData);
-            
+            if (!HalalMarketplace.isHalal(product)) {
+                return ctx.reply('❌ *Product rejected!* Contains haram elements.\nOnly halal items allowed.', { parse_mode: 'Markdown' });
+            }
+
+            products.push(product);
+            users[user.id].products++;
+
             ctx.reply(`
 ✅ *Product Listed Successfully!*
 
@@ -374,487 +257,126 @@ bot.on('text', (ctx) => {
 *Category:* ${product.category}
 *Description:* ${product.description}
 
-*📊 What's Next?*
-• Buyers can see your product with /products
-• You can view all products with /products
-• Check categories with /categories
+*📊 Now visible in:*
+/products - All products
+/products_${category} - Category view
+/categories - Category list
 
-*🕌 May Allah bring barakah to this transaction!*
+*🕌 May Allah bring barakah!*
             `.trim(), { parse_mode: 'Markdown' });
 
         } catch (error) {
-            ctx.reply(`❌ *Error:* ${error.message}\n\nPlease try again with /sell`, {
-                parse_mode: 'Markdown'
-            });
+            ctx.reply('❌ *Invalid format!* Use exact format from /sell', { parse_mode: 'Markdown' });
         }
-    }
-    else if (conversationState === 'awaiting_zakat_amount') {
-        conversations.delete(userId);
-        
-        const amount = parseFloat(messageText);
-        if (isNaN(amount) || amount <= 0) {
-            ctx.reply('❌ Please enter a valid amount (e.g., 1000 for $1000)');
-            return;
-        }
-
-        const zakat = marketplace.calculateZakat(amount);
-        
-        ctx.reply(`
-🤲 *Zakat Calculation*
-
-*Amount:* $${amount}
-*Zakat (2.5%):* $${zakat}
-
-*📖 Quranic Guidance:*
-"Take from their wealth charity to purify them and cause them to increase." (9:103)
-
-*💫 Recommended Actions:*
-• Give to poor and needy Muslims
-• Support Islamic education
-• Help those in debt
-• Aid travelers in need
-
-*Note:* Consult local scholars for your specific Zakat obligations.
-        `.trim(), { parse_mode: 'Markdown' });
     }
 });
 
-// Error handling
-bot.catch((err, ctx) => {
-    console.error(`Error for ${ctx.updateType}:`, err);
-    ctx.reply('❌ An error occurred. Please try again later.');
+// Stats command
+bot.command('stats', (ctx) => {
+    const userCount = Object.keys(users).length;
+    const productCount = products.length;
+    
+    ctx.reply(`
+📊 *Marketplace Stats*
+
+*👥 Total Users:* ${userCount}
+*📦 Active Products:* ${productCount}
+*📁 Categories:* ${categories.length}
+
+*🕌 Quranic Verse:*
+${HalalMarketplace.verseOfTheDay()}
+
+*💫 Growing by Allah's will*
+    `.trim(), { parse_mode: 'Markdown' });
 });
 
-// ==================== EXPRESS ROUTES ====================
-
+// Express server for web interface
 app.get('/', (req, res) => {
-    res.json({
-        name: 'Souk Al-Rahma',
-        version: '1.0.0',
-        message: 'Halal Marketplace - بسم الله الرحمن الرحيم',
-        status: 'Running',
-        users: users.size,
-        products: products.length,
-        quranicVerse: marketplace.verseOfTheDay
-    });
-});
-
-app.get('/stats', (req, res) => {
-    res.json({
-        totalUsers: users.size,
-        totalProducts: products.length,
-        activeProducts: marketplace.getProducts().length,
-        categories: [...new Set(products.map(p => p.category))],
-        verseOfTheDay: marketplace.verseOfTheDay
-    });
-});
-
-// ==================== START SERVERS ====================
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`
-🕌 Souk Al-Rahma Server Running
-📍 Port: ${PORT}
-📿 Started with: بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-👥 Users: ${users.size}
-📦 Products: ${products.length}
-    `.trim());
-});
-
-bot.launch().then(() => {
-    console.log('🤖 Telegram Bot Activated and LIVE!');
-    console.log('💫 Serving the Ummah with halal commerce...');
-}).catch(err => {
-    console.error('❌ Bot failed to start:', err.message);
-    console.log('💡 Check your bot token and try again.');
-});
-
-// Graceful shutdown
-process.once('SIGINT', () => {
-    console.log('🕌 Shutting down gracefully...');
-    bot.stop('SIGINT');
-    process.exit(0);
-});
-
-process.once('SIGTERM', () => {
-    console.log('🕌 Shutting down gracefully...');
-    bot.stop('SIGTERM');
-    process.exit(0);
-});
-            <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+    res.send(`
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سوق الرحمة - Souk Al-Rahma</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Traditional Arabic', Tahoma, sans-serif;
-        }
-        
         body {
+            font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #0d8b4e 0%, #0a6b3a 100%);
-            color: #2c3e50;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
-            min-height: 100vh;
-        }
-        
-        .header {
-            text-align: center;
             color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .header {
             margin-bottom: 30px;
-            padding: 20px 0;
         }
-        
-        .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .header .arabic {
-            font-size: 2rem;
-            color: #d4af37;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        
-        .header p {
-            opacity: 0.95;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-        
-        .quran-verse {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 25px;
-            margin: 25px 0;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            border-right: 6px solid #d4af37;
-            backdrop-filter: blur(10px);
-        }
-        
-        .quran-verse .arabic {
-            font-size: 1.5rem;
-            color: #0d8b4e;
-            margin-bottom: 20px;
-            line-height: 1.8;
-            font-weight: 600;
-        }
-        
-        .quran-verse .translation {
-            color: #7f8c8d;
-            font-style: italic;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-        
-        .feature-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px 25px;
+        .stats {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
             margin: 20px 0;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(13, 139, 78, 0.1);
         }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-align: center;
-            display: block;
-        }
-        
-        .feature-card h3 {
-            color: #0d8b4e;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-        
-        .feature-card p {
-            color: #666;
-            text-align: center;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-        
         .btn {
             display: block;
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            background: #d4af37;
             color: white;
-            text-decoration: none;
-            border-radius: 15px;
-            text-align: center;
-            font-weight: 700;
-            margin: 15px 0;
-            border: none;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-        }
-        
-        .btn:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn-secondary:hover {
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .islamic-pattern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.03;
-            pointer-events: none;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><path fill="%23000" d="M60,0 L70,45 L120,60 L70,75 L60,120 L50,75 L0,60 L50,45 Z"/></svg>');
-            background-size: 120px 120px;
-            z-index: -1;
-        }
-        
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 40px;
-            padding: 25px 20px;
-            opacity: 0.9;
-            font-size: 0.95rem;
-        }
-        
-        .footer p {
-            margin: 8px 0;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            color: white;
-            text-align: center;
-        }
-        
-        .stat-item {
             padding: 15px;
-        }
-        
-        .stat-number {
-            font-size: 1.8rem;
+            text-decoration: none;
+            border-radius: 10px;
+            margin: 10px 0;
             font-weight: bold;
-            display: block;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .header .arabic {
-                font-size: 1.6rem;
-            }
-            
-            .quran-verse .arabic {
-                font-size: 1.3rem;
-            }
-            
-            .feature-card {
-                padding: 20px 15px;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="islamic-pattern"></div>
-    
     <div class="container">
         <div class="header">
-            <div class="arabic">سوق الرحمة</div>
             <h1>🏪 Souk Al-Rahma</h1>
-            <p>Your Compassionate Halal Marketplace</p>
             <p>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+            <p>Your Halal Marketplace is LIVE!</p>
         </div>
         
-        <div class="stats" id="stats">
-            <div class="stat-item">
-                <span class="stat-number" id="userCount">0</span>
-                <span class="stat-label">Users</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" id="productCount">0</span>
-                <span class="stat-label">Products</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number">⭐</span>
-                <span class="stat-label">Halal</span>
-            </div>
+        <div class="stats">
+            <h3>📊 Live Statistics</h3>
+            <p>👥 Users: ${Object.keys(users).length}</p>
+            <p>📦 Products: ${products.length}</p>
+            <p>⭐ 100% Halal</p>
         </div>
         
-        <div class="quran-verse">
-            <div class="arabic" id="quranArabic">وَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَا</div>
-            <div class="translation" id="quranTranslation">"And Allah has permitted trade and has forbidden interest." (Quran 2:275)</div>
-        </div>
+        <a href="https://t.me/${bot.context?.botInfo?.username}" class="btn">Open in Telegram</a>
         
-        <div class="feature-card">
-            <div class="feature-icon">📦</div>
-            <h3>Halal Marketplace</h3>
-            <p>Buy and sell with Islamic principles. All products verified for halal compliance and ethical standards.</p>
-            <button class="btn" onclick="openBot()">Start Trading</button>
-        </div>
-        
-        <div class="feature-card">
-            <div class="feature-icon">🤲</div>
-            <h3>Zakat Calculator</h3>
-            <p>Automatically calculate and distribute Zakat on your transactions according to Islamic principles.</p>
-            <button class="btn btn-secondary" onclick="calculateZakat()">Calculate Zakat</button>
-        </div>
-        
-        <div class="feature-card">
-            <div class="feature-icon">⭐</div>
-            <h3>Trust System</h3>
-            <p>Community-based ratings and Islamic dispute resolution ensuring fair and honest transactions.</p>
-            <button class="btn" onclick="viewTrust()">Trust Guidelines</button>
-        </div>
-        
-        <div class="footer">
-            <p>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-            <p>Starting with Allah's name, the Most Gracious, the Most Merciful</p>
-            <p>© 2024 Souk Al-Rahma - Serving the Ummah</p>
+        <div style="margin-top: 30px; opacity: 0.8;">
+            <p>🕌 Serving the Ummah with halal commerce</p>
+            <p>© 2024 Souk Al-Rahma</p>
         </div>
     </div>
-
-    <script>
-        // Initialize Telegram Web App
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.enableClosingConfirmation();
-        tg.setHeaderColor('#0d8b4e');
-        tg.setBackgroundColor('#0d8b4e');
-        
-        // Fetch live stats
-        async function fetchStats() {
-            try {
-                const response = await fetch('/stats');
-                const data = await response.json();
-                
-                document.getElementById('userCount').textContent = data.totalUsers;
-                document.getElementById('productCount').textContent = data.activeProducts;
-                document.getElementById('quranArabic').textContent = data.verseOfTheDay.arabic;
-                document.getElementById('quranTranslation').textContent = data.verseOfTheDay.translation;
-            } catch (error) {
-                console.log('Stats not available yet');
-            }
-        }
-        
-        function openBot() {
-            tg.showPopup({
-                title: '🕌 Welcome to Souk Al-Rahma',
-                message: 'Open Telegram and start using our halal marketplace bot! You can buy, sell, and trade with Islamic principles.',
-                buttons: [
-                    { type: 'default', text: 'Open Bot', id: 'open_bot' },
-                    { type: 'cancel', text: 'Later' }
-                ]
-            }).then(btnId => {
-                if (btnId === 'open_bot') {
-                    tg.openTelegramLink('https://t.me/' + tg.initDataUnsafe.user?.username || 'your_bot_username');
-                }
-            });
-        }
-        
-        function calculateZakat() {
-            tg.showPopup({
-                title: '🤲 Zakat Calculator',
-                message: 'Use the /zakat command in our Telegram bot to calculate Zakat on any amount according to Islamic principles.',
-                buttons: [{ type: 'ok', text: 'Insha Allah' }]
-            });
-        }
-        
-        function viewTrust() {
-            tg.showPopup({
-                title: '⭐ Islamic Trust System',
-                message: 'Our platform is built on Quranic principles: honesty, transparency, fairness, and fulfilling promises.',
-                buttons: [{ type: 'ok', text: 'Masha Allah' }]
-            });
-        }
-        
-        // Show welcome message
-        setTimeout(() => {
-            tg.showPopup({
-                title: 'أهلاً وسهلاً - Welcome!',
-                message: 'May Allah bless your journey in halal commerce and bring barakah to all your transactions.',
-                buttons: [{ type: 'default', text: 'بِسْمِ اللَّهِ', id: 'bismillah' }]
-            });
-        }, 1500);
-        
-        // Load stats
-        fetchStats();
-        setInterval(fetchStats, 30000); // Update every 30 seconds
-    </script>
 </body>
 </html>
-node_modules/
-.env
-*.log
-.DS_Store
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-            # Copy this to .env and replace with your actual values
-BOT_TOKEN=your_telegram_bot_token_here
-PORT=3000
-            # 1. Create project folder
-mkdir souk-al-rahma
-cd souk-al-rahma
+    `);
+});
 
-# 2. Create all the files above with the exact content
+// Start everything
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`
+🕌 Souk Al-Rahma Server Running
+📍 Port: ${PORT}
+📿 بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+    `.trim());
+});
 
-# 3. Install dependencies
-npm install
+bot.launch().then(() => {
+    console.log('🤖 Bot is LIVE! Serving the Ummah...');
+}).catch(err => {
+    console.error('❌ Bot failed:', err.message);
+});
 
-# 4. Replace "YOUR_BOT_TOKEN_HERE" in server.js with your actual token
+// Graceful shutdown
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
-# 5. LAUNCH!
-npm start
-            
+console.log('🚀 Starting Souk Al-Rahma...');
