@@ -84,6 +84,45 @@
             font-size: 0.9em;
         }
 
+        /* Financial Summary */
+        .financial-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .financial-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        .financial-card.buying {
+            border-color: var(--warning);
+        }
+
+        .financial-card.selling {
+            border-color: var(--accent);
+        }
+
+        .financial-card.profit {
+            border-color: var(--primary);
+        }
+
+        .financial-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .financial-label {
+            color: #aaa;
+            font-size: 0.8em;
+        }
+
         /* Login Screen */
         .login-screen {
             display: flex;
@@ -600,6 +639,22 @@
             flex: 1;
         }
 
+        /* Financial Details */
+        .financial-details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background: #2a2a3e;
+            border-radius: 5px;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 380px) {
             .stats-grid {
@@ -616,6 +671,10 @@
             }
             
             .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .financial-summary {
                 grid-template-columns: 1fr;
             }
         }
@@ -672,6 +731,30 @@
                 </div>
             </div>
 
+            <!-- Financial Summary -->
+            <div class="financial-summary">
+                <div class="financial-card buying">
+                    <div class="financial-label">Total Buying Cost</div>
+                    <div class="financial-value warning" id="totalBuyingCost">$0.00</div>
+                    <div class="financial-label">All Inventory Cost</div>
+                </div>
+                <div class="financial-card selling">
+                    <div class="financial-label">Total Selling Value</div>
+                    <div class="financial-value accent" id="totalSellingValue">$0.00</div>
+                    <div class="financial-label">All Inventory Value</div>
+                </div>
+                <div class="financial-card profit">
+                    <div class="financial-label">Total Profit</div>
+                    <div class="financial-value primary" id="totalProfit">$0.00</div>
+                    <div class="financial-label">Potential Profit</div>
+                </div>
+                <div class="financial-card">
+                    <div class="financial-label">Actual Profit</div>
+                    <div class="financial-value accent" id="actualProfit">$0.00</div>
+                    <div class="financial-label">From Sales</div>
+                </div>
+            </div>
+
             <!-- Stats Dashboard -->
             <div class="stats-grid">
                 <div class="stat-card">
@@ -717,6 +800,32 @@
                     <h3><i class="fas fa-chart-line"></i> Sales Overview</h3>
                     <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
                         <canvas id="salesChart" width="300" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-money-bill-wave"></i> Financial Details</h3>
+                    <div class="financial-details">
+                        <div class="detail-item">
+                            <span>Total Inventory Buying Cost:</span>
+                            <span class="warning" id="detailBuyingCost">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Total Inventory Selling Value:</span>
+                            <span class="accent" id="detailSellingValue">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Potential Profit Margin:</span>
+                            <span class="primary" id="detailProfitMargin">0%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Actual Sales Revenue:</span>
+                            <span class="accent" id="detailSalesRevenue">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Actual Profit from Sales:</span>
+                            <span class="primary" id="detailActualProfit">$0.00</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -1107,6 +1216,54 @@
         let editingCustomerId = null;
         let viewingOrderId = null;
 
+        // Calculate financial totals
+        function calculateFinancialTotals() {
+            // Calculate inventory totals
+            let totalBuyingCost = 0;
+            let totalSellingValue = 0;
+            let totalPotentialProfit = 0;
+            
+            products.forEach(product => {
+                totalBuyingCost += product.cost * product.stock;
+                totalSellingValue += product.price * product.stock;
+                totalPotentialProfit += (product.price - product.cost) * product.stock;
+            });
+            
+            // Calculate actual sales totals
+            let totalSalesRevenue = 0;
+            let totalActualProfit = 0;
+            
+            orders.forEach(order => {
+                totalSalesRevenue += order.total;
+                
+                // Calculate actual profit for this order
+                let orderProfit = 0;
+                order.items.forEach(item => {
+                    const product = products.find(p => p.id === item.productId);
+                    if (product) {
+                        orderProfit += (item.price - product.cost) * item.quantity;
+                    }
+                });
+                totalActualProfit += orderProfit;
+            });
+            
+            // Calculate profit margin percentage
+            const profitMargin = totalSellingValue > 0 ? ((totalSellingValue - totalBuyingCost) / totalSellingValue * 100) : 0;
+            
+            // Update financial summary
+            document.getElementById('totalBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
+            document.getElementById('totalSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('totalProfit').textContent = `$${totalPotentialProfit.toFixed(2)}`;
+            document.getElementById('actualProfit').textContent = `$${totalActualProfit.toFixed(2)}`;
+            
+            // Update financial details
+            document.getElementById('detailBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
+            document.getElementById('detailSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
+            document.getElementById('detailSalesRevenue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
+            document.getElementById('detailActualProfit').textContent = `$${totalActualProfit.toFixed(2)}`;
+        }
+
         // Initialize the app
         function initApp() {
             updateDashboard();
@@ -1115,6 +1272,7 @@
             updateCustomerList();
             updateOrdersTable();
             updateCharts();
+            calculateFinancialTotals();
         }
 
         // Login function
@@ -1208,6 +1366,9 @@
                     `<div class="status warning">${item.name} - Only ${item.stock} left</div>`
                 ).join('');
             }
+            
+            // Update financial totals
+            calculateFinancialTotals();
             
             updateSalesChart();
         }
@@ -1411,7 +1572,7 @@
             document.getElementById('customerPhone').value = '';
             document.getElementById('discountAmount').value = '0';
             
-            // Update dashboard
+            // Update dashboard and financial totals
             updateDashboard();
             updateProductsTable();
             
@@ -1516,6 +1677,7 @@
             // Update UI
             updateProductGrid();
             updateProductsTable();
+            calculateFinancialTotals();
             
             // Clear form
             document.getElementById('productName').value = '';
@@ -1599,6 +1761,7 @@
                 
                 updateProductGrid();
                 updateProductsTable();
+                calculateFinancialTotals();
                 closeEditModal();
                 
                 addLog(`Product updated: ${name}`, 'success');
@@ -1618,6 +1781,7 @@
                 products = products.filter(p => p.id !== productId);
                 updateProductGrid();
                 updateProductsTable();
+                calculateFinancialTotals();
                 addLog('Product deleted', 'info');
             }
         }
@@ -1825,6 +1989,7 @@
                 updateOrdersTable();
                 updateProductsTable();
                 updateDashboard();
+                calculateFinancialTotals();
                 addLog(`Order #${orderId} deleted`, 'info');
             }
         }
@@ -1860,6 +2025,7 @@
                 updateOrdersTable();
                 updateProductsTable();
                 updateDashboard();
+                calculateFinancialTotals();
                 addLog('All orders deleted', 'info');
                 alert('All orders have been deleted and product stock has been restored.');
             }
@@ -1901,6 +2067,7 @@
             updateCustomerList();
             updateOrdersTable();
             updateDashboard();
+            calculateFinancialTotals();
             
             closeResetModal();
             addLog('All data reset to initial state', 'info');
