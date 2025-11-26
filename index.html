@@ -268,6 +268,7 @@
         .btn-small {
             padding: 8px 12px;
             font-size: 0.85em;
+            width: auto;
         }
 
         /* Tables */
@@ -560,6 +561,29 @@
             color: #aaa;
         }
 
+        /* Edit Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 380px) {
             .stats-grid {
@@ -759,12 +783,12 @@
                         <input type="text" id="productName" placeholder="Product name">
                     </div>
                     <div class="form-group">
-                        <label for="productPrice">Price ($)</label>
-                        <input type="number" id="productPrice" step="0.01" placeholder="Price">
+                        <label for="productPrice">Selling Price ($)</label>
+                        <input type="number" id="productPrice" step="0.01" placeholder="Selling price">
                     </div>
                     <div class="form-group">
-                        <label for="productCost">Cost ($)</label>
-                        <input type="number" id="productCost" step="0.01" placeholder="Cost">
+                        <label for="productCost">Buying Price ($)</label>
+                        <input type="number" id="productCost" step="0.01" placeholder="Buying price">
                     </div>
                     <div class="form-group">
                         <label for="productStock">Stock Quantity</label>
@@ -786,10 +810,11 @@
                             <thead>
                                 <tr>
                                     <th>Product</th>
-                                    <th>Price</th>
-                                    <th>Cost</th>
+                                    <th>Buy Price</th>
+                                    <th>Sell Price</th>
+                                    <th>Profit</th>
                                     <th>Stock</th>
-                                    <th>Action</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="productsTableBody">
@@ -893,9 +918,44 @@
         </div>
     </div>
 
+    <!-- Edit Product Modal -->
+    <div class="modal" id="editProductModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Product</h3>
+            <div class="form-group">
+                <label for="editProductName">Product Name</label>
+                <input type="text" id="editProductName">
+            </div>
+            <div class="form-group">
+                <label for="editProductPrice">Selling Price ($)</label>
+                <input type="number" id="editProductPrice" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="editProductCost">Buying Price ($)</label>
+                <input type="number" id="editProductCost" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="editProductStock">Stock Quantity</label>
+                <input type="number" id="editProductStock">
+            </div>
+            <div class="form-group">
+                <label for="editProductBarcode">Barcode</label>
+                <input type="text" id="editProductBarcode">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-success" onclick="saveProductEdit()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn-warning" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Receipt Modal -->
-    <div class="modal" id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; padding: 20px; overflow-y: auto;">
-        <div class="card" style="max-width: 400px; margin: 0 auto;">
+    <div class="modal" id="receiptModal">
+        <div class="modal-content">
             <h3><i class="fas fa-receipt"></i> Receipt</h3>
             <div class="receipt" id="receiptContent">
                 <!-- Receipt content will be here -->
@@ -945,6 +1005,7 @@
         let currentUser = null;
         let cart = [];
         let selectedPayment = 'cash';
+        let editingProductId = null;
 
         // Initialize the app
         function initApp() {
@@ -1379,10 +1440,14 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${product.name}</td>
-                    <td>$${product.price.toFixed(2)}</td>
                     <td>$${product.cost.toFixed(2)}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td class="positive">$${profit.toFixed(2)}</td>
                     <td class="${product.stock < 5 ? 'negative' : 'positive'}">${product.stock}</td>
                     <td>
+                        <button class="btn-small" onclick="editProduct(${product.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
                         <button class="btn-danger btn-small" onclick="deleteProduct(${product.id})">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -1390,6 +1455,61 @@
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        // Edit product
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                editingProductId = productId;
+                document.getElementById('editProductName').value = product.name;
+                document.getElementById('editProductPrice').value = product.price;
+                document.getElementById('editProductCost').value = product.cost;
+                document.getElementById('editProductStock').value = product.stock;
+                document.getElementById('editProductBarcode').value = product.barcode;
+                document.getElementById('editProductModal').style.display = 'block';
+            }
+        }
+
+        // Save product edit
+        function saveProductEdit() {
+            if (editingProductId === null) return;
+            
+            const name = document.getElementById('editProductName').value;
+            const price = parseFloat(document.getElementById('editProductPrice').value);
+            const cost = parseFloat(document.getElementById('editProductCost').value);
+            const stock = parseInt(document.getElementById('editProductStock').value);
+            const barcode = document.getElementById('editProductBarcode').value;
+            
+            if (!name || !price || !cost || !stock) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const productIndex = products.findIndex(p => p.id === editingProductId);
+            if (productIndex !== -1) {
+                products[productIndex] = {
+                    ...products[productIndex],
+                    name: name,
+                    price: price,
+                    cost: cost,
+                    stock: stock,
+                    barcode: barcode
+                };
+                
+                updateProductGrid();
+                updateProductsTable();
+                closeEditModal();
+                
+                addLog(`Product updated: ${name}`, 'success');
+                alert(`Product "${name}" updated successfully!`);
+            }
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editProductModal').style.display = 'none';
+            editingProductId = null;
         }
 
         // Delete product
