@@ -776,9 +776,9 @@
                     <div class="financial-label">All Inventory Value</div>
                 </div>
                 <div class="financial-card profit">
-                    <div class="financial-label">Total Gross Profit</div>
+                    <div class="financial-label">Actual Gross Profit</div>
                     <div class="financial-value primary" id="totalProfit">$0.00</div>
-                    <div class="financial-label">Potential Profit</div>
+                    <div class="financial-label">From Actual Sales</div>
                 </div>
                 <div class="financial-card my-profit">
                     <div class="financial-label">My 50% Profit</div>
@@ -1234,13 +1234,13 @@
     </div>
 
     <script>
-        // Data storage
-        let users = [
+        // Data storage with localStorage persistence
+        let users = JSON.parse(localStorage.getItem('neonpos_users')) || [
             { id: 1, email: 'admin@neonpos.com', password: 'password', role: 'admin', name: 'Admin User' },
             { id: 2, email: 'staff@neonpos.com', password: 'password', role: 'staff', name: 'Staff User' }
         ];
 
-        let products = [
+        let products = JSON.parse(localStorage.getItem('neonpos_products')) || [
             { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
             { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
             { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
@@ -1249,37 +1249,32 @@
             { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
         ];
 
-        let sellers = [
+        let sellers = JSON.parse(localStorage.getItem('neonpos_sellers')) || [
             { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
             { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
         ];
 
-        let orders = [
-            { 
-                id: 1001, 
-                date: new Date(), 
-                items: [
-                    { productId: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, quantity: 2 },
-                    { productId: 3, name: 'Filter', price: 45.00, cost: 22.75, quantity: 1 }
-                ], 
-                total: 335.00, 
-                payment: 'cash', 
-                sellerId: 1,
-                myProfit: 67.125,
-                sellerProfit: 67.125
-            }
-        ];
+        let orders = JSON.parse(localStorage.getItem('neonpos_orders')) || [];
 
         let currentUser = null;
-        let cart = [];
+        let cart = JSON.parse(localStorage.getItem('neonpos_cart')) || [];
         let selectedPayment = 'cash';
         let editingProductId = null;
         let editingSellerId = null;
         let viewingOrderId = null;
 
-        // Calculate financial totals with 50/50 profit sharing
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('neonpos_users', JSON.stringify(users));
+            localStorage.setItem('neonpos_products', JSON.stringify(products));
+            localStorage.setItem('neonpos_sellers', JSON.stringify(sellers));
+            localStorage.setItem('neonpos_orders', JSON.stringify(orders));
+            localStorage.setItem('neonpos_cart', JSON.stringify(cart));
+        }
+
+        // Calculate financial totals with 50/50 profit sharing - FIXED VERSION
         function calculateFinancialTotals() {
-            // Calculate inventory totals
+            // Calculate inventory totals (POTENTIAL values)
             let totalBuyingCost = 0;
             let totalSellingValue = 0;
             let totalPotentialProfit = 0;
@@ -1290,49 +1285,45 @@
                 totalPotentialProfit += (product.price - product.cost) * product.stock;
             });
             
-            // Calculate actual sales totals with 50/50 profit sharing
+            // Calculate ACTUAL sales totals with 50/50 profit sharing
             let totalSalesRevenue = 0;
-            let totalGrossProfit = 0;
-            let myTotalProfit = 0;
-            let sellerTotalProfit = 0;
+            let totalActualProfit = 0;
+            let myTotalActualProfit = 0;
+            let sellerTotalActualProfit = 0;
             
             orders.forEach(order => {
                 totalSalesRevenue += order.total;
-                
-                // Calculate profit for this order (50/50 split)
-                let orderProfit = 0;
-                order.items.forEach(item => {
-                    orderProfit += (item.price - item.cost) * item.quantity;
-                });
-                
-                totalGrossProfit += orderProfit;
-                myTotalProfit += order.myProfit || (orderProfit / 2);
-                sellerTotalProfit += order.sellerProfit || (orderProfit / 2);
+                totalActualProfit += order.myProfit + order.sellerProfit;
+                myTotalActualProfit += order.myProfit;
+                sellerTotalActualProfit += order.sellerProfit;
             });
             
             // Calculate profit margin percentage
             const profitMargin = totalSellingValue > 0 ? ((totalSellingValue - totalBuyingCost) / totalSellingValue * 100) : 0;
             
-            // Update financial summary
+            // Update financial summary - SHOW ACTUAL PROFITS
             document.getElementById('totalBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
             document.getElementById('totalSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
-            document.getElementById('totalProfit').textContent = `$${totalGrossProfit.toFixed(2)}`;
-            document.getElementById('myProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
+            document.getElementById('totalProfit').textContent = `$${totalActualProfit.toFixed(2)}`; // ACTUAL profit
+            document.getElementById('myProfit').textContent = `$${myTotalActualProfit.toFixed(2)}`; // ACTUAL your share
             
-            // Update profit distribution
-            document.getElementById('myTotalProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
-            document.getElementById('sellerTotalProfit').textContent = `$${sellerTotalProfit.toFixed(2)}`;
+            // Update profit distribution - SHOW ACTUAL PROFITS
+            document.getElementById('myTotalProfit').textContent = `$${myTotalActualProfit.toFixed(2)}`; // ACTUAL
+            document.getElementById('sellerTotalProfit').textContent = `$${sellerTotalActualProfit.toFixed(2)}`; // ACTUAL
             
             // Update financial details
             document.getElementById('detailBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
             document.getElementById('detailSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
             document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
             document.getElementById('detailSalesRevenue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
-            document.getElementById('detailMyProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
-            document.getElementById('detailSellerProfit').textContent = `$${sellerTotalProfit.toFixed(2)}`;
+            document.getElementById('detailMyProfit').textContent = `$${myTotalActualProfit.toFixed(2)}`; // ACTUAL
+            document.getElementById('detailSellerProfit').textContent = `$${sellerTotalActualProfit.toFixed(2)}`; // ACTUAL
             
             // Update seller stats
             document.getElementById('activeSellers').textContent = sellers.length;
+            
+            // Save data after calculations
+            saveData();
         }
 
         // Initialize the app
@@ -1345,6 +1336,7 @@
             updateOrdersTable();
             updateCharts();
             calculateFinancialTotals();
+            updateCartDisplay(); // Make sure cart is displayed correctly
         }
 
         // Login function
@@ -1363,6 +1355,7 @@
                 document.getElementById('userGreeting').textContent = `Welcome, ${user.name}`;
                 initApp();
                 addLog(`User ${user.name} logged in`, 'info');
+                saveData();
             } else {
                 alert('Invalid login credentials. Please try again.');
             }
@@ -1374,6 +1367,7 @@
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
             addLog('User logged out', 'info');
+            saveData();
         }
 
         // Tab switching functionality
@@ -1535,6 +1529,7 @@
             
             updateCartDisplay();
             addLog(`Added ${product.name} to cart`, 'info');
+            saveData();
         }
 
         // Update cart display
@@ -1599,6 +1594,7 @@
                     updateCartDisplay();
                 }
             }
+            saveData();
         }
 
         // Remove from cart
@@ -1606,6 +1602,7 @@
             cart = cart.filter(item => item.id !== productId);
             updateCartDisplay();
             addLog('Item removed from cart', 'info');
+            saveData();
         }
 
         // Clear cart
@@ -1613,6 +1610,7 @@
             cart = [];
             updateCartDisplay();
             addLog('Cart cleared', 'info');
+            saveData();
         }
 
         // Select payment method
@@ -1694,6 +1692,7 @@
             updateSellerList();
             
             addLog(`Order #${order.id} completed - $${total.toFixed(2)} (My Profit: $${myProfit.toFixed(2)})`, 'success');
+            saveData();
         }
 
         // Generate receipt
@@ -1744,7 +1743,7 @@
             printWindow.document.write(`
                 <html>
                     <head>
-                        <title>Receipt #${orders[0].id}</title>
+                        <title>Receipt #${orders[0]?.id || '0000'}</title>
                         <style>
                             body { font-family: monospace; padding: 20px; }
                             pre { white-space: pre-wrap; }
@@ -1810,6 +1809,7 @@
             
             addLog(`Product added: ${name}`, 'success');
             alert(`Product "${name}" added successfully!`);
+            saveData();
         }
 
         // Update products table
@@ -1888,6 +1888,7 @@
                 
                 addLog(`Product updated: ${name}`, 'success');
                 alert(`Product "${name}" updated successfully!`);
+                saveData();
             }
         }
 
@@ -1905,6 +1906,7 @@
                 updateProductsTable();
                 calculateFinancialTotals();
                 addLog('Product deleted', 'info');
+                saveData();
             }
         }
 
@@ -1941,6 +1943,7 @@
             
             addLog(`Seller added: ${name}`, 'success');
             alert(`Seller "${name}" added successfully!`);
+            saveData();
         }
 
         // Update seller list
@@ -2012,6 +2015,7 @@
                 
                 addLog(`Seller updated: ${name}`, 'success');
                 alert(`Seller "${name}" updated successfully!`);
+                saveData();
             }
         }
 
@@ -2028,6 +2032,7 @@
                 updateSellerList();
                 updateSellerSelect();
                 addLog('Seller deleted', 'info');
+                saveData();
             }
         }
 
@@ -2131,6 +2136,7 @@
                 updateDashboard();
                 calculateFinancialTotals();
                 addLog(`Order #${orderId} deleted`, 'info');
+                saveData();
             }
         }
 
@@ -2175,6 +2181,7 @@
                 calculateFinancialTotals();
                 addLog('All orders deleted', 'info');
                 alert('All orders have been deleted and product stock has been restored.');
+                saveData();
             }
         }
 
@@ -2190,36 +2197,45 @@
 
         // Reset all data
         function resetAllData() {
-            // Reset all data to initial state
-            products = [
-                { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
-                { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
-                { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
-                { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
-                { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
-                { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
-            ];
-            
-            sellers = [
-                { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
-                { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
-            ];
-            
-            orders = [];
-            cart = [];
-            
-            // Update all UI components
-            updateProductGrid();
-            updateProductsTable();
-            updateSellerList();
-            updateSellerSelect();
-            updateOrdersTable();
-            updateDashboard();
-            calculateFinancialTotals();
-            
-            closeResetModal();
-            addLog('All data reset to initial state', 'info');
-            alert('All data has been reset successfully!');
+            if (confirm('Are you absolutely sure you want to reset ALL data? This cannot be undone!')) {
+                // Reset all data to initial state
+                products = [
+                    { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
+                    { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
+                    { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
+                    { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
+                    { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
+                    { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
+                ];
+                
+                sellers = [
+                    { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
+                    { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
+                ];
+                
+                orders = [];
+                cart = [];
+                
+                // Clear localStorage
+                localStorage.removeItem('neonpos_products');
+                localStorage.removeItem('neonpos_sellers');
+                localStorage.removeItem('neonpos_orders');
+                localStorage.removeItem('neonpos_cart');
+                
+                // Update all UI components
+                updateProductGrid();
+                updateProductsTable();
+                updateSellerList();
+                updateSellerSelect();
+                updateOrdersTable();
+                updateDashboard();
+                calculateFinancialTotals();
+                
+                closeResetModal();
+                addLog('All data reset to initial state', 'info');
+                alert('All data has been reset successfully!');
+                saveData();
+            }
         }
 
         // Filter orders
@@ -2356,6 +2372,13 @@
         // Initialize the app when page loads
         window.addEventListener('load', () => {
             addLog('NEON POS system ready. Please login.', 'info');
+            // Load cart from localStorage
+            updateCartDisplay();
+        });
+
+        // Auto-save data when page is about to close
+        window.addEventListener('beforeunload', () => {
+            saveData();
         });
     </script>
 </body>
