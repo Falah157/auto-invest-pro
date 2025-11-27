@@ -501,6 +501,67 @@
             margin: 0 auto;
         }
 
+        /* Cart */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+        }
+
+        .cart-item-price {
+            color: var(--accent);
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-total {
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: right;
+            padding: 10px 0;
+            margin-top: 10px;
+            border-top: 2px solid var(--islamic-green);
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .payment-method {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-method.active {
+            background: rgba(0, 243, 255, 0.2);
+            border-color: var(--islamic-green);
+        }
+
         /* Responsive adjustments */
         @media (max-width: 380px) {
             .service-grid, .product-grid {
@@ -639,22 +700,22 @@
                             <div class="service-name">Government</div>
                             <div class="service-desc">Services & documents</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('health')">
+                        <div class="service-card" onclick="showHealthServices()">
                             <div class="service-icon"><i class="fas fa-heartbeat"></i></div>
                             <div class="service-name">Health & Wellness</div>
                             <div class="service-desc">Medical services</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('family')">
+                        <div class="service-card" onclick="showFamilyServices()">
                             <div class="service-icon"><i class="fas fa-users"></i></div>
                             <div class="service-name">Family Services</div>
                             <div class="service-desc">Marriage, counseling</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('jobs')">
+                        <div class="service-card" onclick="showJobMarket()">
                             <div class="service-icon"><i class="fas fa-briefcase"></i></div>
                             <div class="service-name">Halal Jobs</div>
                             <div class="service-desc">Employment opportunities</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('zakat')">
+                        <div class="service-card" onclick="showZakatManagement()">
                             <div class="service-icon"><i class="fas fa-hand-holding-usd"></i></div>
                             <div class="service-name">Zakat & Sadaqah</div>
                             <div class="service-desc">Give with confidence</div>
@@ -792,64 +853,64 @@
                         <input type="text" id="marketSearch" placeholder="Search products..." onkeyup="filterMarketProducts()">
                     </div>
                     <div class="product-grid" id="marketProductGrid">
-                        <div class="product-card" onclick="viewProduct(1)">
-                            <div class="product-name">Fresh Tuna</div>
-                            <div class="product-price">MVR 85/kg</div>
-                            <div class="product-seller">Ahmed, Male'</div>
-                            <div class="halal-badge">Halal Certified</div>
+                        <!-- Products will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-shopping-cart"></i> Shopping Cart</h3>
+                    <div id="cartItems">
+                        <div class="status info">Cart is empty</div>
+                    </div>
+                    <div class="cart-total" id="cartTotal">Total: MVR 0.00</div>
+                    
+                    <h4 style="margin: 15px 0 10px 0;">Payment Method</h4>
+                    <div class="payment-methods" id="paymentMethods">
+                        <div class="payment-method active" onclick="selectPayment('cash')">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <div>Cash</div>
                         </div>
-                        <div class="product-card" onclick="viewProduct(2)">
-                            <div class="product-name">Handmade Mats</div>
-                            <div class="product-price">MVR 120</div>
-                            <div class="product-seller">Aisha, Addu</div>
-                            <div class="halal-badge">Local Artisan</div>
+                        <div class="payment-method" onclick="selectPayment('card')">
+                            <i class="fas fa-credit-card"></i>
+                            <div>Card</div>
                         </div>
-                        <div class="product-card" onclick="viewProduct(3)">
-                            <div class="product-name">Coconut Oil</div>
-                            <div class="product-price">MVR 65</div>
-                            <div class="product-seller">Ismail, Fuvahmulah</div>
-                            <div class="halal-badge">Organic</div>
+                        <div class="payment-method" onclick="selectPayment('mobile')">
+                            <i class="fas fa-mobile-alt"></i>
+                            <div>Mobile Pay</div>
                         </div>
-                        <div class="product-card" onclick="viewProduct(4)">
-                            <div class="product-name">Islamic Books</div>
-                            <div class="product-price">MVR 45-150</div>
-                            <div class="product-seller">Islamic Center</div>
-                            <div class="halal-badge">Educational</div>
-                        </div>
-                        <div class="product-card" onclick="viewProduct(5)">
-                            <div class="product-name">Dates (Medjool)</div>
-                            <div class="product-price">MVR 95/kg</div>
-                            <div class="product-seller">Halal Foods Co.</div>
-                            <div class="halal-badge">Premium Quality</div>
-                        </div>
-                        <div class="product-card" onclick="viewProduct(6)">
-                            <div class="product-name">Prayer Rug</div>
-                            <div class="product-price">MVR 180</div>
-                            <div class="product-seller">Islamic Gifts</div>
-                            <div class="halal-badge">Handcrafted</div>
+                        <div class="payment-method" onclick="selectPayment('bank')">
+                            <i class="fas fa-university"></i>
+                            <div>Bank Transfer</div>
                         </div>
                     </div>
+                    
+                    <button class="btn-success" onclick="processPayment()" id="checkoutBtn" style="margin-top: 15px;">
+                        <i class="fas fa-credit-card"></i> Complete Purchase
+                    </button>
+                    <button class="btn-warning" onclick="clearCart()">
+                        <i class="fas fa-trash"></i> Clear Cart
+                    </button>
                 </div>
 
                 <div class="card">
                     <h3><i class="fas fa-hand-holding-usd"></i> Islamic Finance</h3>
                     <div class="service-grid">
-                        <div class="service-card" onclick="showFeature('islamic_banking')">
+                        <div class="service-card" onclick="showIslamicBanking()">
                             <div class="service-icon"><i class="fas fa-university"></i></div>
                             <div class="service-name">Islamic Banking</div>
                             <div class="service-desc">Sharia-compliant accounts</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('takaful')">
+                        <div class="service-card" onclick="showTakaful()">
                             <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
                             <div class="service-name">Takaful</div>
                             <div class="service-desc">Islamic insurance</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('halal_invest')">
+                        <div class="service-card" onclick="showHalalInvestment()">
                             <div class="service-icon"><i class="fas fa-chart-line"></i></div>
                             <div class="service-name">Halal Investment</div>
                             <div class="service-desc">Sharia-compliant funds</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('sadaqah')">
+                        <div class="service-card" onclick="showSadaqah()">
                             <div class="service-icon"><i class="fas fa-hand-holding-heart"></i></div>
                             <div class="service-name">Sadaqah</div>
                             <div class="service-desc">Charity projects</div>
@@ -863,22 +924,22 @@
                 <div class="card">
                     <h3><i class="fas fa-graduation-cap"></i> Learning Resources</h3>
                     <div class="service-grid">
-                        <div class="service-card" onclick="showFeature('quran_studies')">
+                        <div class="service-card" onclick="showQuranStudies()">
                             <div class="service-icon"><i class="fas fa-quran"></i></div>
                             <div class="service-name">Quran Studies</div>
                             <div class="service-desc">Learn Tajweed & Tafsir</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('arabic')">
+                        <div class="service-card" onclick="showArabicCourses()">
                             <div class="service-icon"><i class="fas fa-language"></i></div>
                             <div class="service-name">Arabic Language</div>
                             <div class="service-desc">Read Quran in Arabic</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('islamic_history')">
+                        <div class="service-card" onclick="showIslamicHistory()">
                             <div class="service-icon"><i class="fas fa-history"></i></div>
                             <div class="service-name">Islamic History</div>
                             <div class="service-desc">Prophet's life & more</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('fiqh')">
+                        <div class="service-card" onclick="showFiqh()">
                             <div class="service-icon"><i class="fas fa-balance-scale"></i></div>
                             <div class="service-name">Islamic Law (Fiqh)</div>
                             <div class="service-desc">Daily rulings</div>
@@ -889,22 +950,22 @@
                 <div class="card">
                     <h3><i class="fas fa-laptop-code"></i> Skills Development</h3>
                     <div class="service-grid">
-                        <div class="service-card" onclick="showFeature('programming')">
+                        <div class="service-card" onclick="showProgrammingCourses()">
                             <div class="service-icon"><i class="fas fa-code"></i></div>
                             <div class="service-name">Programming</div>
                             <div class="service-desc">Web & app development</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('business')">
+                        <div class="service-card" onclick="showBusinessSkills()">
                             <div class="service-icon"><i class="fas fa-chart-bar"></i></div>
                             <div class="service-name">Business Skills</div>
                             <div class="service-desc">Entrepreneurship</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('vocational')">
+                        <div class="service-card" onclick="showVocationalTraining()">
                             <div class="service-icon"><i class="fas fa-tools"></i></div>
                             <div class="service-name">Vocational Training</div>
                             <div class="service-desc">Practical skills</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('school')">
+                        <div class="service-card" onclick="showSchoolCurriculum()">
                             <div class="service-icon"><i class="fas fa-school"></i></div>
                             <div class="service-name">School Curriculum</div>
                             <div class="service-desc">Ministry of Education</div>
@@ -914,13 +975,13 @@
 
                 <div class="card">
                     <h3><i class="fas fa-book"></i> Featured Courses</h3>
-                    <div id="featuredCourses">
-                        <div class="service-card">
+                    <div id="featuredCourses" class="service-grid">
+                        <div class="service-card" onclick="enrollCourse('quran_memorization')">
                             <div class="service-name">Quran Memorization</div>
                             <div class="service-desc">Beginner to advanced levels</div>
                             <button class="btn-small" style="margin-top: 10px;">Enroll Now</button>
                         </div>
-                        <div class="service-card">
+                        <div class="service-card" onclick="enrollCourse('islamic_finance')">
                             <div class="service-name">Islamic Finance Basics</div>
                             <div class="service-desc">Understanding halal investments</div>
                             <button class="btn-small" style="margin-top: 10px;">Enroll Now</button>
@@ -934,42 +995,42 @@
                 <div class="card">
                     <h3><i class="fas fa-passport"></i> Government Services</h3>
                     <div class="service-grid">
-                        <div class="service-card" onclick="showFeature('id_card')">
+                        <div class="service-card" onclick="applyForNationalID()">
                             <div class="service-icon"><i class="fas fa-id-card"></i></div>
                             <div class="service-name">National ID</div>
                             <div class="service-desc">Apply or renew</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('passport')">
+                        <div class="service-card" onclick="applyForPassport()">
                             <div class="service-icon"><i class="fas fa-passport"></i></div>
                             <div class="service-name">Passport</div>
                             <div class="service-desc">Apply or renew</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('driver_license')">
+                        <div class="service-card" onclick="applyForDriversLicense()">
                             <div class="service-icon"><i class="fas fa-id-card-alt"></i></div>
                             <div class="service-name">Driver's License</div>
                             <div class="service-desc">Apply or renew</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('birth_cert')">
+                        <div class="service-card" onclick="applyForBirthCertificate()">
                             <div class="service-icon"><i class="fas fa-birthday-cake"></i></div>
                             <div class="service-name">Birth Certificate</div>
                             <div class="service-desc">Apply for copy</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('business_reg')">
+                        <div class="service-card" onclick="registerBusiness()">
                             <div class="service-icon"><i class="fas fa-file-contract"></i></div>
                             <div class="service-name">Business Registration</div>
                             <div class="service-desc">Register your business</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('tax')">
+                        <div class="service-card" onclick="fileTaxes()">
                             <div class="service-icon"><i class="fas fa-receipt"></i></div>
                             <div class="service-name">Tax Services</div>
                             <div class="service-desc">File & pay taxes</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('health_services')">
+                        <div class="service-card" onclick="bookHealthAppointment()">
                             <div class="service-icon"><i class="fas fa-file-medical"></i></div>
                             <div class="service-name">Health Services</div>
                             <div class="service-desc">Book appointments</div>
                         </div>
-                        <div class="service-card" onclick="showFeature('voting')">
+                        <div class="service-card" onclick="accessEVoting()">
                             <div class="service-icon"><i class="fas fa-vote-yea"></i></div>
                             <div class="service-name">E-Voting</div>
                             <div class="service-desc">Participate in elections</div>
@@ -979,18 +1040,18 @@
 
                 <div class="card">
                     <h3><i class="fas fa-chart-line"></i> Government Transparency</h3>
-                    <div id="transparencyData">
-                        <div class="service-card">
+                    <div id="transparencyData" class="service-grid">
+                        <div class="service-card" onclick="viewNationalBudget()">
                             <div class="service-name">National Budget 2023</div>
                             <div class="service-desc">View how public funds are allocated</div>
                             <button class="btn-small" style="margin-top: 10px;">View Details</button>
                         </div>
-                        <div class="service-card">
+                        <div class="service-card" onclick="viewDevelopmentProjects()">
                             <div class="service-name">Development Projects</div>
                             <div class="service-desc">Track progress of national projects</div>
                             <button class="btn-small" style="margin-top: 10px;">View Details</button>
                         </div>
-                        <div class="service-card">
+                        <div class="service-card" onclick="viewPublicProcurement()">
                             <div class="service-name">Public Procurement</div>
                             <div class="service-desc">View government tenders</div>
                             <button class="btn-small" style="margin-top: 10px;">View Details</button>
@@ -1043,6 +1104,24 @@
         </div>
     </div>
 
+    <!-- Service Modal -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <h3 id="serviceModalTitle"><i class="fas fa-cog"></i> Service</h3>
+            <div id="serviceModalContent">
+                <!-- Service content will be loaded here -->
+            </div>
+            <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-success" onclick="proceedWithService()">
+                    <i class="fas fa-check"></i> Proceed
+                </button>
+                <button class="btn-warning" onclick="closeServiceModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Platform data and state
         let currentUser = null;
@@ -1050,65 +1129,73 @@
         let isPlayingQuran = false;
         let currentPrayer = 'dhuhr';
         let currentProduct = null;
+        let currentService = null;
         let cart = [];
+        let selectedPayment = 'cash';
 
         // Sample product data
-        const products = {
-            1: {
+        const products = [
+            {
                 id: 1,
                 name: "Fresh Tuna",
                 price: 85,
                 seller: "Ahmed, Male'",
                 description: "Freshly caught tuna from the Maldives waters. Halal certified and sustainably sourced.",
                 image: "🐟",
-                category: "Food"
+                category: "Food",
+                stock: 15
             },
-            2: {
+            {
                 id: 2,
                 name: "Handmade Mats",
                 price: 120,
                 seller: "Aisha, Addu",
                 description: "Beautiful handmade prayer mats with traditional Maldivian designs.",
                 image: "🧶",
-                category: "Home"
+                category: "Home",
+                stock: 8
             },
-            3: {
+            {
                 id: 3,
                 name: "Coconut Oil",
                 price: 65,
                 seller: "Ismail, Fuvahmulah",
                 description: "Pure organic coconut oil extracted using traditional methods.",
                 image: "🥥",
-                category: "Food"
+                category: "Food",
+                stock: 20
             },
-            4: {
+            {
                 id: 4,
                 name: "Islamic Books",
                 price: 45,
                 seller: "Islamic Center",
                 description: "Collection of Islamic books covering various topics from Quran to Hadith.",
                 image: "📚",
-                category: "Education"
+                category: "Education",
+                stock: 25
             },
-            5: {
+            {
                 id: 5,
                 name: "Dates (Medjool)",
                 price: 95,
                 seller: "Halal Foods Co.",
                 description: "Premium quality Medjool dates, perfect for breaking fast.",
                 image: "🌴",
-                category: "Food"
+                category: "Food",
+                stock: 30
             },
-            6: {
+            {
                 id: 6,
                 name: "Prayer Rug",
                 price: 180,
                 seller: "Islamic Gifts",
                 description: "Beautiful handcrafted prayer rug with compass for Qibla direction.",
                 image: "🕌",
-                category: "Religious"
+                category: "Religious",
+                stock: 12
             }
-        };
+        ];
 
         // Prayer times for Malé, Maldives
         const prayerTimes = {
@@ -1125,6 +1212,68 @@
             { id: 1, email: 'user@jazeera.mv', password: 'password', name: 'Ahmed Mohamed', location: 'Malé' }
         ];
 
+        // Service data
+        const services = {
+            health: {
+                title: "Health & Wellness Services",
+                description: "Access to medical services, appointments, and health resources.",
+                steps: [
+                    "Book appointment with healthcare provider",
+                    "Access medical records",
+                    "Find nearby clinics and hospitals",
+                    "Emergency services contact"
+                ]
+            },
+            family: {
+                title: "Family Services",
+                description: "Marriage counseling, family support, and social services.",
+                steps: [
+                    "Schedule counseling session",
+                    "Access family support resources",
+                    "Marriage registration services",
+                    "Child and youth services"
+                ]
+            },
+            jobs: {
+                title: "Halal Job Market",
+                description: "Find employment opportunities that align with Islamic principles.",
+                steps: [
+                    "Browse available job listings",
+                    "Create professional profile",
+                    "Apply for positions",
+                    "Schedule interviews"
+                ]
+            },
+            islamic_banking: {
+                title: "Islamic Banking Services",
+                description: "Sharia-compliant banking and financial services.",
+                steps: [
+                    "Open Islamic bank account",
+                    "Apply for halal financing",
+                    "Investment opportunities",
+                    "Wealth management"
+                ]
+            },
+            takaful: {
+                title: "Takaful Insurance",
+                description: "Islamic cooperative insurance based on mutual assistance.",
+                steps: [
+                    "Get takaful quote",
+                    "Choose coverage plan",
+                    "Submit application",
+                    "Manage policy"
+                ]
+            }
+        };
+
+        // Initialize the platform
+        function initApp() {
+            updatePrayerTimes();
+            setCurrentPrayer();
+            loadProducts();
+            updateCartDisplay();
+        }
+
         // Login function
         function login() {
             const email = document.getElementById('loginEmail').value;
@@ -1138,10 +1287,7 @@
                 document.getElementById('mainApp').style.display = 'block';
                 document.getElementById('userGreeting').textContent = `Welcome, ${user.name}`;
                 
-                // Update prayer times display
-                updatePrayerTimes();
-                setCurrentPrayer();
-                
+                initApp();
                 addLog(`User ${user.name} logged in`, 'info');
             } else {
                 alert('Invalid login credentials. Please try again.');
@@ -1204,29 +1350,6 @@
             const clickedElement = event.currentTarget;
             if (clickedElement.classList.contains('mobile-tab') || clickedElement.classList.contains('nav-item')) {
                 clickedElement.classList.add('active');
-            }
-            
-            // If it's a service card, find and activate the corresponding tab
-            if (clickedElement.classList.contains('service-card')) {
-                const tabMappings = {
-                    'Islamic Center': 'islamic',
-                    'Halal Marketplace': 'marketplace',
-                    'Education': 'education',
-                    'Government': 'government'
-                };
-                
-                const serviceName = clickedElement.querySelector('.service-name').textContent;
-                if (tabMappings[serviceName]) {
-                    document.querySelectorAll('.mobile-tab').forEach(tab => {
-                        tab.classList.remove('active');
-                    });
-                    document.querySelectorAll('.nav-item').forEach(tab => {
-                        tab.classList.remove('active');
-                    });
-                    
-                    document.querySelector(`.mobile-tab[onclick*="${tabMappings[serviceName]}"]`).classList.add('active');
-                    document.querySelector(`.nav-item[onclick*="${tabMappings[serviceName]}"]`).classList.add('active');
-                }
             }
         }
 
@@ -1322,37 +1445,25 @@
             addLog('Religious question submitted to scholars', 'info');
         }
 
-        // Show feature (placeholder for future implementation)
-        function showFeature(feature) {
-            const featureNames = {
-                'health': 'Health & Wellness Services',
-                'family': 'Family Services',
-                'jobs': 'Halal Job Market',
-                'zakat': 'Zakat & Sadaqah Management',
-                'islamic_banking': 'Islamic Banking',
-                'takaful': 'Takaful Insurance',
-                'halal_invest': 'Halal Investment',
-                'sadaqah': 'Sadaqah Projects',
-                'quran_studies': 'Quran Studies',
-                'arabic': 'Arabic Language Courses',
-                'islamic_history': 'Islamic History',
-                'fiqh': 'Islamic Law (Fiqh)',
-                'programming': 'Programming Courses',
-                'business': 'Business Skills',
-                'vocational': 'Vocational Training',
-                'school': 'School Curriculum',
-                'id_card': 'National ID Services',
-                'passport': 'Passport Services',
-                'driver_license': "Driver's License Services",
-                'birth_cert': 'Birth Certificate Services',
-                'business_reg': 'Business Registration',
-                'tax': 'Tax Services',
-                'health_services': 'Health Services',
-                'voting': 'E-Voting System'
-            };
+        // Load products to marketplace
+        function loadProducts() {
+            const container = document.getElementById('marketProductGrid');
+            container.innerHTML = '';
             
-            alert(`The ${featureNames[feature] || feature} feature will be available in the next update.`);
-            addLog(`Accessed ${featureNames[feature] || feature}`, 'info');
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => viewProduct(product.id);
+                productCard.innerHTML = `
+                    <div style="font-size: 2em; text-align: center; margin-bottom: 10px;">${product.image}</div>
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">MVR ${product.price}</div>
+                    <div class="product-seller">${product.seller}</div>
+                    <div class="halal-badge">Halal Certified</div>
+                    <div class="product-stock" style="font-size: 0.7em; color: #aaa; margin-top: 5px;">Stock: ${product.stock}</div>
+                `;
+                container.appendChild(productCard);
+            });
         }
 
         // Filter market products
@@ -1372,7 +1483,7 @@
 
         // View product details
         function viewProduct(productId) {
-            currentProduct = products[productId];
+            currentProduct = products.find(p => p.id === productId);
             if (!currentProduct) return;
             
             const modalContent = document.getElementById('productModalContent');
@@ -1392,6 +1503,10 @@
                     <span>Category:</span>
                     <span>${currentProduct.category}</span>
                 </div>
+                <div class="result-item">
+                    <span>Stock:</span>
+                    <span>${currentProduct.stock} available</span>
+                </div>
                 <div class="halal-badge" style="margin-top: 10px;">Halal Certified</div>
             `;
             
@@ -1408,10 +1523,303 @@
         function addToCart() {
             if (!currentProduct) return;
             
-            cart.push(currentProduct);
-            alert(`${currentProduct.name} added to cart!`);
+            // Check if product is already in cart
+            const existingItem = cart.find(item => item.id === currentProduct.id);
+            
+            if (existingItem) {
+                if (existingItem.quantity < currentProduct.stock) {
+                    existingItem.quantity += 1;
+                } else {
+                    alert(`Only ${currentProduct.stock} items available in stock`);
+                    return;
+                }
+            } else {
+                if (currentProduct.stock > 0) {
+                    cart.push({
+                        id: currentProduct.id,
+                        name: currentProduct.name,
+                        price: currentProduct.price,
+                        quantity: 1,
+                        image: currentProduct.image
+                    });
+                } else {
+                    alert('Product out of stock');
+                    return;
+                }
+            }
+            
+            updateCartDisplay();
             closeProductModal();
             addLog(`Added ${currentProduct.name} to cart`, 'info');
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cartItems');
+            const totalElement = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<div class="status info">Cart is empty</div>';
+                totalElement.textContent = 'Total: MVR 0.00';
+                return;
+            }
+            
+            let total = 0;
+            cartContainer.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">MVR ${item.price.toFixed(2)} each</div>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, 1)">+</button>
+                            <span>MVR ${itemTotal.toFixed(2)}</span>
+                            <button class="btn-danger btn-small" onclick="removeFromCart(${item.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            totalElement.textContent = `Total: MVR ${total.toFixed(2)}`;
+        }
+
+        // Update cart quantity
+        function updateCartQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                const product = products.find(p => p.id === productId);
+                item.quantity += change;
+                
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else if (item.quantity > product.stock) {
+                    item.quantity = product.stock;
+                    alert(`Only ${product.stock} items available in stock`);
+                } else {
+                    updateCartDisplay();
+                }
+            }
+        }
+
+        // Remove from cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartDisplay();
+            addLog('Item removed from cart', 'info');
+        }
+
+        // Clear cart
+        function clearCart() {
+            cart = [];
+            updateCartDisplay();
+            addLog('Cart cleared', 'info');
+        }
+
+        // Select payment method
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Process payment
+        function processPayment() {
+            if (cart.length === 0) {
+                alert('Cart is empty. Add items before checkout.');
+                return;
+            }
+            
+            // Calculate total
+            let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Update product stock
+            cart.forEach(cartItem => {
+                const product = products.find(p => p.id === cartItem.id);
+                if (product) {
+                    product.stock -= cartItem.quantity;
+                }
+            });
+            
+            // Generate receipt
+            let receiptText = `=== JAZEERA MALDIVES RECEIPT ===\n`;
+            receiptText += `Date: ${new Date().toLocaleString()}\n`;
+            receiptText += `Customer: ${currentUser.name}\n`;
+            receiptText += `Payment: ${selectedPayment.toUpperCase()}\n`;
+            receiptText += `----------------------------\n`;
+            
+            cart.forEach(item => {
+                receiptText += `${item.name} x${item.quantity} MVR ${(item.price * item.quantity).toFixed(2)}\n`;
+            });
+            
+            receiptText += `----------------------------\n`;
+            receiptText += `TOTAL: MVR ${total.toFixed(2)}\n`;
+            receiptText += `============================\n`;
+            receiptText += `Thank you for your purchase!\n`;
+            receiptText += `All products are Halal certified\n`;
+            
+            alert(`Payment processed successfully!\n\n${receiptText}`);
+            
+            // Clear cart
+            cart = [];
+            updateCartDisplay();
+            loadProducts(); // Refresh product stock display
+            
+            addLog(`Purchase completed - MVR ${total.toFixed(2)}`, 'success');
+        }
+
+        // Service functions
+        function showHealthServices() {
+            currentService = 'health';
+            showServiceModal(services.health);
+        }
+
+        function showFamilyServices() {
+            currentService = 'family';
+            showServiceModal(services.family);
+        }
+
+        function showJobMarket() {
+            currentService = 'jobs';
+            showServiceModal(services.jobs);
+        }
+
+        function showZakatManagement() {
+            switchTab('islamic');
+        }
+
+        function showIslamicBanking() {
+            currentService = 'islamic_banking';
+            showServiceModal(services.islamic_banking);
+        }
+
+        function showTakaful() {
+            currentService = 'takaful';
+            showServiceModal(services.takaful);
+        }
+
+        function showHalalInvestment() {
+            alert('Halal Investment services - Coming soon! Browse Sharia-compliant investment opportunities.');
+        }
+
+        function showSadaqah() {
+            alert('Sadaqah Platform - Donate to verified charity projects in the Maldives.');
+        }
+
+        function showQuranStudies() {
+            alert('Quran Studies - Access courses on Tajweed, Tafsir, and Quran memorization.');
+        }
+
+        function showArabicCourses() {
+            alert('Arabic Language Courses - Learn to read and understand the Quran in its original language.');
+        }
+
+        function showIslamicHistory() {
+            alert('Islamic History - Study the life of Prophet Muhammad (PBUH) and Islamic civilization.');
+        }
+
+        function showFiqh() {
+            alert('Islamic Law (Fiqh) - Learn about daily Islamic rulings and practices.');
+        }
+
+        function showProgrammingCourses() {
+            alert('Programming Courses - Web development, app development, and coding skills.');
+        }
+
+        function showBusinessSkills() {
+            alert('Business Skills - Entrepreneurship, management, and halal business practices.');
+        }
+
+        function showVocationalTraining() {
+            alert('Vocational Training - Practical skills for employment and self-sufficiency.');
+        }
+
+        function showSchoolCurriculum() {
+            alert('School Curriculum - Access Ministry of Education resources and materials.');
+        }
+
+        function enrollCourse(courseId) {
+            alert(`Enrolled in ${courseId === 'quran_memorization' ? 'Quran Memorization' : 'Islamic Finance Basics'} course!`);
+        }
+
+        // Government service functions
+        function applyForNationalID() {
+            alert('National ID Application - Fill out the form to apply for or renew your National ID card.');
+        }
+
+        function applyForPassport() {
+            alert('Passport Application - Complete the passport application form with required documents.');
+        }
+
+        function applyForDriversLicense() {
+            alert("Driver's License - Apply for a new license or renew your existing driver's license.");
+        }
+
+        function applyForBirthCertificate() {
+            alert('Birth Certificate - Request a copy of your birth certificate with proper identification.');
+        }
+
+        function registerBusiness() {
+            alert('Business Registration - Register your new business with the appropriate government agencies.');
+        }
+
+        function fileTaxes() {
+            alert('Tax Services - File your annual tax returns or make tax payments online.');
+        }
+
+        function bookHealthAppointment() {
+            alert('Health Services - Book medical appointments with public health facilities.');
+        }
+
+        function accessEVoting() {
+            alert('E-Voting System - Participate in national and local elections through secure online voting.');
+        }
+
+        function viewNationalBudget() {
+            alert('National Budget - View detailed breakdown of government spending and allocations.');
+        }
+
+        function viewDevelopmentProjects() {
+            alert('Development Projects - Track progress on infrastructure and development initiatives.');
+        }
+
+        function viewPublicProcurement() {
+            alert('Public Procurement - View government tenders and procurement opportunities.');
+        }
+
+        // Show service modal
+        function showServiceModal(service) {
+            document.getElementById('serviceModalTitle').innerHTML = `<i class="fas fa-cog"></i> ${service.title}`;
+            
+            let content = `<p>${service.description}</p>`;
+            content += `<h4 style="margin: 15px 0 10px 0;">Process:</h4>`;
+            content += `<ol style="margin-left: 20px;">`;
+            service.steps.forEach(step => {
+                content += `<li style="margin-bottom: 8px;">${step}</li>`;
+            });
+            content += `</ol>`;
+            
+            document.getElementById('serviceModalContent').innerHTML = content;
+            document.getElementById('serviceModal').style.display = 'block';
+        }
+
+        // Close service modal
+        function closeServiceModal() {
+            document.getElementById('serviceModal').style.display = 'none';
+            currentService = null;
+        }
+
+        // Proceed with service
+        function proceedWithService() {
+            alert(`Starting ${services[currentService].title} process...`);
+            closeServiceModal();
         }
 
         // Add entry to system log
