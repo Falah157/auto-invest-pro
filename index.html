@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="dv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEON POS - Complete System</title>
+    <title>Jazeera Maldives - Digital Ummah Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -26,6 +25,7 @@
             --table-header: #2a2a3e;
             --table-row: #1e1e2e;
             --table-alt: #252538;
+            --islamic-green: #009688;
         }
 
         body {
@@ -48,7 +48,7 @@
             padding: 15px;
             background: var(--card-bg);
             border-radius: 12px;
-            border: 2px solid var(--primary);
+            border: 2px solid var(--islamic-green);
             position: relative;
             overflow: hidden;
         }
@@ -60,7 +60,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            background: linear-gradient(90deg, var(--islamic-green), var(--primary), var(--islamic-green));
             animation: pulse 3s infinite;
         }
 
@@ -72,60 +72,17 @@
 
         .logo {
             font-size: 1.8em;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background: linear-gradient(90deg, var(--islamic-green), var(--primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            text-shadow: 0 0 10px rgba(0, 150, 136, 0.5);
             font-weight: bold;
         }
 
         .tagline {
             color: #aaa;
             font-size: 0.9em;
-        }
-
-        /* Financial Summary */
-        .financial-summary {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .financial-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            text-align: center;
-        }
-
-        .financial-card.buying {
-            border-color: var(--warning);
-        }
-
-        .financial-card.selling {
-            border-color: var(--accent);
-        }
-
-        .financial-card.profit {
-            border-color: var(--primary);
-        }
-
-        .financial-card.my-profit {
-            border-color: var(--secondary);
-        }
-
-        .financial-value {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-
-        .financial-label {
-            color: #aaa;
-            font-size: 0.8em;
         }
 
         /* Login Screen */
@@ -136,13 +93,16 @@
             align-items: center;
             height: 100vh;
             padding: 20px;
+            background: linear-gradient(rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.9)), url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
         }
 
         .login-card {
             background: var(--card-bg);
             padding: 30px;
             border-radius: 15px;
-            border: 2px solid var(--primary);
+            border: 2px solid var(--islamic-green);
             width: 100%;
             max-width: 400px;
             text-align: center;
@@ -150,7 +110,7 @@
 
         .login-logo {
             font-size: 2.5em;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background: linear-gradient(90deg, var(--islamic-green), var(--primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 20px;
@@ -160,50 +120,6 @@
         .main-app {
             display: none;
         }
-
-        /* Mobile Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 15px 10px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-
-        .stat-value {
-            font-size: 1.4em;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-
-        .stat-label {
-            color: #aaa;
-            font-size: 0.75em;
-        }
-
-        .primary { color: var(--primary); }
-        .secondary { color: var(--secondary); }
-        .accent { color: var(--accent); }
-        .warning { color: var(--warning); }
 
         /* Mobile Tabs */
         .mobile-tabs {
@@ -229,8 +145,8 @@
         }
 
         .mobile-tab.active {
-            background: rgba(0, 243, 255, 0.2);
-            border: 1px solid var(--primary);
+            background: rgba(0, 150, 136, 0.2);
+            border: 1px solid var(--islamic-green);
         }
 
         .tab-content {
@@ -251,7 +167,7 @@
         }
 
         .card h3 {
-            color: var(--primary);
+            color: var(--islamic-green);
             margin-bottom: 12px;
             display: flex;
             align-items: center;
@@ -284,7 +200,7 @@
         }
 
         button {
-            background: linear-gradient(90deg, var(--primary), #0099cc);
+            background: linear-gradient(90deg, var(--islamic-green), #00796b);
             color: white;
             border: none;
             cursor: pointer;
@@ -315,43 +231,165 @@
             width: auto;
         }
 
-        /* Tables */
-        .mobile-table {
-            width: 100%;
-            border-collapse: collapse;
+        /* Prayer Times */
+        .prayer-times {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .prayer-card {
+            background: var(--card-bg);
+            padding: 15px 10px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prayer-card.current {
+            border-color: var(--islamic-green);
+            background: rgba(0, 150, 136, 0.1);
+        }
+
+        .prayer-name {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .prayer-time {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        /* Service Grid */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .service-card {
+            background: #2a2a3e;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .service-card:active {
+            transform: scale(0.98);
+            border-color: var(--islamic-green);
+        }
+
+        .service-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: var(--islamic-green);
+        }
+
+        .service-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .service-desc {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            display: flex;
+            padding: 10px;
+            border-top: 2px solid var(--islamic-green);
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 5px;
+            color: #aaa;
             font-size: 0.75em;
+            transition: all 0.3s;
         }
 
-        .mobile-table th {
-            background: var(--table-header);
-            padding: 10px 5px;
-            text-align: left;
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
+        .nav-item.active {
+            color: var(--islamic-green);
         }
 
-        .mobile-table td {
-            padding: 10px 5px;
+        .nav-icon {
+            font-size: 1.4em;
+            margin-bottom: 3px;
+        }
+
+        /* Quran Player */
+        .quran-player {
+            background: #2a2a3e;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .surah-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .surah-item {
+            padding: 10px;
             border-bottom: 1px solid #333;
+            cursor: pointer;
         }
 
-        .mobile-table tr {
-            background: var(--table-row);
+        .surah-item:last-child {
+            border-bottom: none;
         }
 
-        .mobile-table tr:nth-child(even) {
-            background: var(--table-alt);
+        .surah-name {
+            font-weight: bold;
         }
 
-        .positive {
-            color: var(--accent);
+        .surah-details {
+            font-size: 0.8em;
+            color: #aaa;
         }
 
-        .negative {
-            color: var(--danger);
+        /* Zakat Calculator */
+        .zakat-results {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 150, 136, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--islamic-green);
         }
 
-        /* Product Grid */
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+            font-weight: bold;
+            border-top: 1px solid #333;
+            padding-top: 8px;
+        }
+
+        /* Marketplace */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -369,7 +407,7 @@
 
         .product-card:active {
             transform: scale(0.98);
-            border-color: var(--primary);
+            border-color: var(--islamic-green);
         }
 
         .product-name {
@@ -382,333 +420,34 @@
             font-weight: bold;
         }
 
-        .product-stock {
+        .product-seller {
             font-size: 0.8em;
             color: #aaa;
         }
 
-        /* Cart */
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        .cart-item:last-child {
-            border-bottom: none;
-        }
-
-        .cart-item-info {
-            flex: 1;
-        }
-
-        .cart-item-name {
-            font-weight: bold;
-        }
-
-        .cart-item-price {
-            color: var(--accent);
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .cart-total {
-            font-weight: bold;
-            font-size: 1.2em;
-            text-align: right;
-            padding: 10px 0;
-            margin-top: 10px;
-            border-top: 2px solid var(--primary);
-        }
-
-        /* Payment Methods */
-        .payment-methods {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .payment-method {
-            padding: 15px;
-            text-align: center;
-            border: 1px solid #333;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .payment-method.active {
-            background: rgba(0, 243, 255, 0.2);
-            border-color: var(--primary);
-        }
-
-        /* Receipt */
-        .receipt {
-            background: white;
-            color: black;
-            padding: 20px;
-            border-radius: 5px;
-            font-family: monospace;
-            white-space: pre-line;
-            margin-top: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        /* Team Members */
-        .team-member {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-bottom: 1px solid #333;
-        }
-
-        .team-member:last-child {
-            border-bottom: none;
-        }
-
-        .member-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1em;
-        }
-
-        .member-info {
-            flex: 1;
-        }
-
-        .member-name {
-            font-weight: bold;
-            margin-bottom: 3px;
-            font-size: 0.95em;
-        }
-
-        .member-role {
-            color: #aaa;
-            font-size: 0.8em;
-        }
-
-        .member-balance {
-            font-weight: bold;
-            color: var(--accent);
-            font-size: 0.9em;
-        }
-
-        /* Status Messages */
-        .status {
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            text-align: center;
-            font-size: 0.9em;
-        }
-
-        .status.success {
-            background: rgba(0, 255, 136, 0.2);
-            border: 1px solid var(--accent);
-        }
-
-        .status.info {
-            background: rgba(0, 243, 255, 0.2);
-            border: 1px solid var(--primary);
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--card-bg);
-            display: flex;
-            padding: 10px;
-            border-top: 2px solid var(--primary);
-            z-index: 100;
-        }
-
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            padding: 8px 5px;
-            color: #aaa;
-            font-size: 0.75em;
-            transition: all 0.3s;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-icon {
-            font-size: 1.4em;
-            margin-bottom: 3px;
-        }
-
-        /* Log */
-        .log {
-            background: #2a2a3e;
-            padding: 12px;
-            border-radius: 5px;
-            height: 150px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 0.75em;
-            margin-top: 12px;
-        }
-
-        .log-entry {
-            margin-bottom: 5px;
-            padding: 5px;
-            border-radius: 3px;
-        }
-
-        .log-success {
-            background: rgba(0, 255, 136, 0.1);
-            border-left: 3px solid var(--accent);
-        }
-
-        .log-info {
-            background: rgba(0, 243, 255, 0.1);
-            border-left: 3px solid var(--primary);
-        }
-
-        /* Swipeable content */
-        .swipe-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Small text for mobile */
-        .small-text {
+        .halal-badge {
+            background: var(--islamic-green);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
             font-size: 0.7em;
-            color: #aaa;
-        }
-
-        /* Edit Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid var(--primary);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* Reset Confirmation */
-        .reset-confirm {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .reset-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .reset-buttons button {
-            flex: 1;
-        }
-
-        /* Financial Details */
-        .financial-details {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px;
-            background: #2a2a3e;
-            border-radius: 5px;
-        }
-
-        /* Profit Distribution */
-        .profit-distribution {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .profit-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            text-align: center;
-        }
-
-        .profit-card.my-share {
-            border-color: var(--primary);
-        }
-
-        .profit-card.seller-share {
-            border-color: var(--secondary);
+            display: inline-block;
+            margin-top: 5px;
         }
 
         /* Responsive adjustments */
         @media (max-width: 380px) {
-            .stats-grid {
+            .service-grid, .product-grid {
                 grid-template-columns: 1fr;
             }
             
-            .mobile-table {
-                font-size: 0.7em;
+            .prayer-times {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .mobile-tab {
                 padding: 10px 12px;
                 font-size: 0.8em;
-            }
-            
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .financial-summary {
-                grid-template-columns: 1fr;
-            }
-            
-            .profit-distribution {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -717,12 +456,12 @@
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-card">
-            <div class="login-logo">NEON POS</div>
-            <h3>Login to System</h3>
+            <div class="login-logo">Jazeera Maldives</div>
+            <h3>Digital Ummah Platform</h3>
             
             <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" placeholder="admin@neonpos.com" value="admin@neonpos.com">
+                <label for="loginEmail">Email or Phone</label>
+                <input type="text" id="loginEmail" placeholder="user@jazeera.mv" value="user@jazeera.mv">
             </div>
             
             <div class="form-group">
@@ -730,353 +469,427 @@
                 <input type="password" id="loginPassword" placeholder="Enter password" value="password">
             </div>
             
-            <div class="form-group">
-                <label for="userRole">Role</label>
-                <select id="userRole">
-                    <option value="admin">Admin</option>
-                    <option value="staff">Staff</option>
-                </select>
-            </div>
-            
             <button class="btn-success" onclick="login()">
-                <i class="fas fa-sign-in-alt"></i> Login to POS
+                <i class="fas fa-sign-in-alt"></i> Login to Platform
             </button>
             
-            <div class="status info" style="margin-top: 15px;">
-                <i class="fas fa-info-circle"></i> Demo: admin@neonpos.com / password
+            <div class="status info" style="margin-top: 15px; padding: 10px; background: rgba(0,150,136,0.2); border-radius: 5px;">
+                <i class="fas fa-info-circle"></i> Demo: user@jazeera.mv / password
             </div>
         </div>
     </div>
 
-    <!-- Main POS Application -->
+    <!-- Main Platform Application -->
     <div class="main-app" id="mainApp">
         <div class="container">
             <div class="header">
-                <div class="logo">NEON POS</div>
-                <p class="tagline" id="userGreeting">Complete Point of Sale System</p>
+                <div class="logo">Jazeera Maldives</div>
+                <p class="tagline" id="userGreeting">Digital Ummah Platform - خدمة الأمة الرقمية</p>
+                <div id="prayerHeader" style="margin-top: 10px; font-size: 0.9em;">
+                    <span id="currentPrayer">Fajr: 05:15 | Dhuhr: 12:05</span>
+                </div>
                 <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                    <button class="btn-danger btn-small" onclick="showResetModal()">
-                        <i class="fas fa-trash"></i> Reset All Data
-                    </button>
                     <button class="btn-danger btn-small" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </div>
             </div>
 
-            <!-- Financial Summary -->
-            <div class="financial-summary">
-                <div class="financial-card buying">
-                    <div class="financial-label">Total Buying Cost</div>
-                    <div class="financial-value warning" id="totalBuyingCost">$0.00</div>
-                    <div class="financial-label">All Inventory Cost</div>
+            <!-- Prayer Times -->
+            <div class="card">
+                <h3><i class="fas fa-mosque"></i> Prayer Times - Malé</h3>
+                <div class="prayer-times">
+                    <div class="prayer-card" id="fajrCard">
+                        <div class="prayer-name">Fajr</div>
+                        <div class="prayer-time">05:15</div>
+                    </div>
+                    <div class="prayer-card" id="sunriseCard">
+                        <div class="prayer-name">Sunrise</div>
+                        <div class="prayer-time">06:05</div>
+                    </div>
+                    <div class="prayer-card" id="dhuhrCard">
+                        <div class="prayer-name">Dhuhr</div>
+                        <div class="prayer-time">12:05</div>
+                    </div>
+                    <div class="prayer-card" id="asrCard">
+                        <div class="prayer-name">Asr</div>
+                        <div class="prayer-time">15:20</div>
+                    </div>
+                    <div class="prayer-card" id="maghribCard">
+                        <div class="prayer-name">Maghrib</div>
+                        <div class="prayer-time">18:15</div>
+                    </div>
+                    <div class="prayer-card" id="ishaCard">
+                        <div class="prayer-name">Isha</div>
+                        <div class="prayer-time">19:30</div>
+                    </div>
                 </div>
-                <div class="financial-card selling">
-                    <div class="financial-label">Total Selling Value</div>
-                    <div class="financial-value accent" id="totalSellingValue">$0.00</div>
-                    <div class="financial-label">All Inventory Value</div>
-                </div>
-                <div class="financial-card profit">
-                    <div class="financial-label">Total Gross Profit</div>
-                    <div class="financial-value primary" id="totalProfit">$0.00</div>
-                    <div class="financial-label">Potential Profit</div>
-                </div>
-                <div class="financial-card my-profit">
-                    <div class="financial-label">My 50% Profit</div>
-                    <div class="financial-value secondary" id="myProfit">$0.00</div>
-                    <div class="financial-label">My Actual Share</div>
-                </div>
-            </div>
-
-            <!-- Profit Distribution -->
-            <div class="profit-distribution">
-                <div class="profit-card my-share">
-                    <div class="financial-label">My Total Profit</div>
-                    <div class="financial-value primary" id="myTotalProfit">$0.00</div>
-                    <div class="financial-label">50% of All Sales</div>
-                </div>
-                <div class="profit-card seller-share">
-                    <div class="financial-label">Seller Total Profit</div>
-                    <div class="financial-value secondary" id="sellerTotalProfit">$0.00</div>
-                    <div class="financial-label">50% of All Sales</div>
-                </div>
-            </div>
-
-            <!-- Stats Dashboard -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Today's Sales</div>
-                    <div class="stat-value primary" id="todaySales">$0.00</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Today's Orders</div>
-                    <div class="stat-value accent" id="todayOrders">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Low Stock Items</div>
-                    <div class="stat-value secondary" id="lowStockCount">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Sellers</div>
-                    <div class="stat-value warning" id="activeSellers">0</div>
-                </div>
+                <button class="btn-small" style="width: 100%; margin-top: 10px;" onclick="findQibla()">
+                    <i class="fas fa-compass"></i> Find Qibla Direction
+                </button>
             </div>
 
             <!-- Mobile Tabs -->
             <div class="mobile-tabs">
-                <div class="mobile-tab active" onclick="switchTab('dashboard')">
-                    <i class="fas fa-tachometer-alt"></i><br>Dashboard
+                <div class="mobile-tab active" onclick="switchTab('services')">
+                    <i class="fas fa-th"></i><br>Services
                 </div>
-                <div class="mobile-tab" onclick="switchTab('pos')">
-                    <i class="fas fa-cash-register"></i><br>POS
+                <div class="mobile-tab" onclick="switchTab('islamic')">
+                    <i class="fas fa-mosque"></i><br>Islamic
                 </div>
-                <div class="mobile-tab" onclick="switchTab('products')">
-                    <i class="fas fa-boxes"></i><br>Products
+                <div class="mobile-tab" onclick="switchTab('marketplace')">
+                    <i class="fas fa-store"></i><br>Marketplace
                 </div>
-                <div class="mobile-tab" onclick="switchTab('sellers')">
-                    <i class="fas fa-users"></i><br>Sellers
+                <div class="mobile-tab" onclick="switchTab('education')">
+                    <i class="fas fa-graduation-cap"></i><br>Education
                 </div>
-                <div class="mobile-tab" onclick="switchTab('reports')">
-                    <i class="fas fa-chart-bar"></i><br>Reports
-                </div>
-            </div>
-
-            <!-- Dashboard Tab -->
-            <div id="dashboard" class="tab-content active">
-                <div class="card">
-                    <h3><i class="fas fa-chart-line"></i> Sales Overview</h3>
-                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
-                        <canvas id="salesChart" width="300" height="200"></canvas>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-money-bill-wave"></i> Financial Details</h3>
-                    <div class="financial-details">
-                        <div class="detail-item">
-                            <span>Total Inventory Buying Cost:</span>
-                            <span class="warning" id="detailBuyingCost">$0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Total Inventory Selling Value:</span>
-                            <span class="accent" id="detailSellingValue">$0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Potential Profit Margin:</span>
-                            <span class="primary" id="detailProfitMargin">0%</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Actual Sales Revenue:</span>
-                            <span class="accent" id="detailSalesRevenue">$0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>My 50% Profit from Sales:</span>
-                            <span class="primary" id="detailMyProfit">$0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Sellers 50% Profit from Sales:</span>
-                            <span class="secondary" id="detailSellerProfit">$0.00</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Low Stock Alerts</h3>
-                    <div id="lowStockAlerts">
-                        <div class="status info">No low stock items</div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-terminal"></i> Recent Activity</h3>
-                    <div class="log" id="activityLog">
-                        <div class="log-entry log-info">
-                            [08:01:20] System initialized
-                        </div>
-                    </div>
+                <div class="mobile-tab" onclick="switchTab('government')">
+                    <i class="fas fa-landmark"></i><br>Government
                 </div>
             </div>
 
-            <!-- POS Tab -->
-            <div id="pos" class="tab-content">
+            <!-- Services Tab -->
+            <div id="services" class="tab-content active">
                 <div class="card">
-                    <h3><i class="fas fa-shopping-cart"></i> Current Sale</h3>
-                    <div id="cartItems">
-                        <div class="status info">Cart is empty</div>
+                    <h3><i class="fas fa-concierge-bell"></i> Community Services</h3>
+                    <div class="service-grid">
+                        <div class="service-card" onclick="switchTab('islamic')">
+                            <div class="service-icon"><i class="fas fa-mosque"></i></div>
+                            <div class="service-name">Islamic Center</div>
+                            <div class="service-desc">Prayer times, Quran, Zakat</div>
+                        </div>
+                        <div class="service-card" onclick="switchTab('marketplace')">
+                            <div class="service-icon"><i class="fas fa-shopping-cart"></i></div>
+                            <div class="service-name">Halal Marketplace</div>
+                            <div class="service-desc">Buy & sell with trust</div>
+                        </div>
+                        <div class="service-card" onclick="switchTab('education')">
+                            <div class="service-icon"><i class="fas fa-book-open"></i></div>
+                            <div class="service-name">Education</div>
+                            <div class="service-desc">Learn & grow</div>
+                        </div>
+                        <div class="service-card" onclick="switchTab('government')">
+                            <div class="service-icon"><i class="fas fa-passport"></i></div>
+                            <div class="service-name">Government</div>
+                            <div class="service-desc">Services & documents</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('health')">
+                            <div class="service-icon"><i class="fas fa-heartbeat"></i></div>
+                            <div class="service-name">Health & Wellness</div>
+                            <div class="service-desc">Medical services</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('family')">
+                            <div class="service-icon"><i class="fas fa-users"></i></div>
+                            <div class="service-name">Family Services</div>
+                            <div class="service-desc">Marriage, counseling</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('jobs')">
+                            <div class="service-icon"><i class="fas fa-briefcase"></i></div>
+                            <div class="service-name">Halal Jobs</div>
+                            <div class="service-desc">Employment opportunities</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('zakat')">
+                            <div class="service-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                            <div class="service-name">Zakat & Sadaqah</div>
+                            <div class="service-desc">Give with confidence</div>
+                        </div>
                     </div>
-                    <div class="cart-total" id="cartTotal">Total: $0.00</div>
-                    
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-bullhorn"></i> Community Announcements</h3>
+                    <div id="announcements">
+                        <div class="service-card">
+                            <div class="service-name">Eid al-Fitr Celebration</div>
+                            <div class="service-desc">Join us at the Islamic Center for Eid prayers at 7:30 AM</div>
+                            <small>Posted: 2 days ago</small>
+                        </div>
+                        <div class="service-card">
+                            <div class="service-name">Zakat Distribution</div>
+                            <div class="service-desc">Zakat collection for families in need - donate through platform</div>
+                            <small>Posted: 1 week ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Islamic Tab -->
+            <div id="islamic" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-quran"></i> Quran Recitation</h3>
+                    <div class="quran-player">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span id="currentSurah">Surah Al-Fatihah</span>
+                            <button class="btn-small" onclick="playPauseQuran()">
+                                <i class="fas fa-play" id="playIcon"></i> <span id="playText">Play</span>
+                            </button>
+                        </div>
+                        <div class="surah-list">
+                            <div class="surah-item" onclick="selectSurah(1)">
+                                <div class="surah-name">Surah Al-Fatihah</div>
+                                <div class="surah-details">The Opening - 7 verses</div>
+                            </div>
+                            <div class="surah-item" onclick="selectSurah(2)">
+                                <div class="surah-name">Surah Al-Baqarah</div>
+                                <div class="surah-details">The Cow - 286 verses</div>
+                            </div>
+                            <div class="surah-item" onclick="selectSurah(36)">
+                                <div class="surah-name">Surah Ya-Sin</div>
+                                <div class="surah-details">The Heart of the Quran - 83 verses</div>
+                            </div>
+                            <div class="surah-item" onclick="selectSurah(55)">
+                                <div class="surah-name">Surah Ar-Rahman</div>
+                                <div class="surah-details">The Beneficent - 78 verses</div>
+                            </div>
+                            <div class="surah-item" onclick="selectSurah(67)">
+                                <div class="surah-name">Surah Al-Mulk</div>
+                                <div class="surah-details">The Sovereignty - 30 verses</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-calculator"></i> Zakat Calculator</h3>
                     <div class="form-group">
-                        <label for="sellerSelect">Select Seller</label>
-                        <select id="sellerSelect">
-                            <!-- Sellers will be loaded here -->
+                        <label for="zakatWealth">Total Wealth/Savings (MVR)</label>
+                        <input type="number" id="zakatWealth" placeholder="Enter total wealth" value="50000">
+                    </div>
+                    <div class="form-group">
+                        <label for="zakatGold">Gold Value (MVR)</label>
+                        <input type="number" id="zakatGold" placeholder="Gold value" value="10000">
+                    </div>
+                    <div class="form-group">
+                        <label for="zakatBusiness">Business Assets (MVR)</label>
+                        <input type="number" id="zakatBusiness" placeholder="Business assets" value="20000">
+                    </div>
+                    <button class="btn-success" onclick="calculateZakat()">
+                        <i class="fas fa-calculator"></i> Calculate Zakat
+                    </button>
+                    
+                    <div class="zakat-results" id="zakatResults" style="display: none;">
+                        <h4>Zakat Calculation Results</h4>
+                        <div class="result-item">
+                            <span>Total Zakatable Wealth:</span>
+                            <span id="totalWealth">MVR 0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Nisab Threshold:</span>
+                            <span>MVR 15,235.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Zakat Rate (2.5%):</span>
+                            <span id="zakatRate">2.5%</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Your Zakat Due:</span>
+                            <span id="zakatDue" style="color: var(--accent); font-weight: bold;">MVR 0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-question-circle"></i> Ask a Scholar</h3>
+                    <div class="form-group">
+                        <label for="questionCategory">Question Category</label>
+                        <select id="questionCategory">
+                            <option value="prayer">Prayer & Worship</option>
+                            <option value="family">Family & Marriage</option>
+                            <option value="business">Business & Finance</option>
+                            <option value="food">Halal Food & Drink</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="discountAmount">Discount (%)</label>
-                        <input type="number" id="discountAmount" min="0" max="100" value="0">
+                        <label for="userQuestion">Your Question</label>
+                        <textarea id="userQuestion" rows="3" placeholder="Ask your religious question here..."></textarea>
                     </div>
-                    
-                    <h4>Payment Method</h4>
-                    <div class="payment-methods" id="paymentMethods">
-                        <div class="payment-method active" onclick="selectPayment('cash')">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <div>Cash</div>
+                    <button class="btn-success" onclick="submitQuestion()">
+                        <i class="fas fa-paper-plane"></i> Submit Question
+                    </button>
+                </div>
+            </div>
+
+            <!-- Marketplace Tab -->
+            <div id="marketplace" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-store"></i> Halal Marketplace</h3>
+                    <div class="form-group">
+                        <input type="text" id="marketSearch" placeholder="Search products..." onkeyup="filterMarketProducts()">
+                    </div>
+                    <div class="product-grid" id="marketProductGrid">
+                        <div class="product-card">
+                            <div class="product-name">Fresh Tuna</div>
+                            <div class="product-price">MVR 85/kg</div>
+                            <div class="product-seller">Ahmed, Male'</div>
+                            <div class="halal-badge">Halal Certified</div>
                         </div>
-                        <div class="payment-method" onclick="selectPayment('card')">
-                            <i class="fas fa-credit-card"></i>
-                            <div>Card</div>
+                        <div class="product-card">
+                            <div class="product-name">Handmade Mats</div>
+                            <div class="product-price">MVR 120</div>
+                            <div class="product-seller">Aisha, Addu</div>
+                            <div class="halal-badge">Local Artisan</div>
                         </div>
-                        <div class="payment-method" onclick="selectPayment('crypto')">
-                            <i class="fas fa-coins"></i>
-                            <div>Crypto</div>
+                        <div class="product-card">
+                            <div class="product-name">Coconut Oil</div>
+                            <div class="product-price">MVR 65</div>
+                            <div class="product-seller">Ismail, Fuvahmulah</div>
+                            <div class="halal-badge">Organic</div>
                         </div>
-                        <div class="payment-method" onclick="selectPayment('transfer')">
-                            <i class="fas fa-university"></i>
-                            <div>Transfer</div>
+                        <div class="product-card">
+                            <div class="product-name">Islamic Books</div>
+                            <div class="product-price">MVR 45-150</div>
+                            <div class="product-seller">Islamic Center</div>
+                            <div class="halal-badge">Educational</div>
                         </div>
                     </div>
-                    
-                    <button class="btn-success" onclick="processPayment()" id="checkoutBtn">
-                        <i class="fas fa-credit-card"></i> Process Payment
-                    </button>
-                    <button class="btn-warning" onclick="clearCart()">
-                        <i class="fas fa-trash"></i> Clear Cart
-                    </button>
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-boxes"></i> Products</h3>
-                    <div class="form-group">
-                        <input type="text" id="productSearch" placeholder="Search products..." onkeyup="filterProducts()">
-                    </div>
-                    <div class="product-grid" id="productGrid">
-                        <!-- Products will be loaded here -->
+                    <h3><i class="fas fa-hand-holding-usd"></i> Islamic Finance</h3>
+                    <div class="service-grid">
+                        <div class="service-card" onclick="showFeature('islamic_banking')">
+                            <div class="service-icon"><i class="fas fa-university"></i></div>
+                            <div class="service-name">Islamic Banking</div>
+                            <div class="service-desc">Sharia-compliant accounts</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('takaful')">
+                            <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="service-name">Takaful</div>
+                            <div class="service-desc">Islamic insurance</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('halal_invest')">
+                            <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="service-name">Halal Investment</div>
+                            <div class="service-desc">Sharia-compliant funds</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('sadaqah')">
+                            <div class="service-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                            <div class="service-name">Sadaqah</div>
+                            <div class="service-desc">Charity projects</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Products Tab -->
-            <div id="products" class="tab-content">
+            <!-- Education Tab -->
+            <div id="education" class="tab-content">
                 <div class="card">
-                    <h3><i class="fas fa-plus-circle"></i> Add New Product</h3>
-                    <div class="form-group">
-                        <label for="productName">Product Name</label>
-                        <input type="text" id="productName" placeholder="Product name">
+                    <h3><i class="fas fa-graduation-cap"></i> Learning Resources</h3>
+                    <div class="service-grid">
+                        <div class="service-card" onclick="showFeature('quran_studies')">
+                            <div class="service-icon"><i class="fas fa-quran"></i></div>
+                            <div class="service-name">Quran Studies</div>
+                            <div class="service-desc">Learn Tajweed & Tafsir</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('arabic')">
+                            <div class="service-icon"><i class="fas fa-language"></i></div>
+                            <div class="service-name">Arabic Language</div>
+                            <div class="service-desc">Read Quran in Arabic</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('islamic_history')">
+                            <div class="service-icon"><i class="fas fa-history"></i></div>
+                            <div class="service-name">Islamic History</div>
+                            <div class="service-desc">Prophet's life & more</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('fiqh')">
+                            <div class="service-icon"><i class="fas fa-balance-scale"></i></div>
+                            <div class="service-name">Islamic Law (Fiqh)</div>
+                            <div class="service-desc">Daily rulings</div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="productPrice">Selling Price ($)</label>
-                        <input type="number" id="productPrice" step="0.01" placeholder="Selling price">
-                    </div>
-                    <div class="form-group">
-                        <label for="productCost">Buying Price ($)</label>
-                        <input type="number" id="productCost" step="0.01" placeholder="Buying price">
-                    </div>
-                    <div class="form-group">
-                        <label for="productStock">Stock Quantity</label>
-                        <input type="number" id="productStock" placeholder="Stock quantity">
-                    </div>
-                    <div class="form-group">
-                        <label for="productBarcode">Barcode (Optional)</label>
-                        <input type="text" id="productBarcode" placeholder="Barcode">
-                    </div>
-                    <button class="btn-success" onclick="addProduct()">
-                        <i class="fas fa-save"></i> Add Product
-                    </button>
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-boxes"></i> Product Inventory</h3>
-                    <div class="swipe-container">
-                        <table class="mobile-table" id="productsTable">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Buy Price</th>
-                                    <th>Sell Price</th>
-                                    <th>Profit</th>
-                                    <th>Stock</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTableBody">
-                                <!-- Products will be loaded here -->
-                            </tbody>
-                        </table>
+                    <h3><i class="fas fa-laptop-code"></i> Skills Development</h3>
+                    <div class="service-grid">
+                        <div class="service-card" onclick="showFeature('programming')">
+                            <div class="service-icon"><i class="fas fa-code"></i></div>
+                            <div class="service-name">Programming</div>
+                            <div class="service-desc">Web & app development</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('business')">
+                            <div class="service-icon"><i class="fas fa-chart-bar"></i></div>
+                            <div class="service-name">Business Skills</div>
+                            <div class="service-desc">Entrepreneurship</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('vocational')">
+                            <div class="service-icon"><i class="fas fa-tools"></i></div>
+                            <div class="service-name">Vocational Training</div>
+                            <div class="service-desc">Practical skills</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('school')">
+                            <div class="service-icon"><i class="fas fa-school"></i></div>
+                            <div class="service-name">School Curriculum</div>
+                            <div class="service-desc">Ministry of Education</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sellers Tab -->
-            <div id="sellers" class="tab-content">
+            <!-- Government Tab -->
+            <div id="government" class="tab-content">
                 <div class="card">
-                    <h3><i class="fas fa-user-plus"></i> Add Seller</h3>
-                    <div class="form-group">
-                        <label for="sellerName">Full Name</label>
-                        <input type="text" id="sellerName" placeholder="Seller name">
+                    <h3><i class="fas fa-passport"></i> Government Services</h3>
+                    <div class="service-grid">
+                        <div class="service-card" onclick="showFeature('id_card')">
+                            <div class="service-icon"><i class="fas fa-id-card"></i></div>
+                            <div class="service-name">National ID</div>
+                            <div class="service-desc">Apply or renew</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('passport')">
+                            <div class="service-icon"><i class="fas fa-passport"></i></div>
+                            <div class="service-name">Passport</div>
+                            <div class="service-desc">Apply or renew</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('driver_license')">
+                            <div class="service-icon"><i class="fas fa-id-card-alt"></i></div>
+                            <div class="service-name">Driver's License</div>
+                            <div class="service-desc">Apply or renew</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('birth_cert')">
+                            <div class="service-icon"><i class="fas fa-birthday-cake"></i></div>
+                            <div class="service-name">Birth Certificate</div>
+                            <div class="service-desc">Apply for copy</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('business_reg')">
+                            <div class="service-icon"><i class="fas fa-file-contract"></i></div>
+                            <div class="service-name">Business Registration</div>
+                            <div class="service-desc">Register your business</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('tax')">
+                            <div class="service-icon"><i class="fas fa-receipt"></i></div>
+                            <div class="service-name">Tax Services</div>
+                            <div class="service-desc">File & pay taxes</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('health_services')">
+                            <div class="service-icon"><i class="fas fa-file-medical"></i></div>
+                            <div class="service-name">Health Services</div>
+                            <div class="service-desc">Book appointments</div>
+                        </div>
+                        <div class="service-card" onclick="showFeature('voting')">
+                            <div class="service-icon"><i class="fas fa-vote-yea"></i></div>
+                            <div class="service-name">E-Voting</div>
+                            <div class="service-desc">Participate in elections</div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="sellerPhone">Phone Number</label>
-                        <input type="text" id="sellerPhone" placeholder="Phone number">
-                    </div>
-                    <div class="form-group">
-                        <label for="sellerEmail">Email (Optional)</label>
-                        <input type="email" id="sellerEmail" placeholder="Email">
-                    </div>
-                    <button class="btn-success" onclick="addSeller()">
-                        <i class="fas fa-user-plus"></i> Add Seller
-                    </button>
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-users"></i> Seller List</h3>
-                    <div id="sellerList">
-                        <div class="status info">No sellers added yet</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reports Tab -->
-            <div id="reports" class="tab-content">
-                <div class="card">
-                    <h3><i class="fas fa-receipt"></i> Order History</h3>
-                    <div class="form-group">
-                        <label for="reportDate">Filter by Date</label>
-                        <select id="reportDate" onchange="filterOrders()">
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                            <option value="all">All Time</option>
-                        </select>
-                    </div>
-                    <div class="swipe-container">
-                        <table class="mobile-table" id="ordersTable">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Items</th>
-                                    <th>Total</th>
-                                    <th>Seller</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersTableBody">
-                                <!-- Orders will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="btn-danger" onclick="deleteAllOrders()">
-                            <i class="fas fa-trash"></i> Delete All Orders
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-chart-pie"></i> Sales Reports</h3>
-                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
-                        <canvas id="reportsChart" width="300" height="200"></canvas>
+                    <h3><i class="fas fa-chart-line"></i> Government Transparency</h3>
+                    <div id="transparencyData">
+                        <div class="service-card">
+                            <div class="service-name">National Budget 2023</div>
+                            <div class="service-desc">View how public funds are allocated</div>
+                        </div>
+                        <div class="service-card">
+                            <div class="service-name">Development Projects</div>
+                            <div class="service-desc">Track progress of national projects</div>
+                        </div>
+                        <div class="service-card">
+                            <div class="service-name">Public Procurement</div>
+                            <div class="service-desc">View government tenders</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1084,285 +897,68 @@
 
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchTab('dashboard')">
-                <div class="nav-icon"><i class="fas fa-tachometer-alt"></i></div>
-                <div>Dashboard</div>
+            <div class="nav-item active" onclick="switchTab('services')">
+                <div class="nav-icon"><i class="fas fa-th"></i></div>
+                <div>Services</div>
             </div>
-            <div class="nav-item" onclick="switchTab('pos')">
-                <div class="nav-icon"><i class="fas fa-cash-register"></i></div>
-                <div>POS</div>
+            <div class="nav-item" onclick="switchTab('islamic')">
+                <div class="nav-icon"><i class="fas fa-mosque"></i></div>
+                <div>Islamic</div>
             </div>
-            <div class="nav-item" onclick="switchTab('products')">
-                <div class="nav-icon"><i class="fas fa-boxes"></i></div>
-                <div>Products</div>
+            <div class="nav-item" onclick="switchTab('marketplace')">
+                <div class="nav-icon"><i class="fas fa-store"></i></div>
+                <div>Marketplace</div>
             </div>
-            <div class="nav-item" onclick="switchTab('sellers')">
-                <div class="nav-icon"><i class="fas fa-users"></i></div>
-                <div>Sellers</div>
+            <div class="nav-item" onclick="switchTab('education')">
+                <div class="nav-icon"><i class="fas fa-graduation-cap"></i></div>
+                <div>Education</div>
             </div>
-            <div class="nav-item" onclick="switchTab('reports')">
-                <div class="nav-icon"><i class="fas fa-chart-bar"></i></div>
-                <div>Reports</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Product Modal -->
-    <div class="modal" id="editProductModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-edit"></i> Edit Product</h3>
-            <div class="form-group">
-                <label for="editProductName">Product Name</label>
-                <input type="text" id="editProductName">
-            </div>
-            <div class="form-group">
-                <label for="editProductPrice">Selling Price ($)</label>
-                <input type="number" id="editProductPrice" step="0.01">
-            </div>
-            <div class="form-group">
-                <label for="editProductCost">Buying Price ($)</label>
-                <input type="number" id="editProductCost" step="0.01">
-            </div>
-            <div class="form-group">
-                <label for="editProductStock">Stock Quantity</label>
-                <input type="number" id="editProductStock">
-            </div>
-            <div class="form-group">
-                <label for="editProductBarcode">Barcode</label>
-                <input type="text" id="editProductBarcode">
-            </div>
-            <div class="action-buttons">
-                <button class="btn-success" onclick="saveProductEdit()">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-                <button class="btn-warning" onclick="closeEditModal()">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Seller Modal -->
-    <div class="modal" id="editSellerModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-edit"></i> Edit Seller</h3>
-            <div class="form-group">
-                <label for="editSellerName">Full Name</label>
-                <input type="text" id="editSellerName">
-            </div>
-            <div class="form-group">
-                <label for="editSellerPhone">Phone Number</label>
-                <input type="text" id="editSellerPhone">
-            </div>
-            <div class="form-group">
-                <label for="editSellerEmail">Email</label>
-                <input type="email" id="editSellerEmail">
-            </div>
-            <div class="action-buttons">
-                <button class="btn-success" onclick="saveSellerEdit()">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-                <button class="btn-warning" onclick="closeSellerModal()">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Order Details Modal -->
-    <div class="modal" id="orderDetailsModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-receipt"></i> Order Details</h3>
-            <div id="orderDetailsContent">
-                <!-- Order details will be loaded here -->
-            </div>
-            <div class="action-buttons" style="margin-top: 15px;">
-                <button class="btn-danger" onclick="deleteCurrentOrder()">
-                    <i class="fas fa-trash"></i> Delete This Order
-                </button>
-                <button class="btn-warning" onclick="closeOrderModal()">
-                    <i class="fas fa-times"></i> Close
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reset Confirmation Modal -->
-    <div class="modal" id="resetModal">
-        <div class="modal-content">
-            <div class="reset-confirm">
-                <h3><i class="fas fa-exclamation-triangle"></i> Reset All Data</h3>
-                <p>This will delete ALL data including:</p>
-                <ul style="text-align: left; margin: 15px 0;">
-                    <li>All products and inventory</li>
-                    <li>All seller records</li>
-                    <li>All sales orders and history</li>
-                    <li>All transaction records</li>
-                </ul>
-                <p style="color: var(--danger); font-weight: bold;">This action cannot be undone!</p>
-                
-                <div class="reset-buttons">
-                    <button class="btn-danger" onclick="resetAllData()">
-                        <i class="fas fa-trash"></i> Reset Everything
-                    </button>
-                    <button class="btn-warning" onclick="closeResetModal()">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Receipt Modal -->
-    <div class="modal" id="receiptModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-receipt"></i> Receipt</h3>
-            <div class="receipt" id="receiptContent">
-                <!-- Receipt content will be here -->
-            </div>
-            <div class="action-buttons" style="margin-top: 15px;">
-                <button class="btn-warning" onclick="printReceipt()">
-                    <i class="fas fa-print"></i> Print
-                </button>
-                <button class="btn-success" onclick="saveReceipt()">
-                    <i class="fas fa-save"></i> Save PDF
-                </button>
-                <button class="btn-small" onclick="closeReceipt()">
-                    <i class="fas fa-times"></i> Close
-                </button>
+            <div class="nav-item" onclick="switchTab('government')">
+                <div class="nav-icon"><i class="fas fa-landmark"></i></div>
+                <div>Government</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Data storage
-        let users = [
-            { id: 1, email: 'admin@neonpos.com', password: 'password', role: 'admin', name: 'Admin User' },
-            { id: 2, email: 'staff@neonpos.com', password: 'password', role: 'staff', name: 'Staff User' }
-        ];
-
-        let products = [
-            { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
-            { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
-            { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
-            { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
-            { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
-            { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
-        ];
-
-        let sellers = [
-            { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
-            { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
-        ];
-
-        let orders = [
-            { 
-                id: 1001, 
-                date: new Date(), 
-                items: [
-                    { productId: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, quantity: 2 },
-                    { productId: 3, name: 'Filter', price: 45.00, cost: 22.75, quantity: 1 }
-                ], 
-                total: 335.00, 
-                payment: 'cash', 
-                sellerId: 1,
-                myProfit: 67.125,
-                sellerProfit: 67.125
-            }
-        ];
-
+        // Platform data and state
         let currentUser = null;
-        let cart = [];
-        let selectedPayment = 'cash';
-        let editingProductId = null;
-        let editingSellerId = null;
-        let viewingOrderId = null;
+        let currentSurah = 1;
+        let isPlayingQuran = false;
+        let currentPrayer = 'dhuhr';
 
-        // Calculate financial totals with 50/50 profit sharing
-        function calculateFinancialTotals() {
-            // Calculate inventory totals
-            let totalBuyingCost = 0;
-            let totalSellingValue = 0;
-            let totalPotentialProfit = 0;
-            
-            products.forEach(product => {
-                totalBuyingCost += product.cost * product.stock;
-                totalSellingValue += product.price * product.stock;
-                totalPotentialProfit += (product.price - product.cost) * product.stock;
-            });
-            
-            // Calculate actual sales totals with 50/50 profit sharing
-            let totalSalesRevenue = 0;
-            let totalGrossProfit = 0;
-            let myTotalProfit = 0;
-            let sellerTotalProfit = 0;
-            
-            orders.forEach(order => {
-                totalSalesRevenue += order.total;
-                
-                // Calculate profit for this order (50/50 split)
-                let orderProfit = 0;
-                order.items.forEach(item => {
-                    orderProfit += (item.price - item.cost) * item.quantity;
-                });
-                
-                totalGrossProfit += orderProfit;
-                myTotalProfit += order.myProfit || (orderProfit / 2);
-                sellerTotalProfit += order.sellerProfit || (orderProfit / 2);
-            });
-            
-            // Calculate profit margin percentage
-            const profitMargin = totalSellingValue > 0 ? ((totalSellingValue - totalBuyingCost) / totalSellingValue * 100) : 0;
-            
-            // Update financial summary
-            document.getElementById('totalBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
-            document.getElementById('totalSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
-            document.getElementById('totalProfit').textContent = `$${totalGrossProfit.toFixed(2)}`;
-            document.getElementById('myProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
-            
-            // Update profit distribution
-            document.getElementById('myTotalProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
-            document.getElementById('sellerTotalProfit').textContent = `$${sellerTotalProfit.toFixed(2)}`;
-            
-            // Update financial details
-            document.getElementById('detailBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
-            document.getElementById('detailSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
-            document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
-            document.getElementById('detailSalesRevenue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
-            document.getElementById('detailMyProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
-            document.getElementById('detailSellerProfit').textContent = `$${sellerTotalProfit.toFixed(2)}`;
-            
-            // Update seller stats
-            document.getElementById('activeSellers').textContent = sellers.length;
-        }
+        // Prayer times for Malé, Maldives
+        const prayerTimes = {
+            fajr: "05:15",
+            sunrise: "06:05",
+            dhuhr: "12:05",
+            asr: "15:20",
+            maghrib: "18:15",
+            isha: "19:30"
+        };
 
-        // Initialize the app
-        function initApp() {
-            updateDashboard();
-            updateProductGrid();
-            updateProductsTable();
-            updateSellerList();
-            updateSellerSelect();
-            updateOrdersTable();
-            updateCharts();
-            calculateFinancialTotals();
-        }
+        // Sample users
+        const users = [
+            { id: 1, email: 'user@jazeera.mv', password: 'password', name: 'Ahmed Mohamed', location: 'Malé' }
+        ];
 
         // Login function
         function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-            const role = document.getElementById('userRole').value;
             
-            // Find user
-            const user = users.find(u => u.email === email && u.password === password && u.role === role);
+            const user = users.find(u => u.email === email && u.password === password);
             
             if (user) {
                 currentUser = user;
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
                 document.getElementById('userGreeting').textContent = `Welcome, ${user.name}`;
-                initApp();
+                
+                // Update prayer times display
+                updatePrayerTimes();
+                setCurrentPrayer();
+                
                 addLog(`User ${user.name} logged in`, 'info');
             } else {
                 alert('Invalid login credentials. Please try again.');
@@ -1374,7 +970,32 @@
             currentUser = null;
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
-            addLog('User logged out', 'info');
+        }
+
+        // Update prayer times display
+        function updatePrayerTimes() {
+            for (const prayer in prayerTimes) {
+                const element = document.getElementById(`${prayer}Card`);
+                if (element) {
+                    element.querySelector('.prayer-time').textContent = prayerTimes[prayer];
+                }
+            }
+            
+            // Update header with next prayer
+            document.getElementById('currentPrayer').textContent = 
+                `Fajr: ${prayerTimes.fajr} | Dhuhr: ${prayerTimes.dhuhr} | Asr: ${prayerTimes.asr}`;
+        }
+
+        // Set current prayer based on time
+        function setCurrentPrayer() {
+            // Remove current class from all prayers
+            document.querySelectorAll('.prayer-card').forEach(card => {
+                card.classList.remove('current');
+            });
+            
+            // For demo purposes, set Dhuhr as current
+            document.getElementById('dhuhrCard').classList.add('current');
+            currentPrayer = 'dhuhr';
         }
 
         // Tab switching functionality
@@ -1398,957 +1019,123 @@
             
             // Add active class to clicked tab
             event.currentTarget.classList.add('active');
-            
-            // Refresh data if needed
-            if (tabName === 'dashboard') {
-                updateDashboard();
-            } else if (tabName === 'pos') {
-                updateProductGrid();
-            } else if (tabName === 'products') {
-                updateProductsTable();
-            } else if (tabName === 'sellers') {
-                updateSellerList();
-            } else if (tabName === 'reports') {
-                updateOrdersTable();
-                updateReportsChart();
-            }
         }
 
-        // Update dashboard
-        function updateDashboard() {
-            // Calculate today's sales
-            const today = new Date().toDateString();
-            const todayOrders = orders.filter(order => new Date(order.date).toDateString() === today);
-            const todaySales = todayOrders.reduce((sum, order) => sum + order.total, 0);
-            
-            // Update stats
-            document.getElementById('todaySales').textContent = `$${todaySales.toFixed(2)}`;
-            document.getElementById('todayOrders').textContent = todayOrders.length;
-            
-            // Check low stock
-            const lowStockItems = products.filter(p => p.stock < 5);
-            document.getElementById('lowStockCount').textContent = lowStockItems.length;
-            
-            // Update low stock alerts
-            const alertsContainer = document.getElementById('lowStockAlerts');
-            if (lowStockItems.length === 0) {
-                alertsContainer.innerHTML = '<div class="status info">No low stock items</div>';
-            } else {
-                alertsContainer.innerHTML = lowStockItems.map(item => 
-                    `<div class="status warning">${item.name} - Only ${item.stock} left</div>`
-                ).join('');
-            }
-            
-            // Update financial totals
-            calculateFinancialTotals();
-            
-            updateSalesChart();
-        }
-
-        // Update product grid for POS
-        function updateProductGrid() {
-            const container = document.getElementById('productGrid');
-            container.innerHTML = '';
-            
-            products.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.onclick = () => addToCart(product);
-                productCard.innerHTML = `
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">$${product.price.toFixed(2)}</div>
-                    <div class="product-stock">Stock: ${product.stock}</div>
-                `;
-                container.appendChild(productCard);
-            });
-        }
-
-        // Update seller select dropdown
-        function updateSellerSelect() {
-            const select = document.getElementById('sellerSelect');
-            select.innerHTML = '<option value="">Select Seller</option>';
-            
-            sellers.forEach(seller => {
-                const option = document.createElement('option');
-                option.value = seller.id;
-                option.textContent = seller.name;
-                select.appendChild(option);
-            });
-        }
-
-        // Filter products
-        function filterProducts() {
-            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-            const filteredProducts = products.filter(p => 
-                p.name.toLowerCase().includes(searchTerm)
-            );
-            
-            const container = document.getElementById('productGrid');
-            container.innerHTML = '';
-            
-            filteredProducts.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.onclick = () => addToCart(product);
-                productCard.innerHTML = `
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">$${product.price.toFixed(2)}</div>
-                    <div class="product-stock">Stock: ${product.stock}</div>
-                `;
-                container.appendChild(productCard);
-            });
-        }
-
-        // Add to cart
-        function addToCart(product) {
-            // Check if product already in cart
-            const existingItem = cart.find(item => item.id === product.id);
-            
-            if (existingItem) {
-                if (existingItem.quantity < product.stock) {
-                    existingItem.quantity += 1;
-                } else {
-                    alert(`Only ${product.stock} items available in stock`);
-                    return;
-                }
-            } else {
-                if (product.stock > 0) {
-                    cart.push({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        cost: product.cost,
-                        quantity: 1
-                    });
-                } else {
-                    alert('Product out of stock');
-                    return;
-                }
-            }
-            
-            updateCartDisplay();
-            addLog(`Added ${product.name} to cart`, 'info');
-        }
-
-        // Update cart display
-        function updateCartDisplay() {
-            const cartContainer = document.getElementById('cartItems');
-            const totalElement = document.getElementById('cartTotal');
-            
-            if (cart.length === 0) {
-                cartContainer.innerHTML = '<div class="status info">Cart is empty</div>';
-                totalElement.textContent = 'Total: $0.00';
-                return;
-            }
-            
-            let total = 0;
-            cartContainer.innerHTML = cart.map(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                return `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">$${item.price.toFixed(2)} each</div>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, -1)">-</button>
-                            <span>${item.quantity}</span>
-                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, 1)">+</button>
-                            <span>$${itemTotal.toFixed(2)}</span>
-                            <button class="btn-danger btn-small" onclick="removeFromCart(${item.id})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            // Apply discount
-            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
-            if (discount > 0) {
-                const discountAmount = total * (discount / 100);
-                total -= discountAmount;
-                totalElement.innerHTML = `Subtotal: $${(total + discountAmount).toFixed(2)}<br>Discount: -$${discountAmount.toFixed(2)}<br>Total: $${total.toFixed(2)}`;
-            } else {
-                totalElement.textContent = `Total: $${total.toFixed(2)}`;
-            }
-        }
-
-        // Update cart quantity
-        function updateCartQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                const product = products.find(p => p.id === productId);
-                item.quantity += change;
-                
-                if (item.quantity <= 0) {
-                    removeFromCart(productId);
-                } else if (item.quantity > product.stock) {
-                    item.quantity = product.stock;
-                    alert(`Only ${product.stock} items available in stock`);
-                } else {
-                    updateCartDisplay();
-                }
-            }
-        }
-
-        // Remove from cart
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCartDisplay();
-            addLog('Item removed from cart', 'info');
-        }
-
-        // Clear cart
-        function clearCart() {
-            cart = [];
-            updateCartDisplay();
-            addLog('Cart cleared', 'info');
-        }
-
-        // Select payment method
-        function selectPayment(method) {
-            selectedPayment = method;
-            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-        }
-
-        // Process payment with 50/50 profit sharing
-        function processPayment() {
-            if (cart.length === 0) {
-                alert('Cart is empty. Add items before checkout.');
-                return;
-            }
-            
-            const sellerId = document.getElementById('sellerSelect').value;
-            if (!sellerId) {
-                alert('Please select a seller for this sale');
-                return;
-            }
-            
-            // Calculate total
-            let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
-            if (discount > 0) {
-                total -= total * (discount / 100);
-            }
-            
-            // Calculate profit (50/50 split)
-            let totalProfit = 0;
-            cart.forEach(item => {
-                totalProfit += (item.price - item.cost) * item.quantity;
-            });
-            
-            const myProfit = totalProfit / 2;
-            const sellerProfit = totalProfit / 2;
-            
-            // Create order
-            const order = {
-                id: Math.floor(1000 + Math.random() * 9000),
-                date: new Date(),
-                items: [...cart],
-                total: total,
-                payment: selectedPayment,
-                sellerId: parseInt(sellerId),
-                myProfit: myProfit,
-                sellerProfit: sellerProfit
-            };
-            
-            orders.unshift(order);
-            
-            // Update seller's totals
-            const seller = sellers.find(s => s.id === parseInt(sellerId));
-            if (seller) {
-                seller.totalSales += total;
-                seller.totalProfit += sellerProfit;
-            }
-            
-            // Update product stock
-            cart.forEach(cartItem => {
-                const product = products.find(p => p.id === cartItem.id);
-                if (product) {
-                    product.stock -= cartItem.quantity;
-                }
-            });
-            
-            // Generate receipt
-            generateReceipt(order);
-            
-            // Clear cart
-            cart = [];
-            updateCartDisplay();
-            document.getElementById('discountAmount').value = '0';
-            
-            // Update dashboard and financial totals
-            updateDashboard();
-            updateProductsTable();
-            updateSellerList();
-            
-            addLog(`Order #${order.id} completed - $${total.toFixed(2)} (My Profit: $${myProfit.toFixed(2)})`, 'success');
-        }
-
-        // Generate receipt
-        function generateReceipt(order) {
-            const seller = sellers.find(s => s.id === order.sellerId);
-            let receiptText = `=== NEON POS RECEIPT ===\n`;
-            receiptText += `Date: ${order.date.toLocaleString()}\n`;
-            receiptText += `Order: #${order.id}\n`;
-            receiptText += `Seller: ${seller ? seller.name : 'Unknown'}\n`;
-            receiptText += `Cashier: ${currentUser.name}\n`;
-            receiptText += `----------------------------\n`;
-            
-            order.items.forEach(item => {
-                receiptText += `${item.name} x${item.quantity} $${(item.price * item.quantity).toFixed(2)}\n`;
-            });
-            
-            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
-            if (discount > 0) {
-                const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                const discountAmount = subtotal * (discount / 100);
-                receiptText += `----------------------------\n`;
-                receiptText += `Subtotal: $${subtotal.toFixed(2)}\n`;
-                receiptText += `Discount: -$${discountAmount.toFixed(2)}\n`;
-            }
-            
-            receiptText += `----------------------------\n`;
-            receiptText += `TOTAL: $${order.total.toFixed(2)}\n`;
-            receiptText += `Payment: ${order.payment.toUpperCase()}\n`;
-            receiptText += `Profit Split: 50/50\n`;
-            receiptText += `My Share: $${order.myProfit.toFixed(2)}\n`;
-            receiptText += `Seller Share: $${order.sellerProfit.toFixed(2)}\n`;
-            receiptText += `============================\n`;
-            receiptText += `Thank you for your business!\n`;
-            
-            document.getElementById('receiptContent').textContent = receiptText;
-            document.getElementById('receiptModal').style.display = 'block';
-        }
-
-        // Close receipt
-        function closeReceipt() {
-            document.getElementById('receiptModal').style.display = 'none';
-        }
-
-        // Print receipt
-        function printReceipt() {
-            const receiptContent = document.getElementById('receiptContent').textContent;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Receipt #${orders[0].id}</title>
-                        <style>
-                            body { font-family: monospace; padding: 20px; }
-                            pre { white-space: pre-wrap; }
-                        </style>
-                    </head>
-                    <body>
-                        <pre>${receiptContent}</pre>
-                        <script>
-                            window.onload = function() {
-                                window.print();
-                                setTimeout(function() {
-                                    window.close();
-                                }, 500);
-                            };
-                        <\/script>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-        }
-
-        // Save receipt as PDF
-        function saveReceipt() {
-            alert('Receipt saved as PDF (simulated)');
-            // In a real app, you would use a library like jsPDF here
-        }
-
-        // Add product
-        function addProduct() {
-            const name = document.getElementById('productName').value;
-            const price = parseFloat(document.getElementById('productPrice').value);
-            const cost = parseFloat(document.getElementById('productCost').value);
-            const stock = parseInt(document.getElementById('productStock').value);
-            const barcode = document.getElementById('productBarcode').value;
-            
-            if (!name || !price || !cost || !stock) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            
-            const newProduct = {
-                id: Date.now(),
-                name: name,
-                price: price,
-                cost: cost,
-                stock: stock,
-                barcode: barcode
-            };
-            
-            products.push(newProduct);
-            
-            // Update UI
-            updateProductGrid();
-            updateProductsTable();
-            calculateFinancialTotals();
-            
-            // Clear form
-            document.getElementById('productName').value = '';
-            document.getElementById('productPrice').value = '';
-            document.getElementById('productCost').value = '';
-            document.getElementById('productStock').value = '';
-            document.getElementById('productBarcode').value = '';
-            
-            addLog(`Product added: ${name}`, 'success');
-            alert(`Product "${name}" added successfully!`);
-        }
-
-        // Update products table
-        function updateProductsTable() {
-            const tbody = document.getElementById('productsTableBody');
-            tbody.innerHTML = '';
-            
-            products.forEach(product => {
-                const profit = product.price - product.cost;
-                const profitMargin = (profit / product.price) * 100;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>$${product.cost.toFixed(2)}</td>
-                    <td>$${product.price.toFixed(2)}</td>
-                    <td class="positive">$${profit.toFixed(2)}</td>
-                    <td class="${product.stock < 5 ? 'negative' : 'positive'}">${product.stock}</td>
-                    <td>
-                        <button class="btn-small" onclick="editProduct(${product.id})" style="margin-bottom: 5px;">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-danger btn-small" onclick="deleteProduct(${product.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Edit product
-        function editProduct(productId) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                editingProductId = productId;
-                document.getElementById('editProductName').value = product.name;
-                document.getElementById('editProductPrice').value = product.price;
-                document.getElementById('editProductCost').value = product.cost;
-                document.getElementById('editProductStock').value = product.stock;
-                document.getElementById('editProductBarcode').value = product.barcode;
-                document.getElementById('editProductModal').style.display = 'block';
-            }
-        }
-
-        // Save product edit
-        function saveProductEdit() {
-            if (editingProductId === null) return;
-            
-            const name = document.getElementById('editProductName').value;
-            const price = parseFloat(document.getElementById('editProductPrice').value);
-            const cost = parseFloat(document.getElementById('editProductCost').value);
-            const stock = parseInt(document.getElementById('editProductStock').value);
-            const barcode = document.getElementById('editProductBarcode').value;
-            
-            if (!name || !price || !cost || !stock) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            
-            const productIndex = products.findIndex(p => p.id === editingProductId);
-            if (productIndex !== -1) {
-                products[productIndex] = {
-                    ...products[productIndex],
-                    name: name,
-                    price: price,
-                    cost: cost,
-                    stock: stock,
-                    barcode: barcode
-                };
-                
-                updateProductGrid();
-                updateProductsTable();
-                calculateFinancialTotals();
-                closeEditModal();
-                
-                addLog(`Product updated: ${name}`, 'success');
-                alert(`Product "${name}" updated successfully!`);
-            }
-        }
-
-        // Close edit modal
-        function closeEditModal() {
-            document.getElementById('editProductModal').style.display = 'none';
-            editingProductId = null;
-        }
-
-        // Delete product
-        function deleteProduct(productId) {
-            if (confirm('Are you sure you want to delete this product?')) {
-                products = products.filter(p => p.id !== productId);
-                updateProductGrid();
-                updateProductsTable();
-                calculateFinancialTotals();
-                addLog('Product deleted', 'info');
-            }
-        }
-
-        // Add seller
-        function addSeller() {
-            const name = document.getElementById('sellerName').value;
-            const phone = document.getElementById('sellerPhone').value;
-            const email = document.getElementById('sellerEmail').value;
-            
-            if (!name || !phone) {
-                alert('Please fill in name and phone fields');
-                return;
-            }
-            
-            const newSeller = {
-                id: Date.now(),
-                name: name,
-                phone: phone,
-                email: email,
-                totalSales: 0,
-                totalProfit: 0
-            };
-            
-            sellers.push(newSeller);
-            
-            // Update UI
-            updateSellerList();
-            updateSellerSelect();
-            
-            // Clear form
-            document.getElementById('sellerName').value = '';
-            document.getElementById('sellerPhone').value = '';
-            document.getElementById('sellerEmail').value = '';
-            
-            addLog(`Seller added: ${name}`, 'success');
-            alert(`Seller "${name}" added successfully!`);
-        }
-
-        // Update seller list
-        function updateSellerList() {
-            const container = document.getElementById('sellerList');
-            
-            if (sellers.length === 0) {
-                container.innerHTML = '<div class="status info">No sellers added yet</div>';
-                return;
-            }
-            
-            container.innerHTML = sellers.map(seller => `
-                <div class="team-member">
-                    <div class="member-avatar">${seller.name.split(' ').map(n => n[0]).join('').toUpperCase()}</div>
-                    <div class="member-info">
-                        <div class="member-name">${seller.name}</div>
-                        <div class="member-role">${seller.phone} | Total Sales: $${seller.totalSales.toFixed(2)}</div>
-                    </div>
-                    <div class="member-balance">$${seller.totalProfit.toFixed(2)}</div>
-                    <div>
-                        <button class="btn-small" onclick="editSeller(${seller.id})" style="margin-bottom: 5px;">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-danger btn-small" onclick="deleteSeller(${seller.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Edit seller
-        function editSeller(sellerId) {
-            const seller = sellers.find(s => s.id === sellerId);
-            if (seller) {
-                editingSellerId = sellerId;
-                document.getElementById('editSellerName').value = seller.name;
-                document.getElementById('editSellerPhone').value = seller.phone;
-                document.getElementById('editSellerEmail').value = seller.email || '';
-                document.getElementById('editSellerModal').style.display = 'block';
-            }
-        }
-
-        // Save seller edit
-        function saveSellerEdit() {
-            if (editingSellerId === null) return;
-            
-            const name = document.getElementById('editSellerName').value;
-            const phone = document.getElementById('editSellerPhone').value;
-            const email = document.getElementById('editSellerEmail').value;
-            
-            if (!name || !phone) {
-                alert('Please fill in name and phone fields');
-                return;
-            }
-            
-            const sellerIndex = sellers.findIndex(s => s.id === editingSellerId);
-            if (sellerIndex !== -1) {
-                sellers[sellerIndex] = {
-                    ...sellers[sellerIndex],
-                    name: name,
-                    phone: phone,
-                    email: email
-                };
-                
-                updateSellerList();
-                updateSellerSelect();
-                closeSellerModal();
-                
-                addLog(`Seller updated: ${name}`, 'success');
-                alert(`Seller "${name}" updated successfully!`);
-            }
-        }
-
-        // Close seller modal
-        function closeSellerModal() {
-            document.getElementById('editSellerModal').style.display = 'none';
-            editingSellerId = null;
-        }
-
-        // Delete seller
-        function deleteSeller(sellerId) {
-            if (confirm('Are you sure you want to delete this seller?')) {
-                sellers = sellers.filter(s => s.id !== sellerId);
-                updateSellerList();
-                updateSellerSelect();
-                addLog('Seller deleted', 'info');
-            }
-        }
-
-        // Update orders table
-        function updateOrdersTable() {
-            const tbody = document.getElementById('ordersTableBody');
-            tbody.innerHTML = '';
-            
-            // Filter orders based on selection
-            const filter = document.getElementById('reportDate').value;
-            let filteredOrders = [...orders];
-            
-            const now = new Date();
-            if (filter === 'today') {
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                filteredOrders = orders.filter(order => new Date(order.date) >= today);
-            } else if (filter === 'week') {
-                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                filteredOrders = orders.filter(order => new Date(order.date) >= weekAgo);
-            } else if (filter === 'month') {
-                const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-                filteredOrders = orders.filter(order => new Date(order.date) >= monthAgo);
-            }
-            
-            filteredOrders.forEach(order => {
-                const seller = sellers.find(s => s.id === order.sellerId);
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${new Date(order.date).toLocaleDateString()}</td>
-                    <td>${order.items.length} items</td>
-                    <td class="positive">$${order.total.toFixed(2)}</td>
-                    <td>${seller ? seller.name : 'Unknown'}</td>
-                    <td>
-                        <button class="btn-small" onclick="viewOrderDetails(${order.id})" style="margin-bottom: 5px;">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn-danger btn-small" onclick="deleteOrder(${order.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // View order details
-        function viewOrderDetails(orderId) {
-            const order = orders.find(o => o.id === orderId);
-            if (order) {
-                const seller = sellers.find(s => s.id === order.sellerId);
-                viewingOrderId = orderId;
-                let detailsHtml = `
-                    <p><strong>Order #${order.id}</strong></p>
-                    <p>Date: ${new Date(order.date).toLocaleString()}</p>
-                    <p>Seller: ${seller ? seller.name : 'Unknown'}</p>
-                    <p>Payment: ${order.payment}</p>
-                    <p>Total: $${order.total.toFixed(2)}</p>
-                    <p><strong>Profit Distribution (50/50):</strong></p>
-                    <p>My Share: $${order.myProfit.toFixed(2)}</p>
-                    <p>Seller Share: $${order.sellerProfit.toFixed(2)}</p>
-                    <p><strong>Items:</strong></p>
-                    <ul style="margin-left: 20px;">
-                `;
-                
-                order.items.forEach(item => {
-                    detailsHtml += `<li>${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}</li>`;
-                });
-                
-                detailsHtml += `</ul>`;
-                document.getElementById('orderDetailsContent').innerHTML = detailsHtml;
-                document.getElementById('orderDetailsModal').style.display = 'block';
-            }
-        }
-
-        // Delete order
-        function deleteOrder(orderId) {
-            if (confirm('Are you sure you want to delete this order?')) {
-                // Restore product stock and seller profits before deleting
-                const order = orders.find(o => o.id === orderId);
-                if (order) {
-                    // Restore product stock
-                    order.items.forEach(item => {
-                        const product = products.find(p => p.id === item.productId);
-                        if (product) {
-                            product.stock += item.quantity;
-                        }
-                    });
-                    
-                    // Remove seller profits
-                    const seller = sellers.find(s => s.id === order.sellerId);
-                    if (seller) {
-                        seller.totalSales -= order.total;
-                        seller.totalProfit -= order.sellerProfit;
-                    }
-                }
-                
-                orders = orders.filter(o => o.id !== orderId);
-                updateOrdersTable();
-                updateProductsTable();
-                updateSellerList();
-                updateDashboard();
-                calculateFinancialTotals();
-                addLog(`Order #${orderId} deleted`, 'info');
-            }
-        }
-
-        // Delete current order from modal
-        function deleteCurrentOrder() {
-            if (viewingOrderId) {
-                deleteOrder(viewingOrderId);
-                closeOrderModal();
-            }
-        }
-
-        // Close order modal
-        function closeOrderModal() {
-            document.getElementById('orderDetailsModal').style.display = 'none';
-            viewingOrderId = null;
-        }
-
-        // Delete all orders
-        function deleteAllOrders() {
-            if (confirm('Are you sure you want to delete ALL orders? This cannot be undone!')) {
-                // Restore all product stock and reset seller profits
-                orders.forEach(order => {
-                    order.items.forEach(item => {
-                        const product = products.find(p => p.id === item.productId);
-                        if (product) {
-                            product.stock += item.quantity;
-                        }
-                    });
-                });
-                
-                // Reset all seller profits
-                sellers.forEach(seller => {
-                    seller.totalSales = 0;
-                    seller.totalProfit = 0;
-                });
-                
-                orders = [];
-                updateOrdersTable();
-                updateProductsTable();
-                updateSellerList();
-                updateDashboard();
-                calculateFinancialTotals();
-                addLog('All orders deleted', 'info');
-                alert('All orders have been deleted and product stock has been restored.');
-            }
-        }
-
-        // Show reset modal
-        function showResetModal() {
-            document.getElementById('resetModal').style.display = 'block';
-        }
-
-        // Close reset modal
-        function closeResetModal() {
-            document.getElementById('resetModal').style.display = 'none';
-        }
-
-        // Reset all data
-        function resetAllData() {
-            // Reset all data to initial state
-            products = [
-                { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
-                { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
-                { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
-                { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
-                { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
-                { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
-            ];
-            
-            sellers = [
-                { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
-                { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
-            ];
-            
-            orders = [];
-            cart = [];
-            
-            // Update all UI components
-            updateProductGrid();
-            updateProductsTable();
-            updateSellerList();
-            updateSellerSelect();
-            updateOrdersTable();
-            updateDashboard();
-            calculateFinancialTotals();
-            
-            closeResetModal();
-            addLog('All data reset to initial state', 'info');
-            alert('All data has been reset successfully!');
-        }
-
-        // Filter orders
-        function filterOrders() {
-            updateOrdersTable();
-        }
-
-        // Update charts
-        function updateCharts() {
-            updateSalesChart();
-            updateReportsChart();
-        }
-
-        // Update sales chart
-        function updateSalesChart() {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            
-            // Sample data for the chart
-            const data = {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Daily Sales',
-                    data: [120, 190, 300, 250, 200, 350, 400],
-                    backgroundColor: 'rgba(0, 243, 255, 0.2)',
-                    borderColor: 'rgba(0, 243, 255, 1)',
-                    borderWidth: 2,
-                    tension: 0.4
-                }]
-            };
-            
-            const config = {
-                type: 'line',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+        // Find Qibla direction
+        function findQibla() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        // In a real app, calculate Qibla direction based on coordinates
+                        alert('Qibla direction found! Facing Northwest from Maldives.');
+                        addLog('Qibla direction located', 'info');
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: 'white'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: 'white'
-                            }
-                        }
+                    function(error) {
+                        alert('Unable to get your location. Qibla is generally Northwest from Maldives.');
                     }
-                }
-            };
-            
-            // Destroy existing chart if it exists
-            if (window.salesChartInstance) {
-                window.salesChartInstance.destroy();
+                );
+            } else {
+                alert('Geolocation not supported. Qibla is generally Northwest from Maldives.');
             }
-            
-            window.salesChartInstance = new Chart(ctx, config);
         }
 
-        // Update reports chart
-        function updateReportsChart() {
-            const ctx = document.getElementById('reportsChart').getContext('2d');
-            
-            // Sample data for the chart
-            const data = {
-                labels: ['Cigarettes', 'Filters', 'Paper', 'Lighters', 'Other'],
-                datasets: [{
-                    label: 'Sales by Category',
-                    data: [45, 25, 15, 10, 5],
-                    backgroundColor: [
-                        'rgba(0, 243, 255, 0.7)',
-                        'rgba(255, 0, 255, 0.7)',
-                        'rgba(0, 255, 136, 0.7)',
-                        'rgba(255, 204, 0, 0.7)',
-                        'rgba(255, 0, 102, 0.7)'
-                    ],
-                    borderWidth: 1
-                }]
+        // Quran player functions
+        function selectSurah(surahNumber) {
+            currentSurah = surahNumber;
+            const surahNames = {
+                1: "Surah Al-Fatihah",
+                2: "Surah Al-Baqarah",
+                36: "Surah Ya-Sin",
+                55: "Surah Ar-Rahman",
+                67: "Surah Al-Mulk"
             };
             
-            const config = {
-                type: 'doughnut',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: 'white',
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        }
-                    }
-                }
-            };
+            document.getElementById('currentSurah').textContent = surahNames[surahNumber] || "Surah";
+            addLog(`Selected ${surahNames[surahNumber]} for recitation`, 'info');
+        }
+
+        function playPauseQuran() {
+            isPlayingQuran = !isPlayingQuran;
+            const playIcon = document.getElementById('playIcon');
+            const playText = document.getElementById('playText');
             
-            // Destroy existing chart if it exists
-            if (window.reportsChartInstance) {
-                window.reportsChartInstance.destroy();
+            if (isPlayingQuran) {
+                playIcon.className = 'fas fa-pause';
+                playText.textContent = 'Pause';
+                addLog('Started Quran recitation', 'info');
+            } else {
+                playIcon.className = 'fas fa-play';
+                playText.textContent = 'Play';
+                addLog('Paused Quran recitation', 'info');
+            }
+        }
+
+        // Zakat calculator
+        function calculateZakat() {
+            const wealth = parseFloat(document.getElementById('zakatWealth').value) || 0;
+            const gold = parseFloat(document.getElementById('zakatGold').value) || 0;
+            const business = parseFloat(document.getElementById('zakatBusiness').value) || 0;
+            
+            const totalWealth = wealth + gold + business;
+            const nisab = 15235; // Approximate nisab value in MVR
+            const zakatDue = totalWealth >= nisab ? totalWealth * 0.025 : 0;
+            
+            document.getElementById('totalWealth').textContent = `MVR ${totalWealth.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('zakatDue').textContent = `MVR ${zakatDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            const results = document.getElementById('zakatResults');
+            results.style.display = 'block';
+            
+            addLog(`Zakat calculated: MVR ${zakatDue.toFixed(2)}`, 'info');
+        }
+
+        // Submit question to scholar
+        function submitQuestion() {
+            const category = document.getElementById('questionCategory').value;
+            const question = document.getElementById('userQuestion').value;
+            
+            if (!question) {
+                alert('Please enter your question');
+                return;
             }
             
-            window.reportsChartInstance = new Chart(ctx, config);
+            // In a real app, this would send to a backend
+            alert('Your question has been submitted to our scholars. You will receive a response within 24 hours.');
+            document.getElementById('userQuestion').value = '';
+            
+            addLog('Religious question submitted to scholars', 'info');
+        }
+
+        // Show feature (placeholder for future implementation)
+        function showFeature(feature) {
+            alert(`The ${feature} feature will be available in the next update.`);
+            addLog(`Accessed ${feature} feature`, 'info');
+        }
+
+        // Filter market products
+        function filterMarketProducts() {
+            const searchTerm = document.getElementById('marketSearch').value.toLowerCase();
+            const products = document.querySelectorAll('.product-card');
+            
+            products.forEach(product => {
+                const name = product.querySelector('.product-name').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
         }
 
         // Add entry to system log
         function addLog(message, type) {
-            const log = document.getElementById('activityLog');
-            const entry = document.createElement('div');
-            entry.className = `log-entry log-${type}`;
-            
-            const timestamp = new Date().toLocaleTimeString();
-            entry.innerHTML = `[${timestamp}] ${message}`;
-            
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
+            // In a real app, this would add to an actual log
+            console.log(`[${new Date().toLocaleTimeString()}] ${message}`);
         }
 
-        // Initialize the app when page loads
+        // Initialize the platform when page loads
         window.addEventListener('load', () => {
-            addLog('NEON POS system ready. Please login.', 'info');
+            addLog('Jazeera Maldives platform loaded', 'info');
         });
     </script>
 </body>
