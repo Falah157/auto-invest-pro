@@ -33,22 +33,40 @@
             color: white;
             min-height: 100vh;
             overflow-x: hidden;
-            padding-bottom: 70px;
         }
 
         .container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 15px;
+            display: flex;
+            min-height: 100vh;
         }
 
+        /* Side Panels */
+        .side-panel {
+            width: 300px;
+            background: var(--card-bg);
+            padding: 15px;
+            overflow-y: auto;
+            border-right: 2px solid var(--islamic-green);
+        }
+
+        .side-panel.right {
+            border-right: none;
+            border-left: 2px solid var(--islamic-green);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
         .header {
             text-align: center;
-            margin-bottom: 20px;
             padding: 15px;
             background: var(--card-bg);
-            border-radius: 12px;
-            border: 2px solid var(--islamic-green);
+            border-bottom: 2px solid var(--islamic-green);
             position: relative;
             overflow: hidden;
         }
@@ -85,76 +103,27 @@
             font-size: 0.9em;
         }
 
-        /* Login Screen */
-        .login-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 20px;
-            background: linear-gradient(rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.9));
-            background-size: cover;
-            background-position: center;
-        }
-
-        .login-card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid var(--islamic-green);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .login-logo {
-            font-size: 2.5em;
-            background: linear-gradient(90deg, var(--islamic-green), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-
-        /* Main App (hidden initially) */
-        .main-app {
-            display: none;
-        }
-
-        /* Mobile Tabs */
-        .mobile-tabs {
-            display: flex;
-            margin-bottom: 15px;
-            background: var(--card-bg);
-            border-radius: 10px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 5px;
-        }
-
-        .mobile-tab {
-            padding: 12px 15px;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 8px;
-            margin: 0 2px;
+        /* Map Container */
+        .map-container {
             flex: 1;
-            text-align: center;
-            font-size: 0.85em;
+            position: relative;
+            background: #1a1a2e;
         }
 
-        .mobile-tab.active {
-            background: rgba(0, 150, 136, 0.2);
+        #maldivesMap {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 10px;
+            border-radius: 8px;
             border: 1px solid var(--islamic-green);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
+            z-index: 1000;
         }
 
         /* Cards */
@@ -268,7 +237,7 @@
         /* Service Grid */
         .service-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
             gap: 10px;
             margin-top: 15px;
         }
@@ -289,7 +258,7 @@
         }
 
         .service-icon {
-            font-size: 2em;
+            font-size: 1.5em;
             margin-bottom: 10px;
             color: var(--islamic-green);
         }
@@ -297,104 +266,71 @@
         .service-name {
             font-weight: bold;
             margin-bottom: 5px;
+            font-size: 0.9em;
         }
 
         .service-desc {
-            font-size: 0.8em;
+            font-size: 0.7em;
             color: #aaa;
         }
 
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--card-bg);
-            display: flex;
-            padding: 10px;
-            border-top: 2px solid var(--islamic-green);
-            z-index: 100;
-        }
-
-        .nav-item {
-            flex: 1;
+        /* User Profile */
+        .user-profile {
             text-align: center;
-            padding: 8px 5px;
-            color: #aaa;
-            font-size: 0.75em;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .nav-item.active {
-            color: var(--islamic-green);
-        }
-
-        .nav-icon {
-            font-size: 1.4em;
-            margin-bottom: 3px;
-        }
-
-        /* Quran Player */
-        .quran-player {
-            background: #2a2a3e;
-            border-radius: 8px;
             padding: 15px;
-            margin-top: 15px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 15px;
         }
 
-        .surah-list {
-            max-height: 300px;
-            overflow-y: auto;
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--islamic-green), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            margin: 0 auto 10px;
+            color: white;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-role {
+            color: #aaa;
+            font-size: 0.8em;
+            margin-bottom: 10px;
+        }
+
+        .user-stats {
+            display: flex;
+            justify-content: space-around;
             margin-top: 10px;
         }
 
-        .surah-item {
-            padding: 10px;
-            border-bottom: 1px solid #333;
-            cursor: pointer;
+        .stat {
+            text-align: center;
         }
 
-        .surah-item:last-child {
-            border-bottom: none;
-        }
-
-        .surah-name {
+        .stat-value {
             font-weight: bold;
+            font-size: 1.2em;
+            color: var(--islamic-green);
         }
 
-        .surah-details {
-            font-size: 0.8em;
+        .stat-label {
+            font-size: 0.7em;
             color: #aaa;
-        }
-
-        /* Zakat Calculator */
-        .zakat-results {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(0, 150, 136, 0.1);
-            border-radius: 8px;
-            border: 1px solid var(--islamic-green);
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .result-item:last-child {
-            margin-bottom: 0;
-            font-weight: bold;
-            border-top: 1px solid #333;
-            padding-top: 8px;
         }
 
         /* Marketplace */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
             gap: 10px;
             margin-top: 15px;
         }
@@ -416,15 +352,17 @@
         .product-name {
             font-weight: bold;
             margin-bottom: 5px;
+            font-size: 0.9em;
         }
 
         .product-price {
             color: var(--accent);
             font-weight: bold;
+            font-size: 0.9em;
         }
 
         .product-seller {
-            font-size: 0.8em;
+            font-size: 0.7em;
             color: #aaa;
         }
 
@@ -433,7 +371,7 @@
             color: white;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.7em;
+            font-size: 0.6em;
             display: inline-block;
             margin-top: 5px;
         }
@@ -461,6 +399,7 @@
         .announcement-item {
             padding: 12px;
             border-bottom: 1px solid #333;
+            font-size: 0.8em;
         }
 
         .announcement-item:last-child {
@@ -474,7 +413,7 @@
         }
 
         .announcement-date {
-            font-size: 0.8em;
+            font-size: 0.7em;
             color: #aaa;
         }
 
@@ -501,80 +440,89 @@
             margin: 0 auto;
         }
 
-        /* Cart */
-        .cart-item {
+        /* Tabs */
+        .tabs {
             display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #333;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow-x: auto;
+            padding: 5px;
         }
 
-        .cart-item:last-child {
-            border-bottom: none;
-        }
-
-        .cart-item-info {
-            flex: 1;
-        }
-
-        .cart-item-name {
-            font-weight: bold;
-        }
-
-        .cart-item-price {
-            color: var(--accent);
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .cart-total {
-            font-weight: bold;
-            font-size: 1.2em;
-            text-align: right;
-            padding: 10px 0;
-            margin-top: 10px;
-            border-top: 2px solid var(--islamic-green);
-        }
-
-        /* Payment Methods */
-        .payment-methods {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .payment-method {
-            padding: 15px;
-            text-align: center;
-            border: 1px solid #333;
-            border-radius: 8px;
+        .tab {
+            padding: 10px 15px;
+            white-space: nowrap;
             cursor: pointer;
             transition: all 0.3s;
+            border-radius: 8px;
+            margin: 0 2px;
+            flex: 1;
+            text-align: center;
+            font-size: 0.8em;
         }
 
-        .payment-method.active {
-            background: rgba(0, 243, 255, 0.2);
-            border-color: var(--islamic-green);
+        .tab.active {
+            background: rgba(0, 150, 136, 0.2);
+            border: 1px solid var(--islamic-green);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            background: linear-gradient(rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.9));
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--islamic-green);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, var(--islamic-green), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
         }
 
         /* Responsive adjustments */
-        @media (max-width: 380px) {
-            .service-grid, .product-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
             }
             
-            .prayer-times {
-                grid-template-columns: repeat(2, 1fr);
+            .side-panel {
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px solid var(--islamic-green);
             }
             
-            .mobile-tab {
-                padding: 10px 12px;
-                font-size: 0.8em;
+            .side-panel.right {
+                border-left: none;
+                border-top: 2px solid var(--islamic-green);
+            }
+            
+            .map-container {
+                height: 400px;
             }
         }
     </style>
@@ -596,6 +544,15 @@
                 <input type="password" id="loginPassword" placeholder="Enter password" value="password">
             </div>
             
+            <div class="form-group">
+                <label for="userType">I am a:</label>
+                <select id="userType">
+                    <option value="buyer">Buyer</option>
+                    <option value="seller">Seller</option>
+                    <option value="both">Both Buyer & Seller</option>
+                </select>
+            </div>
+            
             <button class="btn-success" onclick="login()">
                 <i class="fas fa-sign-in-alt"></i> Login to Platform
             </button>
@@ -603,100 +560,62 @@
             <div class="status info" style="margin-top: 15px;">
                 <i class="fas fa-info-circle"></i> Demo: user@jazeera.mv / password
             </div>
+            
+            <div style="margin-top: 15px; font-size: 0.9em;">
+                <a href="#" onclick="showRegisterModal()" style="color: var(--islamic-green);">Don't have an account? Register here</a>
+            </div>
         </div>
     </div>
 
-    <!-- Main Platform Application -->
-    <div class="main-app" id="mainApp">
-        <div class="container">
-            <div class="header">
-                <div class="logo">Jazeera Maldives</div>
-                <p class="tagline" id="userGreeting">Digital Ummah Platform - خدمة الأمة الرقمية</p>
-                <div id="prayerHeader" style="margin-top: 10px; font-size: 0.9em;">
-                    <span id="currentPrayer">Fajr: 05:15 | Dhuhr: 12:05</span>
-                </div>
-                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                    <button class="btn-danger btn-small" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
+    <!-- Main Platform -->
+    <div class="container" id="mainApp" style="display: none;">
+        <!-- Left Panel - Services & User Profile -->
+        <div class="side-panel">
+            <!-- User Profile -->
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">AM</div>
+                <div class="user-name" id="userName">Ahmed Mohamed</div>
+                <div class="user-role" id="userRole">Buyer & Seller</div>
+                <div class="user-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="userSales">12</div>
+                        <div class="stat-label">Sales</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="userPurchases">28</div>
+                        <div class="stat-label">Purchases</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="userRating">4.8</div>
+                        <div class="stat-label">Rating</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Prayer Times -->
-            <div class="card">
-                <h3><i class="fas fa-mosque"></i> Prayer Times - Malé</h3>
-                <div class="prayer-times">
-                    <div class="prayer-card" id="fajrCard">
-                        <div class="prayer-name">Fajr</div>
-                        <div class="prayer-time">05:15</div>
-                    </div>
-                    <div class="prayer-card" id="sunriseCard">
-                        <div class="prayer-name">Sunrise</div>
-                        <div class="prayer-time">06:05</div>
-                    </div>
-                    <div class="prayer-card" id="dhuhrCard">
-                        <div class="prayer-name">Dhuhr</div>
-                        <div class="prayer-time">12:05</div>
-                    </div>
-                    <div class="prayer-card" id="asrCard">
-                        <div class="prayer-name">Asr</div>
-                        <div class="prayer-time">15:20</div>
-                    </div>
-                    <div class="prayer-card" id="maghribCard">
-                        <div class="prayer-name">Maghrib</div>
-                        <div class="prayer-time">18:15</div>
-                    </div>
-                    <div class="prayer-card" id="ishaCard">
-                        <div class="prayer-name">Isha</div>
-                        <div class="prayer-time">19:30</div>
-                    </div>
-                </div>
-                <button class="btn-small" style="width: 100%; margin-top: 10px;" onclick="findQibla()">
-                    <i class="fas fa-compass"></i> Find Qibla Direction
-                </button>
-            </div>
-
-            <!-- Mobile Tabs -->
-            <div class="mobile-tabs">
-                <div class="mobile-tab active" onclick="switchTab('services')">
-                    <i class="fas fa-th"></i><br>Services
-                </div>
-                <div class="mobile-tab" onclick="switchTab('islamic')">
-                    <i class="fas fa-mosque"></i><br>Islamic
-                </div>
-                <div class="mobile-tab" onclick="switchTab('marketplace')">
-                    <i class="fas fa-store"></i><br>Marketplace
-                </div>
-                <div class="mobile-tab" onclick="switchTab('education')">
-                    <i class="fas fa-graduation-cap"></i><br>Education
-                </div>
-                <div class="mobile-tab" onclick="switchTab('government')">
-                    <i class="fas fa-landmark"></i><br>Government
-                </div>
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchPanelTab('services')">Services</div>
+                <div class="tab" onclick="switchPanelTab('marketplace')">Marketplace</div>
+                <div class="tab" onclick="switchPanelTab('profile')">Profile</div>
             </div>
 
             <!-- Services Tab -->
-            <div id="services" class="tab-content active">
+            <div id="servicesTab" class="tab-content active">
                 <div class="card">
                     <h3><i class="fas fa-concierge-bell"></i> Community Services</h3>
                     <div class="service-grid">
-                        <div class="service-card" onclick="switchTab('islamic')">
+                        <div class="service-card" onclick="showIslamicServices()">
                             <div class="service-icon"><i class="fas fa-mosque"></i></div>
                             <div class="service-name">Islamic Center</div>
                             <div class="service-desc">Prayer times, Quran, Zakat</div>
                         </div>
-                        <div class="service-card" onclick="switchTab('marketplace')">
-                            <div class="service-icon"><i class="fas fa-shopping-cart"></i></div>
-                            <div class="service-name">Halal Marketplace</div>
-                            <div class="service-desc">Buy & sell with trust</div>
-                        </div>
-                        <div class="service-card" onclick="switchTab('education')">
-                            <div class="service-icon"><i class="fas fa-book-open"></i></div>
+                        <div class="service-card" onclick="showEducationServices()">
+                            <div class="service-icon"><i class="fas fa-graduation-cap"></i></div>
                             <div class="service-name">Education</div>
                             <div class="service-desc">Learn & grow</div>
                         </div>
-                        <div class="service-card" onclick="switchTab('government')">
-                            <div class="service-icon"><i class="fas fa-passport"></i></div>
+                        <div class="service-card" onclick="showGovernmentServices()">
+                            <div class="service-icon"><i class="fas fa-landmark"></i></div>
                             <div class="service-name">Government</div>
                             <div class="service-desc">Services & documents</div>
                         </div>
@@ -715,408 +634,269 @@
                             <div class="service-name">Halal Jobs</div>
                             <div class="service-desc">Employment opportunities</div>
                         </div>
-                        <div class="service-card" onclick="showZakatManagement()">
-                            <div class="service-icon"><i class="fas fa-hand-holding-usd"></i></div>
-                            <div class="service-name">Zakat & Sadaqah</div>
-                            <div class="service-desc">Give with confidence</div>
-                        </div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-bullhorn"></i> Community Announcements</h3>
+                    <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
                     <div id="announcements">
                         <div class="announcement-item">
                             <div class="announcement-title">Eid al-Fitr Celebration</div>
-                            <div class="service-desc">Join us at the Islamic Center for Eid prayers at 7:30 AM</div>
+                            <div class="service-desc">Join us at the Islamic Center for Eid prayers</div>
                             <div class="announcement-date">Posted: 2 days ago</div>
                         </div>
                         <div class="announcement-item">
                             <div class="announcement-title">Zakat Distribution</div>
-                            <div class="service-desc">Zakat collection for families in need - donate through platform</div>
+                            <div class="service-desc">Zakat collection for families in need</div>
                             <div class="announcement-date">Posted: 1 week ago</div>
                         </div>
-                        <div class="announcement-item">
-                            <div class="announcement-title">Community Cleanup</div>
-                            <div class="service-desc">Beach cleanup event this Saturday at 8 AM</div>
-                            <div class="announcement-date">Posted: 3 days ago</div>
-                        </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Islamic Tab -->
-            <div id="islamic" class="tab-content">
-                <div class="card">
-                    <h3><i class="fas fa-quran"></i> Quran Recitation</h3>
-                    <div class="quran-player">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <span id="currentSurah">Surah Al-Fatihah</span>
-                            <button class="btn-small" onclick="playPauseQuran()">
-                                <i class="fas fa-play" id="playIcon"></i> <span id="playText">Play</span>
-                            </button>
-                        </div>
-                        <div class="surah-list">
-                            <div class="surah-item" onclick="selectSurah(1)">
-                                <div class="surah-name">Surah Al-Fatihah</div>
-                                <div class="surah-details">The Opening - 7 verses</div>
-                            </div>
-                            <div class="surah-item" onclick="selectSurah(2)">
-                                <div class="surah-name">Surah Al-Baqarah</div>
-                                <div class="surah-details">The Cow - 286 verses</div>
-                            </div>
-                            <div class="surah-item" onclick="selectSurah(36)">
-                                <div class="surah-name">Surah Ya-Sin</div>
-                                <div class="surah-details">The Heart of the Quran - 83 verses</div>
-                            </div>
-                            <div class="surah-item" onclick="selectSurah(55)">
-                                <div class="surah-name">Surah Ar-Rahman</div>
-                                <div class="surah-details">The Beneficent - 78 verses</div>
-                            </div>
-                            <div class="surah-item" onclick="selectSurah(67)">
-                                <div class="surah-name">Surah Al-Mulk</div>
-                                <div class="surah-details">The Sovereignty - 30 verses</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-calculator"></i> Zakat Calculator</h3>
-                    <div class="form-group">
-                        <label for="zakatWealth">Total Wealth/Savings (MVR)</label>
-                        <input type="number" id="zakatWealth" placeholder="Enter total wealth" value="50000">
-                    </div>
-                    <div class="form-group">
-                        <label for="zakatGold">Gold Value (MVR)</label>
-                        <input type="number" id="zakatGold" placeholder="Gold value" value="10000">
-                    </div>
-                    <div class="form-group">
-                        <label for="zakatBusiness">Business Assets (MVR)</label>
-                        <input type="number" id="zakatBusiness" placeholder="Business assets" value="20000">
-                    </div>
-                    <button class="btn-success" onclick="calculateZakat()">
-                        <i class="fas fa-calculator"></i> Calculate Zakat
-                    </button>
-                    
-                    <div class="zakat-results" id="zakatResults" style="display: none;">
-                        <h4>Zakat Calculation Results</h4>
-                        <div class="result-item">
-                            <span>Total Zakatable Wealth:</span>
-                            <span id="totalWealth">MVR 0.00</span>
-                        </div>
-                        <div class="result-item">
-                            <span>Nisab Threshold:</span>
-                            <span>MVR 15,235.00</span>
-                        </div>
-                        <div class="result-item">
-                            <span>Zakat Rate (2.5%):</span>
-                            <span id="zakatRate">2.5%</span>
-                        </div>
-                        <div class="result-item">
-                            <span>Your Zakat Due:</span>
-                            <span id="zakatDue" style="color: var(--accent); font-weight: bold;">MVR 0.00</span>
-                        </div>
-                        <button class="btn-success" style="margin-top: 10px;" onclick="donateZakat()">
-                            <i class="fas fa-donate"></i> Donate Zakat Now
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-question-circle"></i> Ask a Scholar</h3>
-                    <div class="form-group">
-                        <label for="questionCategory">Question Category</label>
-                        <select id="questionCategory">
-                            <option value="prayer">Prayer & Worship</option>
-                            <option value="family">Family & Marriage</option>
-                            <option value="business">Business & Finance</option>
-                            <option value="food">Halal Food & Drink</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="userQuestion">Your Question</label>
-                        <textarea id="userQuestion" rows="3" placeholder="Ask your religious question here..."></textarea>
-                    </div>
-                    <button class="btn-success" onclick="submitQuestion()">
-                        <i class="fas fa-paper-plane"></i> Submit Question
-                    </button>
                 </div>
             </div>
 
             <!-- Marketplace Tab -->
-            <div id="marketplace" class="tab-content">
+            <div id="marketplaceTab" class="tab-content">
                 <div class="card">
-                    <h3><i class="fas fa-store"></i> Halal Marketplace</h3>
-                    <div class="form-group">
-                        <input type="text" id="marketSearch" placeholder="Search products..." onkeyup="filterMarketProducts()">
-                    </div>
-                    <div class="product-grid" id="marketProductGrid">
-                        <!-- Products will be loaded here -->
+                    <h3><i class="fas fa-store"></i> My Products</h3>
+                    <button class="btn-success btn-small" onclick="showAddProductModal()" style="width: 100%; margin-bottom: 10px;">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                    <div class="product-grid" id="myProducts">
+                        <!-- User's products will be loaded here -->
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-shopping-cart"></i> Shopping Cart</h3>
-                    <div id="cartItems">
-                        <div class="status info">Cart is empty</div>
-                    </div>
-                    <div class="cart-total" id="cartTotal">Total: MVR 0.00</div>
-                    
-                    <h4 style="margin: 15px 0 10px 0;">Payment Method</h4>
-                    <div class="payment-methods" id="paymentMethods">
-                        <div class="payment-method active" onclick="selectPayment('cash')">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <div>Cash</div>
-                        </div>
-                        <div class="payment-method" onclick="selectPayment('card')">
-                            <i class="fas fa-credit-card"></i>
-                            <div>Card</div>
-                        </div>
-                        <div class="payment-method" onclick="selectPayment('mobile')">
-                            <i class="fas fa-mobile-alt"></i>
-                            <div>Mobile Pay</div>
-                        </div>
-                        <div class="payment-method" onclick="selectPayment('bank')">
-                            <i class="fas fa-university"></i>
-                            <div>Bank Transfer</div>
-                        </div>
-                    </div>
-                    
-                    <button class="btn-success" onclick="processPayment()" id="checkoutBtn" style="margin-top: 15px;">
-                        <i class="fas fa-credit-card"></i> Complete Purchase
-                    </button>
-                    <button class="btn-warning" onclick="clearCart()">
-                        <i class="fas fa-trash"></i> Clear Cart
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-hand-holding-usd"></i> Islamic Finance</h3>
-                    <div class="service-grid">
-                        <div class="service-card" onclick="showIslamicBanking()">
-                            <div class="service-icon"><i class="fas fa-university"></i></div>
-                            <div class="service-name">Islamic Banking</div>
-                            <div class="service-desc">Sharia-compliant accounts</div>
-                        </div>
-                        <div class="service-card" onclick="showTakaful()">
-                            <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
-                            <div class="service-name">Takaful</div>
-                            <div class="service-desc">Islamic insurance</div>
-                        </div>
-                        <div class="service-card" onclick="showHalalInvestment()">
-                            <div class="service-icon"><i class="fas fa-chart-line"></i></div>
-                            <div class="service-name">Halal Investment</div>
-                            <div class="service-desc">Sharia-compliant funds</div>
-                        </div>
-                        <div class="service-card" onclick="showSadaqah()">
-                            <div class="service-icon"><i class="fas fa-hand-holding-heart"></i></div>
-                            <div class="service-name">Sadaqah</div>
-                            <div class="service-desc">Charity projects</div>
-                        </div>
+                    <h3><i class="fas fa-shopping-cart"></i> Quick Buy</h3>
+                    <div class="product-grid" id="quickBuyProducts">
+                        <!-- Quick buy products will be loaded here -->
                     </div>
                 </div>
             </div>
 
-            <!-- Education Tab -->
-            <div id="education" class="tab-content">
+            <!-- Profile Tab -->
+            <div id="profileTab" class="tab-content">
                 <div class="card">
-                    <h3><i class="fas fa-graduation-cap"></i> Learning Resources</h3>
-                    <div class="service-grid">
-                        <div class="service-card" onclick="showQuranStudies()">
-                            <div class="service-icon"><i class="fas fa-quran"></i></div>
-                            <div class="service-name">Quran Studies</div>
-                            <div class="service-desc">Learn Tajweed & Tafsir</div>
-                        </div>
-                        <div class="service-card" onclick="showArabicCourses()">
-                            <div class="service-icon"><i class="fas fa-language"></i></div>
-                            <div class="service-name">Arabic Language</div>
-                            <div class="service-desc">Read Quran in Arabic</div>
-                        </div>
-                        <div class="service-card" onclick="showIslamicHistory()">
-                            <div class="service-icon"><i class="fas fa-history"></i></div>
-                            <div class="service-name">Islamic History</div>
-                            <div class="service-desc">Prophet's life & more</div>
-                        </div>
-                        <div class="service-card" onclick="showFiqh()">
-                            <div class="service-icon"><i class="fas fa-balance-scale"></i></div>
-                            <div class="service-name">Islamic Law (Fiqh)</div>
-                            <div class="service-desc">Daily rulings</div>
-                        </div>
-                    </div>
+                    <h3><i class="fas fa-user-cog"></i> Profile Settings</h3>
+                    <button class="btn-small" onclick="editProfile()" style="width: 100%; margin-bottom: 10px;">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                    <button class="btn-small" onclick="showVerificationModal()" style="width: 100%; margin-bottom: 10px;">
+                        <i class="fas fa-id-card"></i> Verify Identity
+                    </button>
+                    <button class="btn-small" onclick="showPreferencesModal()" style="width: 100%; margin-bottom: 10px;">
+                        <i class="fas fa-sliders-h"></i> Preferences
+                    </button>
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-laptop-code"></i> Skills Development</h3>
-                    <div class="service-grid">
-                        <div class="service-card" onclick="showProgrammingCourses()">
-                            <div class="service-icon"><i class="fas fa-code"></i></div>
-                            <div class="service-name">Programming</div>
-                            <div class="service-desc">Web & app development</div>
-                        </div>
-                        <div class="service-card" onclick="showBusinessSkills()">
-                            <div class="service-icon"><i class="fas fa-chart-bar"></i></div>
-                            <div class="service-name">Business Skills</div>
-                            <div class="service-desc">Entrepreneurship</div>
-                        </div>
-                        <div class="service-card" onclick="showVocationalTraining()">
-                            <div class="service-icon"><i class="fas fa-tools"></i></div>
-                            <div class="service-name">Vocational Training</div>
-                            <div class="service-desc">Practical skills</div>
-                        </div>
-                        <div class="service-card" onclick="showSchoolCurriculum()">
-                            <div class="service-icon"><i class="fas fa-school"></i></div>
-                            <div class="service-name">School Curriculum</div>
-                            <div class="service-desc">Ministry of Education</div>
-                        </div>
+                    <h3><i class="fas fa-chart-line"></i> My Stats</h3>
+                    <div class="result-item">
+                        <span>Total Sales:</span>
+                        <span>MVR 12,540</span>
                     </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-book"></i> Featured Courses</h3>
-                    <div id="featuredCourses" class="service-grid">
-                        <div class="service-card" onclick="enrollCourse('quran_memorization')">
-                            <div class="service-name">Quran Memorization</div>
-                            <div class="service-desc">Beginner to advanced levels</div>
-                            <button class="btn-small" style="margin-top: 10px;">Enroll Now</button>
-                        </div>
-                        <div class="service-card" onclick="enrollCourse('islamic_finance')">
-                            <div class="service-name">Islamic Finance Basics</div>
-                            <div class="service-desc">Understanding halal investments</div>
-                            <button class="btn-small" style="margin-top: 10px;">Enroll Now</button>
-                        </div>
+                    <div class="result-item">
+                        <span>Total Purchases:</span>
+                        <span>MVR 8,320</span>
                     </div>
-                </div>
-            </div>
-
-            <!-- Government Tab -->
-            <div id="government" class="tab-content">
-                <div class="card">
-                    <h3><i class="fas fa-passport"></i> Government Services</h3>
-                    <div class="service-grid">
-                        <div class="service-card" onclick="applyForNationalID()">
-                            <div class="service-icon"><i class="fas fa-id-card"></i></div>
-                            <div class="service-name">National ID</div>
-                            <div class="service-desc">Apply or renew</div>
-                        </div>
-                        <div class="service-card" onclick="applyForPassport()">
-                            <div class="service-icon"><i class="fas fa-passport"></i></div>
-                            <div class="service-name">Passport</div>
-                            <div class="service-desc">Apply or renew</div>
-                        </div>
-                        <div class="service-card" onclick="applyForDriversLicense()">
-                            <div class="service-icon"><i class="fas fa-id-card-alt"></i></div>
-                            <div class="service-name">Driver's License</div>
-                            <div class="service-desc">Apply or renew</div>
-                        </div>
-                        <div class="service-card" onclick="applyForBirthCertificate()">
-                            <div class="service-icon"><i class="fas fa-birthday-cake"></i></div>
-                            <div class="service-name">Birth Certificate</div>
-                            <div class="service-desc">Apply for copy</div>
-                        </div>
-                        <div class="service-card" onclick="registerBusiness()">
-                            <div class="service-icon"><i class="fas fa-file-contract"></i></div>
-                            <div class="service-name">Business Registration</div>
-                            <div class="service-desc">Register your business</div>
-                        </div>
-                        <div class="service-card" onclick="fileTaxes()">
-                            <div class="service-icon"><i class="fas fa-receipt"></i></div>
-                            <div class="service-name">Tax Services</div>
-                            <div class="service-desc">File & pay taxes</div>
-                        </div>
-                        <div class="service-card" onclick="bookHealthAppointment()">
-                            <div class="service-icon"><i class="fas fa-file-medical"></i></div>
-                            <div class="service-name">Health Services</div>
-                            <div class="service-desc">Book appointments</div>
-                        </div>
-                        <div class="service-card" onclick="accessEVoting()">
-                            <div class="service-icon"><i class="fas fa-vote-yea"></i></div>
-                            <div class="service-name">E-Voting</div>
-                            <div class="service-desc">Participate in elections</div>
-                        </div>
+                    <div class="result-item">
+                        <span>Active Listings:</span>
+                        <span>8 products</span>
                     </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-chart-line"></i> Government Transparency</h3>
-                    <div id="transparencyData" class="service-grid">
-                        <div class="service-card" onclick="viewNationalBudget()">
-                            <div class="service-name">National Budget 2023</div>
-                            <div class="service-desc">View how public funds are allocated</div>
-                            <button class="btn-small" style="margin-top: 10px;">View Details</button>
-                        </div>
-                        <div class="service-card" onclick="viewDevelopmentProjects()">
-                            <div class="service-name">Development Projects</div>
-                            <div class="service-desc">Track progress of national projects</div>
-                            <button class="btn-small" style="margin-top: 10px;">View Details</button>
-                        </div>
-                        <div class="service-card" onclick="viewPublicProcurement()">
-                            <div class="service-name">Public Procurement</div>
-                            <div class="service-desc">View government tenders</div>
-                            <button class="btn-small" style="margin-top: 10px;">View Details</button>
-                        </div>
+                    <div class="result-item">
+                        <span>Member Since:</span>
+                        <span>Jan 2023</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchTab('services')">
-                <div class="nav-icon"><i class="fas fa-th"></i></div>
-                <div>Services</div>
+        <!-- Main Content Area with Map -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">Jazeera Maldives</div>
+                <p class="tagline" id="userGreeting">Digital Ummah Platform - خدمة الأمة الرقمية</p>
+                <div id="prayerHeader" style="margin-top: 10px; font-size: 0.9em;">
+                    <span id="currentPrayer">Fajr: 05:15 | Dhuhr: 12:05 | Asr: 15:20</span>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                    <button class="btn-danger btn-small" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
             </div>
-            <div class="nav-item" onclick="switchTab('islamic')">
-                <div class="nav-icon"><i class="fas fa-mosque"></i></div>
-                <div>Islamic</div>
+
+            <!-- Map Container -->
+            <div class="map-container">
+                <div id="maldivesMap"></div>
+                <div class="map-overlay">
+                    <h4><i class="fas fa-map-marker-alt"></i> Maldives Islands</h4>
+                    <div class="prayer-times">
+                        <div class="prayer-card current">
+                            <div class="prayer-name">Fajr</div>
+                            <div class="prayer-time">05:15</div>
+                        </div>
+                        <div class="prayer-card">
+                            <div class="prayer-name">Dhuhr</div>
+                            <div class="prayer-time">12:05</div>
+                        </div>
+                        <div class="prayer-card">
+                            <div class="prayer-name">Asr</div>
+                            <div class="prayer-time">15:20</div>
+                        </div>
+                    </div>
+                    <button class="btn-small" onclick="findQibla()" style="width: 100%; margin-top: 10px;">
+                        <i class="fas fa-compass"></i> Find Qibla
+                    </button>
+                </div>
             </div>
-            <div class="nav-item" onclick="switchTab('marketplace')">
-                <div class="nav-icon"><i class="fas fa-store"></i></div>
-                <div>Marketplace</div>
+        </div>
+
+        <!-- Right Panel - Marketplace & Community -->
+        <div class="side-panel right">
+            <div class="card">
+                <h3><i class="fas fa-fire"></i> Trending Products</h3>
+                <div class="product-grid" id="trendingProducts">
+                    <!-- Trending products will be loaded here -->
+                </div>
             </div>
-            <div class="nav-item" onclick="switchTab('education')">
-                <div class="nav-icon"><i class="fas fa-graduation-cap"></i></div>
-                <div>Education</div>
+
+            <div class="card">
+                <h3><i class="fas fa-users"></i> Active Sellers</h3>
+                <div id="activeSellers">
+                    <!-- Active sellers will be loaded here -->
+                </div>
             </div>
-            <div class="nav-item" onclick="switchTab('government')">
-                <div class="nav-icon"><i class="fas fa-landmark"></i></div>
-                <div>Government</div>
+
+            <div class="card">
+                <h3><i class="fas fa-chart-pie"></i> Market Stats</h3>
+                <div class="result-item">
+                    <span>Total Products:</span>
+                    <span>1,248</span>
+                </div>
+                <div class="result-item">
+                    <span>Active Buyers:</span>
+                    <span>3,452</span>
+                </div>
+                <div class="result-item">
+                    <span>Active Sellers:</span>
+                    <span>892</span>
+                </div>
+                <div class="result-item">
+                    <span>Today's Transactions:</span>
+                    <span>MVR 124,580</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-gem"></i> Premium Features</h3>
+                <div class="service-grid">
+                    <div class="service-card" onclick="showFeature('verified_badge')">
+                        <div class="service-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="service-name">Verified Badge</div>
+                        <div class="service-desc">Build trust with customers</div>
+                    </div>
+                    <div class="service-card" onclick="showFeature('premium_listing')">
+                        <div class="service-icon"><i class="fas fa-crown"></i></div>
+                        <div class="service-name">Premium Listing</div>
+                        <div class="service-desc">Get more visibility</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Product View Modal -->
-    <div class="modal" id="productModal">
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
         <div class="modal-content">
-            <h3><i class="fas fa-shopping-cart"></i> Product Details</h3>
-            <div id="productModalContent">
-                <!-- Product details will be loaded here -->
+            <h3><i class="fas fa-user-plus"></i> Create Account</h3>
+            <div class="form-group">
+                <label for="regName">Full Name</label>
+                <input type="text" id="regName" placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email</label>
+                <input type="email" id="regEmail" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="regPhone">Phone Number</label>
+                <input type="text" id="regPhone" placeholder="Enter your phone">
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password</label>
+                <input type="password" id="regPassword" placeholder="Create a password">
+            </div>
+            <div class="form-group">
+                <label for="regIsland">Home Island</label>
+                <select id="regIsland">
+                    <option value="male">Malé</option>
+                    <option value="addu">Addu City</option>
+                    <option value="fuvahmulah">Fuvahmulah</option>
+                    <option value="other">Other Island</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="regUserType">I want to:</label>
+                <select id="regUserType">
+                    <option value="buyer">Buy products</option>
+                    <option value="seller">Sell products</option>
+                    <option value="both">Both buy and sell</option>
+                </select>
             </div>
             <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-success" onclick="addToCart()">
-                    <i class="fas fa-cart-plus"></i> Add to Cart
+                <button class="btn-success" onclick="registerUser()">
+                    <i class="fas fa-user-plus"></i> Create Account
                 </button>
-                <button class="btn-warning" onclick="closeProductModal()">
-                    <i class="fas fa-times"></i> Close
+                <button class="btn-warning" onclick="closeRegisterModal()">
+                    <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Service Modal -->
-    <div class="modal" id="serviceModal">
+    <!-- Add Product Modal -->
+    <div class="modal" id="addProductModal">
         <div class="modal-content">
-            <h3 id="serviceModalTitle"><i class="fas fa-cog"></i> Service</h3>
-            <div id="serviceModalContent">
-                <!-- Service content will be loaded here -->
+            <h3><i class="fas fa-plus-circle"></i> Add New Product</h3>
+            <div class="form-group">
+                <label for="productName">Product Name</label>
+                <input type="text" id="productName" placeholder="Enter product name">
+            </div>
+            <div class="form-group">
+                <label for="productDescription">Description</label>
+                <textarea id="productDescription" rows="3" placeholder="Describe your product"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="productPrice">Price (MVR)</label>
+                <input type="number" id="productPrice" placeholder="Enter price">
+            </div>
+            <div class="form-group">
+                <label for="productCategory">Category</label>
+                <select id="productCategory">
+                    <option value="food">Food & Beverages</option>
+                    <option value="handicrafts">Handicrafts</option>
+                    <option value="fishing">Fishing Equipment</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="productLocation">Location/Island</label>
+                <select id="productLocation">
+                    <option value="male">Malé</option>
+                    <option value="addu">Addu City</option>
+                    <option value="fuvahmulah">Fuvahmulah</option>
+                    <option value="other">Other Island</option>
+                </select>
             </div>
             <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-success" onclick="proceedWithService()">
-                    <i class="fas fa-check"></i> Proceed
+                <button class="btn-success" onclick="addProduct()">
+                    <i class="fas fa-save"></i> Add Product
                 </button>
-                <button class="btn-warning" onclick="closeServiceModal()">
-                    <i class="fas fa-times"></i> Close
+                <button class="btn-warning" onclick="closeAddProductModal()">
+                    <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
         </div>
@@ -1125,166 +905,149 @@
     <script>
         // Platform data and state
         let currentUser = null;
-        let currentSurah = 1;
-        let isPlayingQuran = false;
-        let currentPrayer = 'dhuhr';
-        let currentProduct = null;
-        let currentService = null;
-        let cart = [];
-        let selectedPayment = 'cash';
-
-        // Sample product data
-        const products = [
-            {
-                id: 1,
-                name: "Fresh Tuna",
-                price: 85,
-                seller: "Ahmed, Male'",
-                description: "Freshly caught tuna from the Maldives waters. Halal certified and sustainably sourced.",
-                image: "🐟",
-                category: "Food",
-                stock: 15
-            },
-            {
-                id: 2,
-                name: "Handmade Mats",
-                price: 120,
-                seller: "Aisha, Addu",
-                description: "Beautiful handmade prayer mats with traditional Maldivian designs.",
-                image: "🧶",
-                category: "Home",
-                stock: 8
-            },
-            {
-                id: 3,
-                name: "Coconut Oil",
-                price: 65,
-                seller: "Ismail, Fuvahmulah",
-                description: "Pure organic coconut oil extracted using traditional methods.",
-                image: "🥥",
-                category: "Food",
-                stock: 20
-            },
-            {
-                id: 4,
-                name: "Islamic Books",
-                price: 45,
-                seller: "Islamic Center",
-                description: "Collection of Islamic books covering various topics from Quran to Hadith.",
-                image: "📚",
-                category: "Education",
-                stock: 25
-            },
-            {
-                id: 5,
-                name: "Dates (Medjool)",
-                price: 95,
-                seller: "Halal Foods Co.",
-                description: "Premium quality Medjool dates, perfect for breaking fast.",
-                image: "🌴",
-                category: "Food",
-                stock: 30
-            },
-            {
-                id: 6,
-                name: "Prayer Rug",
-                price: 180,
-                seller: "Islamic Gifts",
-                description: "Beautiful handcrafted prayer rug with compass for Qibla direction.",
-                image: "🕌",
-                category: "Religious",
-                stock: 12
-            }
-        ];
-
-        // Prayer times for Malé, Maldives
-        const prayerTimes = {
-            fajr: "05:15",
-            sunrise: "06:05",
-            dhuhr: "12:05",
-            asr: "15:20",
-            maghrib: "18:15",
-            isha: "19:30"
-        };
-
-        // Sample users
-        const users = [
-            { id: 1, email: 'user@jazeera.mv', password: 'password', name: 'Ahmed Mohamed', location: 'Malé' }
-        ];
-
-        // Service data
-        const services = {
-            health: {
-                title: "Health & Wellness Services",
-                description: "Access to medical services, appointments, and health resources.",
-                steps: [
-                    "Book appointment with healthcare provider",
-                    "Access medical records",
-                    "Find nearby clinics and hospitals",
-                    "Emergency services contact"
-                ]
-            },
-            family: {
-                title: "Family Services",
-                description: "Marriage counseling, family support, and social services.",
-                steps: [
-                    "Schedule counseling session",
-                    "Access family support resources",
-                    "Marriage registration services",
-                    "Child and youth services"
-                ]
-            },
-            jobs: {
-                title: "Halal Job Market",
-                description: "Find employment opportunities that align with Islamic principles.",
-                steps: [
-                    "Browse available job listings",
-                    "Create professional profile",
-                    "Apply for positions",
-                    "Schedule interviews"
-                ]
-            },
-            islamic_banking: {
-                title: "Islamic Banking Services",
-                description: "Sharia-compliant banking and financial services.",
-                steps: [
-                    "Open Islamic bank account",
-                    "Apply for halal financing",
-                    "Investment opportunities",
-                    "Wealth management"
-                ]
-            },
-            takaful: {
-                title: "Takaful Insurance",
-                description: "Islamic cooperative insurance based on mutual assistance.",
-                steps: [
-                    "Get takaful quote",
-                    "Choose coverage plan",
-                    "Submit application",
-                    "Manage policy"
-                ]
-            }
-        };
+        let users = [];
+        let products = [];
+        let maldivesMap;
 
         // Initialize the platform
         function initApp() {
-            updatePrayerTimes();
-            setCurrentPrayer();
+            loadSampleData();
+            initMap();
+            updateUserProfile();
             loadProducts();
-            updateCartDisplay();
+            updatePrayerTimes();
+        }
+
+        // Load sample data
+        function loadSampleData() {
+            // Sample users
+            users = [
+                {
+                    id: 1,
+                    name: "Ahmed Mohamed",
+                    email: "user@jazeera.mv",
+                    password: "password",
+                    type: "both",
+                    island: "male",
+                    avatar: "AM",
+                    sales: 12,
+                    purchases: 28,
+                    rating: 4.8,
+                    joinDate: "Jan 2023"
+                }
+            ];
+
+            // Sample products
+            products = [
+                {
+                    id: 1,
+                    name: "Fresh Tuna",
+                    price: 85,
+                    seller: "Ahmed Mohamed",
+                    sellerId: 1,
+                    description: "Freshly caught tuna from the Maldives waters",
+                    category: "food",
+                    location: "male",
+                    image: "🐟",
+                    stock: 15,
+                    rating: 4.7
+                },
+                {
+                    id: 2,
+                    name: "Handmade Mats",
+                    price: 120,
+                    seller: "Aisha Ali",
+                    sellerId: 2,
+                    description: "Beautiful handmade prayer mats",
+                    category: "handicrafts",
+                    location: "addu",
+                    image: "🧶",
+                    stock: 8,
+                    rating: 4.9
+                },
+                {
+                    id: 3,
+                    name: "Coconut Oil",
+                    price: 65,
+                    seller: "Ismail Hassan",
+                    sellerId: 3,
+                    description: "Pure organic coconut oil",
+                    category: "food",
+                    location: "fuvahmulah",
+                    image: "🥥",
+                    stock: 20,
+                    rating: 4.5
+                }
+            ];
+        }
+
+        // Initialize Google Maps
+        function initMap() {
+            // Create a map centered on Maldives
+            const maldivesCenter = { lat: 3.2028, lng: 73.2207 };
+            
+            // Create map
+            maldivesMap = new google.maps.Map(document.getElementById('maldivesMap'), {
+                zoom: 7,
+                center: maldivesCenter,
+                mapTypeId: 'terrain',
+                styles: [
+                    {
+                        "featureType": "all",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#1a1a2e" }]
+                    },
+                    {
+                        "featureType": "all",
+                        "elementType": "labels.text.fill",
+                        "stylers": [{ "color": "#ffffff" }]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#009688" }]
+                    }
+                ]
+            });
+
+            // Add markers for major islands
+            const islands = [
+                { name: "Malé", position: { lat: 4.1755, lng: 73.5093 } },
+                { name: "Addu City", position: { lat: -0.6300, lng: 73.1000 } },
+                { name: "Fuvahmulah", position: { lat: -0.2982, lng: 73.4255 } },
+                { name: "Hithadhoo", position: { lat: -0.6000, lng: 73.0833 } },
+                { name: "Kulhudhuffushi", position: { lat: 6.6221, lng: 73.0700 } }
+            ];
+
+            islands.forEach(island => {
+                new google.maps.Marker({
+                    position: island.position,
+                    map: maldivesMap,
+                    title: island.name,
+                    icon: {
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="10" cy="10" r="8" fill="${island.name === 'Malé' ? '#ff00ff' : '#00f3ff'}" stroke="#ffffff" stroke-width="2"/>
+                            </svg>
+                        `),
+                        scaledSize: new google.maps.Size(20, 20)
+                    }
+                });
+            });
         }
 
         // Login function
         function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            const userType = document.getElementById('userType').value;
             
             const user = users.find(u => u.email === email && u.password === password);
             
             if (user) {
                 currentUser = user;
                 document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('mainApp').style.display = 'flex';
                 document.getElementById('userGreeting').textContent = `Welcome, ${user.name}`;
                 
                 initApp();
@@ -1301,530 +1064,271 @@
             document.getElementById('loginScreen').style.display = 'flex';
         }
 
-        // Update prayer times display
-        function updatePrayerTimes() {
-            for (const prayer in prayerTimes) {
-                const element = document.getElementById(`${prayer}Card`);
-                if (element) {
-                    element.querySelector('.prayer-time').textContent = prayerTimes[prayer];
-                }
+        // Update user profile display
+        function updateUserProfile() {
+            if (!currentUser) return;
+            
+            document.getElementById('userAvatar').textContent = currentUser.avatar;
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userRole').textContent = 
+                currentUser.type === 'both' ? 'Buyer & Seller' : 
+                currentUser.type === 'buyer' ? 'Buyer' : 'Seller';
+            document.getElementById('userSales').textContent = currentUser.sales;
+            document.getElementById('userPurchases').textContent = currentUser.purchases;
+            document.getElementById('userRating').textContent = currentUser.rating;
+        }
+
+        // Load products to marketplace
+        function loadProducts() {
+            // Load user's products
+            const myProductsContainer = document.getElementById('myProducts');
+            const userProducts = products.filter(p => p.sellerId === currentUser.id);
+            
+            if (userProducts.length === 0) {
+                myProductsContainer.innerHTML = '<div class="status info">You have no products listed</div>';
+            } else {
+                myProductsContainer.innerHTML = userProducts.map(product => `
+                    <div class="product-card" onclick="viewProduct(${product.id})">
+                        <div style="font-size: 1.5em; text-align: center; margin-bottom: 5px;">${product.image}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">MVR ${product.price}</div>
+                        <div class="halal-badge">Active</div>
+                    </div>
+                `).join('');
             }
+
+            // Load quick buy products
+            const quickBuyContainer = document.getElementById('quickBuyProducts');
+            const quickBuyProducts = products.slice(0, 3);
             
-            // Update header with next prayer
-            document.getElementById('currentPrayer').textContent = 
-                `Fajr: ${prayerTimes.fajr} | Dhuhr: ${prayerTimes.dhuhr} | Asr: ${prayerTimes.asr}`;
+            quickBuyContainer.innerHTML = quickBuyProducts.map(product => `
+                <div class="product-card" onclick="viewProduct(${product.id})">
+                    <div style="font-size: 1.5em; text-align: center; margin-bottom: 5px;">${product.image}</div>
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">MVR ${product.price}</div>
+                    <div class="product-seller">${product.seller}</div>
+                    <div class="halal-badge">Halal</div>
+                </div>
+            `).join('');
+
+            // Load trending products
+            const trendingContainer = document.getElementById('trendingProducts');
+            const trendingProducts = products.slice().sort((a, b) => b.rating - a.rating).slice(0, 3);
+            
+            trendingContainer.innerHTML = trendingProducts.map(product => `
+                <div class="product-card" onclick="viewProduct(${product.id})">
+                    <div style="font-size: 1.5em; text-align: center; margin-bottom: 5px;">${product.image}</div>
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">MVR ${product.price}</div>
+                    <div class="product-seller">${product.seller}</div>
+                    <div class="halal-badge">⭐ ${product.rating}</div>
+                </div>
+            `).join('');
+
+            // Load active sellers
+            const sellersContainer = document.getElementById('activeSellers');
+            const uniqueSellers = [...new Set(products.map(p => p.seller))].slice(0, 4);
+            
+            sellersContainer.innerHTML = uniqueSellers.map(seller => `
+                <div class="announcement-item">
+                    <div class="announcement-title">${seller}</div>
+                    <div class="service-desc">Active seller • 4.8⭐ rating</div>
+                </div>
+            `).join('');
         }
 
-        // Set current prayer based on time
-        function setCurrentPrayer() {
-            // Remove current class from all prayers
-            document.querySelectorAll('.prayer-card').forEach(card => {
-                card.classList.remove('current');
-            });
-            
-            // For demo purposes, set Dhuhr as current
-            document.getElementById('dhuhrCard').classList.add('current');
-            currentPrayer = 'dhuhr';
-        }
-
-        // Tab switching functionality
-        function switchTab(tabName) {
+        // Switch panel tabs
+        function switchPanelTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
             
             // Remove active class from all tabs
-            document.querySelectorAll('.mobile-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.nav-item').forEach(tab => {
+            document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
             // Show selected tab content
-            document.getElementById(tabName).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
             
             // Add active class to clicked tab
-            const clickedElement = event.currentTarget;
-            if (clickedElement.classList.contains('mobile-tab') || clickedElement.classList.contains('nav-item')) {
-                clickedElement.classList.add('active');
-            }
+            event.currentTarget.classList.add('active');
+        }
+
+        // Update prayer times
+        function updatePrayerTimes() {
+            document.getElementById('currentPrayer').textContent = 
+                'Fajr: 05:15 | Dhuhr: 12:05 | Asr: 15:20 | Maghrib: 18:15 | Isha: 19:30';
         }
 
         // Find Qibla direction
         function findQibla() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        // In a real app, calculate Qibla direction based on coordinates
-                        alert('Qibla direction found! Facing Northwest from Maldives.');
-                        addLog('Qibla direction located', 'info');
-                    },
-                    function(error) {
-                        alert('Unable to get your location. Qibla is generally Northwest from Maldives.');
-                    }
-                );
-            } else {
-                alert('Geolocation not supported. Qibla is generally Northwest from Maldives.');
-            }
+            alert('Qibla direction: Northwest from Maldives\nUsing your location for accurate direction...');
         }
 
-        // Quran player functions
-        function selectSurah(surahNumber) {
-            currentSurah = surahNumber;
-            const surahNames = {
-                1: "Surah Al-Fatihah",
-                2: "Surah Al-Baqarah",
-                36: "Surah Ya-Sin",
-                55: "Surah Ar-Rahman",
-                67: "Surah Al-Mulk"
-            };
-            
-            document.getElementById('currentSurah').textContent = surahNames[surahNumber] || "Surah";
-            addLog(`Selected ${surahNames[surahNumber]} for recitation`, 'info');
+        // Show service modals
+        function showIslamicServices() {
+            alert('Islamic Services: Prayer times, Quran recitation, Zakat calculator, Ask a scholar');
         }
 
-        function playPauseQuran() {
-            isPlayingQuran = !isPlayingQuran;
-            const playIcon = document.getElementById('playIcon');
-            const playText = document.getElementById('playText');
-            
-            if (isPlayingQuran) {
-                playIcon.className = 'fas fa-pause';
-                playText.textContent = 'Pause';
-                addLog('Started Quran recitation', 'info');
-            } else {
-                playIcon.className = 'fas fa-play';
-                playText.textContent = 'Play';
-                addLog('Paused Quran recitation', 'info');
-            }
+        function showEducationServices() {
+            alert('Education Services: Online courses, Skills development, School curriculum');
         }
 
-        // Zakat calculator
-        function calculateZakat() {
-            const wealth = parseFloat(document.getElementById('zakatWealth').value) || 0;
-            const gold = parseFloat(document.getElementById('zakatGold').value) || 0;
-            const business = parseFloat(document.getElementById('zakatBusiness').value) || 0;
-            
-            const totalWealth = wealth + gold + business;
-            const nisab = 15235; // Approximate nisab value in MVR
-            const zakatDue = totalWealth >= nisab ? totalWealth * 0.025 : 0;
-            
-            document.getElementById('totalWealth').textContent = `MVR ${totalWealth.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('zakatDue').textContent = `MVR ${zakatDue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            
-            const results = document.getElementById('zakatResults');
-            results.style.display = 'block';
-            
-            addLog(`Zakat calculated: MVR ${zakatDue.toFixed(2)}`, 'info');
+        function showGovernmentServices() {
+            alert('Government Services: ID/passport applications, Business registration, Tax services');
         }
 
-        // Donate Zakat
-        function donateZakat() {
-            const zakatDue = document.getElementById('zakatDue').textContent;
-            alert(`Thank you for your Zakat donation of ${zakatDue}. Your contribution will help those in need.`);
-            addLog(`Zakat donation of ${zakatDue} processed`, 'success');
+        function showHealthServices() {
+            alert('Health Services: Medical appointments, Health records, Emergency contacts');
         }
 
-        // Submit question to scholar
-        function submitQuestion() {
-            const category = document.getElementById('questionCategory').value;
-            const question = document.getElementById('userQuestion').value;
+        function showFamilyServices() {
+            alert('Family Services: Marriage counseling, Family support, Child services');
+        }
+
+        function showJobMarket() {
+            alert('Halal Job Market: Find employment opportunities aligned with Islamic principles');
+        }
+
+        // Show register modal
+        function showRegisterModal() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+
+        // Close register modal
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        // Register new user
+        function registerUser() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPassword').value;
+            const island = document.getElementById('regIsland').value;
+            const userType = document.getElementById('regUserType').value;
             
-            if (!question) {
-                alert('Please enter your question');
+            if (!name || !email || !password) {
+                alert('Please fill in all required fields');
                 return;
             }
             
-            // In a real app, this would send to a backend
-            alert('Your question has been submitted to our scholars. You will receive a response within 24 hours.');
-            document.getElementById('userQuestion').value = '';
+            // Create new user
+            const newUser = {
+                id: users.length + 1,
+                name: name,
+                email: email,
+                password: password,
+                type: userType,
+                island: island,
+                avatar: name.split(' ').map(n => n[0]).join('').toUpperCase(),
+                sales: 0,
+                purchases: 0,
+                rating: 0,
+                joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+            };
             
-            addLog('Religious question submitted to scholars', 'info');
+            users.push(newUser);
+            
+            alert('Account created successfully! You can now login.');
+            closeRegisterModal();
         }
 
-        // Load products to marketplace
-        function loadProducts() {
-            const container = document.getElementById('marketProductGrid');
-            container.innerHTML = '';
-            
-            products.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.onclick = () => viewProduct(product.id);
-                productCard.innerHTML = `
-                    <div style="font-size: 2em; text-align: center; margin-bottom: 10px;">${product.image}</div>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">MVR ${product.price}</div>
-                    <div class="product-seller">${product.seller}</div>
-                    <div class="halal-badge">Halal Certified</div>
-                    <div class="product-stock" style="font-size: 0.7em; color: #aaa; margin-top: 5px;">Stock: ${product.stock}</div>
-                `;
-                container.appendChild(productCard);
-            });
+        // Show add product modal
+        function showAddProductModal() {
+            document.getElementById('addProductModal').style.display = 'block';
         }
 
-        // Filter market products
-        function filterMarketProducts() {
-            const searchTerm = document.getElementById('marketSearch').value.toLowerCase();
-            const productCards = document.querySelectorAll('#marketProductGrid .product-card');
+        // Close add product modal
+        function closeAddProductModal() {
+            document.getElementById('addProductModal').style.display = 'none';
+        }
+
+        // Add new product
+        function addProduct() {
+            const name = document.getElementById('productName').value;
+            const description = document.getElementById('productDescription').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const category = document.getElementById('productCategory').value;
+            const location = document.getElementById('productLocation').value;
             
-            productCards.forEach(card => {
-                const name = card.querySelector('.product-name').textContent.toLowerCase();
-                if (name.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            if (!name || !description || !price) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Create new product
+            const newProduct = {
+                id: products.length + 1,
+                name: name,
+                price: price,
+                seller: currentUser.name,
+                sellerId: currentUser.id,
+                description: description,
+                category: category,
+                location: location,
+                image: getProductEmoji(category),
+                stock: 1,
+                rating: 0
+            };
+            
+            products.push(newProduct);
+            
+            alert('Product added successfully!');
+            closeAddProductModal();
+            loadProducts(); // Refresh product listings
+        }
+
+        // Get emoji for product category
+        function getProductEmoji(category) {
+            const emojis = {
+                'food': '🍽️',
+                'handicrafts': '🧵',
+                'fishing': '🎣',
+                'clothing': '👕',
+                'electronics': '📱',
+                'other': '📦'
+            };
+            return emojis[category] || '📦';
         }
 
         // View product details
         function viewProduct(productId) {
-            currentProduct = products.find(p => p.id === productId);
-            if (!currentProduct) return;
-            
-            const modalContent = document.getElementById('productModalContent');
-            modalContent.innerHTML = `
-                <div style="text-align: center; font-size: 3em; margin-bottom: 15px;">${currentProduct.image}</div>
-                <h3>${currentProduct.name}</h3>
-                <p style="margin: 10px 0;">${currentProduct.description}</p>
-                <div class="result-item">
-                    <span>Price:</span>
-                    <span style="color: var(--accent); font-weight: bold;">MVR ${currentProduct.price}</span>
-                </div>
-                <div class="result-item">
-                    <span>Seller:</span>
-                    <span>${currentProduct.seller}</span>
-                </div>
-                <div class="result-item">
-                    <span>Category:</span>
-                    <span>${currentProduct.category}</span>
-                </div>
-                <div class="result-item">
-                    <span>Stock:</span>
-                    <span>${currentProduct.stock} available</span>
-                </div>
-                <div class="halal-badge" style="margin-top: 10px;">Halal Certified</div>
-            `;
-            
-            document.getElementById('productModal').style.display = 'block';
-        }
-
-        // Close product modal
-        function closeProductModal() {
-            document.getElementById('productModal').style.display = 'none';
-            currentProduct = null;
-        }
-
-        // Add to cart
-        function addToCart() {
-            if (!currentProduct) return;
-            
-            // Check if product is already in cart
-            const existingItem = cart.find(item => item.id === currentProduct.id);
-            
-            if (existingItem) {
-                if (existingItem.quantity < currentProduct.stock) {
-                    existingItem.quantity += 1;
-                } else {
-                    alert(`Only ${currentProduct.stock} items available in stock`);
-                    return;
-                }
-            } else {
-                if (currentProduct.stock > 0) {
-                    cart.push({
-                        id: currentProduct.id,
-                        name: currentProduct.name,
-                        price: currentProduct.price,
-                        quantity: 1,
-                        image: currentProduct.image
-                    });
-                } else {
-                    alert('Product out of stock');
-                    return;
-                }
-            }
-            
-            updateCartDisplay();
-            closeProductModal();
-            addLog(`Added ${currentProduct.name} to cart`, 'info');
-        }
-
-        // Update cart display
-        function updateCartDisplay() {
-            const cartContainer = document.getElementById('cartItems');
-            const totalElement = document.getElementById('cartTotal');
-            
-            if (cart.length === 0) {
-                cartContainer.innerHTML = '<div class="status info">Cart is empty</div>';
-                totalElement.textContent = 'Total: MVR 0.00';
-                return;
-            }
-            
-            let total = 0;
-            cartContainer.innerHTML = cart.map(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                return `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">MVR ${item.price.toFixed(2)} each</div>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, -1)">-</button>
-                            <span>${item.quantity}</span>
-                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, 1)">+</button>
-                            <span>MVR ${itemTotal.toFixed(2)}</span>
-                            <button class="btn-danger btn-small" onclick="removeFromCart(${item.id})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            totalElement.textContent = `Total: MVR ${total.toFixed(2)}`;
-        }
-
-        // Update cart quantity
-        function updateCartQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                const product = products.find(p => p.id === productId);
-                item.quantity += change;
-                
-                if (item.quantity <= 0) {
-                    removeFromCart(productId);
-                } else if (item.quantity > product.stock) {
-                    item.quantity = product.stock;
-                    alert(`Only ${product.stock} items available in stock`);
-                } else {
-                    updateCartDisplay();
-                }
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                alert(`Product: ${product.name}\nPrice: MVR ${product.price}\nSeller: ${product.seller}\nDescription: ${product.description}`);
             }
         }
 
-        // Remove from cart
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCartDisplay();
-            addLog('Item removed from cart', 'info');
+        // Show feature
+        function showFeature(feature) {
+            const features = {
+                'verified_badge': 'Verified Badge - Build trust with customers',
+                'premium_listing': 'Premium Listing - Get more visibility for your products'
+            };
+            alert(features[feature] || 'Premium feature');
         }
 
-        // Clear cart
-        function clearCart() {
-            cart = [];
-            updateCartDisplay();
-            addLog('Cart cleared', 'info');
+        // Edit profile
+        function editProfile() {
+            alert('Edit Profile - Update your personal information and preferences');
         }
 
-        // Select payment method
-        function selectPayment(method) {
-            selectedPayment = method;
-            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+        // Show verification modal
+        function showVerificationModal() {
+            alert('Identity Verification - Verify your identity to build trust with other users');
         }
 
-        // Process payment
-        function processPayment() {
-            if (cart.length === 0) {
-                alert('Cart is empty. Add items before checkout.');
-                return;
-            }
-            
-            // Calculate total
-            let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            // Update product stock
-            cart.forEach(cartItem => {
-                const product = products.find(p => p.id === cartItem.id);
-                if (product) {
-                    product.stock -= cartItem.quantity;
-                }
-            });
-            
-            // Generate receipt
-            let receiptText = `=== JAZEERA MALDIVES RECEIPT ===\n`;
-            receiptText += `Date: ${new Date().toLocaleString()}\n`;
-            receiptText += `Customer: ${currentUser.name}\n`;
-            receiptText += `Payment: ${selectedPayment.toUpperCase()}\n`;
-            receiptText += `----------------------------\n`;
-            
-            cart.forEach(item => {
-                receiptText += `${item.name} x${item.quantity} MVR ${(item.price * item.quantity).toFixed(2)}\n`;
-            });
-            
-            receiptText += `----------------------------\n`;
-            receiptText += `TOTAL: MVR ${total.toFixed(2)}\n`;
-            receiptText += `============================\n`;
-            receiptText += `Thank you for your purchase!\n`;
-            receiptText += `All products are Halal certified\n`;
-            
-            alert(`Payment processed successfully!\n\n${receiptText}`);
-            
-            // Clear cart
-            cart = [];
-            updateCartDisplay();
-            loadProducts(); // Refresh product stock display
-            
-            addLog(`Purchase completed - MVR ${total.toFixed(2)}`, 'success');
-        }
-
-        // Service functions
-        function showHealthServices() {
-            currentService = 'health';
-            showServiceModal(services.health);
-        }
-
-        function showFamilyServices() {
-            currentService = 'family';
-            showServiceModal(services.family);
-        }
-
-        function showJobMarket() {
-            currentService = 'jobs';
-            showServiceModal(services.jobs);
-        }
-
-        function showZakatManagement() {
-            switchTab('islamic');
-        }
-
-        function showIslamicBanking() {
-            currentService = 'islamic_banking';
-            showServiceModal(services.islamic_banking);
-        }
-
-        function showTakaful() {
-            currentService = 'takaful';
-            showServiceModal(services.takaful);
-        }
-
-        function showHalalInvestment() {
-            alert('Halal Investment services - Coming soon! Browse Sharia-compliant investment opportunities.');
-        }
-
-        function showSadaqah() {
-            alert('Sadaqah Platform - Donate to verified charity projects in the Maldives.');
-        }
-
-        function showQuranStudies() {
-            alert('Quran Studies - Access courses on Tajweed, Tafsir, and Quran memorization.');
-        }
-
-        function showArabicCourses() {
-            alert('Arabic Language Courses - Learn to read and understand the Quran in its original language.');
-        }
-
-        function showIslamicHistory() {
-            alert('Islamic History - Study the life of Prophet Muhammad (PBUH) and Islamic civilization.');
-        }
-
-        function showFiqh() {
-            alert('Islamic Law (Fiqh) - Learn about daily Islamic rulings and practices.');
-        }
-
-        function showProgrammingCourses() {
-            alert('Programming Courses - Web development, app development, and coding skills.');
-        }
-
-        function showBusinessSkills() {
-            alert('Business Skills - Entrepreneurship, management, and halal business practices.');
-        }
-
-        function showVocationalTraining() {
-            alert('Vocational Training - Practical skills for employment and self-sufficiency.');
-        }
-
-        function showSchoolCurriculum() {
-            alert('School Curriculum - Access Ministry of Education resources and materials.');
-        }
-
-        function enrollCourse(courseId) {
-            alert(`Enrolled in ${courseId === 'quran_memorization' ? 'Quran Memorization' : 'Islamic Finance Basics'} course!`);
-        }
-
-        // Government service functions
-        function applyForNationalID() {
-            alert('National ID Application - Fill out the form to apply for or renew your National ID card.');
-        }
-
-        function applyForPassport() {
-            alert('Passport Application - Complete the passport application form with required documents.');
-        }
-
-        function applyForDriversLicense() {
-            alert("Driver's License - Apply for a new license or renew your existing driver's license.");
-        }
-
-        function applyForBirthCertificate() {
-            alert('Birth Certificate - Request a copy of your birth certificate with proper identification.');
-        }
-
-        function registerBusiness() {
-            alert('Business Registration - Register your new business with the appropriate government agencies.');
-        }
-
-        function fileTaxes() {
-            alert('Tax Services - File your annual tax returns or make tax payments online.');
-        }
-
-        function bookHealthAppointment() {
-            alert('Health Services - Book medical appointments with public health facilities.');
-        }
-
-        function accessEVoting() {
-            alert('E-Voting System - Participate in national and local elections through secure online voting.');
-        }
-
-        function viewNationalBudget() {
-            alert('National Budget - View detailed breakdown of government spending and allocations.');
-        }
-
-        function viewDevelopmentProjects() {
-            alert('Development Projects - Track progress on infrastructure and development initiatives.');
-        }
-
-        function viewPublicProcurement() {
-            alert('Public Procurement - View government tenders and procurement opportunities.');
-        }
-
-        // Show service modal
-        function showServiceModal(service) {
-            document.getElementById('serviceModalTitle').innerHTML = `<i class="fas fa-cog"></i> ${service.title}`;
-            
-            let content = `<p>${service.description}</p>`;
-            content += `<h4 style="margin: 15px 0 10px 0;">Process:</h4>`;
-            content += `<ol style="margin-left: 20px;">`;
-            service.steps.forEach(step => {
-                content += `<li style="margin-bottom: 8px;">${step}</li>`;
-            });
-            content += `</ol>`;
-            
-            document.getElementById('serviceModalContent').innerHTML = content;
-            document.getElementById('serviceModal').style.display = 'block';
-        }
-
-        // Close service modal
-        function closeServiceModal() {
-            document.getElementById('serviceModal').style.display = 'none';
-            currentService = null;
-        }
-
-        // Proceed with service
-        function proceedWithService() {
-            alert(`Starting ${services[currentService].title} process...`);
-            closeServiceModal();
+        // Show preferences modal
+        function showPreferencesModal() {
+            alert('Preferences - Customize your platform experience');
         }
 
         // Add entry to system log
         function addLog(message, type) {
-            // In a real app, this would add to an actual log
             console.log(`[${new Date().toLocaleTimeString()}] ${message}`);
         }
 
@@ -1832,6 +1336,36 @@
         window.addEventListener('load', () => {
             addLog('Jazeera Maldives platform loaded', 'info');
         });
+
+        // Google Maps API would be loaded here in a real implementation
+        // For this demo, we'll simulate the map initialization
+        setTimeout(() => {
+            if (typeof google === 'undefined') {
+                document.getElementById('maldivesMap').innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column; color: #aaa;">
+                        <i class="fas fa-map" style="font-size: 3em; margin-bottom: 15px;"></i>
+                        <h3>Maldives Islands Map</h3>
+                        <p>Interactive map showing all Maldivian islands</p>
+                        <div style="margin-top: 20px; background: #2a2a3e; padding: 15px; border-radius: 8px; text-align: left;">
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <div style="width: 12px; height: 12px; background: #ff00ff; border-radius: 50%; margin-right: 8px;"></div>
+                                <span>Malé (Capital)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <div style="width: 12px; height: 12px; background: #00f3ff; border-radius: 50%; margin-right: 8px;"></div>
+                                <span>Other Islands</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 12px; height: 12px; background: #009688; border-radius: 50%; margin-right: 8px;"></div>
+                                <span>Ocean Areas</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }, 1000);
     </script>
+    <!-- In a real implementation, you would include the Google Maps API here -->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script> -->
 </body>
 </html>
