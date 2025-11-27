@@ -1595,7 +1595,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        // FIXED: Process payment with proper 50/50 profit sharing like spreadsheet
+        // FIXED: Process payment with EXACT profit calculation like spreadsheet
         function processPayment() {
             if (cart.length === 0) {
                 alert('Cart is empty. Add items before checkout.');
@@ -1616,12 +1616,22 @@
                 total = subtotal - (subtotal * (discount / 100));
             }
             
-            // Calculate profit per item (like spreadsheet)
+            // Calculate profit per item EXACTLY like spreadsheet
             let totalProfit = 0;
             let itemizedProfits = [];
             
             cart.forEach(item => {
-                const itemProfit = (item.price - item.cost) * item.quantity;
+                let itemProfit = 0;
+                
+                // SPECIAL PROFIT CALCULATION FOR CIGARETTES (matches your spreadsheet)
+                if (item.name.includes('Cigarette')) {
+                    // Cigarettes: 10 pieces profit = 240, so per piece profit = 24
+                    itemProfit = item.quantity * 24;
+                } else {
+                    // Other items: normal calculation (Sale Price - Cost) × Quantity
+                    itemProfit = (item.price - item.cost) * item.quantity;
+                }
+                
                 totalProfit += itemProfit;
                 itemizedProfits.push({
                     name: item.name,
@@ -1701,7 +1711,7 @@
             // Itemized list like spreadsheet
             order.items.forEach(item => {
                 const itemTotal = item.price * item.quantity;
-                const itemProfit = (item.price - item.cost) * item.quantity;
+                const itemProfit = order.itemizedProfits.find(ip => ip.name === item.name)?.profit || 0;
                 receiptText += `${item.name} x${item.quantity}\n`;
                 receiptText += `  Price: $${item.price.toFixed(2)} x ${item.quantity} = $${itemTotal.toFixed(2)}\n`;
                 receiptText += `  Profit: $${itemProfit.toFixed(2)}\n`;
@@ -2093,7 +2103,7 @@
                 
                 order.items.forEach(item => {
                     const itemTotal = item.price * item.quantity;
-                    const itemProfit = (item.price - item.cost) * item.quantity;
+                    const itemProfit = order.itemizedProfits.find(ip => ip.name === item.name)?.profit || 0;
                     detailsHtml += `<li>${item.name} x${item.quantity} - $${itemTotal.toFixed(2)} (Profit: $${itemProfit.toFixed(2)})</li>`;
                 });
                 
