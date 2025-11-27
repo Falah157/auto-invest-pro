@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jazeera Maldives - Digital Ummah Platform</title>
+    <title>Maldives Bazaar - Marketplace Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -42,7 +42,7 @@
 
         /* Side Panels */
         .side-panel {
-            width: 300px;
+            width: 320px;
             background: var(--card-bg);
             padding: 15px;
             overflow-y: auto;
@@ -103,27 +103,12 @@
             font-size: 0.9em;
         }
 
-        /* Map Container */
-        .map-container {
+        /* Main Feed */
+        .main-feed {
             flex: 1;
-            position: relative;
-            background: #1a1a2e;
-        }
-
-        #maldivesMap {
-            width: 100%;
-            height: 100%;
-        }
-
-        .map-overlay {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(26, 26, 46, 0.9);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--islamic-green);
-            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            background: var(--bg-dark);
         }
 
         /* Cards */
@@ -198,40 +183,6 @@
             padding: 8px 12px;
             font-size: 0.85em;
             width: auto;
-        }
-
-        /* Prayer Times */
-        .prayer-times {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .prayer-card {
-            background: var(--card-bg);
-            padding: 15px 10px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .prayer-card.current {
-            border-color: var(--islamic-green);
-            background: rgba(0, 150, 136, 0.1);
-        }
-
-        .prayer-name {
-            font-size: 0.9em;
-            color: #aaa;
-            margin-bottom: 5px;
-        }
-
-        .prayer-time {
-            font-size: 1.2em;
-            font-weight: bold;
         }
 
         /* Service Grid */
@@ -330,7 +281,7 @@
         /* Marketplace */
         .product-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-top: 15px;
         }
@@ -504,6 +455,150 @@
             margin-bottom: 20px;
         }
 
+        /* News Feed */
+        .news-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .news-post {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #333;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--islamic-green), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .post-user {
+            font-weight: bold;
+        }
+
+        .post-time {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        .post-content {
+            margin-bottom: 10px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 15px;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .post-action:hover {
+            color: var(--islamic-green);
+        }
+
+        /* Create Post */
+        .create-post {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .post-input {
+            width: 100%;
+            min-height: 80px;
+            background: #2a2a3e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        /* Job Listings */
+        .job-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .job-card {
+            background: #2a2a3e;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+
+        .job-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--islamic-green);
+        }
+
+        .job-company {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .job-location {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        /* Service Listings */
+        .service-listing {
+            background: #2a2a3e;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #333;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .service-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--islamic-green);
+        }
+
+        .service-provider {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .service-price {
+            font-size: 0.8em;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .container {
@@ -521,8 +616,8 @@
                 border-top: 2px solid var(--islamic-green);
             }
             
-            .map-container {
-                height: 400px;
+            .product-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -531,25 +626,25 @@
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-card">
-            <div class="login-logo">Jazeera Maldives</div>
-            <h3>Digital Ummah Platform</h3>
+            <div class="login-logo">Maldives Bazaar</div>
+            <h3>Marketplace Platform</h3>
             
             <div class="form-group">
-                <label for="loginEmail">Email or Phone</label>
-                <input type="text" id="loginEmail" placeholder="Enter your email" value="">
+                <label for="loginEmail">Email</label>
+                <input type="text" id="loginEmail" placeholder="Enter your email">
             </div>
             
             <div class="form-group">
                 <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter your password" value="">
+                <input type="password" id="loginPassword" placeholder="Enter your password">
             </div>
             
             <button class="btn-success" onclick="login()">
-                <i class="fas fa-sign-in-alt"></i> Login to Platform
+                <i class="fas fa-sign-in-alt"></i> Login to Marketplace
             </button>
             
             <div class="status info" style="margin-top: 15px;">
-                <i class="fas fa-info-circle"></i> Don't have an account? Register below
+                <i class="fas fa-info-circle"></i> Join our marketplace community
             </div>
             
             <div style="margin-top: 15px; font-size: 0.9em;">
@@ -559,10 +654,10 @@
             <!-- Quick Demo Login -->
             <div style="margin-top: 20px; padding: 15px; background: rgba(0,150,136,0.1); border-radius: 8px;">
                 <h4 style="margin-bottom: 10px;">Quick Demo Access:</h4>
-                <button class="btn-small" onclick="demoLogin('demo@jazeera.mv', 'demo123')" style="width: 100%; margin-bottom: 5px;">
+                <button class="btn-small" onclick="demoLogin('demo@bazaar.mv', 'demo123')" style="width: 100%; margin-bottom: 5px;">
                     Demo User 1
                 </button>
-                <button class="btn-small" onclick="demoLogin('ahmed@jazeera.mv', 'ahmed123')" style="width: 100%;">
+                <button class="btn-small" onclick="demoLogin('ahmed@bazaar.mv', 'ahmed123')" style="width: 100%;">
                     Demo User 2
                 </button>
             </div>
@@ -571,157 +666,79 @@
 
     <!-- Main Platform -->
     <div class="container" id="mainApp" style="display: none;">
-        <!-- Left Panel - Services & User Profile -->
+        <!-- Left Panel - User Profile & Navigation -->
         <div class="side-panel">
             <!-- User Profile -->
             <div class="user-profile">
-                <div class="user-avatar" id="userAvatar">AM</div>
-                <div class="user-name" id="userName">Ahmed Mohamed</div>
-                <div class="user-role" id="userRole">Buyer & Seller</div>
+                <div class="user-avatar" id="userAvatar">DU</div>
+                <div class="user-name" id="userName">Demo User</div>
+                <div class="user-role" id="userRole">Seller & Service Provider</div>
                 <div class="user-stats">
                     <div class="stat">
-                        <div class="stat-value" id="userSales">12</div>
+                        <div class="stat-value" id="userSales">15</div>
                         <div class="stat-label">Sales</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value" id="userPurchases">28</div>
-                        <div class="stat-label">Purchases</div>
+                        <div class="stat-value" id="userServices">8</div>
+                        <div class="stat-label">Services</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value" id="userRating">4.8</div>
+                        <div class="stat-value" id="userRating">4.9</div>
                         <div class="stat-label">Rating</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tabs -->
+            <!-- Navigation Tabs -->
             <div class="tabs">
-                <div class="tab active" onclick="switchPanelTab('services')">Services</div>
-                <div class="tab" onclick="switchPanelTab('marketplace')">Marketplace</div>
-                <div class="tab" onclick="switchPanelTab('profile')">Profile</div>
+                <div class="tab active" onclick="switchMainTab('feed')">Feed</div>
+                <div class="tab" onclick="switchMainTab('marketplace')">Marketplace</div>
+                <div class="tab" onclick="switchMainTab('services')">Services</div>
+                <div class="tab" onclick="switchMainTab('jobs')">Jobs</div>
             </div>
 
-            <!-- Services Tab -->
-            <div id="servicesTab" class="tab-content active">
-                <div class="card">
-                    <h3><i class="fas fa-concierge-bell"></i> Community Services</h3>
-                    <div class="service-grid">
-                        <div class="service-card" onclick="showIslamicServices()">
-                            <div class="service-icon"><i class="fas fa-mosque"></i></div>
-                            <div class="service-name">Islamic Center</div>
-                            <div class="service-desc">Prayer times, Quran, Zakat</div>
-                        </div>
-                        <div class="service-card" onclick="showEducationServices()">
-                            <div class="service-icon"><i class="fas fa-graduation-cap"></i></div>
-                            <div class="service-name">Education</div>
-                            <div class="service-desc">Learn & grow</div>
-                        </div>
-                        <div class="service-card" onclick="showGovernmentServices()">
-                            <div class="service-icon"><i class="fas fa-landmark"></i></div>
-                            <div class="service-name">Government</div>
-                            <div class="service-desc">Services & documents</div>
-                        </div>
-                        <div class="service-card" onclick="showHealthServices()">
-                            <div class="service-icon"><i class="fas fa-heartbeat"></i></div>
-                            <div class="service-name">Health & Wellness</div>
-                            <div class="service-desc">Medical services</div>
-                        </div>
-                        <div class="service-card" onclick="showFamilyServices()">
-                            <div class="service-icon"><i class="fas fa-users"></i></div>
-                            <div class="service-name">Family Services</div>
-                            <div class="service-desc">Marriage, counseling</div>
-                        </div>
-                        <div class="service-card" onclick="showJobMarket()">
-                            <div class="service-icon"><i class="fas fa-briefcase"></i></div>
-                            <div class="service-name">Halal Jobs</div>
-                            <div class="service-desc">Employment opportunities</div>
-                        </div>
+            <!-- Quick Actions -->
+            <div class="card">
+                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                <div class="service-grid">
+                    <div class="service-card" onclick="showAddProductModal()">
+                        <div class="service-icon"><i class="fas fa-plus"></i></div>
+                        <div class="service-name">Sell Product</div>
+                        <div class="service-desc">List new item</div>
                     </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
-                    <div id="announcements">
-                        <div class="announcement-item">
-                            <div class="announcement-title">Eid al-Fitr Celebration</div>
-                            <div class="service-desc">Join us at the Islamic Center for Eid prayers</div>
-                            <div class="announcement-date">Posted: 2 days ago</div>
-                        </div>
-                        <div class="announcement-item">
-                            <div class="announcement-title">Zakat Distribution</div>
-                            <div class="service-desc">Zakat collection for families in need</div>
-                            <div class="announcement-date">Posted: 1 week ago</div>
-                        </div>
+                    <div class="service-card" onclick="showAddServiceModal()">
+                        <div class="service-icon"><i class="fas fa-tools"></i></div>
+                        <div class="service-name">Offer Service</div>
+                        <div class="service-desc">Start earning</div>
+                    </div>
+                    <div class="service-card" onclick="showAddJobModal()">
+                        <div class="service-icon"><i class="fas fa-briefcase"></i></div>
+                        <div class="service-name">Post Job</div>
+                        <div class="service-desc">Hire talent</div>
+                    </div>
+                    <div class="service-card" onclick="showCreatePostModal()">
+                        <div class="service-icon"><i class="fas fa-edit"></i></div>
+                        <div class="service-name">Create Post</div>
+                        <div class="service-desc">Share update</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Marketplace Tab -->
-            <div id="marketplaceTab" class="tab-content">
-                <div class="card">
-                    <h3><i class="fas fa-store"></i> My Products</h3>
-                    <button class="btn-success btn-small" onclick="showAddProductModal()" style="width: 100%; margin-bottom: 10px;">
-                        <i class="fas fa-plus"></i> Add Product
-                    </button>
-                    <div class="product-grid" id="myProducts">
-                        <!-- User's products will be loaded here -->
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-shopping-cart"></i> Quick Buy</h3>
-                    <div class="product-grid" id="quickBuyProducts">
-                        <!-- Quick buy products will be loaded here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Tab -->
-            <div id="profileTab" class="tab-content">
-                <div class="card">
-                    <h3><i class="fas fa-user-cog"></i> Profile Settings</h3>
-                    <button class="btn-small" onclick="editProfile()" style="width: 100%; margin-bottom: 10px;">
-                        <i class="fas fa-edit"></i> Edit Profile
-                    </button>
-                    <button class="btn-small" onclick="showVerificationModal()" style="width: 100%; margin-bottom: 10px;">
-                        <i class="fas fa-id-card"></i> Verify Identity
-                    </button>
-                    <button class="btn-small" onclick="showPreferencesModal()" style="width: 100%; margin-bottom: 10px;">
-                        <i class="fas fa-sliders-h"></i> Preferences
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-chart-line"></i> My Stats</h3>
-                    <div class="result-item">
-                        <span>Total Sales:</span>
-                        <span>MVR 12,540</span>
-                    </div>
-                    <div class="result-item">
-                        <span>Total Purchases:</span>
-                        <span>MVR 8,320</span>
-                    </div>
-                    <div class="result-item">
-                        <span>Active Listings:</span>
-                        <span>8 products</span>
-                    </div>
-                    <div class="result-item">
-                        <span>Member Since:</span>
-                        <span>Jan 2023</span>
-                    </div>
+            <!-- My Listings -->
+            <div class="card">
+                <h3><i class="fas fa-list"></i> My Listings</h3>
+                <div id="myListings">
+                    <!-- User's listings will be loaded here -->
                 </div>
             </div>
         </div>
 
-        <!-- Main Content Area with Map -->
+        <!-- Main Content Area -->
         <div class="main-content">
             <!-- Header -->
             <div class="header">
-                <div class="logo">Jazeera Maldives</div>
-                <p class="tagline" id="userGreeting">Digital Ummah Platform - خدمة الأمة الرقمية</p>
-                <div id="prayerHeader" style="margin-top: 10px; font-size: 0.9em;">
-                    <span id="currentPrayer">Fajr: 05:15 | Dhuhr: 12:05 | Asr: 15:20</span>
-                </div>
+                <div class="logo">Maldives Bazaar</div>
+                <p class="tagline" id="userGreeting">Buy • Sell • Services • Jobs</p>
                 <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
                     <button class="btn-danger btn-small" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i> Logout
@@ -729,65 +746,105 @@
                 </div>
             </div>
 
-            <!-- Map Container -->
-            <div class="map-container">
-                <div id="maldivesMap"></div>
-                <div class="map-overlay">
-                    <h4><i class="fas fa-map-marker-alt"></i> Maldives Islands</h4>
-                    <div class="prayer-times">
-                        <div class="prayer-card current">
-                            <div class="prayer-name">Fajr</div>
-                            <div class="prayer-time">05:15</div>
+            <!-- Main Feed -->
+            <div class="main-feed">
+                <!-- Feed Tab -->
+                <div id="feedTab" class="tab-content active">
+                    <!-- Create Post -->
+                    <div class="create-post">
+                        <div class="post-header">
+                            <div class="post-avatar" id="currentUserAvatar">DU</div>
+                            <div>
+                                <div class="post-user" id="currentUserName">Demo User</div>
+                                <div class="post-time">What's new?</div>
+                            </div>
                         </div>
-                        <div class="prayer-card">
-                            <div class="prayer-name">Dhuhr</div>
-                            <div class="prayer-time">12:05</div>
+                        <textarea class="post-input" id="postContent" placeholder="Share what's happening in your business..."></textarea>
+                        <button class="btn-success" onclick="createPost()">
+                            <i class="fas fa-paper-plane"></i> Post Update
+                        </button>
+                    </div>
+
+                    <!-- News Feed -->
+                    <div class="news-feed" id="newsFeed">
+                        <!-- Posts will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Marketplace Tab -->
+                <div id="marketplaceTab" class="tab-content">
+                    <div class="card">
+                        <h3><i class="fas fa-store"></i> Marketplace</h3>
+                        <div class="form-group">
+                            <input type="text" id="productSearch" placeholder="Search products..." onkeyup="filterProducts()">
                         </div>
-                        <div class="prayer-card">
-                            <div class="prayer-name">Asr</div>
-                            <div class="prayer-time">15:20</div>
+                        <div class="product-grid" id="marketplaceProducts">
+                            <!-- Products will be loaded here -->
                         </div>
                     </div>
-                    <button class="btn-small" onclick="findQibla()" style="width: 100%; margin-top: 10px;">
-                        <i class="fas fa-compass"></i> Find Qibla
-                    </button>
+                </div>
+
+                <!-- Services Tab -->
+                <div id="servicesTab" class="tab-content">
+                    <div class="card">
+                        <h3><i class="fas fa-concierge-bell"></i> Services</h3>
+                        <div class="form-group">
+                            <input type="text" id="serviceSearch" placeholder="Search services..." onkeyup="filterServices()">
+                        </div>
+                        <div id="servicesList">
+                            <!-- Services will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jobs Tab -->
+                <div id="jobsTab" class="tab-content">
+                    <div class="card">
+                        <h3><i class="fas fa-briefcase"></i> Job Market</h3>
+                        <div class="form-group">
+                            <input type="text" id="jobSearch" placeholder="Search jobs..." onkeyup="filterJobs()">
+                        </div>
+                        <div class="job-grid" id="jobsList">
+                            <!-- Jobs will be loaded here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Right Panel - Marketplace & Community -->
+        <!-- Right Panel - Community & Trends -->
         <div class="side-panel right">
             <div class="card">
                 <h3><i class="fas fa-fire"></i> Trending Products</h3>
-                <div class="product-grid" id="trendingProducts">
+                <div id="trendingProducts">
                     <!-- Trending products will be loaded here -->
                 </div>
             </div>
 
             <div class="card">
-                <h3><i class="fas fa-users"></i> Active Sellers</h3>
-                <div id="activeSellers">
-                    <!-- Active sellers will be loaded here -->
+                <h3><i class="fas fa-chart-line"></i> Marketplace Stats</h3>
+                <div class="result-item">
+                    <span>Active Users:</span>
+                    <span>2,458</span>
+                </div>
+                <div class="result-item">
+                    <span>Products Listed:</span>
+                    <span>1,847</span>
+                </div>
+                <div class="result-item">
+                    <span>Services Offered:</span>
+                    <span>892</span>
+                </div>
+                <div class="result-item">
+                    <span>Jobs Available:</span>
+                    <span>156</span>
                 </div>
             </div>
 
             <div class="card">
-                <h3><i class="fas fa-chart-pie"></i> Market Stats</h3>
-                <div class="result-item">
-                    <span>Total Products:</span>
-                    <span>1,248</span>
-                </div>
-                <div class="result-item">
-                    <span>Active Buyers:</span>
-                    <span>3,452</span>
-                </div>
-                <div class="result-item">
-                    <span>Active Sellers:</span>
-                    <span>892</span>
-                </div>
-                <div class="result-item">
-                    <span>Today's Transactions:</span>
-                    <span>MVR 124,580</span>
+                <h3><i class="fas fa-users"></i> Top Sellers</h3>
+                <div id="topSellers">
+                    <!-- Top sellers will be loaded here -->
                 </div>
             </div>
 
@@ -797,12 +854,12 @@
                     <div class="service-card" onclick="showFeature('verified_badge')">
                         <div class="service-icon"><i class="fas fa-check-circle"></i></div>
                         <div class="service-name">Verified Badge</div>
-                        <div class="service-desc">Build trust with customers</div>
+                        <div class="service-desc">Build trust</div>
                     </div>
                     <div class="service-card" onclick="showFeature('premium_listing')">
                         <div class="service-icon"><i class="fas fa-crown"></i></div>
                         <div class="service-name">Premium Listing</div>
-                        <div class="service-desc">Get more visibility</div>
+                        <div class="service-desc">More visibility</div>
                     </div>
                 </div>
             </div>
@@ -812,7 +869,7 @@
     <!-- Register Modal -->
     <div class="modal" id="registerModal">
         <div class="modal-content">
-            <h3><i class="fas fa-user-plus"></i> Create Account</h3>
+            <h3><i class="fas fa-user-plus"></i> Join Marketplace</h3>
             <div class="form-group">
                 <label for="regName">Full Name</label>
                 <input type="text" id="regName" placeholder="Enter your full name">
@@ -841,14 +898,15 @@
             <div class="form-group">
                 <label for="regUserType">I want to:</label>
                 <select id="regUserType">
-                    <option value="buyer">Buy products</option>
+                    <option value="buyer">Buy products/services</option>
                     <option value="seller">Sell products</option>
-                    <option value="both">Both buy and sell</option>
+                    <option value="service">Offer services</option>
+                    <option value="both">All of the above</option>
                 </select>
             </div>
             <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="btn-success" onclick="registerUser()">
-                    <i class="fas fa-user-plus"></i> Create Account
+                    <i class="fas fa-user-plus"></i> Join Now
                 </button>
                 <button class="btn-warning" onclick="closeRegisterModal()">
                     <i class="fas fa-times"></i> Cancel
@@ -860,7 +918,7 @@
     <!-- Add Product Modal -->
     <div class="modal" id="addProductModal">
         <div class="modal-content">
-            <h3><i class="fas fa-plus-circle"></i> Add New Product</h3>
+            <h3><i class="fas fa-plus-circle"></i> Sell Product</h3>
             <div class="form-group">
                 <label for="productName">Product Name</label>
                 <input type="text" id="productName" placeholder="Enter product name">
@@ -895,9 +953,93 @@
             </div>
             <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="btn-success" onclick="addProduct()">
-                    <i class="fas fa-save"></i> Add Product
+                    <i class="fas fa-save"></i> List Product
                 </button>
                 <button class="btn-warning" onclick="closeAddProductModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Service Modal -->
+    <div class="modal" id="addServiceModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-tools"></i> Offer Service</h3>
+            <div class="form-group">
+                <label for="serviceName">Service Name</label>
+                <input type="text" id="serviceName" placeholder="Enter service name">
+            </div>
+            <div class="form-group">
+                <label for="serviceDescription">Description</label>
+                <textarea id="serviceDescription" rows="3" placeholder="Describe your service"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="servicePrice">Price (MVR)</label>
+                <input type="number" id="servicePrice" placeholder="Enter price or 'Contact for quote'">
+            </div>
+            <div class="form-group">
+                <label for="serviceCategory">Category</label>
+                <select id="serviceCategory">
+                    <option value="repair">Repair & Maintenance</option>
+                    <option value="cleaning">Cleaning Services</option>
+                    <option value="transport">Transportation</option>
+                    <option value="education">Education & Tutoring</option>
+                    <option value="health">Health & Wellness</option>
+                    <option value="other">Other Service</option>
+                </select>
+            </div>
+            <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-success" onclick="addService()">
+                    <i class="fas fa-save"></i> Offer Service
+                </button>
+                <button class="btn-warning" onclick="closeAddServiceModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Job Modal -->
+    <div class="modal" id="addJobModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-briefcase"></i> Post Job</h3>
+            <div class="form-group">
+                <label for="jobTitle">Job Title</label>
+                <input type="text" id="jobTitle" placeholder="Enter job title">
+            </div>
+            <div class="form-group">
+                <label for="jobDescription">Job Description</label>
+                <textarea id="jobDescription" rows="3" placeholder="Describe the job position"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="jobSalary">Salary (MVR)</label>
+                <input type="text" id="jobSalary" placeholder="Enter salary or 'Negotiable'">
+            </div>
+            <div class="form-group">
+                <label for="jobLocation">Location</label>
+                <select id="jobLocation">
+                    <option value="male">Malé</option>
+                    <option value="addu">Addu City</option>
+                    <option value="fuvahmulah">Fuvahmulah</option>
+                    <option value="remote">Remote</option>
+                    <option value="other">Other Location</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="jobType">Job Type</label>
+                <select id="jobType">
+                    <option value="fulltime">Full Time</option>
+                    <option value="parttime">Part Time</option>
+                    <option value="contract">Contract</option>
+                    <option value="freelance">Freelance</option>
+                </select>
+            </div>
+            <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-success" onclick="addJob()">
+                    <i class="fas fa-save"></i> Post Job
+                </button>
+                <button class="btn-warning" onclick="closeAddJobModal()">
                     <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
@@ -909,15 +1051,21 @@
         let currentUser = null;
         let users = [];
         let products = [];
-        let maldivesMap;
+        let services = [];
+        let jobs = [];
+        let posts = [];
 
         // Initialize the platform
         function initApp() {
             loadSampleData();
-            initMap();
             updateUserProfile();
-            loadProducts();
-            updatePrayerTimes();
+            loadMarketplace();
+            loadServices();
+            loadJobs();
+            loadNewsFeed();
+            loadMyListings();
+            loadTrendingProducts();
+            loadTopSellers();
         }
 
         // Load sample data with pre-created demo users
@@ -927,28 +1075,41 @@
                 {
                     id: 1,
                     name: "Demo User",
-                    email: "demo@jazeera.mv",
+                    email: "demo@bazaar.mv",
                     password: "demo123",
                     type: "both",
                     island: "male",
                     avatar: "DU",
                     sales: 15,
-                    purchases: 32,
+                    services: 8,
                     rating: 4.9,
                     joinDate: "Jan 2023"
                 },
                 {
                     id: 2,
                     name: "Ahmed Mohamed",
-                    email: "ahmed@jazeera.mv",
+                    email: "ahmed@bazaar.mv",
                     password: "ahmed123",
                     type: "both",
                     island: "male",
                     avatar: "AM",
                     sales: 12,
-                    purchases: 28,
+                    services: 5,
                     rating: 4.8,
                     joinDate: "Feb 2023"
+                },
+                {
+                    id: 3,
+                    name: "Aisha Ali",
+                    email: "aisha@bazaar.mv",
+                    password: "aisha123",
+                    type: "service",
+                    island: "addu",
+                    avatar: "AA",
+                    sales: 0,
+                    services: 12,
+                    rating: 4.9,
+                    joinDate: "Mar 2023"
                 }
             ];
 
@@ -956,102 +1117,155 @@
             products = [
                 {
                     id: 1,
-                    name: "Fresh Tuna",
-                    price: 85,
+                    name: "Fresh Tuna - 5kg",
+                    price: 425,
                     seller: "Demo User",
                     sellerId: 1,
-                    description: "Freshly caught tuna from the Maldives waters",
+                    description: "Freshly caught tuna from the Maldives waters, perfect for family meals",
                     category: "food",
                     location: "male",
                     image: "🐟",
-                    stock: 15,
+                    stock: 3,
                     rating: 4.7
                 },
                 {
                     id: 2,
-                    name: "Handmade Mats",
+                    name: "Handmade Prayer Mats",
                     price: 120,
                     seller: "Ahmed Mohamed",
                     sellerId: 2,
-                    description: "Beautiful handmade prayer mats",
+                    description: "Beautiful handmade prayer mats with traditional Maldivian designs",
                     category: "handicrafts",
-                    location: "addu",
+                    location: "male",
                     image: "🧶",
                     stock: 8,
                     rating: 4.9
                 },
                 {
                     id: 3,
-                    name: "Coconut Oil",
+                    name: "Organic Coconut Oil 1L",
                     price: 65,
                     seller: "Demo User",
                     sellerId: 1,
-                    description: "Pure organic coconut oil",
+                    description: "Pure organic coconut oil extracted using traditional methods",
                     category: "food",
-                    location: "fuvahmulah",
+                    location: "male",
                     image: "🥥",
                     stock: 20,
                     rating: 4.5
                 }
             ];
-        }
 
-        // Initialize Google Maps
-        function initMap() {
-            // Create a map centered on Maldives
-            const maldivesCenter = { lat: 3.2028, lng: 73.2207 };
-            
-            // Create map
-            maldivesMap = new google.maps.Map(document.getElementById('maldivesMap'), {
-                zoom: 7,
-                center: maldivesCenter,
-                mapTypeId: 'terrain',
-                styles: [
-                    {
-                        "featureType": "all",
-                        "elementType": "geometry",
-                        "stylers": [{ "color": "#1a1a2e" }]
-                    },
-                    {
-                        "featureType": "all",
-                        "elementType": "labels.text.fill",
-                        "stylers": [{ "color": "#ffffff" }]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "geometry",
-                        "stylers": [{ "color": "#009688" }]
-                    }
-                ]
-            });
-
-            // Add markers for major islands
-            const islands = [
-                { name: "Malé", position: { lat: 4.1755, lng: 73.5093 } },
-                { name: "Addu City", position: { lat: -0.6300, lng: 73.1000 } },
-                { name: "Fuvahmulah", position: { lat: -0.2982, lng: 73.4255 } },
-                { name: "Hithadhoo", position: { lat: -0.6000, lng: 73.0833 } },
-                { name: "Kulhudhuffushi", position: { lat: 6.6221, lng: 73.0700 } }
+            // Sample services
+            services = [
+                {
+                    id: 1,
+                    name: "Boat Engine Repair",
+                    price: "Contact for quote",
+                    provider: "Ahmed Mohamed",
+                    providerId: 2,
+                    description: "Professional boat engine repair and maintenance services",
+                    category: "repair",
+                    location: "male",
+                    rating: 4.8
+                },
+                {
+                    id: 2,
+                    name: "Home Cleaning Service",
+                    price: 250,
+                    provider: "Aisha Ali",
+                    providerId: 3,
+                    description: "Thorough home cleaning with eco-friendly products",
+                    category: "cleaning",
+                    location: "addu",
+                    rating: 4.9
+                },
+                {
+                    id: 3,
+                    name: "Quran Tutoring",
+                    price: 100,
+                    provider: "Demo User",
+                    providerId: 1,
+                    description: "Learn Quran recitation and Tajweed for all ages",
+                    category: "education",
+                    location: "male",
+                    rating: 5.0
+                }
             ];
 
-            islands.forEach(island => {
-                new google.maps.Marker({
-                    position: island.position,
-                    map: maldivesMap,
-                    title: island.name,
-                    icon: {
-                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="10" cy="10" r="8" fill="${island.name === 'Malé' ? '#ff00ff' : '#00f3ff'}" stroke="#ffffff" stroke-width="2"/>
-                            </svg>
-                        `),
-                        scaledSize: new google.maps.Size(20, 20)
-                    }
-                });
-            });
+            // Sample jobs
+            jobs = [
+                {
+                    id: 1,
+                    title: "Fishing Boat Crew",
+                    company: "Ocean Harvest Co.",
+                    salary: "3,500 MVR",
+                    description: "Join our fishing crew for daily fishing trips. Experience preferred.",
+                    location: "male",
+                    type: "fulltime",
+                    postedBy: 2,
+                    date: "2 days ago"
+                },
+                {
+                    id: 2,
+                    title: "Handicraft Artisan",
+                    company: "Maldivian Crafts",
+                    salary: "Negotiable",
+                    description: "Skilled artisan needed for traditional Maldivian handicrafts",
+                    location: "addu",
+                    type: "parttime",
+                    postedBy: 3,
+                    date: "1 week ago"
+                },
+                {
+                    id: 3,
+                    title: "Marketplace Support",
+                    company: "Maldives Bazaar",
+                    salary: "4,200 MVR",
+                    description: "Help users with platform questions and technical support",
+                    location: "remote",
+                    type: "fulltime",
+                    postedBy: 1,
+                    date: "3 days ago"
+                }
+            ];
+
+            // Sample posts
+            posts = [
+                {
+                    id: 1,
+                    userId: 1,
+                    userName: "Demo User",
+                    userAvatar: "DU",
+                    content: "Just listed fresh tuna catch from this morning! Perfect for family dinners. DM for bulk orders! 🐟",
+                    timestamp: "2 hours ago",
+                    likes: 12,
+                    comments: 3
+                },
+                {
+                    id: 2,
+                    userId: 2,
+                    userName: "Ahmed Mohamed",
+                    userAvatar: "AM",
+                    content: "Available for boat engine repairs this week. Special discount for first-time customers! ⚙️🛥️",
+                    timestamp: "5 hours ago",
+                    likes: 8,
+                    comments: 2
+                },
+                {
+                    id: 3,
+                    userId: 3,
+                    userName: "Aisha Ali",
+                    userAvatar: "AA",
+                    content: "New cleaning service packages available! Book your spring cleaning now. Eco-friendly products used. 🏠✨",
+                    timestamp: "1 day ago",
+                    likes: 15,
+                    comments: 5
+                }
+            ];
         }
 
-        // Login function - FIXED
+        // Login function
         function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -1067,7 +1281,7 @@
                 currentUser = user;
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'flex';
-                document.getElementById('userGreeting').textContent = `Welcome, ${user.name}`;
+                document.getElementById('userGreeting').textContent = `Welcome to Maldives Bazaar, ${user.name}`;
                 
                 initApp();
                 addLog(`User ${user.name} logged in`, 'info');
@@ -1088,7 +1302,6 @@
             currentUser = null;
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
-            // Clear login fields
             document.getElementById('loginEmail').value = '';
             document.getElementById('loginPassword').value = '';
         }
@@ -1100,74 +1313,20 @@
             document.getElementById('userAvatar').textContent = currentUser.avatar;
             document.getElementById('userName').textContent = currentUser.name;
             document.getElementById('userRole').textContent = 
-                currentUser.type === 'both' ? 'Buyer & Seller' : 
-                currentUser.type === 'buyer' ? 'Buyer' : 'Seller';
+                currentUser.type === 'both' ? 'Seller & Service Provider' : 
+                currentUser.type === 'buyer' ? 'Buyer' : 
+                currentUser.type === 'seller' ? 'Seller' : 'Service Provider';
             document.getElementById('userSales').textContent = currentUser.sales;
-            document.getElementById('userPurchases').textContent = currentUser.purchases;
+            document.getElementById('userServices').textContent = currentUser.services;
             document.getElementById('userRating').textContent = currentUser.rating;
+            
+            // Update current user in post creation
+            document.getElementById('currentUserAvatar').textContent = currentUser.avatar;
+            document.getElementById('currentUserName').textContent = currentUser.name;
         }
 
-        // Load products to marketplace
-        function loadProducts() {
-            // Load user's products
-            const myProductsContainer = document.getElementById('myProducts');
-            const userProducts = products.filter(p => p.sellerId === currentUser.id);
-            
-            if (userProducts.length === 0) {
-                myProductsContainer.innerHTML = '<div class="status info">You have no products listed</div>';
-            } else {
-                myProductsContainer.innerHTML = userProducts.map(product => `
-                    <div class="product-card" onclick="viewProduct(${product.id})">
-                        <div style="font-size: 1.5em; text-align: center; margin-bottom: 5px;">${product.image}</div>
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-price">MVR ${product.price}</div>
-                        <div class="halal-badge">Active</div>
-                    </div>
-                `).join('');
-            }
-
-            // Load quick buy products
-            const quickBuyContainer = document.getElementById('quickBuyProducts');
-            const quickBuyProducts = products.slice(0, 3);
-            
-            quickBuyContainer.innerHTML = quickBuyProducts.map(product => `
-                <div class="product-card" onclick="viewProduct(${product.id})">
-                    <div style="font-size: 1.5em; text-align: center; margin-bottom: 5px;">${product.image}</div>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">MVR ${product.price}</div>
-                    <div class="product-seller">${product.seller}</div>
-                    <div class="halal-badge">Halal</div>
-                </div>
-            `).join('');
-
-            // Load trending products
-            const trendingContainer = document.getElementById('trendingProducts');
-            const trendingProducts = products.slice().sort((a, b) => b.rating - a.rating).slice(0, 3);
-            
-            trendingContainer.innerHTML = trendingProducts.map(product => `
-                <div class="product-card" onclick="viewProduct(${product.id})">
-                    <div style="font-size: 1.5em; text-align: center; margin-bottom: 5px;">${product.image}</div>
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">MVR ${product.price}</div>
-                    <div class="product-seller">${product.seller}</div>
-                    <div class="halal-badge">⭐ ${product.rating}</div>
-                </div>
-            `).join('');
-
-            // Load active sellers
-            const sellersContainer = document.getElementById('activeSellers');
-            const uniqueSellers = [...new Set(products.map(p => p.seller))].slice(0, 4);
-            
-            sellersContainer.innerHTML = uniqueSellers.map(seller => `
-                <div class="announcement-item">
-                    <div class="announcement-title">${seller}</div>
-                    <div class="service-desc">Active seller • 4.8⭐ rating</div>
-                </div>
-            `).join('');
-        }
-
-        // Switch panel tabs
-        function switchPanelTab(tabName) {
+        // Switch main tabs
+        function switchMainTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -1185,40 +1344,135 @@
             event.currentTarget.classList.add('active');
         }
 
-        // Update prayer times
-        function updatePrayerTimes() {
-            document.getElementById('currentPrayer').textContent = 
-                'Fajr: 05:15 | Dhuhr: 12:05 | Asr: 15:20 | Maghrib: 18:15 | Isha: 19:30';
+        // Load marketplace products
+        function loadMarketplace() {
+            const container = document.getElementById('marketplaceProducts');
+            
+            container.innerHTML = products.map(product => `
+                <div class="product-card" onclick="viewProduct(${product.id})">
+                    <div style="font-size: 2em; text-align: center; margin-bottom: 10px;">${product.image}</div>
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">MVR ${product.price}</div>
+                    <div class="product-seller">${product.seller}</div>
+                    <div class="halal-badge">⭐ ${product.rating}</div>
+                </div>
+            `).join('');
         }
 
-        // Find Qibla direction
-        function findQibla() {
-            alert('Qibla direction: Northwest from Maldives\nUsing your location for accurate direction...');
+        // Load services
+        function loadServices() {
+            const container = document.getElementById('servicesList');
+            
+            container.innerHTML = services.map(service => `
+                <div class="service-listing" onclick="viewService(${service.id})">
+                    <div class="service-title">${service.name}</div>
+                    <div class="service-provider">by ${service.provider}</div>
+                    <div class="service-price">${service.price}</div>
+                    <div class="halal-badge">⭐ ${service.rating}</div>
+                </div>
+            `).join('');
         }
 
-        // Show service modals
-        function showIslamicServices() {
-            alert('Islamic Services: Prayer times, Quran recitation, Zakat calculator, Ask a scholar');
+        // Load jobs
+        function loadJobs() {
+            const container = document.getElementById('jobsList');
+            
+            container.innerHTML = jobs.map(job => `
+                <div class="job-card" onclick="viewJob(${job.id})">
+                    <div class="job-title">${job.title}</div>
+                    <div class="job-company">${job.company}</div>
+                    <div class="job-location">📍 ${job.location} • 💰 ${job.salary}</div>
+                    <div class="halal-badge">${job.type}</div>
+                </div>
+            `).join('');
         }
 
-        function showEducationServices() {
-            alert('Education Services: Online courses, Skills development, School curriculum');
+        // Load news feed
+        function loadNewsFeed() {
+            const container = document.getElementById('newsFeed');
+            
+            container.innerHTML = posts.map(post => `
+                <div class="news-post">
+                    <div class="post-header">
+                        <div class="post-avatar">${post.userAvatar}</div>
+                        <div>
+                            <div class="post-user">${post.userName}</div>
+                            <div class="post-time">${post.timestamp}</div>
+                        </div>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-actions">
+                        <div class="post-action" onclick="likePost(${post.id})">
+                            <i class="fas fa-heart"></i> ${post.likes}
+                        </div>
+                        <div class="post-action" onclick="commentOnPost(${post.id})">
+                            <i class="fas fa-comment"></i> ${post.comments}
+                        </div>
+                        <div class="post-action" onclick="sharePost(${post.id})">
+                            <i class="fas fa-share"></i> Share
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function showGovernmentServices() {
-            alert('Government Services: ID/passport applications, Business registration, Tax services');
+        // Load user's listings
+        function loadMyListings() {
+            const container = document.getElementById('myListings');
+            const userProducts = products.filter(p => p.sellerId === currentUser.id);
+            const userServices = services.filter(s => s.providerId === currentUser.id);
+            
+            let listingsHTML = '';
+            
+            if (userProducts.length === 0 && userServices.length === 0) {
+                listingsHTML = '<div class="status info">No listings yet</div>';
+            } else {
+                userProducts.forEach(product => {
+                    listingsHTML += `
+                        <div class="announcement-item">
+                            <div class="announcement-title">${product.name}</div>
+                            <div class="service-desc">MVR ${product.price} • ${product.stock} left</div>
+                        </div>
+                    `;
+                });
+                
+                userServices.forEach(service => {
+                    listingsHTML += `
+                        <div class="announcement-item">
+                            <div class="announcement-title">${service.name}</div>
+                            <div class="service-desc">${service.price}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            container.innerHTML = listingsHTML;
         }
 
-        function showHealthServices() {
-            alert('Health Services: Medical appointments, Health records, Emergency contacts');
+        // Load trending products
+        function loadTrendingProducts() {
+            const container = document.getElementById('trendingProducts');
+            const trending = products.slice(0, 3);
+            
+            container.innerHTML = trending.map(product => `
+                <div class="announcement-item">
+                    <div class="announcement-title">${product.name}</div>
+                    <div class="service-desc">MVR ${product.price} • ⭐ ${product.rating}</div>
+                </div>
+            `).join('');
         }
 
-        function showFamilyServices() {
-            alert('Family Services: Marriage counseling, Family support, Child services');
-        }
-
-        function showJobMarket() {
-            alert('Halal Job Market: Find employment opportunities aligned with Islamic principles');
+        // Load top sellers
+        function loadTopSellers() {
+            const container = document.getElementById('topSellers');
+            const topSellers = users.slice(0, 3);
+            
+            container.innerHTML = topSellers.map(user => `
+                <div class="announcement-item">
+                    <div class="announcement-title">${user.name}</div>
+                    <div class="service-desc">${user.sales} sales • ⭐ ${user.rating}</div>
+                </div>
+            `).join('');
         }
 
         // Show register modal
@@ -1261,7 +1515,7 @@
                 island: island,
                 avatar: name.split(' ').map(n => n[0]).join('').toUpperCase(),
                 sales: 0,
-                purchases: 0,
+                services: 0,
                 rating: 0,
                 joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
             };
@@ -1315,10 +1569,127 @@
             };
             
             products.push(newProduct);
+            currentUser.sales++;
             
-            alert('Product added successfully!');
+            alert('Product listed successfully!');
             closeAddProductModal();
-            loadProducts(); // Refresh product listings
+            loadMarketplace();
+            loadMyListings();
+        }
+
+        // Show add service modal
+        function showAddServiceModal() {
+            document.getElementById('addServiceModal').style.display = 'block';
+        }
+
+        // Close add service modal
+        function closeAddServiceModal() {
+            document.getElementById('addServiceModal').style.display = 'none';
+        }
+
+        // Add new service
+        function addService() {
+            const name = document.getElementById('serviceName').value;
+            const description = document.getElementById('serviceDescription').value;
+            const price = document.getElementById('servicePrice').value;
+            const category = document.getElementById('serviceCategory').value;
+            
+            if (!name || !description || !price) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Create new service
+            const newService = {
+                id: services.length + 1,
+                name: name,
+                price: price,
+                provider: currentUser.name,
+                providerId: currentUser.id,
+                description: description,
+                category: category,
+                location: currentUser.island,
+                rating: 0
+            };
+            
+            services.push(newService);
+            currentUser.services++;
+            
+            alert('Service offered successfully!');
+            closeAddServiceModal();
+            loadServices();
+            loadMyListings();
+        }
+
+        // Show add job modal
+        function showAddJobModal() {
+            document.getElementById('addJobModal').style.display = 'block';
+        }
+
+        // Close add job modal
+        function closeAddJobModal() {
+            document.getElementById('addJobModal').style.display = 'none';
+        }
+
+        // Add new job
+        function addJob() {
+            const title = document.getElementById('jobTitle').value;
+            const description = document.getElementById('jobDescription').value;
+            const salary = document.getElementById('jobSalary').value;
+            const location = document.getElementById('jobLocation').value;
+            const type = document.getElementById('jobType').value;
+            
+            if (!title || !description || !salary) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Create new job
+            const newJob = {
+                id: jobs.length + 1,
+                title: title,
+                company: currentUser.name,
+                salary: salary,
+                description: description,
+                location: location,
+                type: type,
+                postedBy: currentUser.id,
+                date: "Just now"
+            };
+            
+            jobs.push(newJob);
+            
+            alert('Job posted successfully!');
+            closeAddJobModal();
+            loadJobs();
+        }
+
+        // Create post
+        function createPost() {
+            const content = document.getElementById('postContent').value;
+            
+            if (!content) {
+                alert('Please write something to post');
+                return;
+            }
+            
+            // Create new post
+            const newPost = {
+                id: posts.length + 1,
+                userId: currentUser.id,
+                userName: currentUser.name,
+                userAvatar: currentUser.avatar,
+                content: content,
+                timestamp: "Just now",
+                likes: 0,
+                comments: 0
+            };
+            
+            posts.unshift(newPost); // Add to beginning
+            document.getElementById('postContent').value = '';
+            
+            loadNewsFeed();
+            alert('Post published!');
         }
 
         // Get emoji for product category
@@ -1338,32 +1709,106 @@
         function viewProduct(productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
-                alert(`Product: ${product.name}\nPrice: MVR ${product.price}\nSeller: ${product.seller}\nDescription: ${product.description}`);
+                alert(`Product: ${product.name}\nPrice: MVR ${product.price}\nSeller: ${product.seller}\nDescription: ${product.description}\nLocation: ${product.location}`);
             }
+        }
+
+        // View service details
+        function viewService(serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            if (service) {
+                alert(`Service: ${service.name}\nPrice: ${service.price}\nProvider: ${service.provider}\nDescription: ${service.description}\nLocation: ${service.location}`);
+            }
+        }
+
+        // View job details
+        function viewJob(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            if (job) {
+                alert(`Job: ${job.title}\nCompany: ${job.company}\nSalary: ${job.salary}\nLocation: ${job.location}\nType: ${job.type}\nDescription: ${job.description}`);
+            }
+        }
+
+        // Post interactions
+        function likePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.likes++;
+                loadNewsFeed();
+            }
+        }
+
+        function commentOnPost(postId) {
+            const comment = prompt('Write your comment:');
+            if (comment) {
+                const post = posts.find(p => p.id === postId);
+                if (post) {
+                    post.comments++;
+                    loadNewsFeed();
+                    alert('Comment added!');
+                }
+            }
+        }
+
+        function sharePost(postId) {
+            alert('Post shared to your network!');
+        }
+
+        // Filter functions
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const productCards = document.querySelectorAll('#marketplaceProducts .product-card');
+            
+            productCards.forEach(card => {
+                const name = card.querySelector('.product-name').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterServices() {
+            const searchTerm = document.getElementById('serviceSearch').value.toLowerCase();
+            const serviceListings = document.querySelectorAll('#servicesList .service-listing');
+            
+            serviceListings.forEach(listing => {
+                const name = listing.querySelector('.service-title').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    listing.style.display = 'block';
+                } else {
+                    listing.style.display = 'none';
+                }
+            });
+        }
+
+        function filterJobs() {
+            const searchTerm = document.getElementById('jobSearch').value.toLowerCase();
+            const jobCards = document.querySelectorAll('#jobsList .job-card');
+            
+            jobCards.forEach(card => {
+                const title = card.querySelector('.job-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         }
 
         // Show feature
         function showFeature(feature) {
             const features = {
                 'verified_badge': 'Verified Badge - Build trust with customers',
-                'premium_listing': 'Premium Listing - Get more visibility for your products'
+                'premium_listing': 'Premium Listing - Get more visibility for your listings'
             };
             alert(features[feature] || 'Premium feature');
         }
 
-        // Edit profile
-        function editProfile() {
-            alert('Edit Profile - Update your personal information and preferences');
-        }
-
-        // Show verification modal
-        function showVerificationModal() {
-            alert('Identity Verification - Verify your identity to build trust with other users');
-        }
-
-        // Show preferences modal
-        function showPreferencesModal() {
-            alert('Preferences - Customize your platform experience');
+        // Show create post modal
+        function showCreatePostModal() {
+            document.getElementById('postContent').focus();
         }
 
         // Add entry to system log
@@ -1373,38 +1818,8 @@
 
         // Initialize the platform when page loads
         window.addEventListener('load', () => {
-            addLog('Jazeera Maldives platform loaded', 'info');
+            addLog('Maldives Bazaar platform loaded', 'info');
         });
-
-        // Google Maps API would be loaded here in a real implementation
-        // For this demo, we'll simulate the map initialization
-        setTimeout(() => {
-            if (typeof google === 'undefined') {
-                document.getElementById('maldivesMap').innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column; color: #aaa;">
-                        <i class="fas fa-map" style="font-size: 3em; margin-bottom: 15px;"></i>
-                        <h3>Maldives Islands Map</h3>
-                        <p>Interactive map showing all Maldivian islands</p>
-                        <div style="margin-top: 20px; background: #2a2a3e; padding: 15px; border-radius: 8px; text-align: left;">
-                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                                <div style="width: 12px; height: 12px; background: #ff00ff; border-radius: 50%; margin-right: 8px;"></div>
-                                <span>Malé (Capital)</span>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                                <div style="width: 12px; height: 12px; background: #00f3ff; border-radius: 50%; margin-right: 8px;"></div>
-                                <span>Other Islands</span>
-                            </div>
-                            <div style="display: flex; align-items: center;">
-                                <div style="width: 12px; height: 12px; background: #009688; border-radius: 50%; margin-right: 8px;"></div>
-                                <span>Ocean Areas</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }, 1000);
     </script>
-    <!-- In a real implementation, you would include the Google Maps API here -->
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script> -->
 </body>
 </html>
