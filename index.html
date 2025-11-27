@@ -768,12 +768,12 @@
                 <div class="financial-card buying">
                     <div class="financial-label">Total Buying Cost</div>
                     <div class="financial-value warning" id="totalBuyingCost">$0.00</div>
-                    <div class="financial-label">All Inventory Cost</div>
+                    <div class="financial-label">Original Inventory Cost</div>
                 </div>
                 <div class="financial-card selling">
                     <div class="financial-label">Total Selling Value</div>
                     <div class="financial-value accent" id="totalSellingValue">$0.00</div>
-                    <div class="financial-label">All Inventory Value</div>
+                    <div class="financial-label">Potential Sales Value</div>
                 </div>
                 <div class="financial-card profit">
                     <div class="financial-label">Actual Gross Profit</div>
@@ -853,11 +853,11 @@
                     <h3><i class="fas fa-money-bill-wave"></i> Financial Details</h3>
                     <div class="financial-details">
                         <div class="detail-item">
-                            <span>Total Inventory Buying Cost:</span>
+                            <span>Original Inventory Cost:</span>
                             <span class="warning" id="detailBuyingCost">$0.00</span>
                         </div>
                         <div class="detail-item">
-                            <span>Total Inventory Selling Value:</span>
+                            <span>Potential Sales Value:</span>
                             <span class="accent" id="detailSellingValue">$0.00</span>
                         </div>
                         <div class="detail-item">
@@ -1241,12 +1241,12 @@
         ];
 
         let products = JSON.parse(localStorage.getItem('neonpos_products')) || [
-            { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
-            { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
-            { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
-            { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
-            { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
-            { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
+            { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789', originalStock: 25 },
+            { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790', originalStock: 30 },
+            { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791', originalStock: 50 },
+            { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792', originalStock: 100 },
+            { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793', originalStock: 3 },
+            { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794', originalStock: 10 }
         ];
 
         let sellers = JSON.parse(localStorage.getItem('neonpos_sellers')) || [
@@ -1274,15 +1274,15 @@
 
         // Calculate financial totals with 50/50 profit sharing - FIXED VERSION
         function calculateFinancialTotals() {
-            // Calculate inventory totals (POTENTIAL values)
-            let totalBuyingCost = 0;
-            let totalSellingValue = 0;
-            let totalPotentialProfit = 0;
+            // Calculate ORIGINAL inventory totals (what you originally paid for)
+            let totalOriginalBuyingCost = 0;
+            let totalOriginalSellingValue = 0;
             
+            // Calculate based on ORIGINAL stock values
             products.forEach(product => {
-                totalBuyingCost += product.cost * product.stock;
-                totalSellingValue += product.price * product.stock;
-                totalPotentialProfit += (product.price - product.cost) * product.stock;
+                const originalStock = product.originalStock || product.stock;
+                totalOriginalBuyingCost += product.cost * originalStock;
+                totalOriginalSellingValue += product.price * originalStock;
             });
             
             // Calculate ACTUAL sales totals with 50/50 profit sharing
@@ -1298,12 +1298,22 @@
                 sellerTotalActualProfit += order.sellerProfit;
             });
             
-            // Calculate profit margin percentage
-            const profitMargin = totalSellingValue > 0 ? ((totalSellingValue - totalBuyingCost) / totalSellingValue * 100) : 0;
+            // Calculate CURRENT inventory value (what's left in stock)
+            let currentInventoryBuyingCost = 0;
+            let currentInventorySellingValue = 0;
             
-            // Update financial summary - SHOW ACTUAL PROFITS
-            document.getElementById('totalBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
-            document.getElementById('totalSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            products.forEach(product => {
+                currentInventoryBuyingCost += product.cost * product.stock;
+                currentInventorySellingValue += product.price * product.stock;
+            });
+            
+            // Calculate profit margin percentage
+            const profitMargin = totalOriginalSellingValue > 0 ? 
+                ((totalOriginalSellingValue - totalOriginalBuyingCost) / totalOriginalSellingValue * 100) : 0;
+            
+            // Update financial summary - Show ORIGINAL inventory values
+            document.getElementById('totalBuyingCost').textContent = `$${totalOriginalBuyingCost.toFixed(2)}`;
+            document.getElementById('totalSellingValue').textContent = `$${totalOriginalSellingValue.toFixed(2)}`;
             document.getElementById('totalProfit').textContent = `$${totalActualProfit.toFixed(2)}`; // ACTUAL profit
             document.getElementById('myProfit').textContent = `$${myTotalActualProfit.toFixed(2)}`; // ACTUAL your share
             
@@ -1312,8 +1322,8 @@
             document.getElementById('sellerTotalProfit').textContent = `$${sellerTotalActualProfit.toFixed(2)}`; // ACTUAL
             
             // Update financial details
-            document.getElementById('detailBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
-            document.getElementById('detailSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('detailBuyingCost').textContent = `$${totalOriginalBuyingCost.toFixed(2)}`;
+            document.getElementById('detailSellingValue').textContent = `$${totalOriginalSellingValue.toFixed(2)}`;
             document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
             document.getElementById('detailSalesRevenue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
             document.getElementById('detailMyProfit').textContent = `$${myTotalActualProfit.toFixed(2)}`; // ACTUAL
@@ -1675,6 +1685,10 @@
                 const product = products.find(p => p.id === cartItem.id);
                 if (product) {
                     product.stock -= cartItem.quantity;
+                    // Preserve original stock value
+                    if (!product.originalStock) {
+                        product.originalStock = product.stock + cartItem.quantity;
+                    }
                 }
             });
             
@@ -1790,6 +1804,7 @@
                 price: price,
                 cost: cost,
                 stock: stock,
+                originalStock: stock,
                 barcode: barcode
             };
             
@@ -2200,12 +2215,12 @@
             if (confirm('Are you absolutely sure you want to reset ALL data? This cannot be undone!')) {
                 // Reset all data to initial state
                 products = [
-                    { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
-                    { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
-                    { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
-                    { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
-                    { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
-                    { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
+                    { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789', originalStock: 25 },
+                    { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790', originalStock: 30 },
+                    { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791', originalStock: 50 },
+                    { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792', originalStock: 100 },
+                    { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793', originalStock: 3 },
+                    { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794', originalStock: 10 }
                 ];
                 
                 sellers = [
