@@ -93,7 +93,7 @@
             align-items: center;
             height: 100vh;
             padding: 20px;
-            background: linear-gradient(rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.9)), url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80');
+            background: linear-gradient(rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.9));
             background-size: cover;
             background-position: center;
         }
@@ -280,6 +280,7 @@
             border: 1px solid #333;
             text-align: center;
             transition: all 0.3s;
+            cursor: pointer;
         }
 
         .service-card:active {
@@ -323,6 +324,7 @@
             color: #aaa;
             font-size: 0.75em;
             transition: all 0.3s;
+            cursor: pointer;
         }
 
         .nav-item.active {
@@ -403,6 +405,7 @@
             padding: 12px;
             border: 1px solid #333;
             transition: all 0.3s;
+            cursor: pointer;
         }
 
         .product-card:active {
@@ -433,6 +436,69 @@
             font-size: 0.7em;
             display: inline-block;
             margin-top: 5px;
+        }
+
+        /* Status Messages */
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .status.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--accent);
+        }
+
+        .status.info {
+            background: rgba(0, 243, 255, 0.2);
+            border: 1px solid var(--primary);
+        }
+
+        /* Announcements */
+        .announcement-item {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        .announcement-item:last-child {
+            border-bottom: none;
+        }
+
+        .announcement-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--islamic-green);
+        }
+
+        .announcement-date {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--islamic-green);
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         /* Responsive adjustments */
@@ -473,7 +539,7 @@
                 <i class="fas fa-sign-in-alt"></i> Login to Platform
             </button>
             
-            <div class="status info" style="margin-top: 15px; padding: 10px; background: rgba(0,150,136,0.2); border-radius: 5px;">
+            <div class="status info" style="margin-top: 15px;">
                 <i class="fas fa-info-circle"></i> Demo: user@jazeera.mv / password
             </div>
         </div>
@@ -599,15 +665,20 @@
                 <div class="card">
                     <h3><i class="fas fa-bullhorn"></i> Community Announcements</h3>
                     <div id="announcements">
-                        <div class="service-card">
-                            <div class="service-name">Eid al-Fitr Celebration</div>
+                        <div class="announcement-item">
+                            <div class="announcement-title">Eid al-Fitr Celebration</div>
                             <div class="service-desc">Join us at the Islamic Center for Eid prayers at 7:30 AM</div>
-                            <small>Posted: 2 days ago</small>
+                            <div class="announcement-date">Posted: 2 days ago</div>
                         </div>
-                        <div class="service-card">
-                            <div class="service-name">Zakat Distribution</div>
+                        <div class="announcement-item">
+                            <div class="announcement-title">Zakat Distribution</div>
                             <div class="service-desc">Zakat collection for families in need - donate through platform</div>
-                            <small>Posted: 1 week ago</small>
+                            <div class="announcement-date">Posted: 1 week ago</div>
+                        </div>
+                        <div class="announcement-item">
+                            <div class="announcement-title">Community Cleanup</div>
+                            <div class="service-desc">Beach cleanup event this Saturday at 8 AM</div>
+                            <div class="announcement-date">Posted: 3 days ago</div>
                         </div>
                     </div>
                 </div>
@@ -685,6 +756,9 @@
                             <span>Your Zakat Due:</span>
                             <span id="zakatDue" style="color: var(--accent); font-weight: bold;">MVR 0.00</span>
                         </div>
+                        <button class="btn-success" style="margin-top: 10px;" onclick="donateZakat()">
+                            <i class="fas fa-donate"></i> Donate Zakat Now
+                        </button>
                     </div>
                 </div>
 
@@ -718,29 +792,41 @@
                         <input type="text" id="marketSearch" placeholder="Search products..." onkeyup="filterMarketProducts()">
                     </div>
                     <div class="product-grid" id="marketProductGrid">
-                        <div class="product-card">
+                        <div class="product-card" onclick="viewProduct(1)">
                             <div class="product-name">Fresh Tuna</div>
                             <div class="product-price">MVR 85/kg</div>
                             <div class="product-seller">Ahmed, Male'</div>
                             <div class="halal-badge">Halal Certified</div>
                         </div>
-                        <div class="product-card">
+                        <div class="product-card" onclick="viewProduct(2)">
                             <div class="product-name">Handmade Mats</div>
                             <div class="product-price">MVR 120</div>
                             <div class="product-seller">Aisha, Addu</div>
                             <div class="halal-badge">Local Artisan</div>
                         </div>
-                        <div class="product-card">
+                        <div class="product-card" onclick="viewProduct(3)">
                             <div class="product-name">Coconut Oil</div>
                             <div class="product-price">MVR 65</div>
                             <div class="product-seller">Ismail, Fuvahmulah</div>
                             <div class="halal-badge">Organic</div>
                         </div>
-                        <div class="product-card">
+                        <div class="product-card" onclick="viewProduct(4)">
                             <div class="product-name">Islamic Books</div>
                             <div class="product-price">MVR 45-150</div>
                             <div class="product-seller">Islamic Center</div>
                             <div class="halal-badge">Educational</div>
+                        </div>
+                        <div class="product-card" onclick="viewProduct(5)">
+                            <div class="product-name">Dates (Medjool)</div>
+                            <div class="product-price">MVR 95/kg</div>
+                            <div class="product-seller">Halal Foods Co.</div>
+                            <div class="halal-badge">Premium Quality</div>
+                        </div>
+                        <div class="product-card" onclick="viewProduct(6)">
+                            <div class="product-name">Prayer Rug</div>
+                            <div class="product-price">MVR 180</div>
+                            <div class="product-seller">Islamic Gifts</div>
+                            <div class="halal-badge">Handcrafted</div>
                         </div>
                     </div>
                 </div>
@@ -825,6 +911,22 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-book"></i> Featured Courses</h3>
+                    <div id="featuredCourses">
+                        <div class="service-card">
+                            <div class="service-name">Quran Memorization</div>
+                            <div class="service-desc">Beginner to advanced levels</div>
+                            <button class="btn-small" style="margin-top: 10px;">Enroll Now</button>
+                        </div>
+                        <div class="service-card">
+                            <div class="service-name">Islamic Finance Basics</div>
+                            <div class="service-desc">Understanding halal investments</div>
+                            <button class="btn-small" style="margin-top: 10px;">Enroll Now</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Government Tab -->
@@ -881,14 +983,17 @@
                         <div class="service-card">
                             <div class="service-name">National Budget 2023</div>
                             <div class="service-desc">View how public funds are allocated</div>
+                            <button class="btn-small" style="margin-top: 10px;">View Details</button>
                         </div>
                         <div class="service-card">
                             <div class="service-name">Development Projects</div>
                             <div class="service-desc">Track progress of national projects</div>
+                            <button class="btn-small" style="margin-top: 10px;">View Details</button>
                         </div>
                         <div class="service-card">
                             <div class="service-name">Public Procurement</div>
                             <div class="service-desc">View government tenders</div>
+                            <button class="btn-small" style="margin-top: 10px;">View Details</button>
                         </div>
                     </div>
                 </div>
@@ -920,12 +1025,90 @@
         </div>
     </div>
 
+    <!-- Product View Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-shopping-cart"></i> Product Details</h3>
+            <div id="productModalContent">
+                <!-- Product details will be loaded here -->
+            </div>
+            <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-success" onclick="addToCart()">
+                    <i class="fas fa-cart-plus"></i> Add to Cart
+                </button>
+                <button class="btn-warning" onclick="closeProductModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Platform data and state
         let currentUser = null;
         let currentSurah = 1;
         let isPlayingQuran = false;
         let currentPrayer = 'dhuhr';
+        let currentProduct = null;
+        let cart = [];
+
+        // Sample product data
+        const products = {
+            1: {
+                id: 1,
+                name: "Fresh Tuna",
+                price: 85,
+                seller: "Ahmed, Male'",
+                description: "Freshly caught tuna from the Maldives waters. Halal certified and sustainably sourced.",
+                image: "🐟",
+                category: "Food"
+            },
+            2: {
+                id: 2,
+                name: "Handmade Mats",
+                price: 120,
+                seller: "Aisha, Addu",
+                description: "Beautiful handmade prayer mats with traditional Maldivian designs.",
+                image: "🧶",
+                category: "Home"
+            },
+            3: {
+                id: 3,
+                name: "Coconut Oil",
+                price: 65,
+                seller: "Ismail, Fuvahmulah",
+                description: "Pure organic coconut oil extracted using traditional methods.",
+                image: "🥥",
+                category: "Food"
+            },
+            4: {
+                id: 4,
+                name: "Islamic Books",
+                price: 45,
+                seller: "Islamic Center",
+                description: "Collection of Islamic books covering various topics from Quran to Hadith.",
+                image: "📚",
+                category: "Education"
+            },
+            5: {
+                id: 5,
+                name: "Dates (Medjool)",
+                price: 95,
+                seller: "Halal Foods Co.",
+                description: "Premium quality Medjool dates, perfect for breaking fast.",
+                image: "🌴",
+                category: "Food"
+            },
+            6: {
+                id: 6,
+                name: "Prayer Rug",
+                price: 180,
+                seller: "Islamic Gifts",
+                description: "Beautiful handcrafted prayer rug with compass for Qibla direction.",
+                image: "🕌",
+                category: "Religious"
+            }
+        };
 
         // Prayer times for Malé, Maldives
         const prayerTimes = {
@@ -1018,7 +1201,33 @@
             document.getElementById(tabName).classList.add('active');
             
             // Add active class to clicked tab
-            event.currentTarget.classList.add('active');
+            const clickedElement = event.currentTarget;
+            if (clickedElement.classList.contains('mobile-tab') || clickedElement.classList.contains('nav-item')) {
+                clickedElement.classList.add('active');
+            }
+            
+            // If it's a service card, find and activate the corresponding tab
+            if (clickedElement.classList.contains('service-card')) {
+                const tabMappings = {
+                    'Islamic Center': 'islamic',
+                    'Halal Marketplace': 'marketplace',
+                    'Education': 'education',
+                    'Government': 'government'
+                };
+                
+                const serviceName = clickedElement.querySelector('.service-name').textContent;
+                if (tabMappings[serviceName]) {
+                    document.querySelectorAll('.mobile-tab').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    document.querySelectorAll('.nav-item').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    
+                    document.querySelector(`.mobile-tab[onclick*="${tabMappings[serviceName]}"]`).classList.add('active');
+                    document.querySelector(`.nav-item[onclick*="${tabMappings[serviceName]}"]`).classList.add('active');
+                }
+            }
         }
 
         // Find Qibla direction
@@ -1089,6 +1298,13 @@
             addLog(`Zakat calculated: MVR ${zakatDue.toFixed(2)}`, 'info');
         }
 
+        // Donate Zakat
+        function donateZakat() {
+            const zakatDue = document.getElementById('zakatDue').textContent;
+            alert(`Thank you for your Zakat donation of ${zakatDue}. Your contribution will help those in need.`);
+            addLog(`Zakat donation of ${zakatDue} processed`, 'success');
+        }
+
         // Submit question to scholar
         function submitQuestion() {
             const category = document.getElementById('questionCategory').value;
@@ -1108,23 +1324,94 @@
 
         // Show feature (placeholder for future implementation)
         function showFeature(feature) {
-            alert(`The ${feature} feature will be available in the next update.`);
-            addLog(`Accessed ${feature} feature`, 'info');
+            const featureNames = {
+                'health': 'Health & Wellness Services',
+                'family': 'Family Services',
+                'jobs': 'Halal Job Market',
+                'zakat': 'Zakat & Sadaqah Management',
+                'islamic_banking': 'Islamic Banking',
+                'takaful': 'Takaful Insurance',
+                'halal_invest': 'Halal Investment',
+                'sadaqah': 'Sadaqah Projects',
+                'quran_studies': 'Quran Studies',
+                'arabic': 'Arabic Language Courses',
+                'islamic_history': 'Islamic History',
+                'fiqh': 'Islamic Law (Fiqh)',
+                'programming': 'Programming Courses',
+                'business': 'Business Skills',
+                'vocational': 'Vocational Training',
+                'school': 'School Curriculum',
+                'id_card': 'National ID Services',
+                'passport': 'Passport Services',
+                'driver_license': "Driver's License Services",
+                'birth_cert': 'Birth Certificate Services',
+                'business_reg': 'Business Registration',
+                'tax': 'Tax Services',
+                'health_services': 'Health Services',
+                'voting': 'E-Voting System'
+            };
+            
+            alert(`The ${featureNames[feature] || feature} feature will be available in the next update.`);
+            addLog(`Accessed ${featureNames[feature] || feature}`, 'info');
         }
 
         // Filter market products
         function filterMarketProducts() {
             const searchTerm = document.getElementById('marketSearch').value.toLowerCase();
-            const products = document.querySelectorAll('.product-card');
+            const productCards = document.querySelectorAll('#marketProductGrid .product-card');
             
-            products.forEach(product => {
-                const name = product.querySelector('.product-name').textContent.toLowerCase();
+            productCards.forEach(card => {
+                const name = card.querySelector('.product-name').textContent.toLowerCase();
                 if (name.includes(searchTerm)) {
-                    product.style.display = 'block';
+                    card.style.display = 'block';
                 } else {
-                    product.style.display = 'none';
+                    card.style.display = 'none';
                 }
             });
+        }
+
+        // View product details
+        function viewProduct(productId) {
+            currentProduct = products[productId];
+            if (!currentProduct) return;
+            
+            const modalContent = document.getElementById('productModalContent');
+            modalContent.innerHTML = `
+                <div style="text-align: center; font-size: 3em; margin-bottom: 15px;">${currentProduct.image}</div>
+                <h3>${currentProduct.name}</h3>
+                <p style="margin: 10px 0;">${currentProduct.description}</p>
+                <div class="result-item">
+                    <span>Price:</span>
+                    <span style="color: var(--accent); font-weight: bold;">MVR ${currentProduct.price}</span>
+                </div>
+                <div class="result-item">
+                    <span>Seller:</span>
+                    <span>${currentProduct.seller}</span>
+                </div>
+                <div class="result-item">
+                    <span>Category:</span>
+                    <span>${currentProduct.category}</span>
+                </div>
+                <div class="halal-badge" style="margin-top: 10px;">Halal Certified</div>
+            `;
+            
+            document.getElementById('productModal').style.display = 'block';
+        }
+
+        // Close product modal
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            currentProduct = null;
+        }
+
+        // Add to cart
+        function addToCart() {
+            if (!currentProduct) return;
+            
+            cart.push(currentProduct);
+            alert(`${currentProduct.name} added to cart!`);
+            closeProductModal();
+            addLog(`Added ${currentProduct.name} to cart`, 'info');
         }
 
         // Add entry to system log
