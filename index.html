@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
-<html lang="dv">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maldives Bazaar - Complete Marketplace</title>
+    <title>NEON POS - Complete System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -25,8 +26,6 @@
             --table-header: #2a2a3e;
             --table-row: #1e1e2e;
             --table-alt: #252538;
-            --islamic-green: #009688;
-            --admin-purple: #8a2be2;
         }
 
         body {
@@ -34,40 +33,22 @@
             color: white;
             min-height: 100vh;
             overflow-x: hidden;
+            padding-bottom: 70px;
         }
 
         .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Side Panels */
-        .side-panel {
-            width: 320px;
-            background: var(--card-bg);
+            max-width: 100%;
+            margin: 0 auto;
             padding: 15px;
-            overflow-y: auto;
-            border-right: 2px solid var(--islamic-green);
         }
 
-        .side-panel.right {
-            border-right: none;
-            border-left: 2px solid var(--islamic-green);
-        }
-
-        /* Main Content Area */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header */
         .header {
             text-align: center;
+            margin-bottom: 20px;
             padding: 15px;
             background: var(--card-bg);
-            border-bottom: 2px solid var(--islamic-green);
+            border-radius: 12px;
+            border: 2px solid var(--primary);
             position: relative;
             overflow: hidden;
         }
@@ -79,7 +60,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--islamic-green), var(--primary), var(--islamic-green));
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
             animation: pulse 3s infinite;
         }
 
@@ -91,11 +72,11 @@
 
         .logo {
             font-size: 1.8em;
-            background: linear-gradient(90deg, var(--islamic-green), var(--primary));
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(0, 150, 136, 0.5);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
             font-weight: bold;
         }
 
@@ -104,12 +85,160 @@
             font-size: 0.9em;
         }
 
-        /* Main Feed */
-        .main-feed {
-            flex: 1;
+        /* Financial Summary */
+        .financial-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .financial-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        .financial-card.buying {
+            border-color: var(--warning);
+        }
+
+        .financial-card.selling {
+            border-color: var(--accent);
+        }
+
+        .financial-card.profit {
+            border-color: var(--primary);
+        }
+
+        .financial-card.my-profit {
+            border-color: var(--secondary);
+        }
+
+        .financial-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .financial-label {
+            color: #aaa;
+            font-size: 0.8em;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             padding: 20px;
-            overflow-y: auto;
-            background: var(--bg-dark);
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--primary);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        /* Main App (hidden initially) */
+        .main-app {
+            display: none;
+        }
+
+        /* Mobile Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 15px 10px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.75em;
+        }
+
+        .primary { color: var(--primary); }
+        .secondary { color: var(--secondary); }
+        .accent { color: var(--accent); }
+        .warning { color: var(--warning); }
+
+        /* Mobile Tabs */
+        .mobile-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 5px;
+        }
+
+        .mobile-tab {
+            padding: 12px 15px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 8px;
+            margin: 0 2px;
+            flex: 1;
+            text-align: center;
+            font-size: 0.85em;
+        }
+
+        .mobile-tab.active {
+            background: rgba(0, 243, 255, 0.2);
+            border: 1px solid var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         /* Cards */
@@ -122,7 +251,7 @@
         }
 
         .card h3 {
-            color: var(--islamic-green);
+            color: var(--primary);
             margin-bottom: 12px;
             display: flex;
             align-items: center;
@@ -155,7 +284,7 @@
         }
 
         button {
-            background: linear-gradient(90deg, var(--islamic-green), #00796b);
+            background: linear-gradient(90deg, var(--primary), #0099cc);
             color: white;
             border: none;
             cursor: pointer;
@@ -180,126 +309,49 @@
             background: linear-gradient(90deg, var(--danger), #cc0000);
         }
 
-        .btn-admin {
-            background: linear-gradient(90deg, var(--admin-purple), #6a0dad);
-        }
-
         .btn-small {
             padding: 8px 12px;
             font-size: 0.85em;
             width: auto;
         }
 
-        /* Service Grid */
-        .service-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin-top: 15px;
+        /* Tables */
+        .mobile-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75em;
         }
 
-        .service-card {
-            background: #2a2a3e;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid #333;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
+        .mobile-table th {
+            background: var(--table-header);
+            padding: 10px 5px;
+            text-align: left;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
         }
 
-        .service-card:active {
-            transform: scale(0.98);
-            border-color: var(--islamic-green);
-        }
-
-        .service-icon {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-            color: var(--islamic-green);
-        }
-
-        .service-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 0.9em;
-        }
-
-        .service-desc {
-            font-size: 0.7em;
-            color: #aaa;
-        }
-
-        /* User Profile */
-        .user-profile {
-            text-align: center;
-            padding: 15px;
+        .mobile-table td {
+            padding: 10px 5px;
             border-bottom: 1px solid #333;
-            margin-bottom: 15px;
         }
 
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--islamic-green), var(--primary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            margin: 0 auto 10px;
-            color: white;
-            position: relative;
+        .mobile-table tr {
+            background: var(--table-row);
         }
 
-        .verified-badge {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background: var(--accent);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7em;
+        .mobile-table tr:nth-child(even) {
+            background: var(--table-alt);
         }
 
-        .user-name {
-            font-weight: bold;
-            margin-bottom: 5px;
+        .positive {
+            color: var(--accent);
         }
 
-        .user-role {
-            color: #aaa;
-            font-size: 0.8em;
-            margin-bottom: 10px;
+        .negative {
+            color: var(--danger);
         }
 
-        .user-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: var(--islamic-green);
-        }
-
-        .stat-label {
-            font-size: 0.7em;
-            color: #aaa;
-        }
-
-        /* Marketplace */
+        /* Product Grid */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -313,59 +365,146 @@
             padding: 12px;
             border: 1px solid #333;
             transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
         }
 
         .product-card:active {
             transform: scale(0.98);
-            border-color: var(--islamic-green);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 120px;
-            background: #333;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            overflow: hidden;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            border-color: var(--primary);
         }
 
         .product-name {
             font-weight: bold;
             margin-bottom: 5px;
-            font-size: 0.9em;
         }
 
         .product-price {
             color: var(--accent);
             font-weight: bold;
-            font-size: 0.9em;
         }
 
-        .product-seller {
-            font-size: 0.7em;
+        .product-stock {
+            font-size: 0.8em;
             color: #aaa;
         }
 
-        .halal-badge {
-            background: var(--islamic-green);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.6em;
-            display: inline-block;
-            margin-top: 5px;
+        /* Cart */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+        }
+
+        .cart-item-price {
+            color: var(--accent);
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-total {
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: right;
+            padding: 10px 0;
+            margin-top: 10px;
+            border-top: 2px solid var(--primary);
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .payment-method {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-method.active {
+            background: rgba(0, 243, 255, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Receipt */
+        .receipt {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-line;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Team Members */
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        .team-member:last-child {
+            border-bottom: none;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 0.95em;
+        }
+
+        .member-role {
+            color: #aaa;
+            font-size: 0.8em;
+        }
+
+        .member-balance {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 0.9em;
         }
 
         /* Status Messages */
@@ -387,34 +526,86 @@
             border: 1px solid var(--primary);
         }
 
-        .status.warning {
-            background: rgba(255, 204, 0, 0.2);
-            border: 1px solid var(--warning);
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        /* Announcements */
-        .announcement-item {
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            display: flex;
+            padding: 10px;
+            border-top: 2px solid var(--primary);
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 5px;
+            color: #aaa;
+            font-size: 0.75em;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.4em;
+            margin-bottom: 3px;
+        }
+
+        /* Log */
+        .log {
+            background: #2a2a3e;
             padding: 12px;
-            border-bottom: 1px solid #333;
-            font-size: 0.8em;
+            border-radius: 5px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.75em;
+            margin-top: 12px;
         }
 
-        .announcement-item:last-child {
-            border-bottom: none;
-        }
-
-        .announcement-title {
-            font-weight: bold;
+        .log-entry {
             margin-bottom: 5px;
-            color: var(--islamic-green);
+            padding: 5px;
+            border-radius: 3px;
         }
 
-        .announcement-date {
+        .log-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid var(--accent);
+        }
+
+        .log-info {
+            background: rgba(0, 243, 255, 0.1);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Swipeable content */
+        .swipe-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Small text for mobile */
+        .small-text {
             font-size: 0.7em;
             color: #aaa;
         }
 
-        /* Modal */
+        /* Edit Modal */
         .modal {
             display: none;
             position: fixed;
@@ -432,365 +623,91 @@
             background: var(--card-bg);
             padding: 20px;
             border-radius: 10px;
-            border: 2px solid var(--islamic-green);
+            border: 2px solid var(--primary);
             max-width: 500px;
             margin: 0 auto;
         }
 
-        /* Tabs */
-        .tabs {
-            display: flex;
-            margin-bottom: 15px;
-            background: var(--card-bg);
-            border-radius: 10px;
-            overflow-x: auto;
-            padding: 5px;
-        }
-
-        .tab {
-            padding: 10px 15px;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 8px;
-            margin: 0 2px;
-            flex: 1;
+        /* Reset Confirmation */
+        .reset-confirm {
             text-align: center;
-            font-size: 0.8em;
-        }
-
-        .tab.active {
-            background: rgba(0, 150, 136, 0.2);
-            border: 1px solid var(--islamic-green);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Login Screen */
-        .login-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             padding: 20px;
-            background: linear-gradient(rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.9));
         }
 
-        .login-card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid var(--islamic-green);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .login-logo {
-            font-size: 2.5em;
-            background: linear-gradient(90deg, var(--islamic-green), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-
-        /* News Feed */
-        .news-feed {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .news-post {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid #333;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .post-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--islamic-green), var(--primary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            position: relative;
-        }
-
-        .post-user {
-            font-weight: bold;
-        }
-
-        .post-time {
-            font-size: 0.8em;
-            color: #aaa;
-        }
-
-        .post-content {
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        .post-media {
-            margin: 10px 0;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .post-media img, .post-media video {
-            width: 100%;
-            max-height: 400px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .post-actions {
-            display: flex;
-            gap: 15px;
-            border-top: 1px solid #333;
-            padding-top: 10px;
-        }
-
-        .post-action {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #aaa;
-            cursor: pointer;
-        }
-
-        .post-action:hover {
-            color: var(--islamic-green);
-        }
-
-        /* Create Post */
-        .create-post {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .post-input {
-            width: 100%;
-            min-height: 80px;
-            background: #2a2a3e;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 12px;
-            color: white;
-            margin-bottom: 10px;
-            resize: vertical;
-        }
-
-        .media-preview {
+        .reset-buttons {
             display: flex;
             gap: 10px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
+            margin-top: 20px;
         }
 
-        .media-preview-item {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            border-radius: 6px;
-            overflow: hidden;
+        .reset-buttons button {
+            flex: 1;
         }
 
-        .media-preview-item img, .media-preview-item video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .remove-media {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: var(--danger);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7em;
-            cursor: pointer;
-        }
-
-        /* Job Listings */
-        .job-grid {
+        /* Financial Details */
+        .financial-details {
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
-            margin-top: 15px;
+            margin: 15px 0;
         }
 
-        .job-card {
-            background: #2a2a3e;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid #333;
-            cursor: pointer;
-        }
-
-        .job-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--islamic-green);
-        }
-
-        .job-company {
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .job-location {
-            font-size: 0.8em;
-            color: #aaa;
-        }
-
-        /* Service Listings */
-        .service-listing {
-            background: #2a2a3e;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid #333;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-
-        .service-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--islamic-green);
-        }
-
-        .service-provider {
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .service-price {
-            font-size: 0.8em;
-            color: var(--accent);
-            font-weight: bold;
-        }
-
-        /* Rating System */
-        .rating-stars {
+        .detail-item {
             display: flex;
-            gap: 2px;
-            margin: 5px 0;
-        }
-
-        .star {
-            color: #aaa;
-            cursor: pointer;
-        }
-
-        .star.filled {
-            color: var(--warning);
-        }
-
-        /* Admin Panel */
-        .admin-panel {
-            background: var(--card-bg);
-            border: 2px solid var(--admin-purple);
-        }
-
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .admin-stat {
+            justify-content: space-between;
+            padding: 8px;
             background: #2a2a3e;
+            border-radius: 5px;
+        }
+
+        /* Profit Distribution */
+        .profit-distribution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .profit-card {
+            background: var(--card-bg);
             padding: 15px;
             border-radius: 8px;
+            border: 1px solid #333;
             text-align: center;
         }
 
-        .admin-stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: var(--admin-purple);
-            margin-bottom: 5px;
+        .profit-card.my-share {
+            border-color: var(--primary);
         }
 
-        .admin-stat-label {
-            font-size: 0.8em;
-            color: #aaa;
-        }
-
-        /* Search and Filter */
-        .search-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .search-box {
-            flex: 1;
-        }
-
-        .filter-select {
-            width: 150px;
-        }
-
-        /* Report System */
-        .report-reason {
-            margin-bottom: 10px;
-        }
-
-        .report-details {
-            margin-bottom: 15px;
+        .profit-card.seller-share {
+            border-color: var(--secondary);
         }
 
         /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
+        @media (max-width: 380px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
             
-            .side-panel {
-                width: 100%;
-                border-right: none;
-                border-bottom: 2px solid var(--islamic-green);
+            .mobile-table {
+                font-size: 0.7em;
             }
             
-            .side-panel.right {
-                border-left: none;
-                border-top: 2px solid var(--islamic-green);
+            .mobile-tab {
+                padding: 10px 12px;
+                font-size: 0.8em;
             }
             
             .product-grid {
                 grid-template-columns: 1fr;
             }
-
-            .admin-stats {
+            
+            .financial-summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .profit-distribution {
                 grid-template-columns: 1fr;
             }
         }
@@ -800,1224 +717,1638 @@
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-card">
-            <div class="login-logo">Maldives Bazaar</div>
-            <h3>Complete Marketplace Platform</h3>
+            <div class="login-logo">NEON POS</div>
+            <h3>Login to System</h3>
             
             <div class="form-group">
                 <label for="loginEmail">Email</label>
-                <input type="text" id="loginEmail" placeholder="Enter your email">
+                <input type="email" id="loginEmail" placeholder="admin@neonpos.com" value="admin@neonpos.com">
             </div>
             
             <div class="form-group">
                 <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter your password">
+                <input type="password" id="loginPassword" placeholder="Enter password" value="password">
+            </div>
+            
+            <div class="form-group">
+                <label for="userRole">Role</label>
+                <select id="userRole">
+                    <option value="admin">Admin</option>
+                    <option value="staff">Staff</option>
+                </select>
             </div>
             
             <button class="btn-success" onclick="login()">
-                <i class="fas fa-sign-in-alt"></i> Login to Marketplace
+                <i class="fas fa-sign-in-alt"></i> Login to POS
             </button>
             
             <div class="status info" style="margin-top: 15px;">
-                <i class="fas fa-info-circle"></i> Join our trusted marketplace community
-            </div>
-            
-            <div style="margin-top: 15px; font-size: 0.9em;">
-                <a href="#" onclick="showRegisterModal()" style="color: var(--islamic-green);">Create New Account</a>
-            </div>
-
-            <!-- Quick Demo Login -->
-            <div style="margin-top: 20px; padding: 15px; background: rgba(0,150,136,0.1); border-radius: 8px;">
-                <h4 style="margin-bottom: 10px;">Quick Demo Access:</h4>
-                <button class="btn-small" onclick="demoLogin('demo@bazaar.mv', 'demo123')" style="width: 100%; margin-bottom: 5px;">
-                    Demo User
-                </button>
-                <button class="btn-small btn-admin" onclick="demoLogin('admin@bazaar.mv', 'admin123')" style="width: 100%;">
-                    Admin User
-                </button>
+                <i class="fas fa-info-circle"></i> Demo: admin@neonpos.com / password
             </div>
         </div>
     </div>
 
-    <!-- Register Modal -->
-    <div class="modal" id="registerModal">
+    <!-- Main POS Application -->
+    <div class="main-app" id="mainApp">
+        <div class="container">
+            <div class="header">
+                <div class="logo">NEON POS</div>
+                <p class="tagline" id="userGreeting">Complete Point of Sale System</p>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                    <button class="btn-danger btn-small" onclick="showResetModal()">
+                        <i class="fas fa-trash"></i> Reset All Data
+                    </button>
+                    <button class="btn-danger btn-small" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Financial Summary -->
+            <div class="financial-summary">
+                <div class="financial-card buying">
+                    <div class="financial-label">Total Buying Cost</div>
+                    <div class="financial-value warning" id="totalBuyingCost">$0.00</div>
+                    <div class="financial-label">All Inventory Cost</div>
+                </div>
+                <div class="financial-card selling">
+                    <div class="financial-label">Total Selling Value</div>
+                    <div class="financial-value accent" id="totalSellingValue">$0.00</div>
+                    <div class="financial-label">All Inventory Value</div>
+                </div>
+                <div class="financial-card profit">
+                    <div class="financial-label">Total Gross Profit</div>
+                    <div class="financial-value primary" id="totalProfit">$0.00</div>
+                    <div class="financial-label">Potential Profit</div>
+                </div>
+                <div class="financial-card my-profit">
+                    <div class="financial-label">My 50% Profit</div>
+                    <div class="financial-value secondary" id="myProfit">$0.00</div>
+                    <div class="financial-label">My Actual Share</div>
+                </div>
+            </div>
+
+            <!-- Profit Distribution -->
+            <div class="profit-distribution">
+                <div class="profit-card my-share">
+                    <div class="financial-label">My Total Profit</div>
+                    <div class="financial-value primary" id="myTotalProfit">$0.00</div>
+                    <div class="financial-label">50% of All Sales</div>
+                </div>
+                <div class="profit-card seller-share">
+                    <div class="financial-label">Seller Total Profit</div>
+                    <div class="financial-value secondary" id="sellerTotalProfit">$0.00</div>
+                    <div class="financial-label">50% of All Sales</div>
+                </div>
+            </div>
+
+            <!-- Stats Dashboard -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Today's Sales</div>
+                    <div class="stat-value primary" id="todaySales">$0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Today's Orders</div>
+                    <div class="stat-value accent" id="todayOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Low Stock Items</div>
+                    <div class="stat-value secondary" id="lowStockCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Sellers</div>
+                    <div class="stat-value warning" id="activeSellers">0</div>
+                </div>
+            </div>
+
+            <!-- Mobile Tabs -->
+            <div class="mobile-tabs">
+                <div class="mobile-tab active" onclick="switchTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i><br>Dashboard
+                </div>
+                <div class="mobile-tab" onclick="switchTab('pos')">
+                    <i class="fas fa-cash-register"></i><br>POS
+                </div>
+                <div class="mobile-tab" onclick="switchTab('products')">
+                    <i class="fas fa-boxes"></i><br>Products
+                </div>
+                <div class="mobile-tab" onclick="switchTab('sellers')">
+                    <i class="fas fa-users"></i><br>Sellers
+                </div>
+                <div class="mobile-tab" onclick="switchTab('reports')">
+                    <i class="fas fa-chart-bar"></i><br>Reports
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="card">
+                    <h3><i class="fas fa-chart-line"></i> Sales Overview</h3>
+                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
+                        <canvas id="salesChart" width="300" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-money-bill-wave"></i> Financial Details</h3>
+                    <div class="financial-details">
+                        <div class="detail-item">
+                            <span>Total Inventory Buying Cost:</span>
+                            <span class="warning" id="detailBuyingCost">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Total Inventory Selling Value:</span>
+                            <span class="accent" id="detailSellingValue">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Potential Profit Margin:</span>
+                            <span class="primary" id="detailProfitMargin">0%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Actual Sales Revenue:</span>
+                            <span class="accent" id="detailSalesRevenue">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>My 50% Profit from Sales:</span>
+                            <span class="primary" id="detailMyProfit">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Sellers 50% Profit from Sales:</span>
+                            <span class="secondary" id="detailSellerProfit">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Low Stock Alerts</h3>
+                    <div id="lowStockAlerts">
+                        <div class="status info">No low stock items</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-terminal"></i> Recent Activity</h3>
+                    <div class="log" id="activityLog">
+                        <div class="log-entry log-info">
+                            [08:01:20] System initialized
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POS Tab -->
+            <div id="pos" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-shopping-cart"></i> Current Sale</h3>
+                    <div id="cartItems">
+                        <div class="status info">Cart is empty</div>
+                    </div>
+                    <div class="cart-total" id="cartTotal">Total: $0.00</div>
+                    
+                    <div class="form-group">
+                        <label for="sellerSelect">Select Seller</label>
+                        <select id="sellerSelect">
+                            <!-- Sellers will be loaded here -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discountAmount">Discount (%)</label>
+                        <input type="number" id="discountAmount" min="0" max="100" value="0">
+                    </div>
+                    
+                    <h4>Payment Method</h4>
+                    <div class="payment-methods" id="paymentMethods">
+                        <div class="payment-method active" onclick="selectPayment('cash')">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <div>Cash</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('card')">
+                            <i class="fas fa-credit-card"></i>
+                            <div>Card</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('crypto')">
+                            <i class="fas fa-coins"></i>
+                            <div>Crypto</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('transfer')">
+                            <i class="fas fa-university"></i>
+                            <div>Transfer</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-success" onclick="processPayment()" id="checkoutBtn">
+                        <i class="fas fa-credit-card"></i> Process Payment
+                    </button>
+                    <button class="btn-warning" onclick="clearCart()">
+                        <i class="fas fa-trash"></i> Clear Cart
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-boxes"></i> Products</h3>
+                    <div class="form-group">
+                        <input type="text" id="productSearch" placeholder="Search products..." onkeyup="filterProducts()">
+                    </div>
+                    <div class="product-grid" id="productGrid">
+                        <!-- Products will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Tab -->
+            <div id="products" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Product</h3>
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" placeholder="Product name">
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Selling Price ($)</label>
+                        <input type="number" id="productPrice" step="0.01" placeholder="Selling price">
+                    </div>
+                    <div class="form-group">
+                        <label for="productCost">Buying Price ($)</label>
+                        <input type="number" id="productCost" step="0.01" placeholder="Buying price">
+                    </div>
+                    <div class="form-group">
+                        <label for="productStock">Stock Quantity</label>
+                        <input type="number" id="productStock" placeholder="Stock quantity">
+                    </div>
+                    <div class="form-group">
+                        <label for="productBarcode">Barcode (Optional)</label>
+                        <input type="text" id="productBarcode" placeholder="Barcode">
+                    </div>
+                    <button class="btn-success" onclick="addProduct()">
+                        <i class="fas fa-save"></i> Add Product
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-boxes"></i> Product Inventory</h3>
+                    <div class="swipe-container">
+                        <table class="mobile-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Buy Price</th>
+                                    <th>Sell Price</th>
+                                    <th>Profit</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <!-- Products will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sellers Tab -->
+            <div id="sellers" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-user-plus"></i> Add Seller</h3>
+                    <div class="form-group">
+                        <label for="sellerName">Full Name</label>
+                        <input type="text" id="sellerName" placeholder="Seller name">
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerPhone">Phone Number</label>
+                        <input type="text" id="sellerPhone" placeholder="Phone number">
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerEmail">Email (Optional)</label>
+                        <input type="email" id="sellerEmail" placeholder="Email">
+                    </div>
+                    <button class="btn-success" onclick="addSeller()">
+                        <i class="fas fa-user-plus"></i> Add Seller
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-users"></i> Seller List</h3>
+                    <div id="sellerList">
+                        <div class="status info">No sellers added yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-receipt"></i> Order History</h3>
+                    <div class="form-group">
+                        <label for="reportDate">Filter by Date</label>
+                        <select id="reportDate" onchange="filterOrders()">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="all">All Time</option>
+                        </select>
+                    </div>
+                    <div class="swipe-container">
+                        <table class="mobile-table" id="ordersTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Seller</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Orders will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-danger" onclick="deleteAllOrders()">
+                            <i class="fas fa-trash"></i> Delete All Orders
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-chart-pie"></i> Sales Reports</h3>
+                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
+                        <canvas id="reportsChart" width="300" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('dashboard')">
+                <div class="nav-icon"><i class="fas fa-tachometer-alt"></i></div>
+                <div>Dashboard</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('pos')">
+                <div class="nav-icon"><i class="fas fa-cash-register"></i></div>
+                <div>POS</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('products')">
+                <div class="nav-icon"><i class="fas fa-boxes"></i></div>
+                <div>Products</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('sellers')">
+                <div class="nav-icon"><i class="fas fa-users"></i></div>
+                <div>Sellers</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('reports')">
+                <div class="nav-icon"><i class="fas fa-chart-bar"></i></div>
+                <div>Reports</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal" id="editProductModal">
         <div class="modal-content">
-            <h3><i class="fas fa-user-plus"></i> Join Marketplace</h3>
+            <h3><i class="fas fa-edit"></i> Edit Product</h3>
             <div class="form-group">
-                <label for="regName">Full Name</label>
-                <input type="text" id="regName" placeholder="Enter your full name">
+                <label for="editProductName">Product Name</label>
+                <input type="text" id="editProductName">
             </div>
             <div class="form-group">
-                <label for="regEmail">Email</label>
-                <input type="email" id="regEmail" placeholder="Enter your email">
+                <label for="editProductPrice">Selling Price ($)</label>
+                <input type="number" id="editProductPrice" step="0.01">
             </div>
             <div class="form-group">
-                <label for="regPhone">Phone Number</label>
-                <input type="text" id="regPhone" placeholder="Enter your phone">
+                <label for="editProductCost">Buying Price ($)</label>
+                <input type="number" id="editProductCost" step="0.01">
             </div>
             <div class="form-group">
-                <label for="regPassword">Password</label>
-                <input type="password" id="regPassword" placeholder="Create a password">
+                <label for="editProductStock">Stock Quantity</label>
+                <input type="number" id="editProductStock">
             </div>
             <div class="form-group">
-                <label for="regIsland">Home Island</label>
-                <select id="regIsland">
-                    <option value="male">Malé</option>
-                    <option value="addu">Addu City</option>
-                    <option value="fuvahmulah">Fuvahmulah</option>
-                    <option value="other">Other Island</option>
-                </select>
+                <label for="editProductBarcode">Barcode</label>
+                <input type="text" id="editProductBarcode">
             </div>
-            <div class="form-group">
-                <label for="regUserType">I want to:</label>
-                <select id="regUserType">
-                    <option value="buyer">Buy products/services</option>
-                    <option value="seller">Sell products</option>
-                    <option value="service">Offer services</option>
-                    <option value="both">All of the above</option>
-                </select>
-            </div>
-            <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-success" onclick="registerUser()">
-                    <i class="fas fa-user-plus"></i> Join Now
+            <div class="action-buttons">
+                <button class="btn-success" onclick="saveProductEdit()">
+                    <i class="fas fa-save"></i> Save Changes
                 </button>
-                <button class="btn-warning" onclick="closeRegisterModal()">
+                <button class="btn-warning" onclick="closeEditModal()">
                     <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Main Platform -->
-    <div class="container" id="mainApp" style="display: none;">
-        <!-- Left Panel - User Profile & Navigation -->
-        <div class="side-panel">
-            <!-- User Profile -->
-            <div class="user-profile">
-                <div class="user-avatar" id="userAvatar">
-                    DU
-                    <div class="verified-badge" id="verifiedBadge" style="display: none;">
-                        <i class="fas fa-check"></i>
-                    </div>
-                </div>
-                <div class="user-name" id="userName">Demo User</div>
-                <div class="user-role" id="userRole">Seller & Service Provider</div>
-                <div class="user-stats">
-                    <div class="stat">
-                        <div class="stat-value" id="userSales">15</div>
-                        <div class="stat-label">Sales</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="userServices">8</div>
-                        <div class="stat-label">Services</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="userRating">4.9</div>
-                        <div class="stat-label">Rating</div>
-                    </div>
-                </div>
+    <!-- Edit Seller Modal -->
+    <div class="modal" id="editSellerModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Seller</h3>
+            <div class="form-group">
+                <label for="editSellerName">Full Name</label>
+                <input type="text" id="editSellerName">
             </div>
-
-            <!-- Navigation Tabs -->
-            <div class="tabs">
-                <div class="tab active" onclick="switchMainTab('feed')">
-                    <i class="fas fa-newspaper"></i> Feed
-                </div>
-                <div class="tab" onclick="switchMainTab('marketplace')">
-                    <i class="fas fa-store"></i> Marketplace
-                </div>
-                <div class="tab" onclick="switchMainTab('services')">
-                    <i class="fas fa-concierge-bell"></i> Services
-                </div>
-                <div class="tab" onclick="switchMainTab('jobs')">
-                    <i class="fas fa-briefcase"></i> Jobs
-                </div>
-                <div class="tab" id="adminTab" style="display: none;" onclick="switchMainTab('admin')">
-                    <i class="fas fa-crown"></i> Admin
-                </div>
+            <div class="form-group">
+                <label for="editSellerPhone">Phone Number</label>
+                <input type="text" id="editSellerPhone">
             </div>
-
-            <!-- Quick Actions -->
-            <div class="card">
-                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                <div class="service-grid">
-                    <div class="service-card" onclick="showAddProductModal()">
-                        <div class="service-icon"><i class="fas fa-plus"></i></div>
-                        <div class="service-name">Sell Product</div>
-                        <div class="service-desc">List new item</div>
-                    </div>
-                    <div class="service-card" onclick="showAddServiceModal()">
-                        <div class="service-icon"><i class="fas fa-tools"></i></div>
-                        <div class="service-name">Offer Service</div>
-                        <div class="service-desc">Start earning</div>
-                    </div>
-                    <div class="service-card" onclick="showAddJobModal()">
-                        <div class="service-icon"><i class="fas fa-briefcase"></i></div>
-                        <div class="service-name">Post Job</div>
-                        <div class="service-desc">Hire talent</div>
-                    </div>
-                    <div class="service-card" onclick="showCreatePostModal()">
-                        <div class="service-icon"><i class="fas fa-edit"></i></div>
-                        <div class="service-name">Create Post</div>
-                        <div class="service-desc">Share update</div>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label for="editSellerEmail">Email</label>
+                <input type="email" id="editSellerEmail">
             </div>
-
-            <!-- Island Filter -->
-            <div class="card">
-                <h3><i class="fas fa-map-marker-alt"></i> Filter by Island</h3>
-                <select id="islandFilter" onchange="filterByIsland()" class="filter-select">
-                    <option value="all">All Islands</option>
-                    <option value="male">Malé</option>
-                    <option value="addu">Addu City</option>
-                    <option value="fuvahmulah">Fuvahmulah</option>
-                    <option value="other">Other Islands</option>
-                </select>
-            </div>
-
-            <!-- My Listings -->
-            <div class="card">
-                <h3><i class="fas fa-list"></i> My Listings</h3>
-                <div id="myListings">
-                    <!-- User's listings will be loaded here -->
-                </div>
+            <div class="action-buttons">
+                <button class="btn-success" onclick="saveSellerEdit()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn-warning" onclick="closeSellerModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
             </div>
         </div>
+    </div>
 
-        <!-- Main Content Area -->
-        <div class="main-content">
-            <!-- Header -->
-            <div class="header">
-                <div class="logo">Maldives Bazaar</div>
-                <p class="tagline" id="userGreeting">Buy • Sell • Services • Jobs • Trusted Community</p>
-                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                    <button class="btn-danger btn-small" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                    <button class="btn-warning btn-small" onclick="showReportModal()">
-                        <i class="fas fa-flag"></i> Report
-                    </button>
-                </div>
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderDetailsModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-receipt"></i> Order Details</h3>
+            <div id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
             </div>
-
-            <!-- Main Feed -->
-            <div class="main-feed">
-                <!-- Feed Tab -->
-                <div id="feedTab" class="tab-content active">
-                    <!-- Create Post -->
-                    <div class="create-post">
-                        <div class="post-header">
-                            <div class="post-avatar" id="currentUserAvatar">
-                                DU
-                                <div class="verified-badge" id="currentUserVerified" style="display: none;">
-                                    <i class="fas fa-check"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="post-user" id="currentUserName">Demo User</div>
-                                <div class="post-time">Share with the community</div>
-                            </div>
-                        </div>
-                        <textarea class="post-input" id="postContent" placeholder="Share what's happening in your business..."></textarea>
-                        
-                        <!-- Media Upload -->
-                        <div class="form-group">
-                            <label for="mediaUpload">Add Photos/Videos</label>
-                            <input type="file" id="mediaUpload" multiple accept="image/*,video/*" onchange="previewMedia()">
-                        </div>
-                        
-                        <div class="media-preview" id="mediaPreview"></div>
-                        
-                        <button class="btn-success" onclick="createPost()">
-                            <i class="fas fa-paper-plane"></i> Post Update
-                        </button>
-                    </div>
-
-                    <!-- News Feed -->
-                    <div class="news-feed" id="newsFeed">
-                        <!-- Posts will be loaded here -->
-                    </div>
-                </div>
-
-                <!-- Marketplace Tab -->
-                <div id="marketplaceTab" class="tab-content">
-                    <div class="card">
-                        <h3><i class="fas fa-store"></i> Marketplace</h3>
-                        <div class="search-container">
-                            <div class="search-box">
-                                <input type="text" id="productSearch" placeholder="Search products..." onkeyup="filterProducts()">
-                            </div>
-                            <select id="productCategoryFilter" onchange="filterProducts()" class="filter-select">
-                                <option value="all">All Categories</option>
-                                <option value="food">Food</option>
-                                <option value="handicrafts">Handicrafts</option>
-                                <option value="fishing">Fishing</option>
-                                <option value="clothing">Clothing</option>
-                                <option value="electronics">Electronics</option>
-                            </select>
-                        </div>
-                        <div class="product-grid" id="marketplaceProducts">
-                            <!-- Products will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Services Tab -->
-                <div id="servicesTab" class="tab-content">
-                    <div class="card">
-                        <h3><i class="fas fa-concierge-bell"></i> Services</h3>
-                        <div class="search-container">
-                            <div class="search-box">
-                                <input type="text" id="serviceSearch" placeholder="Search services..." onkeyup="filterServices()">
-                            </div>
-                            <select id="serviceCategoryFilter" onchange="filterServices()" class="filter-select">
-                                <option value="all">All Categories</option>
-                                <option value="repair">Repair</option>
-                                <option value="cleaning">Cleaning</option>
-                                <option value="transport">Transport</option>
-                                <option value="education">Education</option>
-                                <option value="health">Health</option>
-                            </select>
-                        </div>
-                        <div id="servicesList">
-                            <!-- Services will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Jobs Tab -->
-                <div id="jobsTab" class="tab-content">
-                    <div class="card">
-                        <h3><i class="fas fa-briefcase"></i> Job Market</h3>
-                        <div class="search-container">
-                            <div class="search-box">
-                                <input type="text" id="jobSearch" placeholder="Search jobs..." onkeyup="filterJobs()">
-                            </div>
-                            <select id="jobTypeFilter" onchange="filterJobs()" class="filter-select">
-                                <option value="all">All Types</option>
-                                <option value="fulltime">Full Time</option>
-                                <option value="parttime">Part Time</option>
-                                <option value="contract">Contract</option>
-                                <option value="freelance">Freelance</option>
-                            </select>
-                        </div>
-                        <div class="job-grid" id="jobsList">
-                            <!-- Jobs will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Admin Tab -->
-                <div id="adminTab" class="tab-content">
-                    <div class="card admin-panel">
-                        <h3><i class="fas fa-crown"></i> Admin Dashboard</h3>
-                        
-                        <!-- Admin Stats -->
-                        <div class="admin-stats">
-                            <div class="admin-stat">
-                                <div class="admin-stat-value" id="totalUsers">0</div>
-                                <div class="admin-stat-label">Total Users</div>
-                            </div>
-                            <div class="admin-stat">
-                                <div class="admin-stat-value" id="totalProducts">0</div>
-                                <div class="admin-stat-label">Products</div>
-                            </div>
-                            <div class="admin-stat">
-                                <div class="admin-stat-value" id="totalServices">0</div>
-                                <div class="admin-stat-label">Services</div>
-                            </div>
-                            <div class="admin-stat">
-                                <div class="admin-stat-value" id="pendingReports">0</div>
-                                <div class="admin-stat-label">Pending Reports</div>
-                            </div>
-                        </div>
-
-                        <!-- Admin Actions -->
-                        <div class="service-grid">
-                            <div class="service-card" onclick="showUserManagement()">
-                                <div class="service-icon"><i class="fas fa-users"></i></div>
-                                <div class="service-name">User Management</div>
-                                <div class="service-desc">Manage users</div>
-                            </div>
-                            <div class="service-card" onclick="showContentModeration()">
-                                <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
-                                <div class="service-name">Content Moderation</div>
-                                <div class="service-desc">Review content</div>
-                            </div>
-                            <div class="service-card" onclick="showReportsManagement()">
-                                <div class="service-icon"><i class="fas fa-flag"></i></div>
-                                <div class="service-name">Reports</div>
-                                <div class="service-desc">Handle reports</div>
-                            </div>
-                            <div class="service-card" onclick="showPlatformSettings()">
-                                <div class="service-icon"><i class="fas fa-cog"></i></div>
-                                <div class="service-name">Platform Settings</div>
-                                <div class="service-desc">Configure platform</div>
-                            </div>
-                        </div>
-
-                        <!-- Recent Activity -->
-                        <div style="margin-top: 15px;">
-                            <h4>Recent Activity</h4>
-                            <div id="adminActivity">
-                                <!-- Admin activity will be loaded here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+                <button class="btn-danger" onclick="deleteCurrentOrder()">
+                    <i class="fas fa-trash"></i> Delete This Order
+                </button>
+                <button class="btn-warning" onclick="closeOrderModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
             </div>
         </div>
+    </div>
 
-        <!-- Right Panel - Community & Trends -->
-        <div class="side-panel right">
-            <div class="card">
-                <h3><i class="fas fa-fire"></i> Trending Products</h3>
-                <div id="trendingProducts">
-                    <!-- Trending products will be loaded here -->
-                </div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-chart-line"></i> Marketplace Stats</h3>
-                <div class="result-item">
-                    <span>Active Users:</span>
-                    <span>2,458</span>
-                </div>
-                <div class="result-item">
-                    <span>Products Listed:</span>
-                    <span>1,847</span>
-                </div>
-                <div class="result-item">
-                    <span>Services Offered:</span>
-                    <span>892</span>
-                </div>
-                <div class="result-item">
-                    <span>Jobs Available:</span>
-                    <span>156</span>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-users"></i> Top Rated Users</h3>
-                <div id="topRatedUsers">
-                    <!-- Top rated users will be loaded here -->
-                </div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-gem"></i> Premium Features</h3>
-                <div class="service-grid">
-                    <div class="service-card" onclick="showFeature('verified_badge')">
-                        <div class="service-icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="service-name">Verified Badge</div>
-                        <div class="service-desc">Build trust</div>
-                    </div>
-                    <div class="service-card" onclick="showFeature('premium_listing')">
-                        <div class="service-icon"><i class="fas fa-crown"></i></div>
-                        <div class="service-name">Premium Listing</div>
-                        <div class="service-desc">More visibility</div>
-                    </div>
+    <!-- Reset Confirmation Modal -->
+    <div class="modal" id="resetModal">
+        <div class="modal-content">
+            <div class="reset-confirm">
+                <h3><i class="fas fa-exclamation-triangle"></i> Reset All Data</h3>
+                <p>This will delete ALL data including:</p>
+                <ul style="text-align: left; margin: 15px 0;">
+                    <li>All products and inventory</li>
+                    <li>All seller records</li>
+                    <li>All sales orders and history</li>
+                    <li>All transaction records</li>
+                </ul>
+                <p style="color: var(--danger); font-weight: bold;">This action cannot be undone!</p>
+                
+                <div class="reset-buttons">
+                    <button class="btn-danger" onclick="resetAllData()">
+                        <i class="fas fa-trash"></i> Reset Everything
+                    </button>
+                    <button class="btn-warning" onclick="closeResetModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Receipt Modal -->
+    <div class="modal" id="receiptModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-receipt"></i> Receipt</h3>
+            <div class="receipt" id="receiptContent">
+                <!-- Receipt content will be here -->
+            </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+                <button class="btn-warning" onclick="printReceipt()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button class="btn-success" onclick="saveReceipt()">
+                    <i class="fas fa-save"></i> Save PDF
+                </button>
+                <button class="btn-small" onclick="closeReceipt()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Platform data and state
-        let currentUser = null;
-        let users = [];
-        let products = [];
-        let services = [];
-        let jobs = [];
-        let posts = [];
-        let reports = [];
-        let selectedMedia = [];
+        // Data storage
+        let users = [
+            { id: 1, email: 'admin@neonpos.com', password: 'password', role: 'admin', name: 'Admin User' },
+            { id: 2, email: 'staff@neonpos.com', password: 'password', role: 'staff', name: 'Staff User' }
+        ];
 
-        // Initialize the platform
-        function initApp() {
-            loadSampleData();
-            updateUserProfile();
-            loadMarketplace();
-            loadServices();
-            loadJobs();
-            loadNewsFeed();
-            loadMyListings();
-            loadTrendingProducts();
-            loadTopRatedUsers();
-            
-            if (currentUser.role === 'admin') {
-                loadAdminPanel();
-                document.getElementById('adminTab').style.display = 'flex';
+        let products = [
+            { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
+            { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
+            { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
+            { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
+            { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
+            { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
+        ];
+
+        let sellers = [
+            { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
+            { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
+        ];
+
+        let orders = [
+            { 
+                id: 1001, 
+                date: new Date(), 
+                items: [
+                    { productId: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, quantity: 2 },
+                    { productId: 3, name: 'Filter', price: 45.00, cost: 22.75, quantity: 1 }
+                ], 
+                total: 335.00, 
+                payment: 'cash', 
+                sellerId: 1,
+                myProfit: 67.125,
+                sellerProfit: 67.125
             }
+        ];
+
+        let currentUser = null;
+        let cart = [];
+        let selectedPayment = 'cash';
+        let editingProductId = null;
+        let editingSellerId = null;
+        let viewingOrderId = null;
+
+        // Calculate financial totals with 50/50 profit sharing
+        function calculateFinancialTotals() {
+            // Calculate inventory totals
+            let totalBuyingCost = 0;
+            let totalSellingValue = 0;
+            let totalPotentialProfit = 0;
+            
+            products.forEach(product => {
+                totalBuyingCost += product.cost * product.stock;
+                totalSellingValue += product.price * product.stock;
+                totalPotentialProfit += (product.price - product.cost) * product.stock;
+            });
+            
+            // Calculate actual sales totals with 50/50 profit sharing
+            let totalSalesRevenue = 0;
+            let totalGrossProfit = 0;
+            let myTotalProfit = 0;
+            let sellerTotalProfit = 0;
+            
+            orders.forEach(order => {
+                totalSalesRevenue += order.total;
+                
+                // Calculate profit for this order (50/50 split)
+                let orderProfit = 0;
+                order.items.forEach(item => {
+                    orderProfit += (item.price - item.cost) * item.quantity;
+                });
+                
+                totalGrossProfit += orderProfit;
+                myTotalProfit += order.myProfit || (orderProfit / 2);
+                sellerTotalProfit += order.sellerProfit || (orderProfit / 2);
+            });
+            
+            // Calculate profit margin percentage
+            const profitMargin = totalSellingValue > 0 ? ((totalSellingValue - totalBuyingCost) / totalSellingValue * 100) : 0;
+            
+            // Update financial summary
+            document.getElementById('totalBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
+            document.getElementById('totalSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('totalProfit').textContent = `$${totalGrossProfit.toFixed(2)}`;
+            document.getElementById('myProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
+            
+            // Update profit distribution
+            document.getElementById('myTotalProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
+            document.getElementById('sellerTotalProfit').textContent = `$${sellerTotalProfit.toFixed(2)}`;
+            
+            // Update financial details
+            document.getElementById('detailBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
+            document.getElementById('detailSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
+            document.getElementById('detailSalesRevenue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
+            document.getElementById('detailMyProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
+            document.getElementById('detailSellerProfit').textContent = `$${sellerTotalProfit.toFixed(2)}`;
+            
+            // Update seller stats
+            document.getElementById('activeSellers').textContent = sellers.length;
         }
 
-        // Load sample data
-        function loadSampleData() {
-            // Pre-created demo users
-            users = [
-                {
-                    id: 1,
-                    name: "Demo User",
-                    email: "demo@bazaar.mv",
-                    password: "demo123",
-                    type: "both",
-                    island: "male",
-                    avatar: "DU",
-                    sales: 15,
-                    services: 8,
-                    rating: 4.9,
-                    joinDate: "Jan 2023",
-                    role: "user",
-                    verified: false,
-                    totalRatings: 47
-                },
-                {
-                    id: 2,
-                    name: "Admin User",
-                    email: "admin@bazaar.mv",
-                    password: "admin123",
-                    type: "both",
-                    island: "male",
-                    avatar: "AU",
-                    sales: 0,
-                    services: 0,
-                    rating: 5.0,
-                    joinDate: "Jan 2023",
-                    role: "admin",
-                    verified: true,
-                    totalRatings: 12
-                },
-                {
-                    id: 3,
-                    name: "Ahmed Mohamed",
-                    email: "ahmed@bazaar.mv",
-                    password: "ahmed123",
-                    type: "both",
-                    island: "male",
-                    avatar: "AM",
-                    sales: 12,
-                    services: 5,
-                    rating: 4.8,
-                    joinDate: "Feb 2023",
-                    role: "user",
-                    verified: true,
-                    totalRatings: 32
-                },
-                {
-                    id: 4,
-                    name: "Aisha Ali",
-                    email: "aisha@bazaar.mv",
-                    password: "aisha123",
-                    type: "service",
-                    island: "addu",
-                    avatar: "AA",
-                    sales: 0,
-                    services: 12,
-                    rating: 4.9,
-                    joinDate: "Mar 2023",
-                    role: "user",
-                    verified: true,
-                    totalRatings: 28
-                }
-            ];
-
-            // Sample products with images
-            products = [
-                {
-                    id: 1,
-                    name: "Fresh Tuna - 5kg",
-                    price: 425,
-                    seller: "Demo User",
-                    sellerId: 1,
-                    description: "Freshly caught tuna from the Maldives waters, perfect for family meals",
-                    category: "food",
-                    location: "male",
-                    image: "🐟",
-                    stock: 3,
-                    rating: 4.7,
-                    totalRatings: 15
-                },
-                {
-                    id: 2,
-                    name: "Handmade Prayer Mats",
-                    price: 120,
-                    seller: "Ahmed Mohamed",
-                    sellerId: 3,
-                    description: "Beautiful handmade prayer mats with traditional Maldivian designs",
-                    category: "handicrafts",
-                    location: "male",
-                    image: "🧶",
-                    stock: 8,
-                    rating: 4.9,
-                    totalRatings: 22
-                }
-            ];
-
-            // Sample services
-            services = [
-                {
-                    id: 1,
-                    name: "Boat Engine Repair",
-                    price: "Contact for quote",
-                    provider: "Ahmed Mohamed",
-                    providerId: 3,
-                    description: "Professional boat engine repair and maintenance services",
-                    category: "repair",
-                    location: "male",
-                    rating: 4.8,
-                    totalRatings: 18
-                }
-            ];
-
-            // Sample jobs
-            jobs = [
-                {
-                    id: 1,
-                    title: "Fishing Boat Crew",
-                    company: "Ocean Harvest Co.",
-                    salary: "3,500 MVR",
-                    description: "Join our fishing crew for daily fishing trips. Experience preferred.",
-                    location: "male",
-                    type: "fulltime",
-                    postedBy: 3,
-                    date: "2 days ago"
-                }
-            ];
-
-            // Sample posts with media
-            posts = [
-                {
-                    id: 1,
-                    userId: 1,
-                    userName: "Demo User",
-                    userAvatar: "DU",
-                    content: "Just listed fresh tuna catch from this morning! Perfect for family dinners. DM for bulk orders! 🐟",
-                    timestamp: "2 hours ago",
-                    likes: 12,
-                    comments: 3,
-                    media: ["🐟"]
-                },
-                {
-                    id: 2,
-                    userId: 3,
-                    userName: "Ahmed Mohamed",
-                    userAvatar: "AM",
-                    content: "Available for boat engine repairs this week. Special discount for first-time customers! ⚙️🛥️",
-                    timestamp: "5 hours ago",
-                    likes: 8,
-                    comments: 2,
-                    media: []
-                }
-            ];
-
-            // Sample reports
-            reports = [
-                {
-                    id: 1,
-                    reporterId: 1,
-                    reportedUserId: 4,
-                    reason: "Fake product",
-                    description: "User is selling counterfeit items",
-                    status: "pending",
-                    timestamp: "1 day ago"
-                }
-            ];
+        // Initialize the app
+        function initApp() {
+            updateDashboard();
+            updateProductGrid();
+            updateProductsTable();
+            updateSellerList();
+            updateSellerSelect();
+            updateOrdersTable();
+            updateCharts();
+            calculateFinancialTotals();
         }
 
-        // ✅ FIXED: Login function
+        // Login function
         function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            const role = document.getElementById('userRole').value;
             
-            if (!email || !password) {
-                alert('Please enter both email and password');
-                return;
-            }
-            
-            const user = users.find(u => u.email === email && u.password === password);
+            // Find user
+            const user = users.find(u => u.email === email && u.password === password && u.role === role);
             
             if (user) {
                 currentUser = user;
                 document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'flex';
-                document.getElementById('userGreeting').textContent = `Welcome to Maldives Bazaar, ${user.name}`;
-                
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('userGreeting').textContent = `Welcome, ${user.name}`;
                 initApp();
-                console.log(`User ${user.name} logged in`);
+                addLog(`User ${user.name} logged in`, 'info');
             } else {
-                alert('Invalid login credentials. Please try again or use demo accounts.');
+                alert('Invalid login credentials. Please try again.');
             }
         }
 
-        // ✅ FIXED: Demo login function
-        function demoLogin(email, password) {
-            document.getElementById('loginEmail').value = email;
-            document.getElementById('loginPassword').value = password;
-            login();
-        }
-
-        // ✅ FIXED: Logout function
+        // Logout function
         function logout() {
             currentUser = null;
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
+            addLog('User logged out', 'info');
         }
 
-        // ✅ FIXED: Show register modal
-        function showRegisterModal() {
-            document.getElementById('registerModal').style.display = 'block';
-        }
-
-        // ✅ FIXED: Close register modal
-        function closeRegisterModal() {
-            document.getElementById('registerModal').style.display = 'none';
-        }
-
-        // ✅ FIXED: Register new user
-        function registerUser() {
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const phone = document.getElementById('regPhone').value;
-            const password = document.getElementById('regPassword').value;
-            const island = document.getElementById('regIsland').value;
-            const userType = document.getElementById('regUserType').value;
-            
-            if (!name || !email || !password) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            
-            // Check if user already exists
-            if (users.find(u => u.email === email)) {
-                alert('User with this email already exists. Please login instead.');
-                return;
-            }
-            
-            // Create new user
-            const newUser = {
-                id: users.length + 1,
-                name: name,
-                email: email,
-                password: password,
-                type: userType,
-                island: island,
-                avatar: name.split(' ').map(n => n[0]).join('').toUpperCase(),
-                sales: 0,
-                services: 0,
-                rating: 0,
-                joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-                role: "user",
-                verified: false,
-                totalRatings: 0
-            };
-            
-            users.push(newUser);
-            
-            alert('Account created successfully! You can now login with your credentials.');
-            closeRegisterModal();
-            
-            // Auto-fill login form
-            document.getElementById('loginEmail').value = email;
-            document.getElementById('loginPassword').value = password;
-        }
-
-        // Update user profile display
-        function updateUserProfile() {
-            if (!currentUser) return;
-            
-            document.getElementById('userAvatar').textContent = currentUser.avatar;
-            document.getElementById('userName').textContent = currentUser.name;
-            document.getElementById('userRole').textContent = 
-                currentUser.type === 'both' ? 'Seller & Service Provider' : 
-                currentUser.type === 'buyer' ? 'Buyer' : 
-                currentUser.type === 'seller' ? 'Seller' : 'Service Provider';
-            document.getElementById('userSales').textContent = currentUser.sales;
-            document.getElementById('userServices').textContent = currentUser.services;
-            document.getElementById('userRating').textContent = currentUser.rating;
-            
-            // Update verification badge
-            if (currentUser.verified) {
-                document.getElementById('verifiedBadge').style.display = 'flex';
-            }
-            
-            // Update current user in post creation
-            document.getElementById('currentUserAvatar').textContent = currentUser.avatar;
-            document.getElementById('currentUserName').textContent = currentUser.name;
-            if (currentUser.verified) {
-                document.getElementById('currentUserVerified').style.display = 'flex';
-            }
-        }
-
-        // Switch main tabs
-        function switchMainTab(tabName) {
+        // Tab switching functionality
+        function switchTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
             
             // Remove active class from all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
+            document.querySelectorAll('.mobile-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-item').forEach(tab => {
                 tab.classList.remove('active');
             });
             
             // Show selected tab content
-            document.getElementById(tabName + 'Tab').classList.add('active');
+            document.getElementById(tabName).classList.add('active');
             
             // Add active class to clicked tab
             event.currentTarget.classList.add('active');
+            
+            // Refresh data if needed
+            if (tabName === 'dashboard') {
+                updateDashboard();
+            } else if (tabName === 'pos') {
+                updateProductGrid();
+            } else if (tabName === 'products') {
+                updateProductsTable();
+            } else if (tabName === 'sellers') {
+                updateSellerList();
+            } else if (tabName === 'reports') {
+                updateOrdersTable();
+                updateReportsChart();
+            }
         }
 
-        // Load marketplace products
-        function loadMarketplace() {
-            const container = document.getElementById('marketplaceProducts');
+        // Update dashboard
+        function updateDashboard() {
+            // Calculate today's sales
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(order => new Date(order.date).toDateString() === today);
+            const todaySales = todayOrders.reduce((sum, order) => sum + order.total, 0);
             
-            container.innerHTML = products.map(product => `
-                <div class="product-card" onclick="viewProduct(${product.id})">
-                    <div class="product-image">${product.image}</div>
+            // Update stats
+            document.getElementById('todaySales').textContent = `$${todaySales.toFixed(2)}`;
+            document.getElementById('todayOrders').textContent = todayOrders.length;
+            
+            // Check low stock
+            const lowStockItems = products.filter(p => p.stock < 5);
+            document.getElementById('lowStockCount').textContent = lowStockItems.length;
+            
+            // Update low stock alerts
+            const alertsContainer = document.getElementById('lowStockAlerts');
+            if (lowStockItems.length === 0) {
+                alertsContainer.innerHTML = '<div class="status info">No low stock items</div>';
+            } else {
+                alertsContainer.innerHTML = lowStockItems.map(item => 
+                    `<div class="status warning">${item.name} - Only ${item.stock} left</div>`
+                ).join('');
+            }
+            
+            // Update financial totals
+            calculateFinancialTotals();
+            
+            updateSalesChart();
+        }
+
+        // Update product grid for POS
+        function updateProductGrid() {
+            const container = document.getElementById('productGrid');
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => addToCart(product);
+                productCard.innerHTML = `
                     <div class="product-name">${product.name}</div>
-                    <div class="product-price">MVR ${product.price}</div>
-                    <div class="product-seller">${product.seller}</div>
-                    <div class="halal-badge">⭐ ${product.rating}</div>
-                </div>
-            `).join('');
+                    <div class="product-price">$${product.price.toFixed(2)}</div>
+                    <div class="product-stock">Stock: ${product.stock}</div>
+                `;
+                container.appendChild(productCard);
+            });
         }
 
-        // Load services
-        function loadServices() {
-            const container = document.getElementById('servicesList');
+        // Update seller select dropdown
+        function updateSellerSelect() {
+            const select = document.getElementById('sellerSelect');
+            select.innerHTML = '<option value="">Select Seller</option>';
             
-            container.innerHTML = services.map(service => `
-                <div class="service-listing" onclick="viewService(${service.id})">
-                    <div class="service-title">${service.name}</div>
-                    <div class="service-provider">by ${service.provider}</div>
-                    <div class="service-price">${service.price}</div>
-                    <div class="halal-badge">⭐ ${service.rating}</div>
-                </div>
-            `).join('');
+            sellers.forEach(seller => {
+                const option = document.createElement('option');
+                option.value = seller.id;
+                option.textContent = seller.name;
+                select.appendChild(option);
+            });
         }
 
-        // Load jobs
-        function loadJobs() {
-            const container = document.getElementById('jobsList');
+        // Filter products
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const filteredProducts = products.filter(p => 
+                p.name.toLowerCase().includes(searchTerm)
+            );
             
-            container.innerHTML = jobs.map(job => `
-                <div class="job-card" onclick="viewJob(${job.id})">
-                    <div class="job-title">${job.title}</div>
-                    <div class="job-company">${job.company}</div>
-                    <div class="job-location">📍 ${job.location} • 💰 ${job.salary}</div>
-                    <div class="halal-badge">${job.type}</div>
-                </div>
-            `).join('');
+            const container = document.getElementById('productGrid');
+            container.innerHTML = '';
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => addToCart(product);
+                productCard.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">$${product.price.toFixed(2)}</div>
+                    <div class="product-stock">Stock: ${product.stock}</div>
+                `;
+                container.appendChild(productCard);
+            });
         }
 
-        // Load news feed with media support
-        function loadNewsFeed() {
-            const container = document.getElementById('newsFeed');
+        // Add to cart
+        function addToCart(product) {
+            // Check if product already in cart
+            const existingItem = cart.find(item => item.id === product.id);
             
-            container.innerHTML = posts.map(post => {
-                const user = users.find(u => u.id === post.userId);
+            if (existingItem) {
+                if (existingItem.quantity < product.stock) {
+                    existingItem.quantity += 1;
+                } else {
+                    alert(`Only ${product.stock} items available in stock`);
+                    return;
+                }
+            } else {
+                if (product.stock > 0) {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        cost: product.cost,
+                        quantity: 1
+                    });
+                } else {
+                    alert('Product out of stock');
+                    return;
+                }
+            }
+            
+            updateCartDisplay();
+            addLog(`Added ${product.name} to cart`, 'info');
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cartItems');
+            const totalElement = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<div class="status info">Cart is empty</div>';
+                totalElement.textContent = 'Total: $0.00';
+                return;
+            }
+            
+            let total = 0;
+            cartContainer.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
                 return `
-                    <div class="news-post">
-                        <div class="post-header">
-                            <div class="post-avatar">
-                                ${post.userAvatar}
-                                ${user.verified ? '<div class="verified-badge"><i class="fas fa-check"></i></div>' : ''}
-                            </div>
-                            <div>
-                                <div class="post-user">${post.userName}</div>
-                                <div class="post-time">${post.timestamp}</div>
-                            </div>
-                            <div style="margin-left: auto;">
-                                <button class="btn-small btn-danger" onclick="reportUser(${post.userId})">
-                                    <i class="fas fa-flag"></i>
-                                </button>
-                            </div>
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">$${item.price.toFixed(2)} each</div>
                         </div>
-                        <div class="post-content">${post.content}</div>
-                        ${post.media && post.media.length > 0 ? `
-                            <div class="post-media">
-                                ${post.media.map(media => 
-                                    `<div style="font-size: 3em; text-align: center;">${media}</div>`
-                                ).join('')}
-                            </div>
-                        ` : ''}
-                        <div class="post-actions">
-                            <div class="post-action" onclick="likePost(${post.id})">
-                                <i class="fas fa-heart"></i> ${post.likes}
-                            </div>
-                            <div class="post-action" onclick="commentOnPost(${post.id})">
-                                <i class="fas fa-comment"></i> ${post.comments}
-                            </div>
-                            <div class="post-action" onclick="sharePost(${post.id})">
-                                <i class="fas fa-share"></i> Share
-                            </div>
-                            <div class="post-action" onclick="rateUser(${post.userId})">
-                                <i class="fas fa-star"></i> Rate
-                            </div>
+                        <div class="cart-item-controls">
+                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, 1)">+</button>
+                            <span>$${itemTotal.toFixed(2)}</span>
+                            <button class="btn-danger btn-small" onclick="removeFromCart(${item.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
                 `;
             }).join('');
-        }
-
-        // Load user's listings
-        function loadMyListings() {
-            const container = document.getElementById('myListings');
-            const userProducts = products.filter(p => p.sellerId === currentUser.id);
-            const userServices = services.filter(s => s.providerId === currentUser.id);
             
-            let listingsHTML = '';
-            
-            if (userProducts.length === 0 && userServices.length === 0) {
-                listingsHTML = '<div class="status info">No listings yet</div>';
+            // Apply discount
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            if (discount > 0) {
+                const discountAmount = total * (discount / 100);
+                total -= discountAmount;
+                totalElement.innerHTML = `Subtotal: $${(total + discountAmount).toFixed(2)}<br>Discount: -$${discountAmount.toFixed(2)}<br>Total: $${total.toFixed(2)}`;
             } else {
-                userProducts.forEach(product => {
-                    listingsHTML += `
-                        <div class="announcement-item">
-                            <div class="announcement-title">${product.name}</div>
-                            <div class="service-desc">MVR ${product.price} • ${product.stock} left</div>
-                        </div>
-                    `;
-                });
+                totalElement.textContent = `Total: $${total.toFixed(2)}`;
+            }
+        }
+
+        // Update cart quantity
+        function updateCartQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                const product = products.find(p => p.id === productId);
+                item.quantity += change;
                 
-                userServices.forEach(service => {
-                    listingsHTML += `
-                        <div class="announcement-item">
-                            <div class="announcement-title">${service.name}</div>
-                            <div class="service-desc">${service.price}</div>
-                        </div>
-                    `;
-                });
-            }
-            
-            container.innerHTML = listingsHTML;
-        }
-
-        // Load trending products
-        function loadTrendingProducts() {
-            const container = document.getElementById('trendingProducts');
-            const trending = products.slice(0, 3);
-            
-            container.innerHTML = trending.map(product => `
-                <div class="announcement-item">
-                    <div class="announcement-title">${product.name}</div>
-                    <div class="service-desc">MVR ${product.price} • ⭐ ${product.rating}</div>
-                </div>
-            `).join('');
-        }
-
-        // Load top rated users
-        function loadTopRatedUsers() {
-            const container = document.getElementById('topRatedUsers');
-            const topUsers = users.slice().sort((a, b) => b.rating - a.rating).slice(0, 3);
-            
-            container.innerHTML = topUsers.map(user => `
-                <div class="announcement-item">
-                    <div class="announcement-title">${user.name}</div>
-                    <div class="service-desc">⭐ ${user.rating} • ${user.totalRatings} ratings</div>
-                </div>
-            `).join('');
-        }
-
-        // Media preview for posts
-        function previewMedia() {
-            const files = document.getElementById('mediaUpload').files;
-            const preview = document.getElementById('mediaPreview');
-            preview.innerHTML = '';
-            selectedMedia = [];
-            
-            for (let file of files) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const mediaItem = document.createElement('div');
-                    mediaItem.className = 'media-preview-item';
-                    
-                    if (file.type.startsWith('image/')) {
-                        mediaItem.innerHTML = `
-                            <img src="${e.target.result}" alt="Preview">
-                            <div class="remove-media" onclick="removeMedia(this)">×</div>
-                        `;
-                    } else if (file.type.startsWith('video/')) {
-                        mediaItem.innerHTML = `
-                            <video controls><source src="${e.target.result}" type="${file.type}"></video>
-                            <div class="remove-media" onclick="removeMedia(this)">×</div>
-                        `;
-                    }
-                    
-                    preview.appendChild(mediaItem);
-                    selectedMedia.push({
-                        file: file,
-                        url: e.target.result
-                    });
-                };
-                reader.readAsDataURL(file);
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else if (item.quantity > product.stock) {
+                    item.quantity = product.stock;
+                    alert(`Only ${product.stock} items available in stock`);
+                } else {
+                    updateCartDisplay();
+                }
             }
         }
 
-        // Remove media from preview
-        function removeMedia(element) {
-            const mediaItem = element.parentElement;
-            const index = Array.from(mediaItem.parentElement.children).indexOf(mediaItem);
-            selectedMedia.splice(index, 1);
-            mediaItem.remove();
+        // Remove from cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartDisplay();
+            addLog('Item removed from cart', 'info');
         }
 
-        // Create post with media
-        function createPost() {
-            const content = document.getElementById('postContent').value;
-            
-            if (!content && selectedMedia.length === 0) {
-                alert('Please write something or add media to post');
+        // Clear cart
+        function clearCart() {
+            cart = [];
+            updateCartDisplay();
+            addLog('Cart cleared', 'info');
+        }
+
+        // Select payment method
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Process payment with 50/50 profit sharing
+        function processPayment() {
+            if (cart.length === 0) {
+                alert('Cart is empty. Add items before checkout.');
                 return;
             }
             
-            // Create new post
-            const newPost = {
-                id: posts.length + 1,
-                userId: currentUser.id,
-                userName: currentUser.name,
-                userAvatar: currentUser.avatar,
-                content: content,
-                timestamp: "Just now",
-                likes: 0,
-                comments: 0,
-                media: selectedMedia.map(m => m.file.type.startsWith('image/') ? '🖼️' : '🎥')
+            const sellerId = document.getElementById('sellerSelect').value;
+            if (!sellerId) {
+                alert('Please select a seller for this sale');
+                return;
+            }
+            
+            // Calculate total
+            let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            if (discount > 0) {
+                total -= total * (discount / 100);
+            }
+            
+            // Calculate profit (50/50 split)
+            let totalProfit = 0;
+            cart.forEach(item => {
+                totalProfit += (item.price - item.cost) * item.quantity;
+            });
+            
+            const myProfit = totalProfit / 2;
+            const sellerProfit = totalProfit / 2;
+            
+            // Create order
+            const order = {
+                id: Math.floor(1000 + Math.random() * 9000),
+                date: new Date(),
+                items: [...cart],
+                total: total,
+                payment: selectedPayment,
+                sellerId: parseInt(sellerId),
+                myProfit: myProfit,
+                sellerProfit: sellerProfit
             };
             
-            posts.unshift(newPost);
-            document.getElementById('postContent').value = '';
-            document.getElementById('mediaUpload').value = '';
-            document.getElementById('mediaPreview').innerHTML = '';
-            selectedMedia = [];
+            orders.unshift(order);
             
-            loadNewsFeed();
-            alert('Post published!');
+            // Update seller's totals
+            const seller = sellers.find(s => s.id === parseInt(sellerId));
+            if (seller) {
+                seller.totalSales += total;
+                seller.totalProfit += sellerProfit;
+            }
+            
+            // Update product stock
+            cart.forEach(cartItem => {
+                const product = products.find(p => p.id === cartItem.id);
+                if (product) {
+                    product.stock -= cartItem.quantity;
+                }
+            });
+            
+            // Generate receipt
+            generateReceipt(order);
+            
+            // Clear cart
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('discountAmount').value = '0';
+            
+            // Update dashboard and financial totals
+            updateDashboard();
+            updateProductsTable();
+            updateSellerList();
+            
+            addLog(`Order #${order.id} completed - $${total.toFixed(2)} (My Profit: $${myProfit.toFixed(2)})`, 'success');
         }
 
-        // Load admin panel
-        function loadAdminPanel() {
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('totalProducts').textContent = products.length;
-            document.getElementById('totalServices').textContent = services.length;
-            document.getElementById('pendingReports').textContent = reports.filter(r => r.status === 'pending').length;
+        // Generate receipt
+        function generateReceipt(order) {
+            const seller = sellers.find(s => s.id === order.sellerId);
+            let receiptText = `=== NEON POS RECEIPT ===\n`;
+            receiptText += `Date: ${order.date.toLocaleString()}\n`;
+            receiptText += `Order: #${order.id}\n`;
+            receiptText += `Seller: ${seller ? seller.name : 'Unknown'}\n`;
+            receiptText += `Cashier: ${currentUser.name}\n`;
+            receiptText += `----------------------------\n`;
             
-            // Load admin activity
-            const activityContainer = document.getElementById('adminActivity');
-            const recentActivity = [
-                "New user registration: John Doe",
-                "Product reported: Fake item",
-                "Service verification completed",
-                "User banned for violations"
-            ];
+            order.items.forEach(item => {
+                receiptText += `${item.name} x${item.quantity} $${(item.price * item.quantity).toFixed(2)}\n`;
+            });
             
-            activityContainer.innerHTML = recentActivity.map(activity => `
-                <div class="announcement-item">
-                    <div class="announcement-title">${activity}</div>
-                    <div class="announcement-date">Today</div>
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            if (discount > 0) {
+                const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const discountAmount = subtotal * (discount / 100);
+                receiptText += `----------------------------\n`;
+                receiptText += `Subtotal: $${subtotal.toFixed(2)}\n`;
+                receiptText += `Discount: -$${discountAmount.toFixed(2)}\n`;
+            }
+            
+            receiptText += `----------------------------\n`;
+            receiptText += `TOTAL: $${order.total.toFixed(2)}\n`;
+            receiptText += `Payment: ${order.payment.toUpperCase()}\n`;
+            receiptText += `Profit Split: 50/50\n`;
+            receiptText += `My Share: $${order.myProfit.toFixed(2)}\n`;
+            receiptText += `Seller Share: $${order.sellerProfit.toFixed(2)}\n`;
+            receiptText += `============================\n`;
+            receiptText += `Thank you for your business!\n`;
+            
+            document.getElementById('receiptContent').textContent = receiptText;
+            document.getElementById('receiptModal').style.display = 'block';
+        }
+
+        // Close receipt
+        function closeReceipt() {
+            document.getElementById('receiptModal').style.display = 'none';
+        }
+
+        // Print receipt
+        function printReceipt() {
+            const receiptContent = document.getElementById('receiptContent').textContent;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Receipt #${orders[0].id}</title>
+                        <style>
+                            body { font-family: monospace; padding: 20px; }
+                            pre { white-space: pre-wrap; }
+                        </style>
+                    </head>
+                    <body>
+                        <pre>${receiptContent}</pre>
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 500);
+                            };
+                        <\/script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // Save receipt as PDF
+        function saveReceipt() {
+            alert('Receipt saved as PDF (simulated)');
+            // In a real app, you would use a library like jsPDF here
+        }
+
+        // Add product
+        function addProduct() {
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const cost = parseFloat(document.getElementById('productCost').value);
+            const stock = parseInt(document.getElementById('productStock').value);
+            const barcode = document.getElementById('productBarcode').value;
+            
+            if (!name || !price || !cost || !stock) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const newProduct = {
+                id: Date.now(),
+                name: name,
+                price: price,
+                cost: cost,
+                stock: stock,
+                barcode: barcode
+            };
+            
+            products.push(newProduct);
+            
+            // Update UI
+            updateProductGrid();
+            updateProductsTable();
+            calculateFinancialTotals();
+            
+            // Clear form
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productCost').value = '';
+            document.getElementById('productStock').value = '';
+            document.getElementById('productBarcode').value = '';
+            
+            addLog(`Product added: ${name}`, 'success');
+            alert(`Product "${name}" added successfully!`);
+        }
+
+        // Update products table
+        function updateProductsTable() {
+            const tbody = document.getElementById('productsTableBody');
+            tbody.innerHTML = '';
+            
+            products.forEach(product => {
+                const profit = product.price - product.cost;
+                const profitMargin = (profit / product.price) * 100;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>$${product.cost.toFixed(2)}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td class="positive">$${profit.toFixed(2)}</td>
+                    <td class="${product.stock < 5 ? 'negative' : 'positive'}">${product.stock}</td>
+                    <td>
+                        <button class="btn-small" onclick="editProduct(${product.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteProduct(${product.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Edit product
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                editingProductId = productId;
+                document.getElementById('editProductName').value = product.name;
+                document.getElementById('editProductPrice').value = product.price;
+                document.getElementById('editProductCost').value = product.cost;
+                document.getElementById('editProductStock').value = product.stock;
+                document.getElementById('editProductBarcode').value = product.barcode;
+                document.getElementById('editProductModal').style.display = 'block';
+            }
+        }
+
+        // Save product edit
+        function saveProductEdit() {
+            if (editingProductId === null) return;
+            
+            const name = document.getElementById('editProductName').value;
+            const price = parseFloat(document.getElementById('editProductPrice').value);
+            const cost = parseFloat(document.getElementById('editProductCost').value);
+            const stock = parseInt(document.getElementById('editProductStock').value);
+            const barcode = document.getElementById('editProductBarcode').value;
+            
+            if (!name || !price || !cost || !stock) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const productIndex = products.findIndex(p => p.id === editingProductId);
+            if (productIndex !== -1) {
+                products[productIndex] = {
+                    ...products[productIndex],
+                    name: name,
+                    price: price,
+                    cost: cost,
+                    stock: stock,
+                    barcode: barcode
+                };
+                
+                updateProductGrid();
+                updateProductsTable();
+                calculateFinancialTotals();
+                closeEditModal();
+                
+                addLog(`Product updated: ${name}`, 'success');
+                alert(`Product "${name}" updated successfully!`);
+            }
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editProductModal').style.display = 'none';
+            editingProductId = null;
+        }
+
+        // Delete product
+        function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                products = products.filter(p => p.id !== productId);
+                updateProductGrid();
+                updateProductsTable();
+                calculateFinancialTotals();
+                addLog('Product deleted', 'info');
+            }
+        }
+
+        // Add seller
+        function addSeller() {
+            const name = document.getElementById('sellerName').value;
+            const phone = document.getElementById('sellerPhone').value;
+            const email = document.getElementById('sellerEmail').value;
+            
+            if (!name || !phone) {
+                alert('Please fill in name and phone fields');
+                return;
+            }
+            
+            const newSeller = {
+                id: Date.now(),
+                name: name,
+                phone: phone,
+                email: email,
+                totalSales: 0,
+                totalProfit: 0
+            };
+            
+            sellers.push(newSeller);
+            
+            // Update UI
+            updateSellerList();
+            updateSellerSelect();
+            
+            // Clear form
+            document.getElementById('sellerName').value = '';
+            document.getElementById('sellerPhone').value = '';
+            document.getElementById('sellerEmail').value = '';
+            
+            addLog(`Seller added: ${name}`, 'success');
+            alert(`Seller "${name}" added successfully!`);
+        }
+
+        // Update seller list
+        function updateSellerList() {
+            const container = document.getElementById('sellerList');
+            
+            if (sellers.length === 0) {
+                container.innerHTML = '<div class="status info">No sellers added yet</div>';
+                return;
+            }
+            
+            container.innerHTML = sellers.map(seller => `
+                <div class="team-member">
+                    <div class="member-avatar">${seller.name.split(' ').map(n => n[0]).join('').toUpperCase()}</div>
+                    <div class="member-info">
+                        <div class="member-name">${seller.name}</div>
+                        <div class="member-role">${seller.phone} | Total Sales: $${seller.totalSales.toFixed(2)}</div>
+                    </div>
+                    <div class="member-balance">$${seller.totalProfit.toFixed(2)}</div>
+                    <div>
+                        <button class="btn-small" onclick="editSeller(${seller.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteSeller(${seller.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
             `).join('');
         }
 
-        // Report user function
-        function reportUser(userId) {
-            const reason = prompt('Reason for reporting:');
-            if (reason) {
-                const description = prompt('Additional details:');
-                if (description) {
-                    const newReport = {
-                        id: reports.length + 1,
-                        reporterId: currentUser.id,
-                        reportedUserId: userId,
-                        reason: reason,
-                        description: description,
-                        status: "pending",
-                        timestamp: "Just now"
-                    };
+        // Edit seller
+        function editSeller(sellerId) {
+            const seller = sellers.find(s => s.id === sellerId);
+            if (seller) {
+                editingSellerId = sellerId;
+                document.getElementById('editSellerName').value = seller.name;
+                document.getElementById('editSellerPhone').value = seller.phone;
+                document.getElementById('editSellerEmail').value = seller.email || '';
+                document.getElementById('editSellerModal').style.display = 'block';
+            }
+        }
+
+        // Save seller edit
+        function saveSellerEdit() {
+            if (editingSellerId === null) return;
+            
+            const name = document.getElementById('editSellerName').value;
+            const phone = document.getElementById('editSellerPhone').value;
+            const email = document.getElementById('editSellerEmail').value;
+            
+            if (!name || !phone) {
+                alert('Please fill in name and phone fields');
+                return;
+            }
+            
+            const sellerIndex = sellers.findIndex(s => s.id === editingSellerId);
+            if (sellerIndex !== -1) {
+                sellers[sellerIndex] = {
+                    ...sellers[sellerIndex],
+                    name: name,
+                    phone: phone,
+                    email: email
+                };
+                
+                updateSellerList();
+                updateSellerSelect();
+                closeSellerModal();
+                
+                addLog(`Seller updated: ${name}`, 'success');
+                alert(`Seller "${name}" updated successfully!`);
+            }
+        }
+
+        // Close seller modal
+        function closeSellerModal() {
+            document.getElementById('editSellerModal').style.display = 'none';
+            editingSellerId = null;
+        }
+
+        // Delete seller
+        function deleteSeller(sellerId) {
+            if (confirm('Are you sure you want to delete this seller?')) {
+                sellers = sellers.filter(s => s.id !== sellerId);
+                updateSellerList();
+                updateSellerSelect();
+                addLog('Seller deleted', 'info');
+            }
+        }
+
+        // Update orders table
+        function updateOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            
+            // Filter orders based on selection
+            const filter = document.getElementById('reportDate').value;
+            let filteredOrders = [...orders];
+            
+            const now = new Date();
+            if (filter === 'today') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                filteredOrders = orders.filter(order => new Date(order.date) >= today);
+            } else if (filter === 'week') {
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filteredOrders = orders.filter(order => new Date(order.date) >= weekAgo);
+            } else if (filter === 'month') {
+                const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                filteredOrders = orders.filter(order => new Date(order.date) >= monthAgo);
+            }
+            
+            filteredOrders.forEach(order => {
+                const seller = sellers.find(s => s.id === order.sellerId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(order.date).toLocaleDateString()}</td>
+                    <td>${order.items.length} items</td>
+                    <td class="positive">$${order.total.toFixed(2)}</td>
+                    <td>${seller ? seller.name : 'Unknown'}</td>
+                    <td>
+                        <button class="btn-small" onclick="viewOrderDetails(${order.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteOrder(${order.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // View order details
+        function viewOrderDetails(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                const seller = sellers.find(s => s.id === order.sellerId);
+                viewingOrderId = orderId;
+                let detailsHtml = `
+                    <p><strong>Order #${order.id}</strong></p>
+                    <p>Date: ${new Date(order.date).toLocaleString()}</p>
+                    <p>Seller: ${seller ? seller.name : 'Unknown'}</p>
+                    <p>Payment: ${order.payment}</p>
+                    <p>Total: $${order.total.toFixed(2)}</p>
+                    <p><strong>Profit Distribution (50/50):</strong></p>
+                    <p>My Share: $${order.myProfit.toFixed(2)}</p>
+                    <p>Seller Share: $${order.sellerProfit.toFixed(2)}</p>
+                    <p><strong>Items:</strong></p>
+                    <ul style="margin-left: 20px;">
+                `;
+                
+                order.items.forEach(item => {
+                    detailsHtml += `<li>${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}</li>`;
+                });
+                
+                detailsHtml += `</ul>`;
+                document.getElementById('orderDetailsContent').innerHTML = detailsHtml;
+                document.getElementById('orderDetailsModal').style.display = 'block';
+            }
+        }
+
+        // Delete order
+        function deleteOrder(orderId) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                // Restore product stock and seller profits before deleting
+                const order = orders.find(o => o.id === orderId);
+                if (order) {
+                    // Restore product stock
+                    order.items.forEach(item => {
+                        const product = products.find(p => p.id === item.productId);
+                        if (product) {
+                            product.stock += item.quantity;
+                        }
+                    });
                     
-                    reports.push(newReport);
-                    alert('Thank you for reporting. Our team will review this.');
-                    
-                    if (currentUser.role === 'admin') {
-                        loadAdminPanel();
+                    // Remove seller profits
+                    const seller = sellers.find(s => s.id === order.sellerId);
+                    if (seller) {
+                        seller.totalSales -= order.total;
+                        seller.totalProfit -= order.sellerProfit;
                     }
                 }
+                
+                orders = orders.filter(o => o.id !== orderId);
+                updateOrdersTable();
+                updateProductsTable();
+                updateSellerList();
+                updateDashboard();
+                calculateFinancialTotals();
+                addLog(`Order #${orderId} deleted`, 'info');
             }
         }
 
-        // Rate user function
-        function rateUser(userId) {
-            const rating = prompt('Rate this user (1-5 stars):');
-            if (rating && rating >= 1 && rating <= 5) {
-                const user = users.find(u => u.id === userId);
-                if (user) {
-                    // Update user rating (simplified calculation)
-                    const newTotalRatings = user.totalRatings + 1;
-                    const newRating = ((user.rating * user.totalRatings) + parseInt(rating)) / newTotalRatings;
-                    
-                    user.rating = parseFloat(newRating.toFixed(1));
-                    user.totalRatings = newTotalRatings;
-                    
-                    alert(`Thank you for rating ${user.name}!`);
-                    loadTopRatedUsers();
-                }
+        // Delete current order from modal
+        function deleteCurrentOrder() {
+            if (viewingOrderId) {
+                deleteOrder(viewingOrderId);
+                closeOrderModal();
             }
         }
 
-        // Filter by island
-        function filterByIsland() {
-            const island = document.getElementById('islandFilter').value;
-            alert(`Filtering content for ${island === 'all' ? 'all islands' : island}`);
+        // Close order modal
+        function closeOrderModal() {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            viewingOrderId = null;
         }
 
-        // View product details
-        function viewProduct(productId) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                alert(`Product: ${product.name}\nPrice: MVR ${product.price}\nSeller: ${product.seller}\nDescription: ${product.description}\nLocation: ${product.location}`);
+        // Delete all orders
+        function deleteAllOrders() {
+            if (confirm('Are you sure you want to delete ALL orders? This cannot be undone!')) {
+                // Restore all product stock and reset seller profits
+                orders.forEach(order => {
+                    order.items.forEach(item => {
+                        const product = products.find(p => p.id === item.productId);
+                        if (product) {
+                            product.stock += item.quantity;
+                        }
+                    });
+                });
+                
+                // Reset all seller profits
+                sellers.forEach(seller => {
+                    seller.totalSales = 0;
+                    seller.totalProfit = 0;
+                });
+                
+                orders = [];
+                updateOrdersTable();
+                updateProductsTable();
+                updateSellerList();
+                updateDashboard();
+                calculateFinancialTotals();
+                addLog('All orders deleted', 'info');
+                alert('All orders have been deleted and product stock has been restored.');
             }
         }
 
-        // View service details
-        function viewService(serviceId) {
-            const service = services.find(s => s.id === serviceId);
-            if (service) {
-                alert(`Service: ${service.name}\nPrice: ${service.price}\nProvider: ${service.provider}\nDescription: ${service.description}\nLocation: ${service.location}`);
-            }
+        // Show reset modal
+        function showResetModal() {
+            document.getElementById('resetModal').style.display = 'block';
         }
 
-        // View job details
-        function viewJob(jobId) {
-            const job = jobs.find(j => j.id === jobId);
-            if (job) {
-                alert(`Job: ${job.title}\nCompany: ${job.company}\nSalary: ${job.salary}\nLocation: ${job.location}\nType: ${job.type}\nDescription: ${job.description}`);
-            }
+        // Close reset modal
+        function closeResetModal() {
+            document.getElementById('resetModal').style.display = 'none';
         }
 
-        // Post interactions
-        function likePost(postId) {
-            const post = posts.find(p => p.id === postId);
-            if (post) {
-                post.likes++;
-                loadNewsFeed();
-            }
+        // Reset all data
+        function resetAllData() {
+            // Reset all data to initial state
+            products = [
+                { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
+                { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
+                { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
+                { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
+                { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
+                { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
+            ];
+            
+            sellers = [
+                { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
+                { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
+            ];
+            
+            orders = [];
+            cart = [];
+            
+            // Update all UI components
+            updateProductGrid();
+            updateProductsTable();
+            updateSellerList();
+            updateSellerSelect();
+            updateOrdersTable();
+            updateDashboard();
+            calculateFinancialTotals();
+            
+            closeResetModal();
+            addLog('All data reset to initial state', 'info');
+            alert('All data has been reset successfully!');
         }
 
-        function commentOnPost(postId) {
-            const comment = prompt('Write your comment:');
-            if (comment) {
-                const post = posts.find(p => p.id === postId);
-                if (post) {
-                    post.comments++;
-                    loadNewsFeed();
-                    alert('Comment added!');
-                }
-            }
+        // Filter orders
+        function filterOrders() {
+            updateOrdersTable();
         }
 
-        function sharePost(postId) {
-            alert('Post shared to your network!');
+        // Update charts
+        function updateCharts() {
+            updateSalesChart();
+            updateReportsChart();
         }
 
-        // Show feature
-        function showFeature(feature) {
-            const features = {
-                'verified_badge': 'Verified Badge - Build trust with customers',
-                'premium_listing': 'Premium Listing - Get more visibility for your listings'
+        // Update sales chart
+        function updateSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            // Sample data for the chart
+            const data = {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Daily Sales',
+                    data: [120, 190, 300, 250, 200, 350, 400],
+                    backgroundColor: 'rgba(0, 243, 255, 0.2)',
+                    borderColor: 'rgba(0, 243, 255, 1)',
+                    borderWidth: 2,
+                    tension: 0.4
+                }]
             };
-            alert(features[feature] || 'Premium feature');
-        }
-
-        // Show create post modal
-        function showCreatePostModal() {
-            document.getElementById('postContent').focus();
-        }
-
-        // Show report modal
-        function showReportModal() {
-            const userId = prompt('Enter user ID to report:');
-            if (userId) {
-                reportUser(parseInt(userId));
+            
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
+            };
+            
+            // Destroy existing chart if it exists
+            if (window.salesChartInstance) {
+                window.salesChartInstance.destroy();
             }
-        }
-
-        // Admin functions
-        function showUserManagement() {
-            alert('User Management - View and manage all users');
-        }
-
-        function showContentModeration() {
-            alert('Content Moderation - Review and moderate content');
-        }
-
-        function showReportsManagement() {
-            alert('Reports Management - Handle user reports');
-        }
-
-        function showPlatformSettings() {
-            alert('Platform Settings - Configure platform settings');
-        }
-
-        // Show add product modal
-        function showAddProductModal() {
-            alert('Add Product - This would open a product creation form');
-        }
-
-        function showAddServiceModal() {
-            alert('Add Service - This would open a service creation form');
-        }
-
-        function showAddJobModal() {
-            alert('Add Job - This would open a job creation form');
-        }
-
-        // Filter functions
-        function filterProducts() {
-            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-            const productCards = document.querySelectorAll('#marketplaceProducts .product-card');
             
-            productCards.forEach(card => {
-                const name = card.querySelector('.product-name').textContent.toLowerCase();
-                if (name.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            window.salesChartInstance = new Chart(ctx, config);
         }
 
-        function filterServices() {
-            const searchTerm = document.getElementById('serviceSearch').value.toLowerCase();
-            const serviceListings = document.querySelectorAll('#servicesList .service-listing');
+        // Update reports chart
+        function updateReportsChart() {
+            const ctx = document.getElementById('reportsChart').getContext('2d');
             
-            serviceListings.forEach(listing => {
-                const name = listing.querySelector('.service-title').textContent.toLowerCase();
-                if (name.includes(searchTerm)) {
-                    listing.style.display = 'block';
-                } else {
-                    listing.style.display = 'none';
-                }
-            });
-        }
-
-        function filterJobs() {
-            const searchTerm = document.getElementById('jobSearch').value.toLowerCase();
-            const jobCards = document.querySelectorAll('#jobsList .job-card');
+            // Sample data for the chart
+            const data = {
+                labels: ['Cigarettes', 'Filters', 'Paper', 'Lighters', 'Other'],
+                datasets: [{
+                    label: 'Sales by Category',
+                    data: [45, 25, 15, 10, 5],
+                    backgroundColor: [
+                        'rgba(0, 243, 255, 0.7)',
+                        'rgba(255, 0, 255, 0.7)',
+                        'rgba(0, 255, 136, 0.7)',
+                        'rgba(255, 204, 0, 0.7)',
+                        'rgba(255, 0, 102, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
             
-            jobCards.forEach(card => {
-                const title = card.querySelector('.job-title').textContent.toLowerCase();
-                if (title.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    }
                 }
-            });
+            };
+            
+            // Destroy existing chart if it exists
+            if (window.reportsChartInstance) {
+                window.reportsChartInstance.destroy();
+            }
+            
+            window.reportsChartInstance = new Chart(ctx, config);
         }
 
-        // Initialize the platform when page loads
+        // Add entry to system log
+        function addLog(message, type) {
+            const log = document.getElementById('activityLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            entry.innerHTML = `[${timestamp}] ${message}`;
+            
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Initialize the app when page loads
         window.addEventListener('load', () => {
-            console.log('Maldives Bazaar platform loaded');
+            addLog('NEON POS system ready. Please login.', 'info');
         });
     </script>
 </body>
