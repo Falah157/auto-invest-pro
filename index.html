@@ -831,8 +831,57 @@
                 <button class="btn-small" onclick="demoLogin('demo@bazaar.mv', 'demo123')" style="width: 100%; margin-bottom: 5px;">
                     Demo User
                 </button>
-                <button class="btn-small" onclick="demoLogin('admin@bazaar.mv', 'admin123')" style="width: 100%; background: var(--admin-purple);">
+                <button class="btn-small btn-admin" onclick="demoLogin('admin@bazaar.mv', 'admin123')" style="width: 100%;">
                     Admin User
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-user-plus"></i> Join Marketplace</h3>
+            <div class="form-group">
+                <label for="regName">Full Name</label>
+                <input type="text" id="regName" placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email</label>
+                <input type="email" id="regEmail" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="regPhone">Phone Number</label>
+                <input type="text" id="regPhone" placeholder="Enter your phone">
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password</label>
+                <input type="password" id="regPassword" placeholder="Create a password">
+            </div>
+            <div class="form-group">
+                <label for="regIsland">Home Island</label>
+                <select id="regIsland">
+                    <option value="male">Malé</option>
+                    <option value="addu">Addu City</option>
+                    <option value="fuvahmulah">Fuvahmulah</option>
+                    <option value="other">Other Island</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="regUserType">I want to:</label>
+                <select id="regUserType">
+                    <option value="buyer">Buy products/services</option>
+                    <option value="seller">Sell products</option>
+                    <option value="service">Offer services</option>
+                    <option value="both">All of the above</option>
+                </select>
+            </div>
+            <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-success" onclick="registerUser()">
+                    <i class="fas fa-user-plus"></i> Join Now
+                </button>
+                <button class="btn-warning" onclick="closeRegisterModal()">
+                    <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
         </div>
@@ -960,7 +1009,7 @@
                         <div class="post-header">
                             <div class="post-avatar" id="currentUserAvatar">
                                 DU
-                                <div class="verified-badge" style="display: none;">
+                                <div class="verified-badge" id="currentUserVerified" style="display: none;">
                                     <i class="fas fa-check"></i>
                                 </div>
                             </div>
@@ -1173,9 +1222,6 @@
         </div>
     </div>
 
-    <!-- All Modals would go here (Register, Add Product, Add Service, Add Job, Report, etc.) -->
-    <!-- For brevity, I'm showing the structure but the full implementation would include all modals -->
-
     <script>
         // Platform data and state
         let currentUser = null;
@@ -1378,7 +1424,7 @@
             ];
         }
 
-        // Login function
+        // ✅ FIXED: Login function
         function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -1397,17 +1443,84 @@
                 document.getElementById('userGreeting').textContent = `Welcome to Maldives Bazaar, ${user.name}`;
                 
                 initApp();
-                addLog(`User ${user.name} logged in`, 'info');
+                console.log(`User ${user.name} logged in`);
             } else {
                 alert('Invalid login credentials. Please try again or use demo accounts.');
             }
         }
 
-        // Demo login function
+        // ✅ FIXED: Demo login function
         function demoLogin(email, password) {
             document.getElementById('loginEmail').value = email;
             document.getElementById('loginPassword').value = password;
             login();
+        }
+
+        // ✅ FIXED: Logout function
+        function logout() {
+            currentUser = null;
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        // ✅ FIXED: Show register modal
+        function showRegisterModal() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+
+        // ✅ FIXED: Close register modal
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        // ✅ FIXED: Register new user
+        function registerUser() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPassword').value;
+            const island = document.getElementById('regIsland').value;
+            const userType = document.getElementById('regUserType').value;
+            
+            if (!name || !email || !password) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Check if user already exists
+            if (users.find(u => u.email === email)) {
+                alert('User with this email already exists. Please login instead.');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: users.length + 1,
+                name: name,
+                email: email,
+                password: password,
+                type: userType,
+                island: island,
+                avatar: name.split(' ').map(n => n[0]).join('').toUpperCase(),
+                sales: 0,
+                services: 0,
+                rating: 0,
+                joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                role: "user",
+                verified: false,
+                totalRatings: 0
+            };
+            
+            users.push(newUser);
+            
+            alert('Account created successfully! You can now login with your credentials.');
+            closeRegisterModal();
+            
+            // Auto-fill login form
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = password;
         }
 
         // Update user profile display
@@ -1432,6 +1545,71 @@
             // Update current user in post creation
             document.getElementById('currentUserAvatar').textContent = currentUser.avatar;
             document.getElementById('currentUserName').textContent = currentUser.name;
+            if (currentUser.verified) {
+                document.getElementById('currentUserVerified').style.display = 'flex';
+            }
+        }
+
+        // Switch main tabs
+        function switchMainTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Add active class to clicked tab
+            event.currentTarget.classList.add('active');
+        }
+
+        // Load marketplace products
+        function loadMarketplace() {
+            const container = document.getElementById('marketplaceProducts');
+            
+            container.innerHTML = products.map(product => `
+                <div class="product-card" onclick="viewProduct(${product.id})">
+                    <div class="product-image">${product.image}</div>
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">MVR ${product.price}</div>
+                    <div class="product-seller">${product.seller}</div>
+                    <div class="halal-badge">⭐ ${product.rating}</div>
+                </div>
+            `).join('');
+        }
+
+        // Load services
+        function loadServices() {
+            const container = document.getElementById('servicesList');
+            
+            container.innerHTML = services.map(service => `
+                <div class="service-listing" onclick="viewService(${service.id})">
+                    <div class="service-title">${service.name}</div>
+                    <div class="service-provider">by ${service.provider}</div>
+                    <div class="service-price">${service.price}</div>
+                    <div class="halal-badge">⭐ ${service.rating}</div>
+                </div>
+            `).join('');
+        }
+
+        // Load jobs
+        function loadJobs() {
+            const container = document.getElementById('jobsList');
+            
+            container.innerHTML = jobs.map(job => `
+                <div class="job-card" onclick="viewJob(${job.id})">
+                    <div class="job-title">${job.title}</div>
+                    <div class="job-company">${job.company}</div>
+                    <div class="job-location">📍 ${job.location} • 💰 ${job.salary}</div>
+                    <div class="halal-badge">${job.type}</div>
+                </div>
+            `).join('');
         }
 
         // Load news feed with media support
@@ -1461,9 +1639,7 @@
                         ${post.media && post.media.length > 0 ? `
                             <div class="post-media">
                                 ${post.media.map(media => 
-                                    media.includes('🎥') ? 
-                                    `<video controls><source src="#" type="video/mp4">Your browser does not support the video tag.</video>` :
-                                    `<img src="#" alt="Post image" onerror="this.style.display='none'">`
+                                    `<div style="font-size: 3em; text-align: center;">${media}</div>`
                                 ).join('')}
                             </div>
                         ` : ''}
@@ -1484,6 +1660,65 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // Load user's listings
+        function loadMyListings() {
+            const container = document.getElementById('myListings');
+            const userProducts = products.filter(p => p.sellerId === currentUser.id);
+            const userServices = services.filter(s => s.providerId === currentUser.id);
+            
+            let listingsHTML = '';
+            
+            if (userProducts.length === 0 && userServices.length === 0) {
+                listingsHTML = '<div class="status info">No listings yet</div>';
+            } else {
+                userProducts.forEach(product => {
+                    listingsHTML += `
+                        <div class="announcement-item">
+                            <div class="announcement-title">${product.name}</div>
+                            <div class="service-desc">MVR ${product.price} • ${product.stock} left</div>
+                        </div>
+                    `;
+                });
+                
+                userServices.forEach(service => {
+                    listingsHTML += `
+                        <div class="announcement-item">
+                            <div class="announcement-title">${service.name}</div>
+                            <div class="service-desc">${service.price}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            container.innerHTML = listingsHTML;
+        }
+
+        // Load trending products
+        function loadTrendingProducts() {
+            const container = document.getElementById('trendingProducts');
+            const trending = products.slice(0, 3);
+            
+            container.innerHTML = trending.map(product => `
+                <div class="announcement-item">
+                    <div class="announcement-title">${product.name}</div>
+                    <div class="service-desc">MVR ${product.price} • ⭐ ${product.rating}</div>
+                </div>
+            `).join('');
+        }
+
+        // Load top rated users
+        function loadTopRatedUsers() {
+            const container = document.getElementById('topRatedUsers');
+            const topUsers = users.slice().sort((a, b) => b.rating - a.rating).slice(0, 3);
+            
+            container.innerHTML = topUsers.map(user => `
+                <div class="announcement-item">
+                    <div class="announcement-title">${user.name}</div>
+                    <div class="service-desc">⭐ ${user.rating} • ${user.totalRatings} ratings</div>
+                </div>
+            `).join('');
         }
 
         // Media preview for posts
@@ -1519,6 +1754,14 @@
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        // Remove media from preview
+        function removeMedia(element) {
+            const mediaItem = element.parentElement;
+            const index = Array.from(mediaItem.parentElement.children).indexOf(mediaItem);
+            selectedMedia.splice(index, 1);
+            mediaItem.remove();
         }
 
         // Create post with media
@@ -1625,12 +1868,152 @@
         // Filter by island
         function filterByIsland() {
             const island = document.getElementById('islandFilter').value;
-            // Implementation would filter all content by selected island
             alert(`Filtering content for ${island === 'all' ? 'all islands' : island}`);
         }
 
-        // All other functions from previous implementation would go here
-        // (loadMarketplace, loadServices, loadJobs, etc.)
+        // View product details
+        function viewProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                alert(`Product: ${product.name}\nPrice: MVR ${product.price}\nSeller: ${product.seller}\nDescription: ${product.description}\nLocation: ${product.location}`);
+            }
+        }
+
+        // View service details
+        function viewService(serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            if (service) {
+                alert(`Service: ${service.name}\nPrice: ${service.price}\nProvider: ${service.provider}\nDescription: ${service.description}\nLocation: ${service.location}`);
+            }
+        }
+
+        // View job details
+        function viewJob(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            if (job) {
+                alert(`Job: ${job.title}\nCompany: ${job.company}\nSalary: ${job.salary}\nLocation: ${job.location}\nType: ${job.type}\nDescription: ${job.description}`);
+            }
+        }
+
+        // Post interactions
+        function likePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.likes++;
+                loadNewsFeed();
+            }
+        }
+
+        function commentOnPost(postId) {
+            const comment = prompt('Write your comment:');
+            if (comment) {
+                const post = posts.find(p => p.id === postId);
+                if (post) {
+                    post.comments++;
+                    loadNewsFeed();
+                    alert('Comment added!');
+                }
+            }
+        }
+
+        function sharePost(postId) {
+            alert('Post shared to your network!');
+        }
+
+        // Show feature
+        function showFeature(feature) {
+            const features = {
+                'verified_badge': 'Verified Badge - Build trust with customers',
+                'premium_listing': 'Premium Listing - Get more visibility for your listings'
+            };
+            alert(features[feature] || 'Premium feature');
+        }
+
+        // Show create post modal
+        function showCreatePostModal() {
+            document.getElementById('postContent').focus();
+        }
+
+        // Show report modal
+        function showReportModal() {
+            const userId = prompt('Enter user ID to report:');
+            if (userId) {
+                reportUser(parseInt(userId));
+            }
+        }
+
+        // Admin functions
+        function showUserManagement() {
+            alert('User Management - View and manage all users');
+        }
+
+        function showContentModeration() {
+            alert('Content Moderation - Review and moderate content');
+        }
+
+        function showReportsManagement() {
+            alert('Reports Management - Handle user reports');
+        }
+
+        function showPlatformSettings() {
+            alert('Platform Settings - Configure platform settings');
+        }
+
+        // Show add product modal
+        function showAddProductModal() {
+            alert('Add Product - This would open a product creation form');
+        }
+
+        function showAddServiceModal() {
+            alert('Add Service - This would open a service creation form');
+        }
+
+        function showAddJobModal() {
+            alert('Add Job - This would open a job creation form');
+        }
+
+        // Filter functions
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const productCards = document.querySelectorAll('#marketplaceProducts .product-card');
+            
+            productCards.forEach(card => {
+                const name = card.querySelector('.product-name').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterServices() {
+            const searchTerm = document.getElementById('serviceSearch').value.toLowerCase();
+            const serviceListings = document.querySelectorAll('#servicesList .service-listing');
+            
+            serviceListings.forEach(listing => {
+                const name = listing.querySelector('.service-title').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    listing.style.display = 'block';
+                } else {
+                    listing.style.display = 'none';
+                }
+            });
+        }
+
+        function filterJobs() {
+            const searchTerm = document.getElementById('jobSearch').value.toLowerCase();
+            const jobCards = document.querySelectorAll('#jobsList .job-card');
+            
+            jobCards.forEach(card => {
+                const title = card.querySelector('.job-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
 
         // Initialize the platform when page loads
         window.addEventListener('load', () => {
