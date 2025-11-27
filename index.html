@@ -536,21 +536,12 @@
             
             <div class="form-group">
                 <label for="loginEmail">Email or Phone</label>
-                <input type="text" id="loginEmail" placeholder="user@jazeera.mv" value="user@jazeera.mv">
+                <input type="text" id="loginEmail" placeholder="Enter your email" value="">
             </div>
             
             <div class="form-group">
                 <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter password" value="password">
-            </div>
-            
-            <div class="form-group">
-                <label for="userType">I am a:</label>
-                <select id="userType">
-                    <option value="buyer">Buyer</option>
-                    <option value="seller">Seller</option>
-                    <option value="both">Both Buyer & Seller</option>
-                </select>
+                <input type="password" id="loginPassword" placeholder="Enter your password" value="">
             </div>
             
             <button class="btn-success" onclick="login()">
@@ -558,11 +549,22 @@
             </button>
             
             <div class="status info" style="margin-top: 15px;">
-                <i class="fas fa-info-circle"></i> Demo: user@jazeera.mv / password
+                <i class="fas fa-info-circle"></i> Don't have an account? Register below
             </div>
             
             <div style="margin-top: 15px; font-size: 0.9em;">
-                <a href="#" onclick="showRegisterModal()" style="color: var(--islamic-green);">Don't have an account? Register here</a>
+                <a href="#" onclick="showRegisterModal()" style="color: var(--islamic-green);">Create New Account</a>
+            </div>
+
+            <!-- Quick Demo Login -->
+            <div style="margin-top: 20px; padding: 15px; background: rgba(0,150,136,0.1); border-radius: 8px;">
+                <h4 style="margin-bottom: 10px;">Quick Demo Access:</h4>
+                <button class="btn-small" onclick="demoLogin('demo@jazeera.mv', 'demo123')" style="width: 100%; margin-bottom: 5px;">
+                    Demo User 1
+                </button>
+                <button class="btn-small" onclick="demoLogin('ahmed@jazeera.mv', 'ahmed123')" style="width: 100%;">
+                    Demo User 2
+                </button>
             </div>
         </div>
     </div>
@@ -918,22 +920,35 @@
             updatePrayerTimes();
         }
 
-        // Load sample data
+        // Load sample data with pre-created demo users
         function loadSampleData() {
-            // Sample users
+            // Pre-created demo users
             users = [
                 {
                     id: 1,
+                    name: "Demo User",
+                    email: "demo@jazeera.mv",
+                    password: "demo123",
+                    type: "both",
+                    island: "male",
+                    avatar: "DU",
+                    sales: 15,
+                    purchases: 32,
+                    rating: 4.9,
+                    joinDate: "Jan 2023"
+                },
+                {
+                    id: 2,
                     name: "Ahmed Mohamed",
-                    email: "user@jazeera.mv",
-                    password: "password",
+                    email: "ahmed@jazeera.mv",
+                    password: "ahmed123",
                     type: "both",
                     island: "male",
                     avatar: "AM",
                     sales: 12,
                     purchases: 28,
                     rating: 4.8,
-                    joinDate: "Jan 2023"
+                    joinDate: "Feb 2023"
                 }
             ];
 
@@ -943,7 +958,7 @@
                     id: 1,
                     name: "Fresh Tuna",
                     price: 85,
-                    seller: "Ahmed Mohamed",
+                    seller: "Demo User",
                     sellerId: 1,
                     description: "Freshly caught tuna from the Maldives waters",
                     category: "food",
@@ -956,7 +971,7 @@
                     id: 2,
                     name: "Handmade Mats",
                     price: 120,
-                    seller: "Aisha Ali",
+                    seller: "Ahmed Mohamed",
                     sellerId: 2,
                     description: "Beautiful handmade prayer mats",
                     category: "handicrafts",
@@ -969,8 +984,8 @@
                     id: 3,
                     name: "Coconut Oil",
                     price: 65,
-                    seller: "Ismail Hassan",
-                    sellerId: 3,
+                    seller: "Demo User",
+                    sellerId: 1,
                     description: "Pure organic coconut oil",
                     category: "food",
                     location: "fuvahmulah",
@@ -1036,11 +1051,15 @@
             });
         }
 
-        // Login function
+        // Login function - FIXED
         function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-            const userType = document.getElementById('userType').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
             
             const user = users.find(u => u.email === email && u.password === password);
             
@@ -1053,8 +1072,15 @@
                 initApp();
                 addLog(`User ${user.name} logged in`, 'info');
             } else {
-                alert('Invalid login credentials. Please try again.');
+                alert('Invalid login credentials. Please try again or use demo accounts.');
             }
+        }
+
+        // Demo login function
+        function demoLogin(email, password) {
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = password;
+            login();
         }
 
         // Logout function
@@ -1062,6 +1088,9 @@
             currentUser = null;
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
+            // Clear login fields
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
         }
 
         // Update user profile display
@@ -1216,6 +1245,12 @@
                 return;
             }
             
+            // Check if user already exists
+            if (users.find(u => u.email === email)) {
+                alert('User with this email already exists. Please login instead.');
+                return;
+            }
+            
             // Create new user
             const newUser = {
                 id: users.length + 1,
@@ -1233,8 +1268,12 @@
             
             users.push(newUser);
             
-            alert('Account created successfully! You can now login.');
+            alert('Account created successfully! You can now login with your credentials.');
             closeRegisterModal();
+            
+            // Auto-fill login form
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = password;
         }
 
         // Show add product modal
