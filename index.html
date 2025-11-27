@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Your existing CSS styles remain the same */
         * {
             margin: 0;
             padding: 0;
@@ -85,7 +84,604 @@
             font-size: 0.9em;
         }
 
-        /* ... (all your existing CSS styles remain exactly the same) ... */
+        /* Financial Summary */
+        .financial-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .financial-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        .financial-card.buying {
+            border-color: var(--warning);
+        }
+
+        .financial-card.selling {
+            border-color: var(--accent);
+        }
+
+        .financial-card.profit {
+            border-color: var(--primary);
+        }
+
+        .financial-card.my-profit {
+            border-color: var(--secondary);
+        }
+
+        .financial-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .financial-label {
+            color: #aaa;
+            font-size: 0.8em;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--primary);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        /* Main App (hidden initially) */
+        .main-app {
+            display: none;
+        }
+
+        /* Mobile Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 15px 10px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.75em;
+        }
+
+        .primary { color: var(--primary); }
+        .secondary { color: var(--secondary); }
+        .accent { color: var(--accent); }
+        .warning { color: var(--warning); }
+
+        /* Mobile Tabs */
+        .mobile-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 5px;
+        }
+
+        .mobile-tab {
+            padding: 12px 15px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 8px;
+            margin: 0 2px;
+            flex: 1;
+            text-align: center;
+            font-size: 0.85em;
+        }
+
+        .mobile-tab.active {
+            background: rgba(0, 243, 255, 0.2);
+            border: 1px solid var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+            font-size: 0.9em;
+        }
+
+        input, select, button, textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #2a2a3e;
+            color: white;
+            font-size: 1em;
+        }
+
+        button {
+            background: linear-gradient(90deg, var(--primary), #0099cc);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 5px;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, var(--accent), #00cc66);
+        }
+
+        .btn-warning {
+            background: linear-gradient(90deg, var(--warning), #cc9900);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger), #cc0000);
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 0.85em;
+            width: auto;
+        }
+
+        /* Tables */
+        .mobile-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75em;
+        }
+
+        .mobile-table th {
+            background: var(--table-header);
+            padding: 10px 5px;
+            text-align: left;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .mobile-table td {
+            padding: 10px 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        .mobile-table tr {
+            background: var(--table-row);
+        }
+
+        .mobile-table tr:nth-child(even) {
+            background: var(--table-alt);
+        }
+
+        .positive {
+            color: var(--accent);
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .product-card {
+            background: #2a2a3e;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #333;
+            transition: all 0.3s;
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+            border-color: var(--primary);
+        }
+
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .product-stock {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        /* Cart */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+        }
+
+        .cart-item-price {
+            color: var(--accent);
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-total {
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: right;
+            padding: 10px 0;
+            margin-top: 10px;
+            border-top: 2px solid var(--primary);
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .payment-method {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-method.active {
+            background: rgba(0, 243, 255, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Receipt */
+        .receipt {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-line;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Team Members */
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        .team-member:last-child {
+            border-bottom: none;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 0.95em;
+        }
+
+        .member-role {
+            color: #aaa;
+            font-size: 0.8em;
+        }
+
+        .member-balance {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 0.9em;
+        }
+
+        /* Status Messages */
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .status.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--accent);
+        }
+
+        .status.info {
+            background: rgba(0, 243, 255, 0.2);
+            border: 1px solid var(--primary);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            display: flex;
+            padding: 10px;
+            border-top: 2px solid var(--primary);
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 5px;
+            color: #aaa;
+            font-size: 0.75em;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.4em;
+            margin-bottom: 3px;
+        }
+
+        /* Log */
+        .log {
+            background: #2a2a3e;
+            padding: 12px;
+            border-radius: 5px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.75em;
+            margin-top: 12px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .log-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid var(--accent);
+        }
+
+        .log-info {
+            background: rgba(0, 243, 255, 0.1);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Swipeable content */
+        .swipe-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Small text for mobile */
+        .small-text {
+            font-size: 0.7em;
+            color: #aaa;
+        }
+
+        /* Edit Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Reset Confirmation */
+        .reset-confirm {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .reset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .reset-buttons button {
+            flex: 1;
+        }
+
+        /* Financial Details */
+        .financial-details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background: #2a2a3e;
+            border-radius: 5px;
+        }
+
+        /* Profit Distribution */
+        .profit-distribution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .profit-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        .profit-card.my-share {
+            border-color: var(--primary);
+        }
+
+        .profit-card.seller-share {
+            border-color: var(--secondary);
+        }
 
         /* Responsive adjustments */
         @media (max-width: 380px) {
@@ -117,7 +713,6 @@
     </style>
 </head>
 <body>
-    <!-- Your existing HTML structure remains the same -->
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-card">
@@ -154,7 +749,6 @@
 
     <!-- Main POS Application -->
     <div class="main-app" id="mainApp">
-        <!-- Your existing main app HTML structure remains exactly the same -->
         <div class="container">
             <div class="header">
                 <div class="logo">NEON POS</div>
@@ -169,142 +763,519 @@
                 </div>
             </div>
 
-            <!-- Financial Summary, Tabs, and all other content remains exactly the same -->
-            <!-- ... -->
+            <!-- Financial Summary -->
+            <div class="financial-summary">
+                <div class="financial-card buying">
+                    <div class="financial-label">Total Buying Cost</div>
+                    <div class="financial-value warning" id="totalBuyingCost">$0.00</div>
+                    <div class="financial-label">All Inventory Cost</div>
+                </div>
+                <div class="financial-card selling">
+                    <div class="financial-label">Total Selling Value</div>
+                    <div class="financial-value accent" id="totalSellingValue">$0.00</div>
+                    <div class="financial-label">All Inventory Value</div>
+                </div>
+                <div class="financial-card profit">
+                    <div class="financial-label">Total Gross Profit</div>
+                    <div class="financial-value primary" id="totalProfit">$0.00</div>
+                    <div class="financial-label">Potential Profit</div>
+                </div>
+                <div class="financial-card my-profit">
+                    <div class="financial-label">My 50% Profit</div>
+                    <div class="financial-value secondary" id="myProfit">$0.00</div>
+                    <div class="financial-label">My Actual Share</div>
+                </div>
+            </div>
 
+            <!-- Profit Distribution -->
+            <div class="profit-distribution">
+                <div class="profit-card my-share">
+                    <div class="financial-label">My Total Profit</div>
+                    <div class="financial-value primary" id="myTotalProfit">$0.00</div>
+                    <div class="financial-label">50% of All Sales</div>
+                </div>
+                <div class="profit-card seller-share">
+                    <div class="financial-label">Seller Total Profit</div>
+                    <div class="financial-value secondary" id="sellerTotalProfit">$0.00</div>
+                    <div class="financial-label">50% of All Sales</div>
+                </div>
+            </div>
+
+            <!-- Stats Dashboard -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Today's Sales</div>
+                    <div class="stat-value primary" id="todaySales">$0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Today's Orders</div>
+                    <div class="stat-value accent" id="todayOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Low Stock Items</div>
+                    <div class="stat-value secondary" id="lowStockCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Sellers</div>
+                    <div class="stat-value warning" id="activeSellers">0</div>
+                </div>
+            </div>
+
+            <!-- Mobile Tabs -->
+            <div class="mobile-tabs">
+                <div class="mobile-tab active" onclick="switchTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i><br>Dashboard
+                </div>
+                <div class="mobile-tab" onclick="switchTab('pos')">
+                    <i class="fas fa-cash-register"></i><br>POS
+                </div>
+                <div class="mobile-tab" onclick="switchTab('products')">
+                    <i class="fas fa-boxes"></i><br>Products
+                </div>
+                <div class="mobile-tab" onclick="switchTab('sellers')">
+                    <i class="fas fa-users"></i><br>Sellers
+                </div>
+                <div class="mobile-tab" onclick="switchTab('reports')">
+                    <i class="fas fa-chart-bar"></i><br>Reports
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="card">
+                    <h3><i class="fas fa-chart-line"></i> Sales Overview</h3>
+                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
+                        <canvas id="salesChart" width="300" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-money-bill-wave"></i> Financial Details</h3>
+                    <div class="financial-details">
+                        <div class="detail-item">
+                            <span>Total Inventory Buying Cost:</span>
+                            <span class="warning" id="detailBuyingCost">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Total Inventory Selling Value:</span>
+                            <span class="accent" id="detailSellingValue">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Potential Profit Margin:</span>
+                            <span class="primary" id="detailProfitMargin">0%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Actual Sales Revenue:</span>
+                            <span class="accent" id="detailSalesRevenue">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>My 50% Profit from Sales:</span>
+                            <span class="primary" id="detailMyProfit">$0.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Sellers 50% Profit from Sales:</span>
+                            <span class="secondary" id="detailSellerProfit">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Low Stock Alerts</h3>
+                    <div id="lowStockAlerts">
+                        <div class="status info">No low stock items</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-terminal"></i> Recent Activity</h3>
+                    <div class="log" id="activityLog">
+                        <div class="log-entry log-info">
+                            [08:01:20] System initialized
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POS Tab -->
+            <div id="pos" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-shopping-cart"></i> Current Sale</h3>
+                    <div id="cartItems">
+                        <div class="status info">Cart is empty</div>
+                    </div>
+                    <div class="cart-total" id="cartTotal">Total: $0.00</div>
+                    
+                    <div class="form-group">
+                        <label for="sellerSelect">Select Seller</label>
+                        <select id="sellerSelect">
+                            <!-- Sellers will be loaded here -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discountAmount">Discount (%)</label>
+                        <input type="number" id="discountAmount" min="0" max="100" value="0">
+                    </div>
+                    
+                    <h4>Payment Method</h4>
+                    <div class="payment-methods" id="paymentMethods">
+                        <div class="payment-method active" onclick="selectPayment('cash')">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <div>Cash</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('card')">
+                            <i class="fas fa-credit-card"></i>
+                            <div>Card</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('crypto')">
+                            <i class="fas fa-coins"></i>
+                            <div>Crypto</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('transfer')">
+                            <i class="fas fa-university"></i>
+                            <div>Transfer</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-success" onclick="processPayment()" id="checkoutBtn">
+                        <i class="fas fa-credit-card"></i> Process Payment
+                    </button>
+                    <button class="btn-warning" onclick="clearCart()">
+                        <i class="fas fa-trash"></i> Clear Cart
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-boxes"></i> Products</h3>
+                    <div class="form-group">
+                        <input type="text" id="productSearch" placeholder="Search products..." onkeyup="filterProducts()">
+                    </div>
+                    <div class="product-grid" id="productGrid">
+                        <!-- Products will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Tab -->
+            <div id="products" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Product</h3>
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" placeholder="Product name">
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Selling Price ($)</label>
+                        <input type="number" id="productPrice" step="0.01" placeholder="Selling price">
+                    </div>
+                    <div class="form-group">
+                        <label for="productCost">Buying Price ($)</label>
+                        <input type="number" id="productCost" step="0.01" placeholder="Buying price">
+                    </div>
+                    <div class="form-group">
+                        <label for="productStock">Stock Quantity</label>
+                        <input type="number" id="productStock" placeholder="Stock quantity">
+                    </div>
+                    <div class="form-group">
+                        <label for="productBarcode">Barcode (Optional)</label>
+                        <input type="text" id="productBarcode" placeholder="Barcode">
+                    </div>
+                    <button class="btn-success" onclick="addProduct()">
+                        <i class="fas fa-save"></i> Add Product
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-boxes"></i> Product Inventory</h3>
+                    <div class="swipe-container">
+                        <table class="mobile-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Buy Price</th>
+                                    <th>Sell Price</th>
+                                    <th>Profit</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <!-- Products will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sellers Tab -->
+            <div id="sellers" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-user-plus"></i> Add Seller</h3>
+                    <div class="form-group">
+                        <label for="sellerName">Full Name</label>
+                        <input type="text" id="sellerName" placeholder="Seller name">
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerPhone">Phone Number</label>
+                        <input type="text" id="sellerPhone" placeholder="Phone number">
+                    </div>
+                    <div class="form-group">
+                        <label for="sellerEmail">Email (Optional)</label>
+                        <input type="email" id="sellerEmail" placeholder="Email">
+                    </div>
+                    <button class="btn-success" onclick="addSeller()">
+                        <i class="fas fa-user-plus"></i> Add Seller
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-users"></i> Seller List</h3>
+                    <div id="sellerList">
+                        <div class="status info">No sellers added yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-receipt"></i> Order History</h3>
+                    <div class="form-group">
+                        <label for="reportDate">Filter by Date</label>
+                        <select id="reportDate" onchange="filterOrders()">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="all">All Time</option>
+                        </select>
+                    </div>
+                    <div class="swipe-container">
+                        <table class="mobile-table" id="ordersTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Seller</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Orders will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-danger" onclick="deleteAllOrders()">
+                            <i class="fas fa-trash"></i> Delete All Orders
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-chart-pie"></i> Sales Reports</h3>
+                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
+                        <canvas id="reportsChart" width="300" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Bottom Navigation and Modals remain the same -->
-        <!-- ... -->
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('dashboard')">
+                <div class="nav-icon"><i class="fas fa-tachometer-alt"></i></div>
+                <div>Dashboard</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('pos')">
+                <div class="nav-icon"><i class="fas fa-cash-register"></i></div>
+                <div>POS</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('products')">
+                <div class="nav-icon"><i class="fas fa-boxes"></i></div>
+                <div>Products</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('sellers')">
+                <div class="nav-icon"><i class="fas fa-users"></i></div>
+                <div>Sellers</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('reports')">
+                <div class="nav-icon"><i class="fas fa-chart-bar"></i></div>
+                <div>Reports</div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Edit Product Modal -->
+    <div class="modal" id="editProductModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Product</h3>
+            <div class="form-group">
+                <label for="editProductName">Product Name</label>
+                <input type="text" id="editProductName">
+            </div>
+            <div class="form-group">
+                <label for="editProductPrice">Selling Price ($)</label>
+                <input type="number" id="editProductPrice" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="editProductCost">Buying Price ($)</label>
+                <input type="number" id="editProductCost" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="editProductStock">Stock Quantity</label>
+                <input type="number" id="editProductStock">
+            </div>
+            <div class="form-group">
+                <label for="editProductBarcode">Barcode</label>
+                <input type="text" id="editProductBarcode">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-success" onclick="saveProductEdit()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn-warning" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Seller Modal -->
+    <div class="modal" id="editSellerModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Seller</h3>
+            <div class="form-group">
+                <label for="editSellerName">Full Name</label>
+                <input type="text" id="editSellerName">
+            </div>
+            <div class="form-group">
+                <label for="editSellerPhone">Phone Number</label>
+                <input type="text" id="editSellerPhone">
+            </div>
+            <div class="form-group">
+                <label for="editSellerEmail">Email</label>
+                <input type="email" id="editSellerEmail">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-success" onclick="saveSellerEdit()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn-warning" onclick="closeSellerModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderDetailsModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-receipt"></i> Order Details</h3>
+            <div id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
+            </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+                <button class="btn-danger" onclick="deleteCurrentOrder()">
+                    <i class="fas fa-trash"></i> Delete This Order
+                </button>
+                <button class="btn-warning" onclick="closeOrderModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div class="modal" id="resetModal">
+        <div class="modal-content">
+            <div class="reset-confirm">
+                <h3><i class="fas fa-exclamation-triangle"></i> Reset All Data</h3>
+                <p>This will delete ALL data including:</p>
+                <ul style="text-align: left; margin: 15px 0;">
+                    <li>All products and inventory</li>
+                    <li>All seller records</li>
+                    <li>All sales orders and history</li>
+                    <li>All transaction records</li>
+                </ul>
+                <p style="color: var(--danger); font-weight: bold;">This action cannot be undone!</p>
+                
+                <div class="reset-buttons">
+                    <button class="btn-danger" onclick="resetAllData()">
+                        <i class="fas fa-trash"></i> Reset Everything
+                    </button>
+                    <button class="btn-warning" onclick="closeResetModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="modal" id="receiptModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-receipt"></i> Receipt</h3>
+            <div class="receipt" id="receiptContent">
+                <!-- Receipt content will be here -->
+            </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+                <button class="btn-warning" onclick="printReceipt()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button class="btn-success" onclick="saveReceipt()">
+                    <i class="fas fa-save"></i> Save PDF
+                </button>
+                <button class="btn-small" onclick="closeReceipt()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Data storage with localStorage
+        // Data storage
         let users = [
             { id: 1, email: 'admin@neonpos.com', password: 'password', role: 'admin', name: 'Admin User' },
             { id: 2, email: 'staff@neonpos.com', password: 'password', role: 'staff', name: 'Staff User' }
         ];
 
-        // Initialize data from localStorage or use defaults
-        let products = JSON.parse(localStorage.getItem('neonPos_products')) || [
-            { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 15, barcode: '123456789' },
-            { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 20, barcode: '123456790' },
-            { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 48, barcode: '123456791' },
+        let products = [
+            { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
+            { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
+            { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
             { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
             { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
             { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
         ];
 
-        let sellers = JSON.parse(localStorage.getItem('neonPos_sellers')) || [
+        let sellers = [
             { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
             { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
         ];
 
-        let orders = JSON.parse(localStorage.getItem('neonPos_orders')) || [
+        let orders = [
             { 
                 id: 1001, 
-                date: new Date('2025-10-30').toISOString(), 
+                date: new Date(), 
                 items: [
-                    { productId: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, quantity: 5 },
-                    { productId: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, quantity: 10 },
-                    { productId: 3, name: 'Filter', price: 45.00, cost: 22.75, quantity: 24 }
+                    { productId: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, quantity: 2 },
+                    { productId: 3, name: 'Filter', price: 45.00, cost: 22.75, quantity: 1 }
                 ], 
-                total: 2331.00, 
+                total: 335.00, 
                 payment: 'cash', 
                 sellerId: 1,
-                myProfit: 462.50,
-                sellerProfit: 462.50
-            },
-            { 
-                id: 1002, 
-                date: new Date('2025-11-13').toISOString(), 
-                items: [
-                    { productId: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, quantity: 10 },
-                    { productId: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, quantity: 10 },
-                    { productId: 3, name: 'Filter', price: 45.00, cost: 22.75, quantity: 24 }
-                ], 
-                total: 3520.00, 
-                payment: 'cash', 
-                sellerId: 1,
-                myProfit: 526.50,
-                sellerProfit: 526.50
+                myProfit: 67.125,
+                sellerProfit: 67.125
             }
         ];
 
         let currentUser = null;
-        let cart = JSON.parse(localStorage.getItem('neonPos_cart')) || [];
+        let cart = [];
         let selectedPayment = 'cash';
         let editingProductId = null;
         let editingSellerId = null;
         let viewingOrderId = null;
-
-        // Save data to localStorage
-        function saveData() {
-            localStorage.setItem('neonPos_products', JSON.stringify(products));
-            localStorage.setItem('neonPos_sellers', JSON.stringify(sellers));
-            localStorage.setItem('neonPos_orders', JSON.stringify(orders));
-            localStorage.setItem('neonPos_cart', JSON.stringify(cart));
-        }
-
-        // Clear all data from localStorage
-        function clearAllData() {
-            localStorage.removeItem('neonPos_products');
-            localStorage.removeItem('neonPos_sellers');
-            localStorage.removeItem('neonPos_orders');
-            localStorage.removeItem('neonPos_cart');
-            
-            // Reset to initial data
-            products = [
-                { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 15, barcode: '123456789' },
-                { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 20, barcode: '123456790' },
-                { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 48, barcode: '123456791' },
-                { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
-                { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
-                { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
-            ];
-            
-            sellers = [
-                { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
-                { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
-            ];
-            
-            orders = [
-                { 
-                    id: 1001, 
-                    date: new Date('2025-10-30').toISOString(), 
-                    items: [
-                        { productId: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, quantity: 5 },
-                        { productId: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, quantity: 10 },
-                        { productId: 3, name: 'Filter', price: 45.00, cost: 22.75, quantity: 24 }
-                    ], 
-                    total: 2331.00, 
-                    payment: 'cash', 
-                    sellerId: 1,
-                    myProfit: 462.50,
-                    sellerProfit: 462.50
-                },
-                { 
-                    id: 1002, 
-                    date: new Date('2025-11-13').toISOString(), 
-                    items: [
-                        { productId: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, quantity: 10 },
-                        { productId: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, quantity: 10 },
-                        { productId: 3, name: 'Filter', price: 45.00, cost: 22.75, quantity: 24 }
-                    ], 
-                    total: 3520.00, 
-                    payment: 'cash', 
-                    sellerId: 1,
-                    myProfit: 526.50,
-                    sellerProfit: 526.50
-                }
-            ];
-            
-            cart = [];
-            
-            // Save the reset data
-            saveData();
-        }
 
         // Calculate financial totals with 50/50 profit sharing
         function calculateFinancialTotals() {
@@ -339,9 +1310,12 @@
                 sellerTotalProfit += order.sellerProfit || (orderProfit / 2);
             });
             
+            // Calculate profit margin percentage
+            const profitMargin = totalSellingValue > 0 ? ((totalSellingValue - totalBuyingCost) / totalSellingValue * 100) : 0;
+            
             // Update financial summary
             document.getElementById('totalBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
-            document.getElementById('totalSellingValue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
+            document.getElementById('totalSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
             document.getElementById('totalProfit').textContent = `$${totalGrossProfit.toFixed(2)}`;
             document.getElementById('myProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
             
@@ -351,8 +1325,9 @@
             
             // Update financial details
             document.getElementById('detailBuyingCost').textContent = `$${totalBuyingCost.toFixed(2)}`;
-            document.getElementById('detailSellingValue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
-            document.getElementById('detailProfitMargin').textContent = `$${totalGrossProfit.toFixed(2)}`;
+            document.getElementById('detailSellingValue').textContent = `$${totalSellingValue.toFixed(2)}`;
+            document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
+            document.getElementById('detailSalesRevenue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
             document.getElementById('detailMyProfit').textContent = `$${myTotalProfit.toFixed(2)}`;
             document.getElementById('detailSellerProfit').textContent = `$${sellerTotalProfit.toFixed(2)}`;
             
@@ -370,7 +1345,6 @@
             updateOrdersTable();
             updateCharts();
             calculateFinancialTotals();
-            updateCartDisplay(); // Make sure cart is displayed correctly
         }
 
         // Login function
@@ -400,6 +1374,167 @@
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
             addLog('User logged out', 'info');
+        }
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.mobile-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-item').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            const clickedTab = event.currentTarget;
+            clickedTab.classList.add('active');
+            
+            // Find and activate corresponding bottom nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            const tabIndex = Array.from(document.querySelectorAll('.mobile-tab')).indexOf(clickedTab);
+            if (tabIndex >= 0 && navItems[tabIndex]) {
+                navItems[tabIndex].classList.add('active');
+            }
+            
+            // Refresh data if needed
+            if (tabName === 'dashboard') {
+                updateDashboard();
+            } else if (tabName === 'pos') {
+                updateProductGrid();
+            } else if (tabName === 'products') {
+                updateProductsTable();
+            } else if (tabName === 'sellers') {
+                updateSellerList();
+            } else if (tabName === 'reports') {
+                updateOrdersTable();
+                updateReportsChart();
+            }
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            // Calculate today's sales
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(order => new Date(order.date).toDateString() === today);
+            const todaySales = todayOrders.reduce((sum, order) => sum + order.total, 0);
+            
+            // Update stats
+            document.getElementById('todaySales').textContent = `$${todaySales.toFixed(2)}`;
+            document.getElementById('todayOrders').textContent = todayOrders.length;
+            
+            // Check low stock
+            const lowStockItems = products.filter(p => p.stock < 5);
+            document.getElementById('lowStockCount').textContent = lowStockItems.length;
+            
+            // Update low stock alerts
+            const alertsContainer = document.getElementById('lowStockAlerts');
+            if (lowStockItems.length === 0) {
+                alertsContainer.innerHTML = '<div class="status info">No low stock items</div>';
+            } else {
+                alertsContainer.innerHTML = lowStockItems.map(item => 
+                    `<div class="status warning">${item.name} - Only ${item.stock} left</div>`
+                ).join('');
+            }
+            
+            // Update financial totals
+            calculateFinancialTotals();
+            
+            updateSalesChart();
+        }
+
+        // Update product grid for POS
+        function updateProductGrid() {
+            const container = document.getElementById('productGrid');
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => addToCart(product);
+                productCard.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">$${product.price.toFixed(2)}</div>
+                    <div class="product-stock">Stock: ${product.stock}</div>
+                `;
+                container.appendChild(productCard);
+            });
+        }
+
+        // Update seller select dropdown
+        function updateSellerSelect() {
+            const select = document.getElementById('sellerSelect');
+            select.innerHTML = '<option value="">Select Seller</option>';
+            
+            sellers.forEach(seller => {
+                const option = document.createElement('option');
+                option.value = seller.id;
+                option.textContent = seller.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Filter products
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const filteredProducts = products.filter(p => 
+                p.name.toLowerCase().includes(searchTerm)
+            );
+            
+            const container = document.getElementById('productGrid');
+            container.innerHTML = '';
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => addToCart(product);
+                productCard.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">$${product.price.toFixed(2)}</div>
+                    <div class="product-stock">Stock: ${product.stock}</div>
+                `;
+                container.appendChild(productCard);
+            });
+        }
+
+        // Add to cart
+        function addToCart(product) {
+            // Check if product already in cart
+            const existingItem = cart.find(item => item.id === product.id);
+            
+            if (existingItem) {
+                if (existingItem.quantity < product.stock) {
+                    existingItem.quantity += 1;
+                } else {
+                    alert(`Only ${product.stock} items available in stock`);
+                    return;
+                }
+            } else {
+                if (product.stock > 0) {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        cost: product.cost,
+                        quantity: 1
+                    });
+                } else {
+                    alert('Product out of stock');
+                    return;
+                }
+            }
+            
+            updateCartDisplay();
+            addLog(`Added ${product.name} to cart`, 'info');
         }
 
         // Update cart display
@@ -446,40 +1581,6 @@
             } else {
                 totalElement.textContent = `Total: $${total.toFixed(2)}`;
             }
-            
-            // Save cart to localStorage
-            saveData();
-        }
-
-        // Add to cart
-        function addToCart(product) {
-            // Check if product already in cart
-            const existingItem = cart.find(item => item.id === product.id);
-            
-            if (existingItem) {
-                if (existingItem.quantity < product.stock) {
-                    existingItem.quantity += 1;
-                } else {
-                    alert(`Only ${product.stock} items available in stock`);
-                    return;
-                }
-            } else {
-                if (product.stock > 0) {
-                    cart.push({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        cost: product.cost,
-                        quantity: 1
-                    });
-                } else {
-                    alert('Product out of stock');
-                    return;
-                }
-            }
-            
-            updateCartDisplay();
-            addLog(`Added ${product.name} to cart`, 'info');
         }
 
         // Update cart quantity
@@ -514,6 +1615,13 @@
             addLog('Cart cleared', 'info');
         }
 
+        // Select payment method
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
         // Process payment with 50/50 profit sharing
         function processPayment() {
             if (cart.length === 0) {
@@ -546,7 +1654,7 @@
             // Create order
             const order = {
                 id: Math.floor(1000 + Math.random() * 9000),
-                date: new Date().toISOString(),
+                date: new Date(),
                 items: [...cart],
                 total: total,
                 payment: selectedPayment,
@@ -580,15 +1688,88 @@
             updateCartDisplay();
             document.getElementById('discountAmount').value = '0';
             
-            // Save data to localStorage
-            saveData();
-            
             // Update dashboard and financial totals
             updateDashboard();
             updateProductsTable();
             updateSellerList();
             
             addLog(`Order #${order.id} completed - $${total.toFixed(2)} (My Profit: $${myProfit.toFixed(2)})`, 'success');
+        }
+
+        // Generate receipt
+        function generateReceipt(order) {
+            const seller = sellers.find(s => s.id === order.sellerId);
+            let receiptText = `=== NEON POS RECEIPT ===\n`;
+            receiptText += `Date: ${order.date.toLocaleString()}\n`;
+            receiptText += `Order: #${order.id}\n`;
+            receiptText += `Seller: ${seller ? seller.name : 'Unknown'}\n`;
+            receiptText += `Cashier: ${currentUser.name}\n`;
+            receiptText += `----------------------------\n`;
+            
+            order.items.forEach(item => {
+                receiptText += `${item.name} x${item.quantity} $${(item.price * item.quantity).toFixed(2)}\n`;
+            });
+            
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            if (discount > 0) {
+                const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const discountAmount = subtotal * (discount / 100);
+                receiptText += `----------------------------\n`;
+                receiptText += `Subtotal: $${subtotal.toFixed(2)}\n`;
+                receiptText += `Discount: -$${discountAmount.toFixed(2)}\n`;
+            }
+            
+            receiptText += `----------------------------\n`;
+            receiptText += `TOTAL: $${order.total.toFixed(2)}\n`;
+            receiptText += `Payment: ${order.payment.toUpperCase()}\n`;
+            receiptText += `Profit Split: 50/50\n`;
+            receiptText += `My Share: $${order.myProfit.toFixed(2)}\n`;
+            receiptText += `Seller Share: $${order.sellerProfit.toFixed(2)}\n`;
+            receiptText += `============================\n`;
+            receiptText += `Thank you for your business!\n`;
+            
+            document.getElementById('receiptContent').textContent = receiptText;
+            document.getElementById('receiptModal').style.display = 'block';
+        }
+
+        // Close receipt
+        function closeReceipt() {
+            document.getElementById('receiptModal').style.display = 'none';
+        }
+
+        // Print receipt
+        function printReceipt() {
+            const receiptContent = document.getElementById('receiptContent').textContent;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Receipt #${orders[0].id}</title>
+                        <style>
+                            body { font-family: monospace; padding: 20px; }
+                            pre { white-space: pre-wrap; }
+                        </style>
+                    </head>
+                    <body>
+                        <pre>${receiptContent}</pre>
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 500);
+                            };
+                        <\/script>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // Save receipt as PDF
+        function saveReceipt() {
+            alert('Receipt saved as PDF (simulated)');
+            // In a real app, you would use a library like jsPDF here
         }
 
         // Add product
@@ -615,9 +1796,6 @@
             
             products.push(newProduct);
             
-            // Save data to localStorage
-            saveData();
-            
             // Update UI
             updateProductGrid();
             updateProductsTable();
@@ -632,6 +1810,49 @@
             
             addLog(`Product added: ${name}`, 'success');
             alert(`Product "${name}" added successfully!`);
+        }
+
+        // Update products table
+        function updateProductsTable() {
+            const tbody = document.getElementById('productsTableBody');
+            tbody.innerHTML = '';
+            
+            products.forEach(product => {
+                const profit = product.price - product.cost;
+                const profitMargin = (profit / product.price) * 100;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>$${product.cost.toFixed(2)}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td class="positive">$${profit.toFixed(2)}</td>
+                    <td class="${product.stock < 5 ? 'negative' : 'positive'}">${product.stock}</td>
+                    <td>
+                        <button class="btn-small" onclick="editProduct(${product.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteProduct(${product.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Edit product
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                editingProductId = productId;
+                document.getElementById('editProductName').value = product.name;
+                document.getElementById('editProductPrice').value = product.price;
+                document.getElementById('editProductCost').value = product.cost;
+                document.getElementById('editProductStock').value = product.stock;
+                document.getElementById('editProductBarcode').value = product.barcode;
+                document.getElementById('editProductModal').style.display = 'block';
+            }
         }
 
         // Save product edit
@@ -660,9 +1881,6 @@
                     barcode: barcode
                 };
                 
-                // Save data to localStorage
-                saveData();
-                
                 updateProductGrid();
                 updateProductsTable();
                 calculateFinancialTotals();
@@ -673,14 +1891,16 @@
             }
         }
 
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editProductModal').style.display = 'none';
+            editingProductId = null;
+        }
+
         // Delete product
         function deleteProduct(productId) {
             if (confirm('Are you sure you want to delete this product?')) {
                 products = products.filter(p => p.id !== productId);
-                
-                // Save data to localStorage
-                saveData();
-                
                 updateProductGrid();
                 updateProductsTable();
                 calculateFinancialTotals();
@@ -710,9 +1930,6 @@
             
             sellers.push(newSeller);
             
-            // Save data to localStorage
-            saveData();
-            
             // Update UI
             updateSellerList();
             updateSellerSelect();
@@ -724,6 +1941,47 @@
             
             addLog(`Seller added: ${name}`, 'success');
             alert(`Seller "${name}" added successfully!`);
+        }
+
+        // Update seller list
+        function updateSellerList() {
+            const container = document.getElementById('sellerList');
+            
+            if (sellers.length === 0) {
+                container.innerHTML = '<div class="status info">No sellers added yet</div>';
+                return;
+            }
+            
+            container.innerHTML = sellers.map(seller => `
+                <div class="team-member">
+                    <div class="member-avatar">${seller.name.split(' ').map(n => n[0]).join('').toUpperCase()}</div>
+                    <div class="member-info">
+                        <div class="member-name">${seller.name}</div>
+                        <div class="member-role">${seller.phone} | Total Sales: $${seller.totalSales.toFixed(2)}</div>
+                    </div>
+                    <div class="member-balance">$${seller.totalProfit.toFixed(2)}</div>
+                    <div>
+                        <button class="btn-small" onclick="editSeller(${seller.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteSeller(${seller.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Edit seller
+        function editSeller(sellerId) {
+            const seller = sellers.find(s => s.id === sellerId);
+            if (seller) {
+                editingSellerId = sellerId;
+                document.getElementById('editSellerName').value = seller.name;
+                document.getElementById('editSellerPhone').value = seller.phone;
+                document.getElementById('editSellerEmail').value = seller.email || '';
+                document.getElementById('editSellerModal').style.display = 'block';
+            }
         }
 
         // Save seller edit
@@ -748,9 +2006,6 @@
                     email: email
                 };
                 
-                // Save data to localStorage
-                saveData();
-                
                 updateSellerList();
                 updateSellerSelect();
                 closeSellerModal();
@@ -760,17 +2015,90 @@
             }
         }
 
+        // Close seller modal
+        function closeSellerModal() {
+            document.getElementById('editSellerModal').style.display = 'none';
+            editingSellerId = null;
+        }
+
         // Delete seller
         function deleteSeller(sellerId) {
             if (confirm('Are you sure you want to delete this seller?')) {
                 sellers = sellers.filter(s => s.id !== sellerId);
-                
-                // Save data to localStorage
-                saveData();
-                
                 updateSellerList();
                 updateSellerSelect();
                 addLog('Seller deleted', 'info');
+            }
+        }
+
+        // Update orders table
+        function updateOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            
+            // Filter orders based on selection
+            const filter = document.getElementById('reportDate').value;
+            let filteredOrders = [...orders];
+            
+            const now = new Date();
+            if (filter === 'today') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                filteredOrders = orders.filter(order => new Date(order.date) >= today);
+            } else if (filter === 'week') {
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filteredOrders = orders.filter(order => new Date(order.date) >= weekAgo);
+            } else if (filter === 'month') {
+                const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                filteredOrders = orders.filter(order => new Date(order.date) >= monthAgo);
+            }
+            
+            filteredOrders.forEach(order => {
+                const seller = sellers.find(s => s.id === order.sellerId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(order.date).toLocaleDateString()}</td>
+                    <td>${order.items.length} items</td>
+                    <td class="positive">$${order.total.toFixed(2)}</td>
+                    <td>${seller ? seller.name : 'Unknown'}</td>
+                    <td>
+                        <button class="btn-small" onclick="viewOrderDetails(${order.id})" style="margin-bottom: 5px;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-danger btn-small" onclick="deleteOrder(${order.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // View order details
+        function viewOrderDetails(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                const seller = sellers.find(s => s.id === order.sellerId);
+                viewingOrderId = orderId;
+                let detailsHtml = `
+                    <p><strong>Order #${order.id}</strong></p>
+                    <p>Date: ${new Date(order.date).toLocaleString()}</p>
+                    <p>Seller: ${seller ? seller.name : 'Unknown'}</p>
+                    <p>Payment: ${order.payment}</p>
+                    <p>Total: $${order.total.toFixed(2)}</p>
+                    <p><strong>Profit Distribution (50/50):</strong></p>
+                    <p>My Share: $${order.myProfit.toFixed(2)}</p>
+                    <p>Seller Share: $${order.sellerProfit.toFixed(2)}</p>
+                    <p><strong>Items:</strong></p>
+                    <ul style="margin-left: 20px;">
+                `;
+                
+                order.items.forEach(item => {
+                    detailsHtml += `<li>${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}</li>`;
+                });
+                
+                detailsHtml += `</ul>`;
+                document.getElementById('orderDetailsContent').innerHTML = detailsHtml;
+                document.getElementById('orderDetailsModal').style.display = 'block';
             }
         }
 
@@ -797,10 +2125,6 @@
                 }
                 
                 orders = orders.filter(o => o.id !== orderId);
-                
-                // Save data to localStorage
-                saveData();
-                
                 updateOrdersTable();
                 updateProductsTable();
                 updateSellerList();
@@ -808,6 +2132,20 @@
                 calculateFinancialTotals();
                 addLog(`Order #${orderId} deleted`, 'info');
             }
+        }
+
+        // Delete current order from modal
+        function deleteCurrentOrder() {
+            if (viewingOrderId) {
+                deleteOrder(viewingOrderId);
+                closeOrderModal();
+            }
+        }
+
+        // Close order modal
+        function closeOrderModal() {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            viewingOrderId = null;
         }
 
         // Delete all orders
@@ -830,10 +2168,6 @@
                 });
                 
                 orders = [];
-                
-                // Save data to localStorage
-                saveData();
-                
                 updateOrdersTable();
                 updateProductsTable();
                 updateSellerList();
@@ -844,9 +2178,35 @@
             }
         }
 
+        // Show reset modal
+        function showResetModal() {
+            document.getElementById('resetModal').style.display = 'block';
+        }
+
+        // Close reset modal
+        function closeResetModal() {
+            document.getElementById('resetModal').style.display = 'none';
+        }
+
         // Reset all data
         function resetAllData() {
-            clearAllData();
+            // Reset all data to initial state
+            products = [
+                { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789' },
+                { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790' },
+                { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791' },
+                { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792' },
+                { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793' },
+                { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794' }
+            ];
+            
+            sellers = [
+                { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
+                { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
+            ];
+            
+            orders = [];
+            cart = [];
             
             // Update all UI components
             updateProductGrid();
@@ -862,25 +2222,140 @@
             alert('All data has been reset successfully!');
         }
 
-        // Show reset modal
-        function showResetModal() {
-            document.getElementById('resetModal').style.display = 'block';
+        // Filter orders
+        function filterOrders() {
+            updateOrdersTable();
         }
 
-        // Close reset modal
-        function closeResetModal() {
-            document.getElementById('resetModal').style.display = 'none';
+        // Update charts
+        function updateCharts() {
+            updateSalesChart();
+            updateReportsChart();
         }
 
-        // ... (rest of your functions remain the same, just make sure to call saveData() when data changes)
+        // Update sales chart
+        function updateSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            // Sample data for the chart
+            const data = {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Daily Sales',
+                    data: [120, 190, 300, 250, 200, 350, 400],
+                    backgroundColor: 'rgba(0, 243, 255, 0.2)',
+                    borderColor: 'rgba(0, 243, 255, 1)',
+                    borderWidth: 2,
+                    tension: 0.4
+                }]
+            };
+            
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
+            };
+            
+            // Destroy existing chart if it exists
+            if (window.salesChartInstance) {
+                window.salesChartInstance.destroy();
+            }
+            
+            window.salesChartInstance = new Chart(ctx, config);
+        }
 
-        // The rest of your existing functions (updateDashboard, updateProductGrid, etc.) remain exactly the same
-        // Just make sure to call saveData() whenever you modify products, sellers, orders, or cart
+        // Update reports chart
+        function updateReportsChart() {
+            const ctx = document.getElementById('reportsChart').getContext('2d');
+            
+            // Sample data for the chart
+            const data = {
+                labels: ['Cigarettes', 'Filters', 'Paper', 'Lighters', 'Other'],
+                datasets: [{
+                    label: 'Sales by Category',
+                    data: [45, 25, 15, 10, 5],
+                    backgroundColor: [
+                        'rgba(0, 243, 255, 0.7)',
+                        'rgba(255, 0, 255, 0.7)',
+                        'rgba(0, 255, 136, 0.7)',
+                        'rgba(255, 204, 0, 0.7)',
+                        'rgba(255, 0, 102, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            // Destroy existing chart if it exists
+            if (window.reportsChartInstance) {
+                window.reportsChartInstance.destroy();
+            }
+            
+            window.reportsChartInstance = new Chart(ctx, config);
+        }
+
+        // Add entry to system log
+        function addLog(message, type) {
+            const log = document.getElementById('activityLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            entry.innerHTML = `[${timestamp}] ${message}`;
+            
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
 
         // Initialize the app when page loads
         window.addEventListener('load', () => {
             addLog('NEON POS system ready. Please login.', 'info');
-            // Cart is already loaded from localStorage in the variable initialization
         });
     </script>
 </body>
