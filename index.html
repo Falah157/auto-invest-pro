@@ -1,15 +1,65 @@
-# database/init_db.py
+#!/usr/bin/env python3
+"""
+mrc_miniapp.py
+Single-file Mini App for MRC Assistant Manager
+- Flask web dashboard (embedded templates)
+- Telegram bot (polling) with guided flows
+- SQLite DB init
+- Photos saved to ./photos/
+Instructions:
+  pip install flask python-telegram-bot==20.5
+  export TELEGRAM_BOT_TOKEN="123456:ABC..."
+  python3 mrc_miniapp.py
+"""
+
+import os
 import sqlite3
+import logging
+import threading
 from pathlib import Path
+from uuid import uuid4
+from datetime import datetime
 
-ROOT = Path(__file__).resolve().parents[1]
-DB = ROOT / "mrc.db"
-DB.parent.mkdir(parents=True, exist_ok=True)
+# Flask imports
+from flask import Flask, render_template_string, jsonify, send_from_directory, request
 
-def init():
-    conn = sqlite3.connect(DB)
+# Telegram imports (v20)
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from telegram.ext import (
+    ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters,
+    ConversationHandler
+)
+
+# -------------------------
+# Configuration / Constants
+# -------------------------
+ROOT = Path(__file__).resolve().parent
+DB_PATH = ROOT / "mrc.db"
+PHOTOS_DIR = ROOT / "photos"
+PHOTOS_DIR.mkdir(exist_ok=True)
+# Use the admin username you provided (normalized)
+RAW_ADMIN = ".falah60906"
+ADMIN_USERNAME = RAW_ADMIN.lstrip('@.').strip().lower()
+
+# Flask app
+flask_app = Flask(__name__)
+
+# Logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("mrc_miniapp")
+
+# -------------------------
+# Database helper functions
+# -------------------------
+def db_conn():
+    return sqlite3.connect(DB_PATH, check_same_thread=False)
+
+def init_db():
+    if not DB_PATH.parent.exists():
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = db_conn()
     c = conn.cursor()
-
+    # create tables
     c.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,7 +69,6 @@ def init():
         is_admin INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
-
     c.execute("""
     CREATE TABLE IF NOT EXISTS reports (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,7 +84,6 @@ def init():
         photo_path TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
-
     c.execute("""
     CREATE TABLE IF NOT EXISTS attendance (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,7 +94,6 @@ def init():
         longitude REAL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
-
     c.execute("""
     CREATE TABLE IF NOT EXISTS issues (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,7 +108,6 @@ def init():
         status TEXT DEFAULT 'open',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
-
     c.execute("""
     CREATE TABLE IF NOT EXISTS tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,457 +118,17 @@ def init():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP
     )""")
-
     conn.commit()
     conn.close()
-    print("Initialized DB at", DB)
+    logger.info("DB initialized at %s", DB_PATH)
 
-if __name__ == "__main__":
-    init()
-# bot/bot.py
-import os
-import sqlite3
-import logging
-from pathlib import Path
-from uuid import uuid4
-from datetime import datetime
+# Initialize DB on startup
+init_db()
 
-from telegram import (
-    Update, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
-)
-from telegram.ext import (
-    ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters,
-    ConversationHandler
-)
-
-ROOT = Path(__file__).resolve().parents[1]
-DB_PATH = ROOT / "mrc.db"
-PHOTOS_DIR = ROOT / "photos"
-PHOTOS_DIR.mkdir(parents=True, exist_ok=True)
-
-# Admin username provided earlier; normalize (change if needed)
-RAW_ADMIN = ".falah60906"
-ADMIN_USERNAME = RAW_ADMIN.lstrip('@.').strip().lower()
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Conversation states
-(R_LOC, R_PHOTO, R_DETAILS,
- I_LOC, I_PHOTO, I_DETAILS,
- ATT_WAIT_LOC) = range(7)
-
-def db_conn():
-    return sqlite3.connect(DB_PATH, check_same_thread=False)
-
-async def ensure_user_record(user):
-    conn = db_conn(); c = conn.cursor()
-    c.execute("INSERT OR IGNORE INTO users (tg_id, username, full_name) VALUES (?, ?, ?)",
-              (user.id, user.username or "", f"{user.first_name or ''} {user.last_name or ''}".strip()))
-    if (user.username or "").lstrip('@').lower() == ADMIN_USERNAME:
-        c.execute("UPDATE users SET is_admin = 1 WHERE tg_id = ?", (user.id,))
-    conn.commit(); conn.close()
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    await ensure_user_record(user)
-    text = ("Welcome to MRC Assistant Manager Bot.\n\n"
-            "Use:\n"
-            "/report - Create a site report (location + photo + details)\n"
-            "/issue - File an issue (location + photo + details)\n"
-            "/checkin - Check-in (share location)\n"
-            "/checkout - Check-out (share location)\n"
-            "/myreports - List last reports\n"
-            "/tasks - View tasks\n"
-            "/createtask title|||desc|||assigned_to  (admin only)\n")
-    await update.message.reply_text(text)
-
-# ---------- REPORT FLOW ----------
-async def report_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await ensure_user_record(update.effective_user)
-    kb = [[KeyboardButton("Send my location", request_location=True)]]
-    await update.message.reply_text(
-        "Report flow started. First, please share location (tap button) or send 'skip' to add later.",
-        reply_markup=ReplyKeyboardMarkup(kb, one_time_keyboard=True))
-    return R_LOC
-
-async def report_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.location:
-        loc = update.message.location
-        context.user_data['report_location'] = {'latitude': loc.latitude, 'longitude': loc.longitude}
-        await update.message.reply_text("Location saved. Now please send a photo (or type 'skip' to continue without photo).", reply_markup=ReplyKeyboardRemove())
-    else:
-        # user typed 'skip' or something
-        await update.message.reply_text("No location saved. You can still send photo or type 'skip'.", reply_markup=ReplyKeyboardRemove())
-    return R_PHOTO
-
-async def report_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    msg = update.message
-    # Handle skip keyword
-    if msg.text and msg.text.lower() == 'skip':
-        context.user_data['report_photo'] = None
-        await update.message.reply_text("Photo skipped. Now send details in this format:\nprogress:50 materials:gravel machines:roller notes:Done 200m")
-        return R_DETAILS
-
-    if not msg.photo:
-        await update.message.reply_text("Please send a photo or type 'skip'.")
-        return R_PHOTO
-
-    photo = msg.photo[-1]
-    file = await photo.get_file()
-    filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{uuid4().hex}.jpg"
-    path = PHOTOS_DIR / filename
-    # download
-    await file.download_to_drive(custom_path=str(path))
-    context.user_data['report_photo'] = str(path)
-    await update.message.reply_text("Photo saved. Now send details: progress:50 materials:... machines:... notes:...")
-    return R_DETAILS
-
-def simple_parse_details(text):
-    # very simple parser - looks for keys followed by colon
-    data = {'progress': None, 'materials': '', 'machines': '', 'notes': ''}
-    if not text:
-        return data
-    lower = text
-    # try simple token parsing
-    parts = lower.split()
-    for part in parts:
-        if part.startswith('progress:'):
-            try:
-                data['progress'] = int(part.split(':',1)[1])
-            except:
-                pass
-        elif part.startswith('materials:'):
-            data['materials'] = part.split(':',1)[1]
-        elif part.startswith('machines:'):
-            data['machines'] = part.split(':',1)[1]
-        elif part.startswith('notes:'):
-            data['notes'] = part.split(':',1)[1]
-    # fallback: put full text into notes if nothing parsed
-    if not data['notes'] and not data['materials'] and not data['machines'] and not data['progress']:
-        data['notes'] = text
-    return data
-
-async def report_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    await ensure_user_record(user)
-    text = update.message.text or ""
-    parsed = simple_parse_details(text)
-    loc = context.user_data.get('report_location')
-    photo = context.user_data.get('report_photo')
-    conn = db_conn(); c = conn.cursor()
-    c.execute("""
-    INSERT INTO reports (tg_id, username, location_text, latitude, longitude, progress, materials, machines, notes, photo_path)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        user.id, user.username or "", f"{loc.get('latitude')},{loc.get('longitude')}" if loc else '',
-        loc.get('latitude') if loc else None, loc.get('longitude') if loc else None,
-        parsed['progress'] or 0, parsed['materials'], parsed['machines'], parsed['notes'], photo
-    ))
-    conn.commit(); conn.close()
-    # cleanup
-    context.user_data.pop('report_location', None)
-    context.user_data.pop('report_photo', None)
-    await update.message.reply_text("Report saved ✅")
-    return ConversationHandler.END
-
-async def report_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data.pop('report_location', None)
-    context.user_data.pop('report_photo', None)
-    await update.message.reply_text("Report cancelled.", reply_markup=ReplyKeyboardRemove())
-    return ConversationHandler.END
-
-# ---------- ISSUE FLOW ----------
-async def issue_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await ensure_user_record(update.effective_user)
-    kb = [[KeyboardButton("Send issue location", request_location=True)]]
-    await update.message.reply_text("Issue flow started. Please share location (or type 'skip').", reply_markup=ReplyKeyboardMarkup(kb, one_time_keyboard=True))
-    return I_LOC
-
-async def issue_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.location:
-        loc = update.message.location
-        context.user_data['issue_location'] = {'latitude': loc.latitude, 'longitude': loc.longitude}
-        await update.message.reply_text("Location saved. Now please send a photo (or type 'skip').", reply_markup=ReplyKeyboardRemove())
-    else:
-        await update.message.reply_text("No location saved. You can still send photo or type 'skip'.", reply_markup=ReplyKeyboardRemove())
-    return I_PHOTO
-
-async def issue_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    msg = update.message
-    if msg.text and msg.text.lower() == 'skip':
-        context.user_data['issue_photo'] = None
-        await update.message.reply_text("Photo skipped. Now send title and details in one message. Example:\nTitle: Pothole at X\npriority:high\nDescription: big hole near junction")
-        return I_DETAILS
-
-    if not msg.photo:
-        await update.message.reply_text("Please send a photo or type 'skip'.")
-        return I_PHOTO
-
-    photo = msg.photo[-1]
-    file = await photo.get_file()
-    filename = f"issue_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{uuid4().hex}.jpg"
-    path = PHOTOS_DIR / filename
-    await file.download_to_drive(custom_path=str(path))
-    context.user_data['issue_photo'] = str(path)
-    await update.message.reply_text("Photo saved. Now send title, priority and description (in one message).")
-    return I_DETAILS
-
-async def issue_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    await ensure_user_record(user)
-    text = update.message.text or ""
-    # parse simple title/priority/description
-    title = text.splitlines()[0] if text else "Issue"
-    priority = "normal"
-    if "priority:high" in text.lower(): priority = "high"
-    if "priority:low" in text.lower(): priority = "low"
-    description = text
-    loc = context.user_data.get('issue_location')
-    photo = context.user_data.get('issue_photo')
-    conn = db_conn(); c = conn.cursor()
-    c.execute("""
-    INSERT INTO issues (tg_id, username, title, description, priority, latitude, longitude, photo_path)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        user.id, user.username or "", title, description, priority,
-        loc.get('latitude') if loc else None, loc.get('longitude') if loc else None,
-        photo
-    ))
-    conn.commit(); conn.close()
-    context.user_data.pop('issue_location', None)
-    context.user_data.pop('issue_photo', None)
-    # notify admin (if admin exists in DB)
-    try:
-        conn2 = db_conn(); c2 = conn2.cursor()
-        c2.execute("SELECT tg_id FROM users WHERE is_admin = 1 LIMIT 1")
-        row = c2.fetchone()
-        conn2.close()
-        if row:
-            admin_id = row[0]
-            await context.bot.send_message(admin_id, f"New ISSUE reported by @{user.username or user.id}: {title}\nPriority: {priority}")
-    except Exception as e:
-        logger.exception("notify admin error: %s", e)
-    await update.message.reply_text("Issue saved ✅")
-    return ConversationHandler.END
-
-async def issue_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data.pop('issue_location', None)
-    context.user_data.pop('issue_photo', None)
-    await update.message.reply_text("Issue reporting cancelled.", reply_markup=ReplyKeyboardRemove())
-    return ConversationHandler.END
-
-# ---------- ATTENDANCE ----------
-async def checkin_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    kb = [[KeyboardButton("Share location for check-in", request_location=True)]]
-    context.user_data['awaiting_att'] = 'checkin'
-    await update.message.reply_text("Please share your location to check-in.", reply_markup=ReplyKeyboardMarkup(kb, one_time_keyboard=True))
-    return ATT_WAIT_LOC
-
-async def checkout_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    kb = [[KeyboardButton("Share location for check-out", request_location=True)]]
-    context.user_data['awaiting_att'] = 'checkout'
-    await update.message.reply_text("Please share your location to check-out.", reply_markup=ReplyKeyboardMarkup(kb, one_time_keyboard=True))
-    return ATT_WAIT_LOC
-
-async def attendance_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    await ensure_user_record(user)
-    loc = update.message.location
-    action = context.user_data.get('awaiting_att', 'checkin')
-    conn = db_conn(); c = conn.cursor()
-    c.execute("INSERT INTO attendance (tg_id, username, action, latitude, longitude) VALUES (?, ?, ?, ?, ?)",
-              (user.id, user.username or "", action, loc.latitude, loc.longitude))
-    conn.commit(); conn.close()
-    context.user_data.pop('awaiting_att', None)
-    await update.message.reply_text(f"{action} recorded ✅", reply_markup=ReplyKeyboardRemove())
-    return ConversationHandler.END
-
-async def attendance_no_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Please share your location using the button. Type /checkin or /checkout to start again.")
-    return ConversationHandler.END
-
-# ---------- Utility commands ----------
-async def myreports(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    conn = db_conn(); c = conn.cursor()
-    c.execute("SELECT id, created_at, location_text, progress, notes FROM reports WHERE tg_id = ? ORDER BY created_at DESC LIMIT 10", (user.id,))
-    rows = c.fetchall(); conn.close()
-    if not rows:
-        await update.message.reply_text("You have no saved reports.")
-        return
-    text = "Your last reports:\n"
-    for r in rows:
-        text += f"- #{r[0]} {r[1]} progress:{r[3]} notes:{(r[4] or '')[:40]}\n"
-    await update.message.reply_text(text)
-
-async def tasks_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    conn = db_conn(); c = conn.cursor()
-    c.execute("SELECT id, title, assigned_to, status FROM tasks ORDER BY created_at DESC LIMIT 50")
-    rows = c.fetchall(); conn.close()
-    if not rows:
-        await update.message.reply_text("No tasks found.")
-        return
-    text = "Tasks:\n"
-    for r in rows:
-        text += f"#{r[0]} [{r[3]}] {r[1]} -> {r[2]}\n"
-    await update.message.reply_text(text)
-
-async def create_task(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    if (user.username or "").lstrip('@').lower() != ADMIN_USERNAME:
-        await update.message.reply_text("Only admin can create tasks.")
-        return
-    raw = update.message.text.partition(" ")[2]
-    if not raw:
-        await update.message.reply_text("Usage: /createtask title|||description|||assigned_to")
-        return
-    try:
-        title, desc, assigned = [x.strip() for x in raw.split("|||")]
-    except Exception:
-        await update.message.reply_text("Please separate fields with `|||`")
-        return
-    conn = db_conn(); c = conn.cursor()
-    c.execute("INSERT INTO tasks (title, description, assigned_to) VALUES (?, ?, ?)", (title, desc, assigned))
-    conn.commit(); conn.close()
-    await update.message.reply_text("Task created ✅")
-
-# ---------- Handlers wiring & main ----------
-def main():
-    TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-    if not TOKEN:
-        print("Set TELEGRAM_BOT_TOKEN env var and try again.")
-        return
-
-    app = ApplicationBuilder().token(TOKEN).build()
-
-    # start
-    app.add_handler(CommandHandler("start", start))
-
-    # report conversation
-    report_conv = ConversationHandler(
-        entry_points=[CommandHandler('report', report_start)],
-        states={
-            R_LOC: [MessageHandler(filters.LOCATION | filters.Regex('^(skip|SKIP)$') | filters.TEXT, report_location)],
-            R_PHOTO: [MessageHandler(filters.PHOTO | filters.Regex('^(skip|SKIP)$') | filters.TEXT, report_photo)],
-            R_DETAILS: [MessageHandler(filters.TEXT & ~filters.COMMAND, report_details)],
-        },
-        fallbacks=[CommandHandler('cancel', report_cancel)],
-        allow_reentry=True
-    )
-    app.add_handler(report_conv)
-
-    # issue conversation
-    issue_conv = ConversationHandler(
-        entry_points=[CommandHandler('issue', issue_start)],
-        states={
-            I_LOC: [MessageHandler(filters.LOCATION | filters.Regex('^(skip|SKIP)$') | filters.TEXT, issue_location)],
-            I_PHOTO: [MessageHandler(filters.PHOTO | filters.Regex('^(skip|SKIP)$') | filters.TEXT, issue_photo)],
-            I_DETAILS: [MessageHandler(filters.TEXT & ~filters.COMMAND, issue_details)],
-        },
-        fallbacks=[CommandHandler('cancel', issue_cancel)],
-        allow_reentry=True
-    )
-    app.add_handler(issue_conv)
-
-    # attendance conversation
-    att_conv = ConversationHandler(
-        entry_points=[CommandHandler('checkin', checkin_cmd), CommandHandler('checkout', checkout_cmd)],
-        states={
-            ATT_WAIT_LOC: [MessageHandler(filters.LOCATION, attendance_location), MessageHandler(filters.TEXT, attendance_no_location)]
-        },
-        fallbacks=[CommandHandler('cancel', lambda u,c: ConversationHandler.END)]
-    )
-    app.add_handler(att_conv)
-
-    # utility commands
-    app.add_handler(CommandHandler('myreports', myreports))
-    app.add_handler(CommandHandler('tasks', tasks_cmd))
-    app.add_handler(CommandHandler('createtask', create_task))
-
-    print("Bot starting... Admin username:", ADMIN_USERNAME)
-    app.run_polling()
-
-if __name__ == "__main__":
-    main()
-
-# webapp/app.py
-from flask import Flask, render_template, jsonify, send_from_directory, request
-import sqlite3
-from pathlib import Path
-import os
-
-ROOT = Path(__file__).resolve().parents[1]
-DB = ROOT / "mrc.db"
-PHOTOS = ROOT / "photos"
-
-app = Flask(__name__, template_folder="templates", static_folder="static")
-
-def db_conn():
-    return sqlite3.connect(DB)
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/reports")
-def reports_page():
-    return render_template("reports.html")
-
-@app.route("/issues")
-def issues_page():
-    return render_template("issues.html")
-
-@app.route("/api/reports")
-def api_reports():
-    conn = db_conn(); c = conn.cursor()
-    c.execute("SELECT id, username, location_text, latitude, longitude, progress, materials, machines, notes, photo_path, created_at FROM reports ORDER BY created_at DESC LIMIT 500")
-    rows = c.fetchall(); conn.close()
-    keys = ["id","username","location_text","latitude","longitude","progress","materials","machines","notes","photo_path","created_at"]
-    data = [dict(zip(keys, r)) for r in rows]
-    # make photo url relative
-    for d in data:
-        if d.get("photo_path"):
-            d["photo_url"] = "/photos/" + Path(d["photo_path"]).name
-        else:
-            d["photo_url"] = None
-    return jsonify(data)
-
-@app.route("/api/issues")
-def api_issues():
-    conn = db_conn(); c = conn.cursor()
-    c.execute("SELECT id, username, title, description, priority, latitude, longitude, photo_path, status, created_at FROM issues ORDER BY created_at DESC LIMIT 500")
-    rows = c.fetchall(); conn.close()
-    keys = ["id","username","title","description","priority","latitude","longitude","photo_path","status","created_at"]
-    data = [dict(zip(keys, r)) for r in rows]
-    for d in data:
-        if d.get("photo_path"):
-            d["photo_url"] = "/photos/" + Path(d["photo_path"]).name
-        else:
-            d["photo_url"] = None
-    return jsonify(data)
-
-@app.route("/photos/<path:filename>")
-def photos(filename):
-    # serve from photos dir (creates if not exist)
-    path = PHOTOS
-    if not path.exists():
-        path.mkdir(parents=True, exist_ok=True)
-    return send_from_directory(str(path), filename)
-
-# Simple API to change issue status (for UI)
-@app.route("/api/issues/<int:issue_id>/close", methods=["POST"])
-def close_issue(issue_id):
-    conn = db_conn(); c = conn.cursor()
-    c.execute("UPDATE issues SET status = 'closed' WHERE id = ?", (issue_id,))
-    conn.commit(); conn.close()
-    return jsonify({"ok": True})
-
-if __name__ == "__main__":
-    # default host for local dev; in production use gunicorn/nginx
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
-
-    <!-- webapp/templates/index.html -->
+# -------------------------
+# Flask templates (embedded)
+# -------------------------
+INDEX_HTML = """
 <!doctype html>
 <html>
 <head>
@@ -537,11 +143,15 @@ if __name__ == "__main__":
     .card{background:#0b1a27;padding:12px;border-radius:8px;margin:12px}
     .topbar{display:flex;gap:12px;align-items:center}
     .btn{padding:8px 12px;background:#063049;border-radius:6px;border:1px solid #194d6b;cursor:pointer;color:#d1d5db}
+    .small{font-size:0.9em;color:#9fb7c8}
   </style>
 </head>
 <body>
   <header>
-    <div><h2 style="margin:0">MRC — Assistant Manager Dashboard</h2><div style="font-size:0.85em;color:#9fb7c8">Dark theme</div></div>
+    <div>
+      <h2 style="margin:0">MRC — Assistant Manager Dashboard</h2>
+      <div class="small">Dark theme — Reports & Issues live map</div>
+    </div>
     <div class="topbar">
       <a href="/reports" class="btn">Reports</a>
       <a href="/issues" class="btn">Issues</a>
@@ -552,6 +162,9 @@ if __name__ == "__main__":
   <div class="card">
     <h3>Live Map — Reports & Issues</h3>
     <div id="map"></div>
+    <div style="margin-top:10px;font-size:0.9em;color:#9fb7c8">
+      Use the Telegram bot for on-site reporting: /report /issue /checkin /checkout. Photos and locations saved here.
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -567,7 +180,7 @@ if __name__ == "__main__":
         if(rep.latitude && rep.longitude){
           const m = L.circleMarker([rep.latitude, rep.longitude], {radius:6}).addTo(map);
           const photo = rep.photo_url ? `<div><a href="${rep.photo_url}" target="_blank">View photo</a></div>` : '';
-          m.bindPopup(`<b>Report #${rep.id}</b><br>${rep.username}<br>Progress: ${rep.progress}%<br>${rep.notes || ''}${photo}`);
+          m.bindPopup(`<b>Report #${rep.id}</b><br>${rep.username || 'Anonymous'}<br>Progress: ${rep.progress || 0}%<br>${rep.notes || ''}${photo}`);
         }
       });
 
@@ -575,7 +188,7 @@ if __name__ == "__main__":
         if(issue.latitude && issue.longitude){
           const m = L.marker([issue.latitude, issue.longitude]).addTo(map);
           const photo = issue.photo_url ? `<div><a href="${issue.photo_url}" target="_blank">View photo</a></div>` : '';
-          m.bindPopup(`<b>Issue #${issue.id}</b><br>${issue.title} (${issue.priority})<br>${issue.description || ''}${photo}<br>Status:${issue.status}`);
+          m.bindPopup(`<b>Issue #${issue.id}</b><br>${issue.title || 'Issue'} (${issue.priority})<br>${issue.description || ''}${photo}<br>Status:${issue.status}`);
         }
       });
     }
@@ -584,7 +197,9 @@ if __name__ == "__main__":
   </script>
 </body>
 </html>
-<!-- webapp/templates/reports.html -->
+"""
+
+REPORTS_HTML = """
 <!doctype html>
 <html>
 <head>
@@ -601,9 +216,9 @@ if __name__ == "__main__":
       if(!data.length){ el.innerHTML = '<div>No reports</div>'; return; }
       el.innerHTML = data.map(rep=>`
         <div style="padding:10px;border-bottom:1px solid #0f2a37;margin-bottom:8px">
-          <b>#${rep.id}</b> ${rep.username} — ${rep.created_at}<br>
+          <b>#${rep.id}</b> ${rep.username || 'Anonymous'} — ${rep.created_at}<br>
           Location: ${rep.location_text || 'n/a'}<br>
-          Progress: ${rep.progress}% — Notes: ${rep.notes || ''}<br>
+          Progress: ${rep.progress || 0}% — Notes: ${rep.notes || ''}<br>
           ${rep.photo_url ? `<a href="${rep.photo_url}" target="_blank">Photo</a>` : ''}
         </div>
       `).join('');
@@ -612,12 +227,14 @@ if __name__ == "__main__":
   </script>
 </body>
 </html>
-<!-- webapp/templates/issues.html -->
+"""
+
+ISSUES_HTML = """
 <!doctype html>
 <html>
 <head>
   <meta charset="utf-8"><title>Issues</title>
-  <style>body{background:#071023;color:#d1d5db;font-family:Arial;padding:12px} a{color:#60a5fa}</style>
+  <style>body{background:#071023;color:#d1d5db;font-family:Arial;padding:12px} button{padding:6px 10px}</style>
 </head>
 <body>
   <h2>Issues</h2>
@@ -629,7 +246,7 @@ if __name__ == "__main__":
       if(!data.length){ el.innerHTML = '<div>No issues</div>'; return; }
       el.innerHTML = data.map(it=>`
         <div style="padding:10px;border-bottom:1px solid #0f2a37;margin-bottom:8px">
-          <b>#${it.id}</b> ${it.title} — ${it.priority} — ${it.created_at}<br>
+          <b>#${it.id}</b> ${it.title || 'Issue'} — ${it.priority || 'normal'} — ${it.created_at}<br>
           ${it.description || ''}<br>
           ${it.photo_url ? `<a href="${it.photo_url}" target="_blank">Photo</a>` : ''}
           <div style="margin-top:6px">
@@ -646,4 +263,445 @@ if __name__ == "__main__":
   </script>
 </body>
 </html>
+"""
+
+# -------------------------
+# Flask routes / APIs
+# -------------------------
+@flask_app.route("/")
+def index():
+    return render_template_string(INDEX_HTML)
+
+@flask_app.route("/reports")
+def reports_page():
+    return render_template_string(REPORTS_HTML)
+
+@flask_app.route("/issues")
+def issues_page():
+    return render_template_string(ISSUES_HTML)
+
+@flask_app.route("/api/reports")
+def api_reports():
+    conn = db_conn(); c = conn.cursor()
+    c.execute("SELECT id, username, location_text, latitude, longitude, progress, materials, machines, notes, photo_path, created_at FROM reports ORDER BY created_at DESC LIMIT 500")
+    rows = c.fetchall(); conn.close()
+    keys = ["id","username","location_text","latitude","longitude","progress","materials","machines","notes","photo_path","created_at"]
+    data = [dict(zip(keys, r)) for r in rows]
+    for d in data:
+        d["photo_url"] = "/photos/" + Path(d["photo_path"]).name if d.get("photo_path") else None
+    return jsonify(data)
+
+@flask_app.route("/api/issues")
+def api_issues():
+    conn = db_conn(); c = conn.cursor()
+    c.execute("SELECT id, username, title, description, priority, latitude, longitude, photo_path, status, created_at FROM issues ORDER BY created_at DESC LIMIT 500")
+    rows = c.fetchall(); conn.close()
+    keys = ["id","username","title","description","priority","latitude","longitude","photo_path","status","created_at"]
+    data = [dict(zip(keys, r)) for r in rows]
+    for d in data:
+        d["photo_url"] = "/photos/" + Path(d["photo_path"]).name if d.get("photo_path") else None
+    return jsonify(data)
+
+@flask_app.route("/photos/<path:filename>")
+def photos(filename):
+    # serve from photos dir
+    return send_from_directory(str(PHOTOS_DIR), filename)
+
+@flask_app.route("/api/issues/<int:issue_id>/close", methods=["POST"])
+def close_issue(issue_id):
+    conn = db_conn(); c = conn.cursor()
+    c.execute("UPDATE issues SET status = 'closed' WHERE id = ?", (issue_id,))
+    conn.commit(); conn.close()
+    return jsonify({"ok": True})
+
+# -------------------------
+# Telegram Bot (single-file)
+# -------------------------
+# Conversation states
+(R_LOC, R_PHOTO, R_DETAILS,
+ I_LOC, I_PHOTO, I_DETAILS,
+ ATT_WAIT_LOC) = range(7)
+
+def safe_insert_user(tg_user):
+    try:
+        conn = db_conn(); c = conn.cursor()
+        c.execute("INSERT OR IGNORE INTO users (tg_id, username, full_name) VALUES (?, ?, ?)",
+                  (tg_user.id, tg_user.username or "", f"{tg_user.first_name or ''} {tg_user.last_name or ''}".strip()))
+        if (tg_user.username or "").lstrip('@').lower() == ADMIN_USERNAME:
+            c.execute("UPDATE users SET is_admin = 1 WHERE tg_id = ?", (tg_user.id,))
+        conn.commit(); conn.close()
+    except Exception as e:
+        logger.exception("safe_insert_user error: %s", e)
+
+# Helper to save photo from Telegram File async
+async def save_file_and_get_path(telegram_file):
+    # telegram_file is a File object (async)
+    filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{uuid4().hex}.jpg"
+    path = PHOTOS_DIR / filename
+    try:
+        # download_to_drive is async in python-telegram-bot
+        await telegram_file.download_to_drive(custom_path=str(path))
+        return str(path)
+    except Exception as e:
+        logger.exception("file download error: %s", e)
+        return None
+
+# Start command
+async def start_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    safe_insert_user(user)
+    text = ("Welcome to MRC Assistant Manager Bot.\n\n"
+            "Use these commands:\n"
+            "/report - Create a site report (location + photo + details)\n"
+            "/issue - File an issue (location + photo + details)\n"
+            "/checkin - Check-in (share location)\n"
+            "/checkout - Check-out (share location)\n"
+            "/myreports - List your last reports\n"
+            "/tasks - View tasks\n"
+            "/createtask title|||desc|||assigned_to  (admin only)\n")
+    await update.message.reply_text(text)
+
+# ---------------- Report flow ----------------
+async def report_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    safe_insert_user(update.effective_user)
+    kb = [[KeyboardButton("Send my location", request_location=True)]]
+    await update.message.reply_text("Report started. Please share location (or type 'skip').", reply_markup=ReplyKeyboardMarkup(kb, one_time_keyboard=True))
+    return R_LOC
+
+async def report_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = update.message
+    if msg.location:
+        context.user_data['report_location'] = {'latitude': msg.location.latitude, 'longitude': msg.location.longitude}
+        await msg.reply_text("Location saved. Now send a photo (or type 'skip').", reply_markup=ReplyKeyboardRemove())
+    else:
+        # user typed skip or other text
+        await msg.reply_text("No location saved. You can still send photo or type 'skip'.", reply_markup=ReplyKeyboardRemove())
+    return R_PHOTO
+
+async def report_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = update.message
+    if msg.text and msg.text.lower() == 'skip':
+        context.user_data['report_photo'] = None
+        await msg.reply_text("Photo skipped. Now send details in single message:\nprogress:50 materials:gravel machines:roller notes:done 200m")
+        return R_DETAILS
+
+    if not msg.photo:
+        await msg.reply_text("Please send a photo or type 'skip'.")
+        return R_PHOTO
+
+    photo = msg.photo[-1]
+    file = await photo.get_file()
+    path = await save_file_and_get_path(file)
+    context.user_data['report_photo'] = path
+    await msg.reply_text("Photo saved. Now send details in one message (or simple note). Example:\nprogress:50 materials:gravel machines:roller notes:done 200m")
+    return R_DETAILS
+
+def parse_details(text):
+    data = {'progress': None, 'materials': '', 'machines': '', 'notes': ''}
+    if not text: 
+        return data
+    parts = text.split()
+    for part in parts:
+        if part.startswith('progress:'):
+            try:
+                data['progress'] = int(part.split(':',1)[1])
+            except:
+                pass
+        elif part.startswith('materials:'):
+            data['materials'] = part.split(':',1)[1]
+        elif part.startswith('machines:'):
+            data['machines'] = part.split(':',1)[1]
+        elif part.startswith('notes:'):
+            data['notes'] = part.split(':',1)[1]
+    if not any([data['progress'], data['materials'], data['machines'], data['notes']]):
+        data['notes'] = text
+    return data
+
+async def report_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    safe_insert_user(user)
+    text = update.message.text or ""
+    parsed = parse_details(text)
+    loc = context.user_data.get('report_location')
+    photo = context.user_data.get('report_photo')
+    try:
+        conn = db_conn(); c = conn.cursor()
+        c.execute("""
+        INSERT INTO reports (tg_id, username, location_text, latitude, longitude, progress, materials, machines, notes, photo_path)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            user.id, user.username or "", f"{loc.get('latitude')},{loc.get('longitude')}" if loc else '',
+            loc.get('latitude') if loc else None, loc.get('longitude') if loc else None,
+            parsed['progress'] or 0, parsed['materials'], parsed['machines'], parsed['notes'], photo
+        ))
+        conn.commit(); conn.close()
+    except Exception as e:
+        logger.exception("save report error: %s", e)
+        await update.message.reply_text("Failed to save report. Try again.")
+        return ConversationHandler.END
+    context.user_data.pop('report_location', None)
+    context.user_data.pop('report_photo', None)
+    await update.message.reply_text("Report saved ✅")
+    return ConversationHandler.END
+
+async def report_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data.pop('report_location', None)
+    context.user_data.pop('report_photo', None)
+    await update.message.reply_text("Report cancelled.", reply_markup=ReplyKeyboardRemove())
+    return ConversationHandler.END
+
+# ---------------- Issue flow ----------------
+async def issue_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    safe_insert_user(update.effective_user)
+    kb = [[KeyboardButton("Send issue location", request_location=True)]]
+    await update.message.reply_text("Issue started. Please share location (or type 'skip').", reply_markup=ReplyKeyboardMarkup(kb, one_time_keyboard=True))
+    return I_LOC
+
+async def issue_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = update.message
+    if msg.location:
+        context.user_data['issue_location'] = {'latitude': msg.location.latitude, 'longitude': msg.location.longitude}
+        await msg.reply_text("Location saved. Now send photo (or type 'skip').", reply_markup=ReplyKeyboardRemove())
+    else:
+        await msg.reply_text("No location saved. You can still send photo or type 'skip'.", reply_markup=ReplyKeyboardRemove())
+    return I_PHOTO
+
+async def issue_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = update.message
+    if msg.text and msg.text.lower() == 'skip':
+        context.user_data['issue_photo'] = None
+        await msg.reply_text("Photo skipped. Now send title, priority and description (in one message). Example:\nTitle: Pothole at X\npriority:high\nDescription: big hole near junction")
+        return I_DETAILS
+
+    if not msg.photo:
+        await msg.reply_text("Please send a photo or type 'skip'.")
+        return I_PHOTO
+
+    photo = msg.photo[-1]
+    file = await photo.get_file()
+    path = await save_file_and_get_path(file)
+    context.user_data['issue_photo'] = path
+    await msg.reply_text("Photo saved. Now send title, priority and description (in one message).")
+    return I_DETAILS
+
+async def issue_details(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    safe_insert_user(user)
+    text = update.message.text or ""
+    title = text.splitlines()[0] if text else "Issue"
+    priority = "normal"
+    if "priority:high" in text.lower(): priority = "high"
+    if "priority:low" in text.lower(): priority = "low"
+    description = text
+    loc = context.user_data.get('issue_location')
+    photo = context.user_data.get('issue_photo')
+    try:
+        conn = db_conn(); c = conn.cursor()
+        c.execute("""
+        INSERT INTO issues (tg_id, username, title, description, priority, latitude, longitude, photo_path)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            user.id, user.username or "", title, description, priority,
+            loc.get('latitude') if loc else None, loc.get('longitude') if loc else None,
+            photo
+        ))
+        conn.commit(); conn.close()
+        # notify first admin if present
+        conn2 = db_conn(); c2 = conn2.cursor()
+        c2.execute("SELECT tg_id FROM users WHERE is_admin = 1 LIMIT 1")
+        row = c2.fetchone(); conn2.close()
+        if row:
+            try:
+                admin_id = row[0]
+                await context.bot.send_message(admin_id, f"New ISSUE by @{user.username or user.id}: {title} (priority: {priority})")
+            except Exception:
+                pass
+    except Exception as e:
+        logger.exception("save issue error: %s", e)
+        await update.message.reply_text("Failed to save issue. Try again.")
+        return ConversationHandler.END
+    context.user_data.pop('issue_location', None)
+    context.user_data.pop('issue_photo', None)
+    await update.message.reply_text("Issue saved ✅")
+    return ConversationHandler.END
+
+async def issue_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data.pop('issue_location', None)
+    context.user_data.pop('issue_photo', None)
+    await update.message.reply_text("Issue cancelled.", reply_markup=ReplyKeyboardRemove())
+    return ConversationHandler.END
+
+# ---------------- Attendance ----------------
+async def checkin_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    safe_insert_user(update.effective_user)
+    kb = [[KeyboardButton("Share location for check-in", request_location=True)]]
+    context.user_data['awaiting_att'] = 'checkin'
+    await update.message.reply_text("Please share location to check-in.", reply_markup=ReplyKeyboardMarkup(kb, one_time_keyboard=True))
+    return ATT_WAIT_LOC
+
+async def checkout_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    safe_insert_user(update.effective_user)
+    kb = [[KeyboardButton("Share location for check-out", request_location=True)]]
+    context.user_data['awaiting_att'] = 'checkout'
+    await update.message.reply_text("Please share location to check-out.", reply_markup=ReplyKeyboardMarkup(kb, one_time_keyboard=True))
+    return ATT_WAIT_LOC
+
+async def attendance_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    safe_insert_user(user)
+    loc = update.message.location
+    action = context.user_data.get('awaiting_att', 'checkin')
+    try:
+        conn = db_conn(); c = conn.cursor()
+        c.execute("INSERT INTO attendance (tg_id, username, action, latitude, longitude) VALUES (?, ?, ?, ?, ?)",
+                  (user.id, user.username or "", action, loc.latitude, loc.longitude))
+        conn.commit(); conn.close()
+    except Exception as e:
+        logger.exception("attendance save error: %s", e)
+        await update.message.reply_text("Failed to record attendance.")
+        return ConversationHandler.END
+    context.user_data.pop('awaiting_att', None)
+    await update.message.reply_text(f"{action} recorded ✅", reply_markup=ReplyKeyboardRemove())
+    return ConversationHandler.END
+
+async def attendance_no_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Please share your location using the button. Type /checkin or /checkout to start again.")
+    return ConversationHandler.END
+
+# ---------------- Utilities ----------------
+async def myreports_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    try:
+        conn = db_conn(); c = conn.cursor()
+        c.execute("SELECT id, created_at, location_text, progress, notes FROM reports WHERE tg_id = ? ORDER BY created_at DESC LIMIT 10", (user.id,))
+        rows = c.fetchall(); conn.close()
+        if not rows:
+            await update.message.reply_text("You have no saved reports.")
+            return
+        text = "Your last reports:\n"
+        for r in rows:
+            text += f"- #{r[0]} {r[1]} progress:{r[3]} notes:{(r[4] or '')[:40]}\n"
+        await update.message.reply_text(text)
+    except Exception:
+        await update.message.reply_text("Error fetching reports.")
+
+async def tasks_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        conn = db_conn(); c = conn.cursor()
+        c.execute("SELECT id, title, assigned_to, status FROM tasks ORDER BY created_at DESC LIMIT 50")
+        rows = c.fetchall(); conn.close()
+        if not rows:
+            await update.message.reply_text("No tasks found.")
+            return
+        text = "Tasks:\n"
+        for r in rows:
+            text += f"#{r[0]} [{r[3]}] {r[1]} -> {r[2]}\n"
+        await update.message.reply_text(text)
+    except Exception:
+        await update.message.reply_text("Error fetching tasks.")
+
+async def create_task_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    if (user.username or "").lstrip('@').lower() != ADMIN_USERNAME:
+        await update.message.reply_text("Only admin can create tasks.")
+        return
+    raw = update.message.text.partition(" ")[2]
+    if not raw:
+        await update.message.reply_text("Usage: /createtask title|||description|||assigned_to")
+        return
+    try:
+        title, desc, assigned = [x.strip() for x in raw.split("|||")]
+    except Exception:
+        await update.message.reply_text("Please separate fields with `|||`")
+        return
+    try:
+        conn = db_conn(); c = conn.cursor()
+        c.execute("INSERT INTO tasks (title, description, assigned_to) VALUES (?, ?, ?)", (title, desc, assigned))
+        conn.commit(); conn.close()
+        await update.message.reply_text("Task created ✅")
+    except Exception:
+        await update.message.reply_text("Failed to create task.")
+
+# ---------------- Bot starter ----------------
+def start_flask_in_thread(host="0.0.0.0", port=5000):
+    def run():
+        logger.info("Starting Flask web server on %s:%s", host, port)
+        # disable Flask logging to keep console cleaner
+        log = logging.getLogger('werkzeug')
+        log.setLevel(logging.ERROR)
+        flask_app.run(host=host, port=port, debug=False)
+    t = threading.Thread(target=run, daemon=True)
+    t.start()
+    return t
+
+def start_telegram_bot():
+    TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+    if not TOKEN:
+        logger.warning("TELEGRAM_BOT_TOKEN not set — Bot will not start. Set env var to enable bot.")
+        return
+    app = ApplicationBuilder().token(TOKEN).build()
+
+    # simple handlers
+    app.add_handler(CommandHandler("start", start_cmd))
+
+    # Report conversation
+    report_conv = ConversationHandler(
+        entry_points=[CommandHandler('report', report_start)],
+        states={
+            R_LOC: [MessageHandler(filters.LOCATION | filters.Regex('^(skip|SKIP)$') | filters.TEXT, report_location)],
+            R_PHOTO: [MessageHandler(filters.PHOTO | filters.Regex('^(skip|SKIP)$') | filters.TEXT, report_photo)],
+            R_DETAILS: [MessageHandler(filters.TEXT & ~filters.COMMAND, report_details)],
+        },
+        fallbacks=[CommandHandler('cancel', report_cancel)],
+        allow_reentry=True
+    )
+    app.add_handler(report_conv)
+
+    # Issue conversation
+    issue_conv = ConversationHandler(
+        entry_points=[CommandHandler('issue', issue_start)],
+        states={
+            I_LOC: [MessageHandler(filters.LOCATION | filters.Regex('^(skip|SKIP)$') | filters.TEXT, issue_location)],
+            I_PHOTO: [MessageHandler(filters.PHOTO | filters.Regex('^(skip|SKIP)$') | filters.TEXT, issue_photo)],
+            I_DETAILS: [MessageHandler(filters.TEXT & ~filters.COMMAND, issue_details)],
+        },
+        fallbacks=[CommandHandler('cancel', issue_cancel)],
+        allow_reentry=True
+    )
+    app.add_handler(issue_conv)
+
+    # Attendance conversation
+    att_conv = ConversationHandler(
+        entry_points=[CommandHandler('checkin', checkin_cmd), CommandHandler('checkout', checkout_cmd)],
+        states={
+            ATT_WAIT_LOC: [MessageHandler(filters.LOCATION, attendance_location), MessageHandler(filters.TEXT, attendance_no_location)]
+        },
+        fallbacks=[CommandHandler('cancel', lambda u,c: ConversationHandler.END)]
+    )
+    app.add_handler(att_conv)
+
+    # utilities
+    app.add_handler(CommandHandler('myreports', myreports_cmd))
+    app.add_handler(CommandHandler('tasks', tasks_cmd))
+    app.add_handler(CommandHandler('createtask', create_task_cmd))
+
+    logger.info("Starting Telegram bot (polling). Admin username: %s", ADMIN_USERNAME)
+    app.run_polling()
+
+# ---------------- Main entry ----------------
+if __name__ == "__main__":
+    # Start Flask in background thread
+    start_flask_in_thread(host="0.0.0.0", port=5000)
+    # Start Telegram bot (if token provided). This call blocks the main thread.
+    start_telegram_bot()
+    # If bot not started (no token), keep the script running so Flask stays alive
+    if not os.environ.get("TELEGRAM_BOT_TOKEN"):
+        logger.info("No TELEGRAM_BOT_TOKEN — web dashboard still running at http://localhost:5000/")
+        try:
+            import time
+            while True:
+                time.sleep(60)
+        except KeyboardInterrupt:
+            print("Stopping.")
+
     
