@@ -495,8 +495,11 @@
                         <button class="location-btn" onclick="getReportLocation()">
                             <i class="fas fa-map-marker-alt"></i> Use Current Location
                         </button>
+                        <button class="btn-small" onclick="useManualLocation('report')">
+                            <i class="fas fa-edit"></i> Enter Manually
+                        </button>
                     </div>
-                    <input type="text" id="reportLocation" placeholder="Location description" readonly>
+                    <input type="text" id="reportLocation" placeholder="Location description">
                 </div>
                 
                 <div class="form-group">
@@ -553,8 +556,11 @@
                         <button class="location-btn" onclick="getIssueLocation()">
                             <i class="fas fa-map-marker-alt"></i> Use Current Location
                         </button>
+                        <button class="btn-small" onclick="useManualLocation('issue')">
+                            <i class="fas fa-edit"></i> Enter Manually
+                        </button>
                     </div>
-                    <input type="text" id="issueLocation" placeholder="Location description" readonly>
+                    <input type="text" id="issueLocation" placeholder="Location description">
                 </div>
                 
                 <div class="form-group">
@@ -704,7 +710,7 @@
         ];
         
         let map, detailedMap;
-        let currentLocation = null;
+        let currentLocation = { latitude: 4.1755, longitude: 73.5093 }; // Default sample location
 
         // Initialize the app
         function initApp() {
@@ -736,7 +742,9 @@
             // Show selected tab content
             if (tabName === 'map') {
                 document.getElementById('mapTab').classList.add('active');
-                setTimeout(() => detailedMap.invalidateSize(), 100);
+                setTimeout(() => {
+                    if (detailedMap) detailedMap.invalidateSize();
+                }, 100);
             } else {
                 document.getElementById(tabName).classList.add('active');
             }
@@ -755,25 +763,22 @@
 
         // Initialize main map
         function initMap() {
-            map = L.map('map').setView([0, 0], 2);
+            map = L.map('map').setView([currentLocation.latitude, currentLocation.longitude], 15);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: ''
             }).addTo(map);
             
-            // Add sample markers if no data
-            if (reports.length === 0 && issues.length === 0) {
-                const sampleLocation = [4.1755, 73.5093]; // Sample coordinates
-                map.setView(sampleLocation, 15);
-                L.marker(sampleLocation).addTo(map)
-                    .bindPopup('Sample Construction Site<br>Start adding reports and issues!');
-            } else {
-                updateMap();
-            }
+            // Add sample marker
+            L.marker([currentLocation.latitude, currentLocation.longitude]).addTo(map)
+                .bindPopup('Main Construction Site<br>Start adding reports and issues!')
+                .openPopup();
+            
+            updateMap();
         }
 
         // Initialize detailed map
         function initDetailedMap() {
-            detailedMap = L.map('detailedMap').setView([0, 0], 2);
+            detailedMap = L.map('detailedMap').setView([currentLocation.latitude, currentLocation.longitude], 15);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: ''
             }).addTo(detailedMap);
@@ -783,47 +788,55 @@
 
         // Update maps with data
         function updateMap() {
-            // Clear existing markers
+            // Clear existing markers (except base layers)
             map.eachLayer((layer) => {
                 if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
                     map.removeLayer(layer);
                 }
             });
 
+            // Add main site marker
+            L.marker([currentLocation.latitude, currentLocation.longitude]).addTo(map)
+                .bindPopup('Main Construction Site');
+
             // Add reports
             reports.forEach(report => {
-                if (report.latitude && report.longitude) {
-                    L.circleMarker([report.latitude, report.longitude], {
-                        radius: 8,
-                        color: '#00a8ff',
-                        fillColor: '#00a8ff',
-                        fillOpacity: 0.7
-                    }).addTo(map).bindPopup(`
-                        <b>Report #${report.id}</b><br>
-                        Progress: ${report.progress}%<br>
-                        ${report.notes || ''}
-                    `);
-                }
+                const lat = report.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.01;
+                const lng = report.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.01;
+                
+                L.circleMarker([lat, lng], {
+                    radius: 8,
+                    color: '#00a8ff',
+                    fillColor: '#00a8ff',
+                    fillOpacity: 0.7
+                }).addTo(map).bindPopup(`
+                    <b>Report #${report.id}</b><br>
+                    Progress: ${report.progress}%<br>
+                    ${report.notes || ''}
+                `);
             });
 
             // Add issues
             issues.forEach(issue => {
-                if (issue.latitude && issue.longitude) {
-                    L.circleMarker([issue.latitude, issue.longitude], {
-                        radius: 8,
-                        color: '#fbc531',
-                        fillColor: '#fbc531',
-                        fillOpacity: 0.7
-                    }).addTo(map).bindPopup(`
-                        <b>Issue #${issue.id}</b><br>
-                        ${issue.title}<br>
-                        Priority: ${issue.priority}
-                    `);
-                }
+                const lat = issue.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.01;
+                const lng = issue.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.01;
+                
+                L.circleMarker([lat, lng], {
+                    radius: 8,
+                    color: '#fbc531',
+                    fillColor: '#fbc531',
+                    fillOpacity: 0.7
+                }).addTo(map).bindPopup(`
+                    <b>Issue #${issue.id}</b><br>
+                    ${issue.title}<br>
+                    Priority: ${issue.priority}
+                `);
             });
         }
 
         function updateDetailedMap() {
+            if (!detailedMap) return;
+            
             // Clear existing markers
             detailedMap.eachLayer((layer) => {
                 if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
@@ -834,58 +847,66 @@
             // Add all markers to detailed map
             let bounds = [];
 
+            // Main site
+            const mainMarker = L.marker([currentLocation.latitude, currentLocation.longitude]).addTo(detailedMap)
+                .bindPopup('<b>Main Construction Site</b>');
+            bounds.push([currentLocation.latitude, currentLocation.longitude]);
+
             // Reports
             reports.forEach(report => {
-                if (report.latitude && report.longitude) {
-                    const marker = L.circleMarker([report.latitude, report.longitude], {
-                        radius: 10,
-                        color: '#00a8ff',
-                        fillColor: '#00a8ff',
-                        fillOpacity: 0.8
-                    }).addTo(detailedMap).bindPopup(`
-                        <b>Report #${report.id}</b><br>
-                        Progress: ${report.progress}%<br>
-                        Materials: ${report.materials || 'N/A'}<br>
-                        ${report.notes || ''}
-                    `);
-                    bounds.push([report.latitude, report.longitude]);
-                }
+                const lat = report.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.01;
+                const lng = report.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.01;
+                
+                const marker = L.circleMarker([lat, lng], {
+                    radius: 10,
+                    color: '#00a8ff',
+                    fillColor: '#00a8ff',
+                    fillOpacity: 0.8
+                }).addTo(detailedMap).bindPopup(`
+                    <b>Report #${report.id}</b><br>
+                    Progress: ${report.progress}%<br>
+                    Materials: ${report.materials || 'N/A'}<br>
+                    ${report.notes || ''}
+                `);
+                bounds.push([lat, lng]);
             });
 
             // Issues
             issues.forEach(issue => {
-                if (issue.latitude && issue.longitude) {
-                    const marker = L.circleMarker([issue.latitude, issue.longitude], {
-                        radius: 10,
-                        color: '#fbc531',
-                        fillColor: '#fbc531',
-                        fillOpacity: 0.8
-                    }).addTo(detailedMap).bindPopup(`
-                        <b>Issue #${issue.id}</b><br>
-                        ${issue.title}<br>
-                        Priority: ${issue.priority}<br>
-                        ${issue.description || ''}
-                    `);
-                    bounds.push([issue.latitude, issue.longitude]);
-                }
+                const lat = issue.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.01;
+                const lng = issue.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.01;
+                
+                const marker = L.circleMarker([lat, lng], {
+                    radius: 10,
+                    color: '#fbc531',
+                    fillColor: '#fbc531',
+                    fillOpacity: 0.8
+                }).addTo(detailedMap).bindPopup(`
+                    <b>Issue #${issue.id}</b><br>
+                    ${issue.title}<br>
+                    Priority: ${issue.priority}<br>
+                    ${issue.description || ''}
+                `);
+                bounds.push([lat, lng]);
             });
 
             // Attendance
             attendance.forEach(record => {
-                if (record.latitude && record.longitude) {
-                    const color = record.action === 'checkin' ? '#4cd137' : '#e84118';
-                    const marker = L.circleMarker([record.latitude, record.longitude], {
-                        radius: 6,
-                        color: color,
-                        fillColor: color,
-                        fillOpacity: 0.8
-                    }).addTo(detailedMap).bindPopup(`
-                        <b>${record.action.toUpperCase()}</b><br>
-                        ${record.username || 'User'}<br>
-                        ${new Date(record.timestamp).toLocaleString()}
-                    `);
-                    bounds.push([record.latitude, record.longitude]);
-                }
+                const lat = record.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.005;
+                const lng = record.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.005;
+                
+                const color = record.action === 'checkin' ? '#4cd137' : '#e84118';
+                const marker = L.circleMarker([lat, lng], {
+                    radius: 6,
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.8
+                }).addTo(detailedMap).bindPopup(`
+                    <b>${record.action.toUpperCase()}</b><br>
+                    ${record.username || 'User'}<br>
+                    ${new Date(record.timestamp).toLocaleString()}
+                `);
+                bounds.push([lat, lng]);
             });
 
             // Fit map to show all markers
@@ -894,9 +915,10 @@
             }
         }
 
-        // Location functions
+        // Location functions with fallback
         function getCurrentLocation() {
             if (navigator.geolocation) {
+                showStatus('Getting your location...', 'info');
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         currentLocation = {
@@ -908,19 +930,26 @@
                             .addTo(map)
                             .bindPopup('Your current location')
                             .openPopup();
-                        showStatus('Location found!', 'success');
+                        showStatus('Location found! Map updated.', 'success');
                     },
                     (error) => {
-                        showStatus('Unable to get location: ' + error.message, 'warning');
+                        showStatus('Using sample location. Enable location permissions for accurate tracking.', 'warning');
+                        // Keep using sample location
+                        map.setView([currentLocation.latitude, currentLocation.longitude], 15);
+                    },
+                    { 
+                        timeout: 10000,
+                        enableHighAccuracy: false 
                     }
                 );
             } else {
-                showStatus('Geolocation is not supported by this browser', 'warning');
+                showStatus('Geolocation not supported. Using sample location.', 'warning');
             }
         }
 
         function getCurrentLocationForMap() {
             if (navigator.geolocation) {
+                showStatus('Getting your location...', 'info');
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         currentLocation = {
@@ -935,14 +964,19 @@
                         showStatus('Location found!', 'success');
                     },
                     (error) => {
-                        showStatus('Unable to get location: ' + error.message, 'warning');
-                    }
+                        showStatus('Using sample location.', 'warning');
+                        detailedMap.setView([currentLocation.latitude, currentLocation.longitude], 15);
+                    },
+                    { timeout: 10000 }
                 );
+            } else {
+                showStatus('Geolocation not supported.', 'warning');
             }
         }
 
         function getReportLocation() {
             if (navigator.geolocation) {
+                showStatus('Getting location for report...', 'info');
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         currentLocation = {
@@ -954,14 +988,18 @@
                         showStatus('Report location set!', 'success');
                     },
                     (error) => {
-                        showStatus('Unable to get location', 'warning');
-                    }
+                        useManualLocation('report');
+                    },
+                    { timeout: 10000 }
                 );
+            } else {
+                useManualLocation('report');
             }
         }
 
         function getIssueLocation() {
             if (navigator.geolocation) {
+                showStatus('Getting location for issue...', 'info');
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         currentLocation = {
@@ -973,19 +1011,32 @@
                         showStatus('Issue location set!', 'success');
                     },
                     (error) => {
-                        showStatus('Unable to get location', 'warning');
-                    }
+                        useManualLocation('issue');
+                    },
+                    { timeout: 10000 }
                 );
+            } else {
+                useManualLocation('issue');
+            }
+        }
+
+        function useManualLocation(type) {
+            const defaultLocation = "Construction Site - Main Area";
+            const manualLocation = prompt('Enter location manually:', defaultLocation);
+            if (manualLocation) {
+                if (type === 'report') {
+                    document.getElementById('reportLocation').value = manualLocation;
+                } else {
+                    document.getElementById('issueLocation').value = manualLocation;
+                }
+                showStatus('Manual location set!', 'success');
             }
         }
 
         function showAllLocations() {
             updateMap();
-            if (reports.length > 0 || issues.length > 0) {
-                showStatus('Showing all site locations', 'info');
-            } else {
-                showStatus('No locations to show', 'warning');
-            }
+            updateDetailedMap();
+            showStatus('Showing all site locations', 'info');
         }
 
         function refreshMap() {
@@ -1037,8 +1088,8 @@
                 materials: materials,
                 machines: machines,
                 notes: notes,
-                latitude: currentLocation ? currentLocation.latitude : null,
-                longitude: currentLocation ? currentLocation.longitude : null,
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
                 photo: document.getElementById('reportPhotoPreview').src || null
             };
 
@@ -1074,6 +1125,8 @@
                     <div style="color: #ccc; font-size: 0.9em;">
                         ${report.notes || 'No additional notes'}
                     </div>
+                    ${report.materials ? `<div style="margin-top: 4px; font-size: 0.8em; color: #aaa;">Materials: ${report.materials}</div>` : ''}
+                    ${report.machines ? `<div style="font-size: 0.8em; color: #aaa;">Machines: ${report.machines}</div>` : ''}
                     ${report.photo ? `<div style="margin-top: 8px;"><img src="${report.photo}" style="max-width: 100%; border-radius: 4px;"></div>` : ''}
                 </div>
             `).join('');
@@ -1120,8 +1173,8 @@
                 location: location,
                 priority: priority,
                 description: description,
-                latitude: currentLocation ? currentLocation.latitude : null,
-                longitude: currentLocation ? currentLocation.longitude : null,
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
                 photo: document.getElementById('issuePhotoPreview').src || null,
                 status: 'open'
             };
@@ -1184,57 +1237,35 @@
 
         // Attendance functions
         function checkIn() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const record = {
-                            id: Date.now(),
-                            timestamp: new Date().toISOString(),
-                            action: 'checkin',
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            username: 'User' // In real app, this would be actual user
-                        };
-                        attendance.unshift(record);
-                        localStorage.setItem('mrc_attendance', JSON.stringify(attendance));
-                        updateAttendanceList();
-                        updateDashboard();
-                        showStatus('Checked in successfully!', 'success');
-                    },
-                    (error) => {
-                        showStatus('Unable to get location for check-in', 'warning');
-                    }
-                );
-            } else {
-                showStatus('Geolocation not supported', 'warning');
-            }
+            const record = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                action: 'checkin',
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+                username: 'User'
+            };
+            attendance.unshift(record);
+            localStorage.setItem('mrc_attendance', JSON.stringify(attendance));
+            updateAttendanceList();
+            updateDashboard();
+            showStatus('Checked in successfully!', 'success');
         }
 
         function checkOut() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const record = {
-                            id: Date.now(),
-                            timestamp: new Date().toISOString(),
-                            action: 'checkout',
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            username: 'User'
-                        };
-                        attendance.unshift(record);
-                        localStorage.setItem('mrc_attendance', JSON.stringify(attendance));
-                        updateAttendanceList();
-                        updateDashboard();
-                        showStatus('Checked out successfully!', 'success');
-                    },
-                    (error) => {
-                        showStatus('Unable to get location for check-out', 'warning');
-                    }
-                );
-            } else {
-                showStatus('Geolocation not supported', 'warning');
-            }
+            const record = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                action: 'checkout',
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+                username: 'User'
+            };
+            attendance.unshift(record);
+            localStorage.setItem('mrc_attendance', JSON.stringify(attendance));
+            updateAttendanceList();
+            updateDashboard();
+            showStatus('Checked out successfully!', 'success');
         }
 
         function updateAttendanceList() {
@@ -1380,11 +1411,14 @@
             status.style.zIndex = '1000';
             status.style.minWidth = '200px';
             status.style.textAlign = 'center';
+            status.style.maxWidth = '90%';
             
             document.body.appendChild(status);
             
             setTimeout(() => {
-                status.remove();
+                if (status.parentNode) {
+                    status.parentNode.removeChild(status);
+                }
             }, 3000);
         }
 
@@ -1417,5 +1451,3 @@
     </script>
 </body>
 </html>
-
-    
