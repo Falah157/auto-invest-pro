@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRC Assistant Manager - Construction Site Management</title>
+    <title>GOLDEN SITE MANAGER - Construction Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         * {
@@ -14,20 +14,22 @@
         }
 
         :root {
-            --primary: #00a8ff;
-            --secondary: #0097e6;
-            --accent: #00d2d3;
-            --danger: #e84118;
-            --warning: #fbc531;
-            --success: #4cd137;
-            --bg-dark: #0c2461;
-            --card-bg: #1e3799;
-            --text-light: #dfe6e9;
+            --gold: #FFD700;
+            --dark-gold: #B8860B;
+            --light-gold: #FFEC8B;
+            --black: #0a0a0a;
+            --dark-gray: #1a1a1a;
+            --medium-gray: #2a2a2a;
+            --light-gray: #3a3a3a;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --danger: #ff4444;
+            --info: #00a8ff;
         }
 
         body {
-            background: var(--bg-dark);
-            color: var(--text-light);
+            background: var(--black);
+            color: var(--light-gold);
             min-height: 100vh;
             padding: 15px;
             padding-bottom: 80px;
@@ -42,11 +44,12 @@
             text-align: center;
             margin-bottom: 20px;
             padding: 20px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 2px solid var(--primary);
+            background: linear-gradient(135deg, var(--dark-gray), var(--black));
+            border-radius: 15px;
+            border: 2px solid var(--gold);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
 
         .header::before {
@@ -56,7 +59,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--warning));
+            background: linear-gradient(90deg, var(--gold), var(--dark-gold), var(--light-gold));
             animation: pulse 3s infinite;
         }
 
@@ -67,18 +70,43 @@
         }
 
         .logo {
-            font-size: 2em;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            font-size: 2.2em;
+            background: linear-gradient(90deg, var(--gold), var(--light-gold));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
             font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
         .tagline {
-            color: #aaa;
+            color: var(--light-gold);
             font-size: 0.9em;
             margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .access-control {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .mode-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--gold);
+            background: var(--dark-gray);
+            color: var(--light-gold);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: var(--gold);
+            color: var(--black);
+            font-weight: bold;
         }
 
         /* Stats Grid */
@@ -90,13 +118,14 @@
         }
 
         .stat-card {
-            background: var(--card-bg);
+            background: linear-gradient(135deg, var(--dark-gray), var(--medium-gray));
             padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #34495e;
+            border-radius: 10px;
+            border: 1px solid var(--light-gray);
             text-align: center;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .stat-card::after {
@@ -106,35 +135,38 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            background: linear-gradient(90deg, var(--gold), var(--dark-gold));
         }
 
         .stat-value {
-            font-size: 1.4em;
+            font-size: 1.6em;
             font-weight: bold;
             margin: 5px 0;
+            color: var(--gold);
         }
 
         .stat-label {
-            color: #aaa;
+            color: var(--light-gold);
             font-size: 0.8em;
+            opacity: 0.8;
         }
 
-        .primary { color: var(--primary); }
-        .accent { color: var(--accent); }
-        .warning { color: var(--warning); }
+        .gold { color: var(--gold); }
         .success { color: var(--success); }
+        .warning { color: var(--warning); }
         .danger { color: var(--danger); }
+        .info { color: var(--info); }
 
         /* Mobile Tabs */
         .mobile-tabs {
             display: flex;
             margin-bottom: 15px;
-            background: var(--card-bg);
-            border-radius: 10px;
+            background: var(--dark-gray);
+            border-radius: 12px;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             padding: 5px;
+            border: 1px solid var(--light-gray);
         }
 
         .mobile-tab {
@@ -147,11 +179,13 @@
             flex: 1;
             text-align: center;
             font-size: 0.85em;
+            color: var(--light-gold);
         }
 
         .mobile-tab.active {
-            background: rgba(0, 168, 255, 0.2);
-            border: 1px solid var(--primary);
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--gold);
+            color: var(--gold);
         }
 
         .tab-content {
@@ -164,49 +198,58 @@
 
         /* Cards */
         .card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #34495e;
+            background: linear-gradient(135deg, var(--dark-gray), var(--medium-gray));
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--light-gray);
             margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .card h3 {
-            color: var(--primary);
-            margin-bottom: 12px;
+            color: var(--gold);
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid #34495e;
-            padding-bottom: 8px;
-            font-size: 1.1em;
+            gap: 10px;
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 10px;
+            font-size: 1.2em;
         }
 
         /* Forms */
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #ccc;
-            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: var(--light-gold);
+            font-size: 0.95em;
+            font-weight: 500;
         }
 
         input, select, button, textarea {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
-            border: 1px solid #34495e;
-            background: #2c3e50;
-            color: white;
+            border: 1px solid var(--light-gray);
+            background: var(--black);
+            color: var(--light-gold);
             font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
         button {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--black);
             border: none;
             cursor: pointer;
             font-weight: bold;
@@ -219,104 +262,140 @@
         }
 
         .btn-success {
-            background: linear-gradient(90deg, var(--success), #27ae60);
+            background: linear-gradient(135deg, var(--success), #00cc66);
+            color: white;
         }
 
         .btn-warning {
-            background: linear-gradient(90deg, var(--warning), #e1b12c);
+            background: linear-gradient(135deg, var(--warning), #cc9900);
+            color: black;
         }
 
         .btn-danger {
-            background: linear-gradient(90deg, var(--danger), #c23616);
+            background: linear-gradient(135deg, var(--danger), #cc0000);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #0099cc);
+            color: white;
         }
 
         .btn-small {
-            padding: 8px 12px;
+            padding: 10px 15px;
             font-size: 0.85em;
             width: auto;
         }
 
-        /* Map */
-        #map {
+        /* Maps */
+        #map, #detailedMap {
             height: 300px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 15px;
-            border: 1px solid #34495e;
+            border: 2px solid var(--light-gray);
         }
 
-        /* Reports List */
-        .report-item, .issue-item {
-            background: #2c3e50;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--primary);
+        /* Items List */
+        .report-item, .issue-item, .task-item {
+            background: var(--black);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--gold);
+            border: 1px solid var(--light-gray);
+            transition: all 0.3s;
         }
 
         .issue-item {
             border-left-color: var(--warning);
         }
 
-        .report-header, .issue-header {
+        .task-item {
+            border-left-color: var(--info);
+        }
+
+        .report-header, .issue-header, .task-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        .report-id, .issue-id {
+        .report-id, .issue-id, .task-id {
             font-weight: bold;
-            color: var(--primary);
+            color: var(--gold);
+            font-size: 1.1em;
         }
 
-        .report-date, .issue-date {
-            color: #aaa;
+        .report-date, .issue-date, .task-date {
+            color: var(--light-gold);
             font-size: 0.8em;
+            opacity: 0.7;
         }
 
         .report-progress {
             display: inline-block;
-            padding: 2px 8px;
-            background: var(--primary);
-            border-radius: 12px;
+            padding: 4px 12px;
+            background: var(--gold);
+            color: black;
+            border-radius: 15px;
             font-size: 0.8em;
-            margin-right: 8px;
+            margin-right: 10px;
+            font-weight: bold;
         }
 
-        .issue-priority {
+        .issue-priority, .task-priority {
             display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 4px 12px;
+            border-radius: 15px;
             font-size: 0.8em;
-            margin-right: 8px;
+            margin-right: 10px;
+            font-weight: bold;
         }
 
-        .priority-high { background: var(--danger); }
-        .priority-medium { background: var(--warning); }
-        .priority-low { background: var(--success); }
+        .priority-high { background: var(--danger); color: white; }
+        .priority-medium { background: var(--warning); color: black; }
+        .priority-low { background: var(--success); color: white; }
+
+        .task-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .status-pending { background: var(--warning); color: black; }
+        .status-inprogress { background: var(--info); color: white; }
+        .status-completed { background: var(--success); color: white; }
 
         /* Status Messages */
         .status {
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
             text-align: center;
-            font-size: 0.9em;
+            font-size: 0.95em;
+            border: 1px solid;
         }
 
         .status.success {
-            background: rgba(76, 209, 55, 0.2);
-            border: 1px solid var(--success);
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--success);
+            color: var(--success);
         }
 
         .status.info {
-            background: rgba(0, 168, 255, 0.2);
-            border: 1px solid var(--primary);
+            background: rgba(0, 168, 255, 0.1);
+            border-color: var(--info);
+            color: var(--info);
         }
 
         .status.warning {
-            background: rgba(251, 197, 49, 0.2);
-            border: 1px solid var(--warning);
+            background: rgba(255, 170, 0, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
         }
 
         /* Bottom Navigation */
@@ -325,24 +404,27 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--card-bg);
+            background: var(--dark-gray);
             display: flex;
-            padding: 10px;
-            border-top: 2px solid var(--primary);
+            padding: 12px;
+            border-top: 2px solid var(--gold);
             z-index: 100;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
         }
 
         .nav-item {
             flex: 1;
             text-align: center;
             padding: 8px 5px;
-            color: #aaa;
+            color: var(--light-gold);
             font-size: 0.75em;
             transition: all 0.3s;
+            opacity: 0.7;
         }
 
         .nav-item.active {
-            color: var(--primary);
+            color: var(--gold);
+            opacity: 1;
         }
 
         .nav-icon {
@@ -365,12 +447,110 @@
             object-fit: cover;
             border-radius: 8px;
             margin: 10px 0;
-            border: 2px solid var(--primary);
+            border: 2px solid var(--gold);
         }
 
         /* Location Button */
         .location-btn {
-            background: linear-gradient(90deg, var(--accent), #00b894);
+            background: linear-gradient(135deg, var(--info), #0099cc);
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--black);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--dark-gold));
+            transition: width 0.3s ease;
+        }
+
+        /* Photo Gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .gallery-item {
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid var(--light-gray);
+            transition: all 0.3s;
+        }
+
+        .gallery-item:hover {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--dark-gray), var(--black));
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Login */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            background: var(--black);
+        }
+
+        .login-card {
+            background: linear-gradient(135deg, var(--dark-gray), var(--black));
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .login-logo {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, var(--gold), var(--light-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            font-weight: bold;
         }
 
         /* Responsive */
@@ -387,343 +567,1101 @@
             .action-buttons {
                 grid-template-columns: 1fr;
             }
+            
+            .photo-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+
+        /* View Mode Styles */
+        .view-mode .edit-only {
+            display: none !important;
+        }
+
+        .public-note {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--gold);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">MRC ASSISTANT MANAGER</div>
-            <p class="tagline">Construction Site Management System</p>
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                <button class="btn-warning btn-small" onclick="syncData()">
-                    <i class="fas fa-sync-alt"></i> Sync Data
-                </button>
-                <button class="btn-danger btn-small" onclick="clearAllData()">
-                    <i class="fas fa-trash"></i> Clear Data
-                </button>
-            </div>
-        </div>
-
-        <!-- Stats Dashboard -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Active Reports</div>
-                <div class="stat-value primary" id="activeReports">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Open Issues</div>
-                <div class="stat-value warning" id="openIssues">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Today's Check-ins</div>
-                <div class="stat-value accent" id="todayCheckins">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Team Members</div>
-                <div class="stat-value success" id="teamMembers">0</div>
-            </div>
-        </div>
-
-        <!-- Mobile Tabs -->
-        <div class="mobile-tabs">
-            <div class="mobile-tab active" onclick="switchTab('dashboard')">
-                <i class="fas fa-tachometer-alt"></i><br>Dashboard
-            </div>
-            <div class="mobile-tab" onclick="switchTab('reports')">
-                <i class="fas fa-clipboard-list"></i><br>Reports
-            </div>
-            <div class="mobile-tab" onclick="switchTab('issues')">
-                <i class="fas fa-exclamation-triangle"></i><br>Issues
-            </div>
-            <div class="mobile-tab" onclick="switchTab('attendance')">
-                <i class="fas fa-user-check"></i><br>Attendance
-            </div>
-            <div class="mobile-tab" onclick="switchTab('map')">
-                <i class="fas fa-map-marked-alt"></i><br>Live Map
-            </div>
-        </div>
-
-        <!-- Dashboard Tab -->
-        <div id="dashboard" class="tab-content active">
-            <div class="card">
-                <h3><i class="fas fa-map-marker-alt"></i> Site Overview Map</h3>
-                <div id="map"></div>
-                <div class="action-buttons">
-                    <button class="btn-success" onclick="getCurrentLocation()">
-                        <i class="fas fa-location-arrow"></i> My Location
-                    </button>
-                    <button class="location-btn" onclick="showAllLocations()">
-                        <i class="fas fa-layer-group"></i> Show All Sites
-                    </button>
-                </div>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">GOLDEN SITE</div>
+            <h3 style="color: var(--gold); margin-bottom: 20px;">Construction Manager</h3>
+            
+            <div class="form-group">
+                <label for="loginPassword">Team Access Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter team password" value="site123">
             </div>
             
-            <div class="card">
-                <h3><i class="fas fa-bell"></i> Recent Activity</h3>
-                <div id="recentActivity">
-                    <div class="status info">No recent activity</div>
-                </div>
-            </div>
+            <button class="btn-success" onclick="login()" style="margin-bottom: 15px;">
+                <i class="fas fa-lock-open"></i> Team Login
+            </button>
             
-            <div class="card">
-                <h3><i class="fas fa-tasks"></i> Quick Actions</h3>
-                <div class="action-buttons">
-                    <button class="btn-success" onclick="switchTab('reports'); startNewReport();">
-                        <i class="fas fa-plus"></i> New Report
-                    </button>
-                    <button class="btn-warning" onclick="switchTab('issues'); startNewIssue();">
-                        <i class="fas fa-exclamation-circle"></i> Report Issue
-                    </button>
-                    <button class="location-btn" onclick="checkIn()">
-                        <i class="fas fa-sign-in-alt"></i> Check In
-                    </button>
-                    <button class="btn-danger" onclick="checkOut()">
-                        <i class="fas fa-sign-out-alt"></i> Check Out
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reports Tab -->
-        <div id="reports" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-plus-circle"></i> Create New Report</h3>
-                <div class="form-group">
-                    <label for="reportLocation">Location</label>
-                    <div class="action-buttons">
-                        <button class="location-btn" onclick="getReportLocation()">
-                            <i class="fas fa-map-marker-alt"></i> Use Current Location
-                        </button>
-                        <button class="btn-small" onclick="useManualLocation('report')">
-                            <i class="fas fa-edit"></i> Enter Manually
-                        </button>
-                    </div>
-                    <input type="text" id="reportLocation" placeholder="Location description">
-                </div>
-                
-                <div class="form-group">
-                    <label for="reportProgress">Progress (%)</label>
-                    <input type="number" id="reportProgress" min="0" max="100" value="0">
-                </div>
-                
-                <div class="form-group">
-                    <label for="reportMaterials">Materials Used</label>
-                    <input type="text" id="reportMaterials" placeholder="e.g., Concrete, Steel, Gravel">
-                </div>
-                
-                <div class="form-group">
-                    <label for="reportMachines">Machines Used</label>
-                    <input type="text" id="reportMachines" placeholder="e.g., Excavator, Crane, Mixer">
-                </div>
-                
-                <div class="form-group">
-                    <label for="reportNotes">Notes</label>
-                    <textarea id="reportNotes" rows="3" placeholder="Additional details about the work..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Photo (Optional)</label>
-                    <input type="file" id="reportPhoto" accept="image/*" onchange="previewReportPhoto()">
-                    <img id="reportPhotoPreview" class="photo-preview" style="display: none;">
-                </div>
-                
-                <button class="btn-success" onclick="saveReport()">
-                    <i class="fas fa-save"></i> Save Report
-                </button>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-clipboard-list"></i> Recent Reports</h3>
-                <div id="reportsList">
-                    <div class="status info">No reports yet</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Issues Tab -->
-        <div id="issues" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-exclamation-triangle"></i> Report New Issue</h3>
-                <div class="form-group">
-                    <label for="issueTitle">Issue Title</label>
-                    <input type="text" id="issueTitle" placeholder="Brief description of the issue">
-                </div>
-                
-                <div class="form-group">
-                    <label for="issueLocation">Location</label>
-                    <div class="action-buttons">
-                        <button class="location-btn" onclick="getIssueLocation()">
-                            <i class="fas fa-map-marker-alt"></i> Use Current Location
-                        </button>
-                        <button class="btn-small" onclick="useManualLocation('issue')">
-                            <i class="fas fa-edit"></i> Enter Manually
-                        </button>
-                    </div>
-                    <input type="text" id="issueLocation" placeholder="Location description">
-                </div>
-                
-                <div class="form-group">
-                    <label for="issuePriority">Priority</label>
-                    <select id="issuePriority">
-                        <option value="low">Low</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="issueDescription">Description</label>
-                    <textarea id="issueDescription" rows="3" placeholder="Detailed description of the issue..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Photo (Optional)</label>
-                    <input type="file" id="issuePhoto" accept="image/*" onchange="previewIssuePhoto()">
-                    <img id="issuePhotoPreview" class="photo-preview" style="display: none;">
-                </div>
-                
-                <button class="btn-warning" onclick="saveIssue()">
-                    <i class="fas fa-save"></i> Save Issue
-                </button>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-list"></i> Active Issues</h3>
-                <div id="issuesList">
-                    <div class="status info">No active issues</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Attendance Tab -->
-        <div id="attendance" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-user-check"></i> Team Attendance</h3>
-                <div class="action-buttons">
-                    <button class="btn-success" onclick="checkIn()">
-                        <i class="fas fa-sign-in-alt"></i> Check In
-                    </button>
-                    <button class="btn-danger" onclick="checkOut()">
-                        <i class="fas fa-sign-out-alt"></i> Check Out
-                    </button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-history"></i> Today's Attendance</h3>
-                <div id="attendanceList">
-                    <div class="status info">No attendance records today</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-users"></i> Team Members</h3>
-                <div id="teamList">
-                    <div class="status info">No team members added</div>
-                </div>
-                
-                <div class="form-group" style="margin-top: 15px;">
-                    <label for="newMemberName">Add Team Member</label>
-                    <input type="text" id="newMemberName" placeholder="Full name">
-                    <input type="text" id="newMemberRole" placeholder="Role" style="margin-top: 8px;">
-                    <button class="btn-small" onclick="addTeamMember()" style="margin-top: 8px;">
-                        <i class="fas fa-user-plus"></i> Add Member
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Map Tab -->
-        <div id="mapTab" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-map-marked-alt"></i> Live Site Map</h3>
-                <div id="detailedMap" style="height: 400px;"></div>
-                <div class="action-buttons">
-                    <button class="location-btn" onclick="refreshMap()">
-                        <i class="fas fa-sync-alt"></i> Refresh Map
-                    </button>
-                    <button class="btn-success" onclick="getCurrentLocationForMap()">
-                        <i class="fas fa-location-arrow"></i> My Location
-                    </button>
-                </div>
-            </div>
+            <button class="mode-btn active" onclick="enterPublicMode()">
+                <i class="fas fa-eye"></i> Public View Mode
+            </button>
             
-            <div class="card">
-                <h3><i class="fas fa-layer-group"></i> Map Legend</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="width: 12px; height: 12px; background: var(--primary); border-radius: 50%;"></div>
-                        <span>Reports</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="width: 12px; height: 12px; background: var(--warning); border-radius: 50%;"></div>
-                        <span>Issues</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="width: 12px; height: 12px; background: var(--success); border-radius: 50%;"></div>
-                        <span>Check-ins</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%;"></div>
-                        <span>Team Locations</span>
-                    </div>
-                </div>
+            <div class="status info" style="margin-top: 15px;">
+                <i class="fas fa-info-circle"></i> Public: View Only | Team: Full Access
             </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('dashboard')">
-            <div class="nav-icon"><i class="fas fa-tachometer-alt"></i></div>
-            <div>Dashboard</div>
+    <!-- Main Application -->
+    <div class="main-app" id="mainApp">
+        <div class="container">
+            <div class="header">
+                <div class="logo">GOLDEN SITE MANAGER</div>
+                <p class="tagline" id="userGreeting">Complete Construction Management System</p>
+                <div class="access-control">
+                    <button class="mode-btn" id="publicModeBtn" onclick="switchToPublicMode()">
+                        <i class="fas fa-eye"></i> Public View
+                    </button>
+                    <button class="mode-btn active" id="teamModeBtn" onclick="switchToTeamMode()">
+                        <i class="fas fa-users"></i> Team Mode
+                    </button>
+                    <button class="btn-danger btn-small" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> 
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Dashboard -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Active Tasks</div>
+                    <div class="stat-value gold" id="activeTasks">0</div>
+                    <div class="stat-label">Today's Progress</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completed Areas</div>
+                    <div class="stat-value success" id="completedAreas">0%</div>
+                    <div class="stat-label">Overall Progress</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Team Members</div>
+                    <div class="stat-value info" id="teamMembers">0</div>
+                    <div class="stat-label">On Site</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Open Issues</div>
+                    <div class="stat-value warning" id="openIssues">0</div>
+                    <div class="stat-label">Need Attention</div>
+                </div>
+            </div>
+
+            <!-- Progress Overview -->
+            <div class="card">
+                <h3><i class="fas fa-chart-line"></i> Project Progress</h3>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Overall Completion</span>
+                        <span id="overallProgress">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="overallProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-info" onclick="switchTab('progress')">
+                        <i class="fas fa-chart-bar"></i> View Details
+                    </button>
+                    <button class="gold" onclick="switchTab('map')">
+                        <i class="fas fa-map-marked-alt"></i> Site Map
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Tabs -->
+            <div class="mobile-tabs">
+                <div class="mobile-tab active" onclick="switchTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i><br>Dashboard
+                </div>
+                <div class="mobile-tab" onclick="switchTab('tasks')">
+                    <i class="fas fa-tasks"></i><br>Tasks
+                </div>
+                <div class="mobile-tab" onclick="switchTab('progress')">
+                    <i class="fas fa-chart-bar"></i><br>Progress
+                </div>
+                <div class="mobile-tab" onclick="switchTab('map')">
+                    <i class="fas fa-map"></i><br>Site Map
+                </div>
+                <div class="mobile-tab" onclick="switchTab('gallery')">
+                    <i class="fas fa-images"></i><br>Gallery
+                </div>
+                <div class="mobile-tab" onclick="switchTab('team')">
+                    <i class="fas fa-users"></i><br>Team
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="card">
+                    <h3><i class="fas fa-bell"></i> Recent Activity</h3>
+                    <div id="recentActivity">
+                        <div class="status info">No recent activity</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Priority Items</h3>
+                    <div id="priorityItems">
+                        <div class="status info">No priority items</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-tasks"></i> Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn-success edit-only" onclick="switchTab('tasks'); showCreateTask();">
+                            <i class="fas fa-plus"></i> New Task
+                        </button>
+                        <button class="btn-warning edit-only" onclick="switchTab('progress'); showAddProgress();">
+                            <i class="fas fa-chart-line"></i> Add Progress
+                        </button>
+                        <button class="btn-info" onclick="switchTab('gallery'); showAddPhoto();">
+                            <i class="fas fa-camera"></i> Add Photo
+                        </button>
+                        <button class="gold" onclick="switchTab('map')">
+                            <i class="fas fa-map-marker-alt"></i> View Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Tab -->
+            <div id="tasks" class="tab-content">
+                <div class="card edit-only">
+                    <h3><i class="fas fa-plus-circle"></i> Create New Task</h3>
+                    <div class="form-group">
+                        <label for="taskTitle">Task Title</label>
+                        <input type="text" id="taskTitle" placeholder="What needs to be done?">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskDescription">Description</label>
+                        <textarea id="taskDescription" rows="3" placeholder="Task details..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskAssignedTo">Assign To</label>
+                        <select id="taskAssignedTo">
+                            <option value="">Select Team Member</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskPriority">Priority</label>
+                        <select id="taskPriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskDueDate">Due Date</label>
+                        <input type="date" id="taskDueDate">
+                    </div>
+                    
+                    <button class="btn-success" onclick="createTask()">
+                        <i class="fas fa-save"></i> Create Task
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-list"></i> Active Tasks</h3>
+                    <div class="form-group">
+                        <input type="text" id="taskSearch" placeholder="Search tasks..." onkeyup="filterTasks()">
+                    </div>
+                    <div id="tasksList">
+                        <div class="status info">No active tasks</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tab -->
+            <div id="progress" class="tab-content">
+                <div class="card edit-only">
+                    <h3><i class="fas fa-chart-line"></i> Update Progress</h3>
+                    <div class="form-group">
+                        <label for="progressArea">Area/Section</label>
+                        <select id="progressArea">
+                            <option value="foundation">Foundation</option>
+                            <option value="structure">Structure</option>
+                            <option value="electrical">Electrical</option>
+                            <option value="plumbing">Plumbing</option>
+                            <option value="finishing">Finishing</option>
+                            <option value="landscaping">Landscaping</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="progressPercentage">Completion (%)</label>
+                        <input type="range" id="progressPercentage" min="0" max="100" value="0">
+                        <div style="text-align: center; font-size: 1.2em; color: var(--gold);" id="progressValue">0%</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="progressNotes">Notes</label>
+                        <textarea id="progressNotes" rows="3" placeholder="Progress details..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Progress Photo</label>
+                        <input type="file" id="progressPhoto" accept="image/*" onchange="previewProgressPhoto()">
+                        <img id="progressPhotoPreview" class="photo-preview" style="display: none;">
+                    </div>
+                    
+                    <button class="btn-success" onclick="saveProgress()">
+                        <i class="fas fa-save"></i> Save Progress
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-chart-pie"></i> Progress Overview</h3>
+                    <div id="progressOverview">
+                        <div class="status info">No progress data available</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Tab -->
+            <div id="map" class="tab-content">
+                <div class="card">
+                    <h3><i class="fas fa-map-marked-alt"></i> Site Map</h3>
+                    <div id="siteMap" style="height: 400px;"></div>
+                    <div class="action-buttons">
+                        <button class="location-btn edit-only" onclick="addMapMarker()">
+                            <i class="fas fa-map-marker-alt"></i> Add Marker
+                        </button>
+                        <button class="btn-info" onclick="refreshMap()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-info-circle"></i> Map Legend</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--gold); border-radius: 50%;"></div>
+                            <span>Work Areas</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--success); border-radius: 50%;"></div>
+                            <span>Completed</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--warning); border-radius: 50%;"></div>
+                            <span>In Progress</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--info); border-radius: 50%;"></div>
+                            <span>Tasks</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Tab -->
+            <div id="gallery" class="tab-content">
+                <div class="card edit-only">
+                    <h3><i class="fas fa-camera"></i> Add Progress Photo</h3>
+                    <div class="form-group">
+                        <label for="photoArea">Area/Location</label>
+                        <select id="photoArea">
+                            <option value="site-entrance">Site Entrance</option>
+                            <option value="foundation">Foundation</option>
+                            <option value="structure">Structure</option>
+                            <option value="roof">Roof</option>
+                            <option value="interior">Interior</option>
+                            <option value="exterior">Exterior</option>
+                            <option value="landscape">Landscape</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="photoDescription">Description</label>
+                        <textarea id="photoDescription" rows="2" placeholder="What does this photo show?"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Select Photo</label>
+                        <input type="file" id="galleryPhoto" accept="image/*" onchange="previewGalleryPhoto()">
+                        <img id="galleryPhotoPreview" class="photo-preview" style="display: none;">
+                    </div>
+                    
+                    <button class="btn-success" onclick="saveGalleryPhoto()">
+                        <i class="fas fa-save"></i> Save Photo
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-images"></i> Photo Gallery</h3>
+                    <div class="form-group">
+                        <select id="galleryFilter" onchange="filterGallery()">
+                            <option value="all">All Areas</option>
+                            <option value="site-entrance">Site Entrance</option>
+                            <option value="foundation">Foundation</option>
+                            <option value="structure">Structure</option>
+                            <option value="roof">Roof</option>
+                            <option value="interior">Interior</option>
+                            <option value="exterior">Exterior</option>
+                            <option value="landscape">Landscape</option>
+                        </select>
+                    </div>
+                    <div id="photoGallery" class="photo-gallery">
+                        <div class="status info">No photos yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Tab -->
+            <div id="team" class="tab-content">
+                <div class="card edit-only">
+                    <h3><i class="fas fa-user-plus"></i> Add Team Member</h3>
+                    <div class="form-group">
+                        <label for="memberName">Full Name</label>
+                        <input type="text" id="memberName" placeholder="Team member name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="memberRole">Role</label>
+                        <select id="memberRole">
+                            <option value="worker">Worker</option>
+                            <option value="supervisor">Supervisor</option>
+                            <option value="foreman">Foreman</option>
+                            <option value="engineer">Engineer</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="memberPhone">Phone</label>
+                        <input type="text" id="memberPhone" placeholder="Phone number">
+                    </div>
+                    
+                    <button class="btn-success" onclick="addTeamMember()">
+                        <i class="fas fa-user-plus"></i> Add Member
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-users"></i> Team Members</h3>
+                    <div id="teamList">
+                        <div class="status info">No team members added</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-chart-bar"></i> Team Performance</h3>
+                    <div id="teamPerformance">
+                        <div class="status info">No performance data available</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="nav-item" onclick="switchTab('reports')">
-            <div class="nav-icon"><i class="fas fa-clipboard-list"></i></div>
-            <div>Reports</div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('dashboard')">
+                <div class="nav-icon"><i class="fas fa-tachometer-alt"></i></div>
+                <div>Dashboard</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('tasks')">
+                <div class="nav-icon"><i class="fas fa-tasks"></i></div>
+                <div>Tasks</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('progress')">
+                <div class="nav-icon"><i class="fas fa-chart-bar"></i></div>
+                <div>Progress</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('map')">
+                <div class="nav-icon"><i class="fas fa-map"></i></div>
+                <div>Map</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('gallery')">
+                <div class="nav-icon"><i class="fas fa-images"></i></div>
+                <div>Gallery</div>
+            </div>
         </div>
-        <div class="nav-item" onclick="switchTab('issues')">
-            <div class="nav-icon"><i class="fas fa-exclamation-triangle"></i></div>
-            <div>Issues</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('attendance')">
-            <div class="nav-icon"><i class="fas fa-user-check"></i></div>
-            <div>Attendance</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('map')">
-            <div class="nav-icon"><i class="fas fa-map-marked-alt"></i></div>
-            <div>Map</div>
+    </div>
+
+    <!-- Photo Modal -->
+    <div class="modal" id="photoModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-image"></i> Photo Details</h3>
+            <div id="modalPhotoContent">
+                <!-- Photo content will be loaded here -->
+            </div>
+            <div class="action-buttons" style="margin-top: 15px;">
+                <button class="btn-warning" onclick="closePhotoModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // Data storage
-        let reports = JSON.parse(localStorage.getItem('mrc_reports')) || [];
-        let issues = JSON.parse(localStorage.getItem('mrc_issues')) || [];
-        let attendance = JSON.parse(localStorage.getItem('mrc_attendance')) || [];
-        let teamMembers = JSON.parse(localStorage.getItem('mrc_team')) || [
-            { id: 1, name: 'Site Manager', role: 'Manager', active: true },
-            { id: 2, name: 'Foreman', role: 'Supervisor', active: true }
-        ];
+        // ===== DATA STORAGE =====
+        let currentUser = null;
+        let isPublicMode = false;
         
-        let map, detailedMap;
-        let currentLocation = { latitude: 4.1755, longitude: 73.5093 }; // Default sample location
+        let tasks = JSON.parse(localStorage.getItem('golden_tasks')) || [];
+        let progress = JSON.parse(localStorage.getItem('golden_progress')) || [];
+        let teamMembers = JSON.parse(localStorage.getItem('golden_team')) || [
+            { id: 1, name: 'Site Manager', role: 'manager', phone: '+1234567890', active: true }
+        ];
+        let photos = JSON.parse(localStorage.getItem('golden_photos')) || [];
+        let mapMarkers = JSON.parse(localStorage.getItem('golden_map_markers')) || [];
+        
+        let siteMap = null;
 
-        // Initialize the app
+        // ===== INITIALIZATION =====
         function initApp() {
             updateDashboard();
             initMap();
-            initDetailedMap();
-            updateReportsList();
-            updateIssuesList();
-            updateAttendanceList();
+            updateTasksList();
+            updateProgressOverview();
             updateTeamList();
+            updateGallery();
+            checkAccessMode();
         }
 
-        // Tab switching
+        function checkAccessMode() {
+            if (isPublicMode) {
+                document.body.classList.add('view-mode');
+                document.getElementById('userGreeting').textContent = 'Public View Mode - Construction Progress';
+            } else {
+                document.body.classList.remove('view-mode');
+                document.getElementById('userGreeting').textContent = 'Team Mode - Full Access';
+            }
+        }
+
+        // ===== ACCESS CONTROL =====
+        function login() {
+            const password = document.getElementById('loginPassword').value;
+            if (password === 'site123') {
+                currentUser = { name: 'Team Member', role: 'team' };
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                isPublicMode = false;
+                checkAccessMode();
+                showStatus('Team access granted!', 'success');
+            } else {
+                showStatus('Invalid password', 'danger');
+            }
+        }
+
+        function enterPublicMode() {
+            currentUser = { name: 'Public Viewer', role: 'public' };
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            isPublicMode = true;
+            checkAccessMode();
+            showStatus('Public view mode activated', 'info');
+        }
+
+        function switchToPublicMode() {
+            isPublicMode = true;
+            checkAccessMode();
+            document.getElementById('publicModeBtn').classList.add('active');
+            document.getElementById('teamModeBtn').classList.remove('active');
+            showStatus('Switched to public view mode', 'info');
+        }
+
+        function switchToTeamMode() {
+            if (currentUser && currentUser.role === 'team') {
+                isPublicMode = false;
+                checkAccessMode();
+                document.getElementById('teamModeBtn').classList.add('active');
+                document.getElementById('publicModeBtn').classList.remove('active');
+                showStatus('Switched to team mode', 'success');
+            } else {
+                showStatus('Please login for team access', 'warning');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            showStatus('Logged out successfully', 'info');
+        }
+
+        // ===== MAP SYSTEM =====
+        function initMap() {
+            siteMap = L.map('siteMap').setView([4.1755, 73.5093], 16);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: ''
+            }).addTo(siteMap);
+            
+            // Add sample markers
+            addSampleMarkers();
+            updateMapMarkers();
+        }
+
+        function addSampleMarkers() {
+            const sampleMarkers = [
+                { lat: 4.1755, lng: 73.5093, title: 'Main Site', type: 'site', progress: 75 },
+                { lat: 4.1760, lng: 73.5088, title: 'Foundation Work', type: 'work', progress: 100 },
+                { lat: 4.1750, lng: 73.5098, title: 'Structure Work', type: 'work', progress: 60 },
+                { lat: 4.1765, lng: 73.5100, title: 'Landscaping', type: 'work', progress: 20 }
+            ];
+            
+            sampleMarkers.forEach(marker => {
+                const color = getMarkerColor(marker.type, marker.progress);
+                const circle = L.circleMarker([marker.lat, marker.lng], {
+                    radius: 15,
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.7
+                }).addTo(siteMap);
+                
+                circle.bindPopup(`
+                    <b>${marker.title}</b><br>
+                    Progress: ${marker.progress}%<br>
+                    <button onclick="viewLocationPhotos(${marker.lat}, ${marker.lng})" style="margin-top: 5px; padding: 5px 10px; background: var(--gold); color: black; border: none; border-radius: 3px; cursor: pointer;">
+                        View Photos
+                    </button>
+                `);
+            });
+        }
+
+        function getMarkerColor(type, progress) {
+            if (type === 'site') return '#FFD700'; // Gold
+            if (progress >= 90) return '#00ff88'; // Green
+            if (progress >= 50) return '#ffaa00'; // Orange
+            return '#ff4444'; // Red
+        }
+
+        function addMapMarker() {
+            if (isPublicMode) {
+                showStatus('Public view mode - cannot add markers', 'warning');
+                return;
+            }
+            // Implementation for adding custom markers
+            showStatus('Click on map to add marker', 'info');
+        }
+
+        function refreshMap() {
+            siteMap.invalidateSize();
+            showStatus('Map refreshed', 'info');
+        }
+
+        function viewLocationPhotos(lat, lng) {
+            const locationPhotos = photos.filter(photo => 
+                Math.abs(photo.lat - lat) < 0.001 && Math.abs(photo.lng - lng) < 0.001
+            );
+            
+            let content = `<h4>Photos at this location</h4>`;
+            if (locationPhotos.length === 0) {
+                content += '<div class="status info">No photos available</div>';
+            } else {
+                content += '<div class="photo-gallery">';
+                locationPhotos.forEach(photo => {
+                    content += `
+                        <div class="gallery-item" onclick="showPhotoDetail(${photo.id})">
+                            <img src="${photo.data}" alt="${photo.description}">
+                        </div>
+                    `;
+                });
+                content += '</div>';
+            }
+            
+            document.getElementById('modalPhotoContent').innerHTML = content;
+            document.getElementById('photoModal').style.display = 'block';
+        }
+
+        // ===== TASK MANAGEMENT =====
+        function showCreateTask() {
+            // Scroll to top of tasks tab
+            document.getElementById('taskTitle').focus();
+        }
+
+        function createTask() {
+            if (isPublicMode) {
+                showStatus('Public view mode - cannot create tasks', 'warning');
+                return;
+            }
+
+            const title = document.getElementById('taskTitle').value;
+            const description = document.getElementById('taskDescription').value;
+            const assignedTo = document.getElementById('taskAssignedTo').value;
+            const priority = document.getElementById('taskPriority').value;
+            const dueDate = document.getElementById('taskDueDate').value;
+
+            if (!title) {
+                showStatus('Please enter task title', 'warning');
+                return;
+            }
+
+            const newTask = {
+                id: Date.now(),
+                title: title,
+                description: description,
+                assignedTo: assignedTo,
+                priority: priority,
+                dueDate: dueDate,
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                createdBy: currentUser.name
+            };
+
+            tasks.unshift(newTask);
+            saveData();
+            updateTasksList();
+            updateDashboard();
+            
+            // Clear form
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDescription').value = '';
+            document.getElementById('taskAssignedTo').value = '';
+            document.getElementById('taskPriority').value = 'medium';
+            document.getElementById('taskDueDate').value = '';
+            
+            showStatus('Task created successfully!', 'success');
+        }
+
+        function updateTaskStatus(taskId, status) {
+            if (isPublicMode) {
+                showStatus('Public view mode - cannot update tasks', 'warning');
+                return;
+            }
+
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.status = status;
+                task.updatedAt = new Date().toISOString();
+                saveData();
+                updateTasksList();
+                updateDashboard();
+                showStatus('Task status updated!', 'success');
+            }
+        }
+
+        function updateTasksList() {
+            const container = document.getElementById('tasksList');
+            const activeTasks = tasks.filter(task => task.status !== 'completed');
+            
+            if (activeTasks.length === 0) {
+                container.innerHTML = '<div class="status info">No active tasks</div>';
+                return;
+            }
+
+            container.innerHTML = activeTasks.map(task => `
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-id">${task.title}</div>
+                        <div class="task-date">${new Date(task.createdAt).toLocaleDateString()}</div>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <span class="task-priority priority-${task.priority}">${task.priority.toUpperCase()}</span>
+                        <span class="task-status status-${task.status}">${task.status.toUpperCase()}</span>
+                    </div>
+                    <div style="color: #ccc; font-size: 0.9em; margin-bottom: 10px;">
+                        ${task.description || 'No description'}
+                    </div>
+                    <div style="font-size: 0.8em; color: #aaa; margin-bottom: 10px;">
+                        Assigned to: ${task.assignedTo || 'Unassigned'} | Due: ${task.dueDate || 'No due date'}
+                    </div>
+                    <div class="action-buttons edit-only">
+                        <button class="btn-small btn-success" onclick="updateTaskStatus(${task.id}, 'completed')">
+                            <i class="fas fa-check"></i> Complete
+                        </button>
+                        <button class="btn-small btn-warning" onclick="updateTaskStatus(${task.id}, 'inprogress')">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                        <button class="btn-small btn-danger" onclick="deleteTask(${task.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterTasks() {
+            // Implementation for task filtering
+            updateTasksList();
+        }
+
+        function deleteTask(taskId) {
+            if (isPublicMode) return;
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(t => t.id !== taskId);
+                saveData();
+                updateTasksList();
+                updateDashboard();
+                showStatus('Task deleted', 'info');
+            }
+        }
+
+        // ===== PROGRESS TRACKING =====
+        function showAddProgress() {
+            document.getElementById('progressPercentage').addEventListener('input', function() {
+                document.getElementById('progressValue').textContent = this.value + '%';
+            });
+        }
+
+        function saveProgress() {
+            if (isPublicMode) {
+                showStatus('Public view mode - cannot update progress', 'warning');
+                return;
+            }
+
+            const area = document.getElementById('progressArea').value;
+            const percentage = parseInt(document.getElementById('progressPercentage').value);
+            const notes = document.getElementById('progressNotes').value;
+            const photo = document.getElementById('progressPhotoPreview').src;
+
+            const progressUpdate = {
+                id: Date.now(),
+                area: area,
+                percentage: percentage,
+                notes: notes,
+                photo: photo,
+                date: new Date().toISOString(),
+                updatedBy: currentUser.name
+            };
+
+            // Update or add progress
+            const existingIndex = progress.findIndex(p => p.area === area);
+            if (existingIndex !== -1) {
+                progress[existingIndex] = { ...progress[existingIndex], ...progressUpdate };
+            } else {
+                progress.push(progressUpdate);
+            }
+
+            saveData();
+            updateProgressOverview();
+            updateDashboard();
+            
+            // Clear form
+            document.getElementById('progressPercentage').value = 0;
+            document.getElementById('progressValue').textContent = '0%';
+            document.getElementById('progressNotes').value = '';
+            document.getElementById('progressPhotoPreview').style.display = 'none';
+            document.getElementById('progressPhoto').value = '';
+            
+            showStatus('Progress updated successfully!', 'success');
+        }
+
+        function updateProgressOverview() {
+            const container = document.getElementById('progressOverview');
+            
+            if (progress.length === 0) {
+                container.innerHTML = '<div class="status info">No progress data available</div>';
+                return;
+            }
+
+            let html = '';
+            progress.forEach(p => {
+                html += `
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="text-transform: capitalize;">${p.area}</span>
+                            <span style="color: var(--gold); font-weight: bold;">${p.percentage}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${p.percentage}%"></div>
+                        </div>
+                        <div style="font-size: 0.8em; color: #aaa; margin-top: 5px;">
+                            ${p.notes || 'No notes'} | ${new Date(p.date).toLocaleDateString()}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // ===== PHOTO GALLERY =====
+        function showAddPhoto() {
+            // Scroll to photo upload section
+        }
+
+        function previewGalleryPhoto() {
+            const file = document.getElementById('galleryPhoto').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('galleryPhotoPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveGalleryPhoto() {
+            if (isPublicMode) {
+                showStatus('Public view mode - cannot upload photos', 'warning');
+                return;
+            }
+
+            const area = document.getElementById('photoArea').value;
+            const description = document.getElementById('photoDescription').value;
+            const photoData = document.getElementById('galleryPhotoPreview').src;
+
+            if (!photoData || photoData === '') {
+                showStatus('Please select a photo', 'warning');
+                return;
+            }
+
+            const newPhoto = {
+                id: Date.now(),
+                area: area,
+                description: description,
+                data: photoData,
+                date: new Date().toISOString(),
+                uploadedBy: currentUser.name,
+                lat: 4.1755 + (Math.random() - 0.5) * 0.01, // Sample coordinates
+                lng: 73.5093 + (Math.random() - 0.5) * 0.01
+            };
+
+            photos.unshift(newPhoto);
+            saveData();
+            updateGallery();
+            
+            // Clear form
+            document.getElementById('photoDescription').value = '';
+            document.getElementById('galleryPhotoPreview').style.display = 'none';
+            document.getElementById('galleryPhoto').value = '';
+            
+            showStatus('Photo added to gallery!', 'success');
+        }
+
+        function updateGallery() {
+            const container = document.getElementById('photoGallery');
+            const filter = document.getElementById('galleryFilter').value;
+            
+            let filteredPhotos = photos;
+            if (filter !== 'all') {
+                filteredPhotos = photos.filter(photo => photo.area === filter);
+            }
+            
+            if (filteredPhotos.length === 0) {
+                container.innerHTML = '<div class="status info">No photos found</div>';
+                return;
+            }
+
+            container.innerHTML = filteredPhotos.map(photo => `
+                <div class="gallery-item" onclick="showPhotoDetail(${photo.id})">
+                    <img src="${photo.data}" alt="${photo.description}">
+                </div>
+            `).join('');
+        }
+
+        function filterGallery() {
+            updateGallery();
+        }
+
+        function showPhotoDetail(photoId) {
+            const photo = photos.find(p => p.id === photoId);
+            if (photo) {
+                const content = `
+                    <img src="${photo.data}" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="margin-bottom: 10px;">
+                        <strong>Area:</strong> <span style="text-transform: capitalize;">${photo.area}</span>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <strong>Description:</strong> ${photo.description || 'No description'}
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <strong>Date:</strong> ${new Date(photo.date).toLocaleString()}
+                    </div>
+                    <div>
+                        <strong>Uploaded by:</strong> ${photo.uploadedBy}
+                    </div>
+                `;
+                document.getElementById('modalPhotoContent').innerHTML = content;
+                document.getElementById('photoModal').style.display = 'block';
+            }
+        }
+
+        function closePhotoModal() {
+            document.getElementById('photoModal').style.display = 'none';
+        }
+
+        // ===== TEAM MANAGEMENT =====
+        function addTeamMember() {
+            if (isPublicMode) {
+                showStatus('Public view mode - cannot add team members', 'warning');
+                return;
+            }
+
+            const name = document.getElementById('memberName').value;
+            const role = document.getElementById('memberRole').value;
+            const phone = document.getElementById('memberPhone').value;
+
+            if (!name) {
+                showStatus('Please enter team member name', 'warning');
+                return;
+            }
+
+            const newMember = {
+                id: Date.now(),
+                name: name,
+                role: role,
+                phone: phone,
+                active: true,
+                joinedDate: new Date().toISOString()
+            };
+
+            teamMembers.push(newMember);
+            saveData();
+            updateTeamList();
+            updateDashboard();
+            
+            // Clear form
+            document.getElementById('memberName').value = '';
+            document.getElementById('memberPhone').value = '';
+            
+            showStatus('Team member added!', 'success');
+        }
+
+        function updateTeamList() {
+            const container = document.getElementById('teamList');
+            
+            if (teamMembers.length === 0) {
+                container.innerHTML = '<div class="status info">No team members added</div>';
+                return;
+            }
+
+            // Update task assignment dropdown
+            const assignSelect = document.getElementById('taskAssignedTo');
+            assignSelect.innerHTML = '<option value="">Select Team Member</option>';
+            teamMembers.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.name;
+                option.textContent = member.name;
+                assignSelect.appendChild(option);
+            });
+
+            container.innerHTML = teamMembers.map(member => `
+                <div class="report-item">
+                    <div class="report-header">
+                        <div class="report-id">${member.name}</div>
+                        <div style="font-size: 0.8em; color: ${member.active ? '#00ff88' : '#ff4444'}">
+                            ${member.active ? 'Active' : 'Inactive'}
+                        </div>
+                    </div>
+                    <div style="color: #ccc; font-size: 0.9em; margin-bottom: 5px;">
+                        ${member.role.toUpperCase()} | ${member.phone}
+                    </div>
+                    <div style="font-size: 0.8em; color: #aaa;">
+                        Joined: ${new Date(member.joinedDate).toLocaleDateString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== DASHBOARD UPDATES =====
+        function updateDashboard() {
+            // Update stats
+            const activeTasks = tasks.filter(task => task.status !== 'completed').length;
+            const completedTasks = tasks.filter(task => task.status === 'completed').length;
+            const totalTasks = tasks.length;
+            const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            // Calculate overall progress from area progress
+            const overallProgress = progress.length > 0 ? 
+                Math.round(progress.reduce((sum, p) => sum + p.percentage, 0) / progress.length) : 0;
+
+            document.getElementById('activeTasks').textContent = activeTasks;
+            document.getElementById('completedAreas').textContent = overallProgress + '%';
+            document.getElementById('teamMembers').textContent = teamMembers.filter(m => m.active).length;
+            document.getElementById('openIssues').textContent = tasks.filter(t => t.priority === 'high' && t.status !== 'completed').length;
+
+            // Update progress bar
+            document.getElementById('overallProgress').textContent = overallProgress + '%';
+            document.getElementById('overallProgressBar').style.width = overallProgress + '%';
+
+            // Update recent activity
+            updateRecentActivity();
+            updatePriorityItems();
+        }
+
+        function updateRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            const allActivities = [
+                ...tasks.map(t => ({ type: 'task', ...t })),
+                ...progress.map(p => ({ type: 'progress', ...p })),
+                ...photos.map(p => ({ type: 'photo', ...p }))
+            ].sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt)).slice(0, 5);
+
+            if (allActivities.length === 0) {
+                container.innerHTML = '<div class="status info">No recent activity</div>';
+                return;
+            }
+
+            container.innerHTML = allActivities.map(activity => {
+                let icon, color, text;
+                if (activity.type === 'task') {
+                    icon = 'tasks';
+                    color = '#00a8ff';
+                    text = `Task: ${activity.title} (${activity.status})`;
+                } else if (activity.type === 'progress') {
+                    icon = 'chart-line';
+                    color = '#00ff88';
+                    text = `Progress: ${activity.area} ${activity.percentage}%`;
+                } else {
+                    icon = 'camera';
+                    color = '#FFD700';
+                    text = `Photo: ${activity.area}`;
+                }
+
+                return `
+                    <div class="report-item" style="border-left-color: ${color};">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-${icon}" style="color: ${color};"></i>
+                            <div style="flex: 1;">
+                                <div style="font-size: 0.9em;">${text}</div>
+                                <div style="font-size: 0.8em; color: #aaa;">${new Date(activity.date || activity.createdAt).toLocaleString()}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updatePriorityItems() {
+            const container = document.getElementById('priorityItems');
+            const highPriorityTasks = tasks.filter(task => task.priority === 'high' && task.status !== 'completed');
+            
+            if (highPriorityTasks.length === 0) {
+                container.innerHTML = '<div class="status info">No priority items</div>';
+                return;
+            }
+
+            container.innerHTML = highPriorityTasks.slice(0, 3).map(task => `
+                <div class="issue-item">
+                    <div class="issue-header">
+                        <div class="issue-id">${task.title}</div>
+                        <div class="issue-priority priority-high">HIGH</div>
+                    </div>
+                    <div style="color: #ccc; font-size: 0.9em;">
+                        ${task.description || 'No description'}
+                    </div>
+                    <div style="font-size: 0.8em; color: #aaa; margin-top: 5px;">
+                        Due: ${task.dueDate || 'No due date'} | Assigned to: ${task.assignedTo || 'Unassigned'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== UTILITY FUNCTIONS =====
         function switchTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -740,14 +1678,7 @@
             });
             
             // Show selected tab content
-            if (tabName === 'map') {
-                document.getElementById('mapTab').classList.add('active');
-                setTimeout(() => {
-                    if (detailedMap) detailedMap.invalidateSize();
-                }, 100);
-            } else {
-                document.getElementById(tabName).classList.add('active');
-            }
+            document.getElementById(tabName).classList.add('active');
             
             // Add active class to clicked tab
             const clickedTab = event.currentTarget;
@@ -759,646 +1690,13 @@
             if (tabIndex >= 0 && navItems[tabIndex]) {
                 navItems[tabIndex].classList.add('active');
             }
-        }
 
-        // Initialize main map
-        function initMap() {
-            map = L.map('map').setView([currentLocation.latitude, currentLocation.longitude], 15);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: ''
-            }).addTo(map);
-            
-            // Add sample marker
-            L.marker([currentLocation.latitude, currentLocation.longitude]).addTo(map)
-                .bindPopup('Main Construction Site<br>Start adding reports and issues!')
-                .openPopup();
-            
-            updateMap();
-        }
-
-        // Initialize detailed map
-        function initDetailedMap() {
-            detailedMap = L.map('detailedMap').setView([currentLocation.latitude, currentLocation.longitude], 15);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: ''
-            }).addTo(detailedMap);
-            
-            updateDetailedMap();
-        }
-
-        // Update maps with data
-        function updateMap() {
-            // Clear existing markers (except base layers)
-            map.eachLayer((layer) => {
-                if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
-                    map.removeLayer(layer);
-                }
-            });
-
-            // Add main site marker
-            L.marker([currentLocation.latitude, currentLocation.longitude]).addTo(map)
-                .bindPopup('Main Construction Site');
-
-            // Add reports
-            reports.forEach(report => {
-                const lat = report.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.01;
-                const lng = report.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.01;
-                
-                L.circleMarker([lat, lng], {
-                    radius: 8,
-                    color: '#00a8ff',
-                    fillColor: '#00a8ff',
-                    fillOpacity: 0.7
-                }).addTo(map).bindPopup(`
-                    <b>Report #${report.id}</b><br>
-                    Progress: ${report.progress}%<br>
-                    ${report.notes || ''}
-                `);
-            });
-
-            // Add issues
-            issues.forEach(issue => {
-                const lat = issue.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.01;
-                const lng = issue.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.01;
-                
-                L.circleMarker([lat, lng], {
-                    radius: 8,
-                    color: '#fbc531',
-                    fillColor: '#fbc531',
-                    fillOpacity: 0.7
-                }).addTo(map).bindPopup(`
-                    <b>Issue #${issue.id}</b><br>
-                    ${issue.title}<br>
-                    Priority: ${issue.priority}
-                `);
-            });
-        }
-
-        function updateDetailedMap() {
-            if (!detailedMap) return;
-            
-            // Clear existing markers
-            detailedMap.eachLayer((layer) => {
-                if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
-                    detailedMap.removeLayer(layer);
-                }
-            });
-
-            // Add all markers to detailed map
-            let bounds = [];
-
-            // Main site
-            const mainMarker = L.marker([currentLocation.latitude, currentLocation.longitude]).addTo(detailedMap)
-                .bindPopup('<b>Main Construction Site</b>');
-            bounds.push([currentLocation.latitude, currentLocation.longitude]);
-
-            // Reports
-            reports.forEach(report => {
-                const lat = report.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.01;
-                const lng = report.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.01;
-                
-                const marker = L.circleMarker([lat, lng], {
-                    radius: 10,
-                    color: '#00a8ff',
-                    fillColor: '#00a8ff',
-                    fillOpacity: 0.8
-                }).addTo(detailedMap).bindPopup(`
-                    <b>Report #${report.id}</b><br>
-                    Progress: ${report.progress}%<br>
-                    Materials: ${report.materials || 'N/A'}<br>
-                    ${report.notes || ''}
-                `);
-                bounds.push([lat, lng]);
-            });
-
-            // Issues
-            issues.forEach(issue => {
-                const lat = issue.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.01;
-                const lng = issue.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.01;
-                
-                const marker = L.circleMarker([lat, lng], {
-                    radius: 10,
-                    color: '#fbc531',
-                    fillColor: '#fbc531',
-                    fillOpacity: 0.8
-                }).addTo(detailedMap).bindPopup(`
-                    <b>Issue #${issue.id}</b><br>
-                    ${issue.title}<br>
-                    Priority: ${issue.priority}<br>
-                    ${issue.description || ''}
-                `);
-                bounds.push([lat, lng]);
-            });
-
-            // Attendance
-            attendance.forEach(record => {
-                const lat = record.latitude || currentLocation.latitude + (Math.random() - 0.5) * 0.005;
-                const lng = record.longitude || currentLocation.longitude + (Math.random() - 0.5) * 0.005;
-                
-                const color = record.action === 'checkin' ? '#4cd137' : '#e84118';
-                const marker = L.circleMarker([lat, lng], {
-                    radius: 6,
-                    color: color,
-                    fillColor: color,
-                    fillOpacity: 0.8
-                }).addTo(detailedMap).bindPopup(`
-                    <b>${record.action.toUpperCase()}</b><br>
-                    ${record.username || 'User'}<br>
-                    ${new Date(record.timestamp).toLocaleString()}
-                `);
-                bounds.push([lat, lng]);
-            });
-
-            // Fit map to show all markers
-            if (bounds.length > 0) {
-                detailedMap.fitBounds(bounds);
+            // Special handling for map tab
+            if (tabName === 'map' && siteMap) {
+                setTimeout(() => siteMap.invalidateSize(), 100);
             }
         }
 
-        // Location functions with fallback
-        function getCurrentLocation() {
-            if (navigator.geolocation) {
-                showStatus('Getting your location...', 'info');
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        currentLocation = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude
-                        };
-                        map.setView([currentLocation.latitude, currentLocation.longitude], 15);
-                        L.marker([currentLocation.latitude, currentLocation.longitude])
-                            .addTo(map)
-                            .bindPopup('Your current location')
-                            .openPopup();
-                        showStatus('Location found! Map updated.', 'success');
-                    },
-                    (error) => {
-                        showStatus('Using sample location. Enable location permissions for accurate tracking.', 'warning');
-                        // Keep using sample location
-                        map.setView([currentLocation.latitude, currentLocation.longitude], 15);
-                    },
-                    { 
-                        timeout: 10000,
-                        enableHighAccuracy: false 
-                    }
-                );
-            } else {
-                showStatus('Geolocation not supported. Using sample location.', 'warning');
-            }
-        }
-
-        function getCurrentLocationForMap() {
-            if (navigator.geolocation) {
-                showStatus('Getting your location...', 'info');
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        currentLocation = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude
-                        };
-                        detailedMap.setView([currentLocation.latitude, currentLocation.longitude], 15);
-                        L.marker([currentLocation.latitude, currentLocation.longitude])
-                            .addTo(detailedMap)
-                            .bindPopup('Your current location')
-                            .openPopup();
-                        showStatus('Location found!', 'success');
-                    },
-                    (error) => {
-                        showStatus('Using sample location.', 'warning');
-                        detailedMap.setView([currentLocation.latitude, currentLocation.longitude], 15);
-                    },
-                    { timeout: 10000 }
-                );
-            } else {
-                showStatus('Geolocation not supported.', 'warning');
-            }
-        }
-
-        function getReportLocation() {
-            if (navigator.geolocation) {
-                showStatus('Getting location for report...', 'info');
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        currentLocation = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude
-                        };
-                        document.getElementById('reportLocation').value = 
-                            `Lat: ${position.coords.latitude.toFixed(6)}, Lng: ${position.coords.longitude.toFixed(6)}`;
-                        showStatus('Report location set!', 'success');
-                    },
-                    (error) => {
-                        useManualLocation('report');
-                    },
-                    { timeout: 10000 }
-                );
-            } else {
-                useManualLocation('report');
-            }
-        }
-
-        function getIssueLocation() {
-            if (navigator.geolocation) {
-                showStatus('Getting location for issue...', 'info');
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        currentLocation = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude
-                        };
-                        document.getElementById('issueLocation').value = 
-                            `Lat: ${position.coords.latitude.toFixed(6)}, Lng: ${position.coords.longitude.toFixed(6)}`;
-                        showStatus('Issue location set!', 'success');
-                    },
-                    (error) => {
-                        useManualLocation('issue');
-                    },
-                    { timeout: 10000 }
-                );
-            } else {
-                useManualLocation('issue');
-            }
-        }
-
-        function useManualLocation(type) {
-            const defaultLocation = "Construction Site - Main Area";
-            const manualLocation = prompt('Enter location manually:', defaultLocation);
-            if (manualLocation) {
-                if (type === 'report') {
-                    document.getElementById('reportLocation').value = manualLocation;
-                } else {
-                    document.getElementById('issueLocation').value = manualLocation;
-                }
-                showStatus('Manual location set!', 'success');
-            }
-        }
-
-        function showAllLocations() {
-            updateMap();
-            updateDetailedMap();
-            showStatus('Showing all site locations', 'info');
-        }
-
-        function refreshMap() {
-            updateDetailedMap();
-            showStatus('Map refreshed', 'info');
-        }
-
-        // Report functions
-        function startNewReport() {
-            document.getElementById('reportLocation').value = '';
-            document.getElementById('reportProgress').value = '0';
-            document.getElementById('reportMaterials').value = '';
-            document.getElementById('reportMachines').value = '';
-            document.getElementById('reportNotes').value = '';
-            document.getElementById('reportPhoto').value = '';
-            document.getElementById('reportPhotoPreview').style.display = 'none';
-        }
-
-        function previewReportPhoto() {
-            const file = document.getElementById('reportPhoto').files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('reportPhotoPreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function saveReport() {
-            const location = document.getElementById('reportLocation').value;
-            const progress = parseInt(document.getElementById('reportProgress').value) || 0;
-            const materials = document.getElementById('reportMaterials').value;
-            const machines = document.getElementById('reportMachines').value;
-            const notes = document.getElementById('reportNotes').value;
-
-            if (!location) {
-                showStatus('Please set a location for the report', 'warning');
-                return;
-            }
-
-            const newReport = {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                location: location,
-                progress: progress,
-                materials: materials,
-                machines: machines,
-                notes: notes,
-                latitude: currentLocation.latitude,
-                longitude: currentLocation.longitude,
-                photo: document.getElementById('reportPhotoPreview').src || null
-            };
-
-            reports.unshift(newReport);
-            localStorage.setItem('mrc_reports', JSON.stringify(reports));
-            
-            updateDashboard();
-            updateReportsList();
-            updateMap();
-            updateDetailedMap();
-            
-            showStatus('Report saved successfully!', 'success');
-            startNewReport();
-        }
-
-        function updateReportsList() {
-            const container = document.getElementById('reportsList');
-            if (reports.length === 0) {
-                container.innerHTML = '<div class="status info">No reports yet</div>';
-                return;
-            }
-
-            container.innerHTML = reports.slice(0, 10).map(report => `
-                <div class="report-item">
-                    <div class="report-header">
-                        <div class="report-id">Report #${report.id}</div>
-                        <div class="report-date">${new Date(report.timestamp).toLocaleDateString()}</div>
-                    </div>
-                    <div style="margin-bottom: 8px;">
-                        <span class="report-progress">${report.progress}%</span>
-                        <span>${report.location}</span>
-                    </div>
-                    <div style="color: #ccc; font-size: 0.9em;">
-                        ${report.notes || 'No additional notes'}
-                    </div>
-                    ${report.materials ? `<div style="margin-top: 4px; font-size: 0.8em; color: #aaa;">Materials: ${report.materials}</div>` : ''}
-                    ${report.machines ? `<div style="font-size: 0.8em; color: #aaa;">Machines: ${report.machines}</div>` : ''}
-                    ${report.photo ? `<div style="margin-top: 8px;"><img src="${report.photo}" style="max-width: 100%; border-radius: 4px;"></div>` : ''}
-                </div>
-            `).join('');
-        }
-
-        // Issue functions
-        function startNewIssue() {
-            document.getElementById('issueTitle').value = '';
-            document.getElementById('issueLocation').value = '';
-            document.getElementById('issuePriority').value = 'medium';
-            document.getElementById('issueDescription').value = '';
-            document.getElementById('issuePhoto').value = '';
-            document.getElementById('issuePhotoPreview').style.display = 'none';
-        }
-
-        function previewIssuePhoto() {
-            const file = document.getElementById('issuePhoto').files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('issuePhotoPreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function saveIssue() {
-            const title = document.getElementById('issueTitle').value;
-            const location = document.getElementById('issueLocation').value;
-            const priority = document.getElementById('issuePriority').value;
-            const description = document.getElementById('issueDescription').value;
-
-            if (!title || !location) {
-                showStatus('Please fill in title and location', 'warning');
-                return;
-            }
-
-            const newIssue = {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                title: title,
-                location: location,
-                priority: priority,
-                description: description,
-                latitude: currentLocation.latitude,
-                longitude: currentLocation.longitude,
-                photo: document.getElementById('issuePhotoPreview').src || null,
-                status: 'open'
-            };
-
-            issues.unshift(newIssue);
-            localStorage.setItem('mrc_issues', JSON.stringify(issues));
-            
-            updateDashboard();
-            updateIssuesList();
-            updateMap();
-            updateDetailedMap();
-            
-            showStatus('Issue reported successfully!', 'success');
-            startNewIssue();
-        }
-
-        function updateIssuesList() {
-            const container = document.getElementById('issuesList');
-            const openIssues = issues.filter(issue => issue.status === 'open');
-            
-            if (openIssues.length === 0) {
-                container.innerHTML = '<div class="status info">No active issues</div>';
-                return;
-            }
-
-            container.innerHTML = openIssues.slice(0, 10).map(issue => `
-                <div class="issue-item">
-                    <div class="issue-header">
-                        <div class="issue-id">Issue #${issue.id}</div>
-                        <div class="issue-date">${new Date(issue.timestamp).toLocaleDateString()}</div>
-                    </div>
-                    <div style="margin-bottom: 8px;">
-                        <span class="issue-priority priority-${issue.priority}">${issue.priority.toUpperCase()}</span>
-                        <strong>${issue.title}</strong>
-                    </div>
-                    <div style="color: #ccc; font-size: 0.9em; margin-bottom: 8px;">
-                        ${issue.description || 'No description'}
-                    </div>
-                    <div style="font-size: 0.8em; color: #aaa;">
-                        Location: ${issue.location}
-                    </div>
-                    ${issue.photo ? `<div style="margin-top: 8px;"><img src="${issue.photo}" style="max-width: 100%; border-radius: 4px;"></div>` : ''}
-                    <button class="btn-small btn-success" onclick="closeIssue(${issue.id})" style="margin-top: 8px;">
-                        <i class="fas fa-check"></i> Mark Resolved
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function closeIssue(issueId) {
-            const issue = issues.find(i => i.id === issueId);
-            if (issue) {
-                issue.status = 'closed';
-                localStorage.setItem('mrc_issues', JSON.stringify(issues));
-                updateIssuesList();
-                updateDashboard();
-                showStatus('Issue marked as resolved', 'success');
-            }
-        }
-
-        // Attendance functions
-        function checkIn() {
-            const record = {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                action: 'checkin',
-                latitude: currentLocation.latitude,
-                longitude: currentLocation.longitude,
-                username: 'User'
-            };
-            attendance.unshift(record);
-            localStorage.setItem('mrc_attendance', JSON.stringify(attendance));
-            updateAttendanceList();
-            updateDashboard();
-            showStatus('Checked in successfully!', 'success');
-        }
-
-        function checkOut() {
-            const record = {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                action: 'checkout',
-                latitude: currentLocation.latitude,
-                longitude: currentLocation.longitude,
-                username: 'User'
-            };
-            attendance.unshift(record);
-            localStorage.setItem('mrc_attendance', JSON.stringify(attendance));
-            updateAttendanceList();
-            updateDashboard();
-            showStatus('Checked out successfully!', 'success');
-        }
-
-        function updateAttendanceList() {
-            const container = document.getElementById('attendanceList');
-            const today = new Date().toDateString();
-            const todayRecords = attendance.filter(record => 
-                new Date(record.timestamp).toDateString() === today
-            );
-
-            if (todayRecords.length === 0) {
-                container.innerHTML = '<div class="status info">No attendance records today</div>';
-                return;
-            }
-
-            container.innerHTML = todayRecords.map(record => `
-                <div class="report-item" style="border-left-color: ${record.action === 'checkin' ? '#4cd137' : '#e84118'};">
-                    <div class="report-header">
-                        <div class="report-id">${record.action.toUpperCase()}</div>
-                        <div class="report-date">${new Date(record.timestamp).toLocaleTimeString()}</div>
-                    </div>
-                    <div style="color: #ccc; font-size: 0.9em;">
-                        ${record.username} - Location recorded
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Team functions
-        function addTeamMember() {
-            const name = document.getElementById('newMemberName').value;
-            const role = document.getElementById('newMemberRole').value;
-
-            if (!name) {
-                showStatus('Please enter a name', 'warning');
-                return;
-            }
-
-            const newMember = {
-                id: Date.now(),
-                name: name,
-                role: role || 'Worker',
-                active: true
-            };
-
-            teamMembers.push(newMember);
-            localStorage.setItem('mrc_team', JSON.stringify(teamMembers));
-            
-            updateTeamList();
-            updateDashboard();
-            
-            document.getElementById('newMemberName').value = '';
-            document.getElementById('newMemberRole').value = '';
-            showStatus('Team member added!', 'success');
-        }
-
-        function updateTeamList() {
-            const container = document.getElementById('teamList');
-            if (teamMembers.length === 0) {
-                container.innerHTML = '<div class="status info">No team members added</div>';
-                return;
-            }
-
-            container.innerHTML = teamMembers.map(member => `
-                <div class="report-item">
-                    <div class="report-header">
-                        <div class="report-id">${member.name}</div>
-                        <div style="font-size: 0.8em; color: ${member.active ? '#4cd137' : '#e84118'}">
-                            ${member.active ? 'Active' : 'Inactive'}
-                        </div>
-                    </div>
-                    <div style="color: #ccc; font-size: 0.9em;">
-                        ${member.role}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Dashboard update
-        function updateDashboard() {
-            const today = new Date().toDateString();
-            const todayAttendance = attendance.filter(record => 
-                new Date(record.timestamp).toDateString() === today
-            );
-
-            document.getElementById('activeReports').textContent = reports.length;
-            document.getElementById('openIssues').textContent = issues.filter(i => i.status === 'open').length;
-            document.getElementById('todayCheckins').textContent = todayAttendance.filter(a => a.action === 'checkin').length;
-            document.getElementById('teamMembers').textContent = teamMembers.filter(m => m.active).length;
-
-            // Update recent activity
-            const activityContainer = document.getElementById('recentActivity');
-            const allActivities = [
-                ...reports.map(r => ({ type: 'report', ...r })),
-                ...issues.map(i => ({ type: 'issue', ...i })),
-                ...attendance.map(a => ({ type: 'attendance', ...a }))
-            ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5);
-
-            if (allActivities.length === 0) {
-                activityContainer.innerHTML = '<div class="status info">No recent activity</div>';
-                return;
-            }
-
-            activityContainer.innerHTML = allActivities.map(activity => {
-                let icon, color, text;
-                if (activity.type === 'report') {
-                    icon = 'clipboard-list';
-                    color = '#00a8ff';
-                    text = `New report: ${activity.progress}% progress`;
-                } else if (activity.type === 'issue') {
-                    icon = 'exclamation-triangle';
-                    color = '#fbc531';
-                    text = `New issue: ${activity.title}`;
-                } else {
-                    icon = activity.action === 'checkin' ? 'sign-in-alt' : 'sign-out-alt';
-                    color = activity.action === 'checkin' ? '#4cd137' : '#e84118';
-                    text = `${activity.action.toUpperCase()}: ${activity.username}`;
-                }
-
-                return `
-                    <div class="report-item" style="border-left-color: ${color};">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-${icon}" style="color: ${color};"></i>
-                            <div style="flex: 1;">
-                                <div style="font-size: 0.9em;">${text}</div>
-                                <div style="font-size: 0.8em; color: #aaa;">${new Date(activity.timestamp).toLocaleString()}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Utility functions
         function showStatus(message, type) {
             // Create temporary status message
             const status = document.createElement('div');
@@ -1422,32 +1720,47 @@
             }, 3000);
         }
 
-        function syncData() {
-            showStatus('Data synced with local storage', 'info');
+        function saveData() {
+            localStorage.setItem('golden_tasks', JSON.stringify(tasks));
+            localStorage.setItem('golden_progress', JSON.stringify(progress));
+            localStorage.setItem('golden_team', JSON.stringify(teamMembers));
+            localStorage.setItem('golden_photos', JSON.stringify(photos));
+            localStorage.setItem('golden_map_markers', JSON.stringify(mapMarkers));
         }
 
-        function clearAllData() {
-            if (confirm('Are you sure you want to clear ALL data? This cannot be undone!')) {
-                localStorage.removeItem('mrc_reports');
-                localStorage.removeItem('mrc_issues');
-                localStorage.removeItem('mrc_attendance');
-                localStorage.removeItem('mrc_team');
-                
-                reports = [];
-                issues = [];
-                attendance = [];
-                teamMembers = [
-                    { id: 1, name: 'Site Manager', role: 'Manager', active: true },
-                    { id: 2, name: 'Foreman', role: 'Supervisor', active: true }
-                ];
-                
-                initApp();
-                showStatus('All data cleared!', 'success');
+        function previewProgressPhoto() {
+            const file = document.getElementById('progressPhoto').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('progressPhotoPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
         }
 
+        function updateMapMarkers() {
+            // Implementation for updating map markers based on data
+        }
+
         // Initialize the app when page loads
-        window.addEventListener('load', initApp);
+        window.addEventListener('load', function() {
+            // Check if user was previously logged in
+            const savedUser = localStorage.getItem('golden_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                isPublicMode = false;
+                initApp();
+            }
+            // Otherwise, show login screen
+        });
+
+        // Auto-save data
+        setInterval(saveData, 30000); // Save every 30 seconds
     </script>
 </body>
 </html>
