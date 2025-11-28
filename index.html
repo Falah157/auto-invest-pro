@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEON POS - Complete System</title>
+    <title>AI Knowledge Assistant - Quran, Science, Coding & More</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -84,125 +83,166 @@
             font-size: 0.9em;
         }
 
-        /* Financial Summary */
-        .financial-summary {
+        /* Knowledge Cards */
+        .knowledge-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 15px;
         }
 
-        .financial-card {
+        .knowledge-card {
             background: var(--card-bg);
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #333;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .financial-card.buying {
-            border-color: var(--warning);
-        }
-
-        .financial-card.selling {
-            border-color: var(--accent);
-        }
-
-        .financial-card.profit {
+        .knowledge-card:active {
+            transform: scale(0.98);
             border-color: var(--primary);
         }
 
-        .financial-card.my-profit {
+        .knowledge-card.quran {
+            border-color: var(--accent);
+        }
+
+        .knowledge-card.science {
+            border-color: var(--primary);
+        }
+
+        .knowledge-card.coding {
             border-color: var(--secondary);
         }
 
-        .financial-value {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin: 5px 0;
+        .knowledge-card.languages {
+            border-color: var(--warning);
         }
 
-        .financial-label {
+        .knowledge-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .knowledge-label {
             color: #aaa;
             font-size: 0.8em;
         }
 
-        /* Login Screen */
-        .login-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 20px;
-        }
-
-        .login-card {
+        /* Chat Interface */
+        .chat-container {
             background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid var(--primary);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #333;
         }
 
-        .login-logo {
-            font-size: 2.5em;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
         }
 
-        /* Main App (hidden initially) */
-        .main-app {
-            display: none;
+        .user-message {
+            background: rgba(0, 243, 255, 0.2);
+            border-left: 3px solid var(--primary);
+            margin-left: auto;
         }
 
-        /* Mobile Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .ai-message {
+            background: rgba(0, 255, 136, 0.2);
+            border-left: 3px solid var(--accent);
+            margin-right: auto;
+        }
+
+        .message-sender {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.8em;
+            color: #ccc;
+        }
+
+        .message-content {
+            font-size: 0.9em;
+        }
+
+        /* Input Area */
+        .input-area {
+            display: flex;
             gap: 10px;
             margin-bottom: 15px;
         }
 
-        .stat-card {
-            background: var(--card-bg);
-            padding: 15px 10px;
+        .input-area input {
+            flex: 1;
+            padding: 12px;
             border-radius: 8px;
             border: 1px solid #333;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+            background: #2a2a3e;
+            color: white;
+            font-size: 1em;
         }
 
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-
-        .stat-value {
-            font-size: 1.4em;
+        .input-area button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(90deg, var(--primary), #0099cc);
+            color: white;
+            cursor: pointer;
             font-weight: bold;
-            margin: 5px 0;
         }
 
-        .stat-label {
-            color: #aaa;
-            font-size: 0.75em;
+        /* Quick Questions */
+        .quick-questions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
-        .primary { color: var(--primary); }
-        .secondary { color: var(--secondary); }
-        .accent { color: var(--accent); }
-        .warning { color: var(--warning); }
+        .quick-question {
+            padding: 10px;
+            background: #2a2a3e;
+            border-radius: 8px;
+            border: 1px solid #333;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .quick-question:active {
+            background: rgba(0, 243, 255, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+            font-size: 1.1em;
+        }
 
         /* Mobile Tabs */
         .mobile-tabs {
@@ -240,46 +280,46 @@
             display: block;
         }
 
-        /* Cards */
-        .card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #333;
-            margin-bottom: 15px;
+        /* Knowledge Base */
+        .knowledge-base {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
         }
 
-        .card h3 {
-            color: var(--primary);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 8px;
-            font-size: 1.1em;
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #ccc;
-            font-size: 0.9em;
-        }
-
-        input, select, button, textarea {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #333;
+        .topic-section {
             background: #2a2a3e;
-            color: white;
-            font-size: 1em;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .topic-section.quran {
+            border-left-color: var(--accent);
+        }
+
+        .topic-section.science {
+            border-left-color: var(--primary);
+        }
+
+        .topic-section.coding {
+            border-left-color: var(--secondary);
+        }
+
+        .topic-section.languages {
+            border-left-color: var(--warning);
+        }
+
+        .topic-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .topic-content {
+            font-size: 0.85em;
+            color: #ccc;
+            line-height: 1.4;
         }
 
         button {
@@ -290,6 +330,9 @@
             font-weight: bold;
             transition: all 0.3s;
             margin-top: 5px;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
         }
 
         button:active {
@@ -306,231 +349,6 @@
 
         .btn-danger {
             background: linear-gradient(90deg, var(--danger), #cc0000);
-        }
-
-        .btn-small {
-            padding: 8px 12px;
-            font-size: 0.85em;
-            width: auto;
-        }
-
-        /* Tables */
-        .mobile-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.75em;
-        }
-
-        .mobile-table th {
-            background: var(--table-header);
-            padding: 10px 5px;
-            text-align: left;
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .mobile-table td {
-            padding: 10px 5px;
-            border-bottom: 1px solid #333;
-        }
-
-        .mobile-table tr {
-            background: var(--table-row);
-        }
-
-        .mobile-table tr:nth-child(even) {
-            background: var(--table-alt);
-        }
-
-        .positive {
-            color: var(--accent);
-        }
-
-        .negative {
-            color: var(--danger);
-        }
-
-        /* Product Grid */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .product-card {
-            background: #2a2a3e;
-            border-radius: 8px;
-            padding: 12px;
-            border: 1px solid #333;
-            transition: all 0.3s;
-        }
-
-        .product-card:active {
-            transform: scale(0.98);
-            border-color: var(--primary);
-        }
-
-        .product-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .product-price {
-            color: var(--accent);
-            font-weight: bold;
-        }
-
-        .product-stock {
-            font-size: 0.8em;
-            color: #aaa;
-        }
-
-        /* Cart */
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        .cart-item:last-child {
-            border-bottom: none;
-        }
-
-        .cart-item-info {
-            flex: 1;
-        }
-
-        .cart-item-name {
-            font-weight: bold;
-        }
-
-        .cart-item-price {
-            color: var(--accent);
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .cart-total {
-            font-weight: bold;
-            font-size: 1.2em;
-            text-align: right;
-            padding: 10px 0;
-            margin-top: 10px;
-            border-top: 2px solid var(--primary);
-        }
-
-        /* Payment Methods */
-        .payment-methods {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .payment-method {
-            padding: 15px;
-            text-align: center;
-            border: 1px solid #333;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .payment-method.active {
-            background: rgba(0, 243, 255, 0.2);
-            border-color: var(--primary);
-        }
-
-        /* Receipt */
-        .receipt {
-            background: white;
-            color: black;
-            padding: 20px;
-            border-radius: 5px;
-            font-family: monospace;
-            white-space: pre-line;
-            margin-top: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        /* Team Members */
-        .team-member {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-bottom: 1px solid #333;
-        }
-
-        .team-member:last-child {
-            border-bottom: none;
-        }
-
-        .member-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1em;
-        }
-
-        .member-info {
-            flex: 1;
-        }
-
-        .member-name {
-            font-weight: bold;
-            margin-bottom: 3px;
-            font-size: 0.95em;
-        }
-
-        .member-role {
-            color: #aaa;
-            font-size: 0.8em;
-        }
-
-        .member-balance {
-            font-weight: bold;
-            color: var(--accent);
-            font-size: 0.9em;
-        }
-
-        /* Status Messages */
-        .status {
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            text-align: center;
-            font-size: 0.9em;
-        }
-
-        .status.success {
-            background: rgba(0, 255, 136, 0.2);
-            border: 1px solid var(--accent);
-        }
-
-        .status.info {
-            background: rgba(0, 243, 255, 0.2);
-            border: 1px solid var(--primary);
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
         }
 
         /* Bottom Navigation */
@@ -564,150 +382,15 @@
             margin-bottom: 3px;
         }
 
-        /* Log */
-        .log {
-            background: #2a2a3e;
-            padding: 12px;
-            border-radius: 5px;
-            height: 150px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 0.75em;
-            margin-top: 12px;
-        }
-
-        .log-entry {
-            margin-bottom: 5px;
-            padding: 5px;
-            border-radius: 3px;
-        }
-
-        .log-success {
-            background: rgba(0, 255, 136, 0.1);
-            border-left: 3px solid var(--accent);
-        }
-
-        .log-info {
-            background: rgba(0, 243, 255, 0.1);
-            border-left: 3px solid var(--primary);
-        }
-
-        /* Swipeable content */
-        .swipe-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Small text for mobile */
-        .small-text {
-            font-size: 0.7em;
-            color: #aaa;
-        }
-
-        /* Edit Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid var(--primary);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* Reset Confirmation */
-        .reset-confirm {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .reset-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .reset-buttons button {
-            flex: 1;
-        }
-
-        /* Financial Details */
-        .financial-details {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px;
-            background: #2a2a3e;
-            border-radius: 5px;
-        }
-
-        /* Profit Distribution */
-        .profit-distribution {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .profit-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            text-align: center;
-        }
-
-        .profit-card.my-share {
-            border-color: var(--primary);
-        }
-
-        .profit-card.seller-share {
-            border-color: var(--secondary);
-        }
-
-        /* Responsive adjustments */
+        /* Responsive */
         @media (max-width: 380px) {
-            .stats-grid {
+            .knowledge-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .mobile-table {
-                font-size: 0.7em;
             }
             
             .mobile-tab {
                 padding: 10px 12px;
                 font-size: 0.8em;
-            }
-            
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .financial-summary {
-                grid-template-columns: 1fr;
-            }
-            
-            .profit-distribution {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -715,367 +398,251 @@
 <body>
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
-        <div class="login-card">
-            <div class="login-logo">NEON POS</div>
-            <h3>Login to System</h3>
+        <div class="login-card" style="background: var(--card-bg); padding: 30px; border-radius: 15px; border: 2px solid var(--primary); width: 100%; max-width: 400px; text-align: center; margin: 20px;">
+            <div class="login-logo" style="font-size: 2.5em; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px;">AI KNOWLEDGE</div>
+            <h3>Access Knowledge Assistant</h3>
             
-            <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" placeholder="admin@neonpos.com" value="admin@neonpos.com">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: #ccc;">Email</label>
+                <input type="email" id="loginEmail" placeholder="user@knowledge.com" value="user@knowledge.com" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #2a2a3e; color: white;">
             </div>
             
-            <div class="form-group">
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter password" value="password">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: #ccc;">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password" value="password" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #2a2a3e; color: white;">
             </div>
             
-            <div class="form-group">
-                <label for="userRole">Role</label>
-                <select id="userRole">
-                    <option value="admin">Admin</option>
-                    <option value="staff">Staff</option>
-                </select>
-            </div>
-            
-            <button class="btn-success" onclick="login()">
-                <i class="fas fa-sign-in-alt"></i> Login to POS
+            <button class="btn-success" onclick="login()" style="background: linear-gradient(90deg, var(--accent), #00cc66); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer;">
+                <i class="fas fa-sign-in-alt"></i> Access Knowledge
             </button>
             
-            <div class="status info" style="margin-top: 15px;">
-                <i class="fas fa-info-circle"></i> Demo: admin@neonpos.com / password
+            <div style="padding: 10px; border-radius: 5px; margin: 10px 0; text-align: center; background: rgba(0, 243, 255, 0.2); border: 1px solid var(--primary);">
+                <i class="fas fa-info-circle"></i> Demo: user@knowledge.com / password
             </div>
         </div>
     </div>
 
-    <!-- Main POS Application -->
-    <div class="main-app" id="mainApp">
+    <!-- Main AI Knowledge Application -->
+    <div class="main-app" id="mainApp" style="display: none;">
         <div class="container">
             <div class="header">
-                <div class="logo">NEON POS</div>
-                <p class="tagline" id="userGreeting">Complete Point of Sale System</p>
+                <div class="logo">AI KNOWLEDGE ASSISTANT</div>
+                <p class="tagline" id="userGreeting">Quran, Science, Coding, Languages & More</p>
                 <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                    <button class="btn-danger btn-small" onclick="showResetModal()">
-                        <i class="fas fa-trash"></i> Reset All Data
+                    <button class="btn-danger" onclick="clearChat()" style="padding: 8px 12px; width: auto;">
+                        <i class="fas fa-trash"></i> Clear Chat
                     </button>
-                    <button class="btn-danger btn-small" onclick="logout()">
+                    <button class="btn-danger" onclick="logout()" style="padding: 8px 12px; width: auto;">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </div>
             </div>
 
-            <!-- Financial Summary -->
-            <div class="financial-summary">
-                <div class="financial-card buying">
-                    <div class="financial-label">Total Buying Cost</div>
-                    <div class="financial-value warning" id="totalBuyingCost">$0.00</div>
-                    <div class="financial-label">Original Inventory Cost</div>
+            <!-- Knowledge Quick Access -->
+            <div class="knowledge-grid">
+                <div class="knowledge-card quran" onclick="askQuestion('quran')">
+                    <div class="knowledge-icon"><i class="fas fa-book-quran"></i></div>
+                    <div class="knowledge-value" style="font-size: 1.1em; font-weight: bold; margin: 5px 0;">Quran & Islam</div>
+                    <div class="knowledge-label">Islamic Knowledge</div>
                 </div>
-                <div class="financial-card selling">
-                    <div class="financial-label">Total Selling Value</div>
-                    <div class="financial-value accent" id="totalSellingValue">$0.00</div>
-                    <div class="financial-label">Potential Sales Value</div>
+                <div class="knowledge-card science" onclick="askQuestion('science')">
+                    <div class="knowledge-icon"><i class="fas fa-atom"></i></div>
+                    <div class="knowledge-value" style="font-size: 1.1em; font-weight: bold; margin: 5px 0;">Science</div>
+                    <div class="knowledge-label">Physics, Biology, Math</div>
                 </div>
-                <div class="financial-card profit">
-                    <div class="financial-label">Actual Gross Profit</div>
-                    <div class="financial-value primary" id="totalProfit">$0.00</div>
-                    <div class="financial-label">From Actual Sales</div>
+                <div class="knowledge-card coding" onclick="askQuestion('coding')">
+                    <div class="knowledge-icon"><i class="fas fa-code"></i></div>
+                    <div class="knowledge-value" style="font-size: 1.1em; font-weight: bold; margin: 5px 0;">Coding</div>
+                    <div class="knowledge-label">Python, Java, Programming</div>
                 </div>
-                <div class="financial-card my-profit">
-                    <div class="financial-label">My 50% Profit</div>
-                    <div class="financial-value secondary" id="myProfit">$0.00</div>
-                    <div class="financial-label">My Actual Share</div>
-                </div>
-            </div>
-
-            <!-- Profit Distribution -->
-            <div class="profit-distribution">
-                <div class="profit-card my-share">
-                    <div class="financial-label">My Total Profit</div>
-                    <div class="financial-value primary" id="myTotalProfit">$0.00</div>
-                    <div class="financial-label">50% of All Sales</div>
-                </div>
-                <div class="profit-card seller-share">
-                    <div class="financial-label">Seller Total Profit</div>
-                    <div class="financial-value secondary" id="sellerTotalProfit">$0.00</div>
-                    <div class="financial-label">50% of All Sales</div>
-                </div>
-            </div>
-
-            <!-- Stats Dashboard -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Today's Sales</div>
-                    <div class="stat-value primary" id="todaySales">$0.00</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Today's Orders</div>
-                    <div class="stat-value accent" id="todayOrders">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Low Stock Items</div>
-                    <div class="stat-value secondary" id="lowStockCount">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Sellers</div>
-                    <div class="stat-value warning" id="activeSellers">0</div>
+                <div class="knowledge-card languages" onclick="askQuestion('languages')">
+                    <div class="knowledge-icon"><i class="fas fa-language"></i></div>
+                    <div class="knowledge-value" style="font-size: 1.1em; font-weight: bold; margin: 5px 0;">Languages</div>
+                    <div class="knowledge-label">Arabic, English, Dhivehi</div>
                 </div>
             </div>
 
             <!-- Mobile Tabs -->
             <div class="mobile-tabs">
-                <div class="mobile-tab active" onclick="switchTab('dashboard')">
-                    <i class="fas fa-tachometer-alt"></i><br>Dashboard
+                <div class="mobile-tab active" onclick="switchTab('chat')">
+                    <i class="fas fa-robot"></i><br>AI Chat
                 </div>
-                <div class="mobile-tab" onclick="switchTab('pos')">
-                    <i class="fas fa-cash-register"></i><br>POS
+                <div class="mobile-tab" onclick="switchTab('knowledge')">
+                    <i class="fas fa-graduation-cap"></i><br>Knowledge Base
                 </div>
-                <div class="mobile-tab" onclick="switchTab('products')">
-                    <i class="fas fa-boxes"></i><br>Products
+                <div class="mobile-tab" onclick="switchTab('quran')">
+                    <i class="fas fa-book-quran"></i><br>Quran
                 </div>
-                <div class="mobile-tab" onclick="switchTab('sellers')">
-                    <i class="fas fa-users"></i><br>Sellers
+                <div class="mobile-tab" onclick="switchTab('coding')">
+                    <i class="fas fa-code"></i><br>Coding
                 </div>
-                <div class="mobile-tab" onclick="switchTab('reports')">
-                    <i class="fas fa-chart-bar"></i><br>Reports
-                </div>
-            </div>
-
-            <!-- Dashboard Tab -->
-            <div id="dashboard" class="tab-content active">
-                <div class="card">
-                    <h3><i class="fas fa-chart-line"></i> Sales Overview</h3>
-                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
-                        <canvas id="salesChart" width="300" height="200"></canvas>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-money-bill-wave"></i> Financial Details</h3>
-                    <div class="financial-details">
-                        <div class="detail-item">
-                            <span>Original Inventory Cost:</span>
-                            <span class="warning" id="detailBuyingCost">$0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Potential Sales Value:</span>
-                            <span class="accent" id="detailSellingValue">$0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Potential Profit Margin:</span>
-                            <span class="primary" id="detailProfitMargin">0%</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Actual Sales Revenue:</span>
-                            <span class="accent" id="detailSalesRevenue">$0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>My 50% Profit from Sales:</span>
-                            <span class="primary" id="detailMyProfit">$0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Sellers 50% Profit from Sales:</span>
-                            <span class="secondary" id="detailSellerProfit">$0.00</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Low Stock Alerts</h3>
-                    <div id="lowStockAlerts">
-                        <div class="status info">No low stock items</div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-terminal"></i> Recent Activity</h3>
-                    <div class="log" id="activityLog">
-                        <div class="log-entry log-info">
-                            [08:01:20] System initialized
-                        </div>
-                    </div>
+                <div class="mobile-tab" onclick="switchTab('languages')">
+                    <i class="fas fa-language"></i><br>Languages
                 </div>
             </div>
 
-            <!-- POS Tab -->
-            <div id="pos" class="tab-content">
+            <!-- Chat Tab -->
+            <div id="chat" class="tab-content active">
                 <div class="card">
-                    <h3><i class="fas fa-shopping-cart"></i> Current Sale</h3>
-                    <div id="cartItems">
-                        <div class="status info">Cart is empty</div>
-                    </div>
-                    <div class="cart-total" id="cartTotal">Total: $0.00</div>
-                    
-                    <div class="form-group">
-                        <label for="sellerSelect">Select Seller</label>
-                        <select id="sellerSelect">
-                            <!-- Sellers will be loaded here -->
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="discountAmount">Discount (%)</label>
-                        <input type="number" id="discountAmount" min="0" max="100" value="0">
-                    </div>
-                    
-                    <h4>Payment Method</h4>
-                    <div class="payment-methods" id="paymentMethods">
-                        <div class="payment-method active" onclick="selectPayment('cash')">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <div>Cash</div>
-                        </div>
-                        <div class="payment-method" onclick="selectPayment('card')">
-                            <i class="fas fa-credit-card"></i>
-                            <div>Card</div>
-                        </div>
-                        <div class="payment-method" onclick="selectPayment('crypto')">
-                            <i class="fas fa-coins"></i>
-                            <div>Crypto</div>
-                        </div>
-                        <div class="payment-method" onclick="selectPayment('transfer')">
-                            <i class="fas fa-university"></i>
-                            <div>Transfer</div>
+                    <h3><i class="fas fa-robot"></i> AI Knowledge Assistant</h3>
+                    <div class="chat-container" id="chatContainer">
+                        <div class="message ai-message">
+                            <div class="message-sender">AI Assistant</div>
+                            <div class="message-content">Assalamu Alaikum! I'm your AI Knowledge Assistant. I can help you with Quran, Science, Coding, Languages, and many other topics. What would you like to learn today?</div>
                         </div>
                     </div>
                     
-                    <button class="btn-success" onclick="processPayment()" id="checkoutBtn">
-                        <i class="fas fa-credit-card"></i> Process Payment
-                    </button>
-                    <button class="btn-warning" onclick="clearCart()">
-                        <i class="fas fa-trash"></i> Clear Cart
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-boxes"></i> Products</h3>
-                    <div class="form-group">
-                        <input type="text" id="productSearch" placeholder="Search products..." onkeyup="filterProducts()">
+                    <div class="quick-questions">
+                        <div class="quick-question" onclick="askQuickQuestion('What is Python programming?')">What is Python programming?</div>
+                        <div class="quick-question" onclick="askQuickQuestion('Tell me about Quran')">Tell me about Quran</div>
+                        <div class="quick-question" onclick="askQuickQuestion('Explain physics basics')">Explain physics basics</div>
+                        <div class="quick-question" onclick="askQuickQuestion('Teach me Arabic greetings')">Teach me Arabic greetings</div>
+                        <div class="quick-question" onclick="askQuickQuestion('What is Dhivehi language?')">What is Dhivehi language?</div>
                     </div>
-                    <div class="product-grid" id="productGrid">
-                        <!-- Products will be loaded here -->
+                    
+                    <div class="input-area">
+                        <input type="text" id="userInput" placeholder="Ask me anything about Quran, Science, Coding, Languages..." onkeypress="handleKeyPress(event)">
+                        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
 
-            <!-- Products Tab -->
-            <div id="products" class="tab-content">
+            <!-- Knowledge Base Tab -->
+            <div id="knowledge" class="tab-content">
                 <div class="card">
-                    <h3><i class="fas fa-plus-circle"></i> Add New Product</h3>
-                    <div class="form-group">
-                        <label for="productName">Product Name</label>
-                        <input type="text" id="productName" placeholder="Product name">
-                    </div>
-                    <div class="form-group">
-                        <label for="productPrice">Selling Price ($)</label>
-                        <input type="number" id="productPrice" step="0.01" placeholder="Selling price">
-                    </div>
-                    <div class="form-group">
-                        <label for="productCost">Buying Price ($)</label>
-                        <input type="number" id="productCost" step="0.01" placeholder="Buying price">
-                    </div>
-                    <div class="form-group">
-                        <label for="productStock">Stock Quantity</label>
-                        <input type="number" id="productStock" placeholder="Stock quantity">
-                    </div>
-                    <div class="form-group">
-                        <label for="productBarcode">Barcode (Optional)</label>
-                        <input type="text" id="productBarcode" placeholder="Barcode">
-                    </div>
-                    <button class="btn-success" onclick="addProduct()">
-                        <i class="fas fa-save"></i> Add Product
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-boxes"></i> Product Inventory</h3>
-                    <div class="swipe-container">
-                        <table class="mobile-table" id="productsTable">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Buy Price</th>
-                                    <th>Sell Price</th>
-                                    <th>Profit</th>
-                                    <th>Stock</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTableBody">
-                                <!-- Products will be loaded here -->
-                            </tbody>
-                        </table>
+                    <h3><i class="fas fa-graduation-cap"></i> Knowledge Topics</h3>
+                    <div class="knowledge-base">
+                        <div class="topic-section quran">
+                            <div class="topic-title"><i class="fas fa-book-quran"></i> Quran & Islamic Studies</div>
+                            <div class="topic-content">
+                                The Quran is the holy book of Islam, revealed to Prophet Muhammad (PBUH). It contains guidance for all humanity covering faith, morality, law, and wisdom.
+                            </div>
+                            <button onclick="askQuestion('quran basics')" style="margin-top: 10px;">Learn More</button>
+                        </div>
+                        
+                        <div class="topic-section science">
+                            <div class="topic-title"><i class="fas fa-atom"></i> Science & Technology</div>
+                            <div class="topic-content">
+                                Physics studies matter and energy. Biology studies living organisms. Mathematics is the language of patterns. Technology applies scientific knowledge.
+                            </div>
+                            <button onclick="askQuestion('science overview')" style="margin-top: 10px;">Explore Science</button>
+                        </div>
+                        
+                        <div class="topic-section coding">
+                            <div class="topic-title"><i class="fas fa-code"></i> Programming & Coding</div>
+                            <div class="topic-content">
+                                Python is great for beginners. Java for enterprise applications. JavaScript for web development. Learn algorithms, data structures, and problem-solving.
+                            </div>
+                            <button onclick="askQuestion('coding introduction')" style="margin-top: 10px;">Start Coding</button>
+                        </div>
+                        
+                        <div class="topic-section languages">
+                            <div class="topic-title"><i class="fas fa-language"></i> Languages</div>
+                            <div class="topic-content">
+                                Arabic: Language of Quran. English: Global communication. Dhivehi: Language of Maldives. Learn grammar, vocabulary, and cultural context.
+                            </div>
+                            <button onclick="askQuestion('languages learning')" style="margin-top: 10px;">Learn Languages</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sellers Tab -->
-            <div id="sellers" class="tab-content">
+            <!-- Quran Tab -->
+            <div id="quran" class="tab-content">
                 <div class="card">
-                    <h3><i class="fas fa-user-plus"></i> Add Seller</h3>
-                    <div class="form-group">
-                        <label for="sellerName">Full Name</label>
-                        <input type="text" id="sellerName" placeholder="Seller name">
-                    </div>
-                    <div class="form-group">
-                        <label for="sellerPhone">Phone Number</label>
-                        <input type="text" id="sellerPhone" placeholder="Phone number">
-                    </div>
-                    <div class="form-group">
-                        <label for="sellerEmail">Email (Optional)</label>
-                        <input type="email" id="sellerEmail" placeholder="Email">
-                    </div>
-                    <button class="btn-success" onclick="addSeller()">
-                        <i class="fas fa-user-plus"></i> Add Seller
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-users"></i> Seller List</h3>
-                    <div id="sellerList">
-                        <div class="status info">No sellers added yet</div>
+                    <h3><i class="fas fa-book-quran"></i> Quranic Knowledge</h3>
+                    <div class="knowledge-base">
+                        <div class="topic-section">
+                            <div class="topic-title">The Holy Quran</div>
+                            <div class="topic-content">
+                                The Quran is the literal word of God revealed to Prophet Muhammad (PBUH) over 23 years. It contains 114 chapters (surahs) with guidance for all aspects of life.
+                            </div>
+                            <button onclick="askQuestion('quran introduction')">Ask About Quran</button>
+                        </div>
+                        
+                        <div class="topic-section">
+                            <div class="topic-title">Five Pillars of Islam</div>
+                            <div class="topic-content">
+                                1. Shahada (Faith) - Declaration of belief in one God<br>
+                                2. Salah (Prayer) - Five daily prayers<br>
+                                3. Zakat (Charity) - Giving to those in need<br>
+                                4. Sawm (Fasting) - Ramadan fasting<br>
+                                5. Hajj (Pilgrimage) - Journey to Mecca
+                            </div>
+                            <button onclick="askQuestion('islam pillars')">Learn More</button>
+                        </div>
+                        
+                        <div class="topic-section">
+                            <div class="topic-title">Islamic Values</div>
+                            <div class="topic-content">
+                                Key Islamic values include compassion, justice, honesty, patience, gratitude, and seeking knowledge. The Quran emphasizes the importance of education and learning.
+                            </div>
+                            <button onclick="askQuestion('islamic values')">Explore Values</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Reports Tab -->
-            <div id="reports" class="tab-content">
+            <!-- Coding Tab -->
+            <div id="coding" class="tab-content">
                 <div class="card">
-                    <h3><i class="fas fa-receipt"></i> Order History</h3>
-                    <div class="form-group">
-                        <label for="reportDate">Filter by Date</label>
-                        <select id="reportDate" onchange="filterOrders()">
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                            <option value="all">All Time</option>
-                        </select>
-                    </div>
-                    <div class="swipe-container">
-                        <table class="mobile-table" id="ordersTable">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Items</th>
-                                    <th>Total</th>
-                                    <th>Seller</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersTableBody">
-                                <!-- Orders will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="btn-danger" onclick="deleteAllOrders()">
-                            <i class="fas fa-trash"></i> Delete All Orders
-                        </button>
+                    <h3><i class="fas fa-code"></i> Programming & Development</h3>
+                    <div class="knowledge-base">
+                        <div class="topic-section">
+                            <div class="topic-title">Python Programming</div>
+                            <div class="topic-content">
+                                Python is a high-level programming language known for its simplicity and readability. It's great for beginners and used in web development, data science, AI, and automation.
+                            </div>
+                            <button onclick="askQuestion('python programming')">Learn Python</button>
+                        </div>
+                        
+                        <div class="topic-section">
+                            <div class="topic-title">Java Development</div>
+                            <div class="topic-content">
+                                Java is an object-oriented programming language used for enterprise applications, Android development, and large-scale systems. It follows "write once, run anywhere" principle.
+                            </div>
+                            <button onclick="askQuestion('java programming')">Learn Java</button>
+                        </div>
+                        
+                        <div class="topic-section">
+                            <div class="topic-title">Web Development</div>
+                            <div class="topic-content">
+                                Web development involves HTML, CSS, and JavaScript. Front-end deals with user interface, back-end handles server logic, and full-stack covers both areas.
+                            </div>
+                            <button onclick="askQuestion('web development')">Learn Web Dev</button>
+                        </div>
                     </div>
                 </div>
-                
+            </div>
+
+            <!-- Languages Tab -->
+            <div id="languages" class="tab-content">
                 <div class="card">
-                    <h3><i class="fas fa-chart-pie"></i> Sales Reports</h3>
-                    <div style="height: 200px; background: #2a2a3e; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #aaa; margin-bottom: 15px;">
-                        <canvas id="reportsChart" width="300" height="200"></canvas>
+                    <h3><i class="fas fa-language"></i> Language Learning</h3>
+                    <div class="knowledge-base">
+                        <div class="topic-section">
+                            <div class="topic-title">Arabic Language</div>
+                            <div class="topic-content">
+                                Arabic is a Semitic language written from right to left. It's the language of the Quran and spoken by over 400 million people. Key features include root-based word formation.
+                            </div>
+                            <button onclick="askQuestion('learn arabic')">Learn Arabic</button>
+                        </div>
+                        
+                        <div class="topic-section">
+                            <div class="topic-title">English Language</div>
+                            <div class="topic-content">
+                                English is a global lingua franca used in business, science, and international communication. It has Germanic roots with extensive vocabulary from Latin and French.
+                            </div>
+                            <button onclick="askQuestion('learn english')">Learn English</button>
+                        </div>
+                        
+                        <div class="topic-section">
+                            <div class="topic-title">Dhivehi Language</div>
+                            <div class="topic-content">
+                                Dhivehi is the official language of Maldives with its own unique script called Thaana. It shows influences from Arabic, Hindi, Sinhalese, and English.
+                            </div>
+                            <button onclick="askQuestion('learn dhivehi')">Learn Dhivehi</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1083,291 +650,94 @@
 
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchTab('dashboard')">
-                <div class="nav-icon"><i class="fas fa-tachometer-alt"></i></div>
-                <div>Dashboard</div>
+            <div class="nav-item active" onclick="switchTab('chat')">
+                <div class="nav-icon"><i class="fas fa-robot"></i></div>
+                <div>AI Chat</div>
             </div>
-            <div class="nav-item" onclick="switchTab('pos')">
-                <div class="nav-icon"><i class="fas fa-cash-register"></i></div>
-                <div>POS</div>
+            <div class="nav-item" onclick="switchTab('knowledge')">
+                <div class="nav-icon"><i class="fas fa-graduation-cap"></i></div>
+                <div>Knowledge</div>
             </div>
-            <div class="nav-item" onclick="switchTab('products')">
-                <div class="nav-icon"><i class="fas fa-boxes"></i></div>
-                <div>Products</div>
+            <div class="nav-item" onclick="switchTab('quran')">
+                <div class="nav-icon"><i class="fas fa-book-quran"></i></div>
+                <div>Quran</div>
             </div>
-            <div class="nav-item" onclick="switchTab('sellers')">
-                <div class="nav-icon"><i class="fas fa-users"></i></div>
-                <div>Sellers</div>
+            <div class="nav-item" onclick="switchTab('coding')">
+                <div class="nav-icon"><i class="fas fa-code"></i></div>
+                <div>Coding</div>
             </div>
-            <div class="nav-item" onclick="switchTab('reports')">
-                <div class="nav-icon"><i class="fas fa-chart-bar"></i></div>
-                <div>Reports</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Product Modal -->
-    <div class="modal" id="editProductModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-edit"></i> Edit Product</h3>
-            <div class="form-group">
-                <label for="editProductName">Product Name</label>
-                <input type="text" id="editProductName">
-            </div>
-            <div class="form-group">
-                <label for="editProductPrice">Selling Price ($)</label>
-                <input type="number" id="editProductPrice" step="0.01">
-            </div>
-            <div class="form-group">
-                <label for="editProductCost">Buying Price ($)</label>
-                <input type="number" id="editProductCost" step="0.01">
-            </div>
-            <div class="form-group">
-                <label for="editProductStock">Stock Quantity</label>
-                <input type="number" id="editProductStock">
-            </div>
-            <div class="form-group">
-                <label for="editProductBarcode">Barcode</label>
-                <input type="text" id="editProductBarcode">
-            </div>
-            <div class="action-buttons">
-                <button class="btn-success" onclick="saveProductEdit()">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-                <button class="btn-warning" onclick="closeEditModal()">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Seller Modal -->
-    <div class="modal" id="editSellerModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-edit"></i> Edit Seller</h3>
-            <div class="form-group">
-                <label for="editSellerName">Full Name</label>
-                <input type="text" id="editSellerName">
-            </div>
-            <div class="form-group">
-                <label for="editSellerPhone">Phone Number</label>
-                <input type="text" id="editSellerPhone">
-            </div>
-            <div class="form-group">
-                <label for="editSellerEmail">Email</label>
-                <input type="email" id="editSellerEmail">
-            </div>
-            <div class="action-buttons">
-                <button class="btn-success" onclick="saveSellerEdit()">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-                <button class="btn-warning" onclick="closeSellerModal()">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Order Details Modal -->
-    <div class="modal" id="orderDetailsModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-receipt"></i> Order Details</h3>
-            <div id="orderDetailsContent">
-                <!-- Order details will be loaded here -->
-            </div>
-            <div class="action-buttons" style="margin-top: 15px;">
-                <button class="btn-danger" onclick="deleteCurrentOrder()">
-                    <i class="fas fa-trash"></i> Delete This Order
-                </button>
-                <button class="btn-warning" onclick="closeOrderModal()">
-                    <i class="fas fa-times"></i> Close
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reset Confirmation Modal -->
-    <div class="modal" id="resetModal">
-        <div class="modal-content">
-            <div class="reset-confirm">
-                <h3><i class="fas fa-exclamation-triangle"></i> Reset All Data</h3>
-                <p>This will delete ALL data including:</p>
-                <ul style="text-align: left; margin: 15px 0;">
-                    <li>All products and inventory</li>
-                    <li>All seller records</li>
-                    <li>All sales orders and history</li>
-                    <li>All transaction records</li>
-                </ul>
-                <p style="color: var(--danger); font-weight: bold;">This action cannot be undone!</p>
-                
-                <div class="reset-buttons">
-                    <button class="btn-danger" onclick="resetAllData()">
-                        <i class="fas fa-trash"></i> Reset Everything
-                    </button>
-                    <button class="btn-warning" onclick="closeResetModal()">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Receipt Modal -->
-    <div class="modal" id="receiptModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-receipt"></i> Receipt</h3>
-            <div class="receipt" id="receiptContent">
-                <!-- Receipt content will be here -->
-            </div>
-            <div class="action-buttons" style="margin-top: 15px;">
-                <button class="btn-warning" onclick="printReceipt()">
-                    <i class="fas fa-print"></i> Print
-                </button>
-                <button class="btn-success" onclick="saveReceipt()">
-                    <i class="fas fa-save"></i> Save PDF
-                </button>
-                <button class="btn-small" onclick="closeReceipt()">
-                    <i class="fas fa-times"></i> Close
-                </button>
+            <div class="nav-item" onclick="switchTab('languages')">
+                <div class="nav-icon"><i class="fas fa-language"></i></div>
+                <div>Languages</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Data storage with localStorage persistence
-        let users = JSON.parse(localStorage.getItem('neonpos_users')) || [
-            { id: 1, email: 'admin@neonpos.com', password: 'password', role: 'admin', name: 'Admin User' },
-            { id: 2, email: 'staff@neonpos.com', password: 'password', role: 'staff', name: 'Staff User' }
-        ];
+        // Knowledge database
+        const knowledgeBase = {
+            // Quran & Islam
+            'quran': 'The Quran is the holy book of Islam, revealed to Prophet Muhammad (PBUH) over 23 years. It contains 114 chapters (surahs) providing guidance for all aspects of life including faith, morality, law, and wisdom.',
+            'islam': 'Islam is a monotheistic religion teaching belief in one God (Allah). The Five Pillars are: Shahada (declaration of faith), Salah (prayer), Zakat (charity), Sawm (fasting), and Hajj (pilgrimage).',
+            'salah': 'Salah is the Islamic prayer performed five times daily facing the Kaaba in Mecca. It includes recitations from Quran and physical movements that demonstrate submission to God.',
+            
+            // Programming
+            'python': 'Python is a high-level programming language known for its simplicity and readability. It is great for beginners and widely used in web development, data science, artificial intelligence, machine learning, and automation.',
+            'java': 'Java is an object-oriented programming language used for enterprise applications, Android development, and large-scale systems. It follows the "write once, run anywhere" principle using the Java Virtual Machine.',
+            'javascript': 'JavaScript is a programming language primarily used for web development to create interactive websites. It runs in web browsers and can also be used on the server-side with Node.js.',
+            'coding': 'Coding is the process of writing instructions for computers using programming languages. It involves problem-solving, algorithms, data structures, and logical thinking to create software applications.',
+            
+            // Sciences
+            'physics': 'Physics is the natural science that studies matter, energy, motion, and forces through space and time. Key areas include mechanics, thermodynamics, electromagnetism, and quantum physics.',
+            'biology': 'Biology is the science of life and living organisms. It studies cells, genetics, evolution, ecosystems, and all forms of life from microscopic bacteria to complex human systems.',
+            'math': 'Mathematics is the study of numbers, quantities, shapes, patterns, and their relationships. Main branches include algebra, geometry, calculus, statistics, and number theory.',
+            
+            // Languages
+            'arabic': 'Arabic is a Semitic language written from right to left. It is the language of the Quran and spoken by over 400 million people across the Arab world. Arabic has a rich literary tradition and complex grammar system.',
+            'dhivehi': 'Dhivehi is the official language of Maldives. It has its own unique script called Thaana and shows influences from Arabic, Hindi, Sinhalese, and English. Dhivehi is spoken by about 400,000 people.',
+            'english': 'English is a global lingua franca originating from England. It is used worldwide for business, science, technology, and international communication. English has extensive vocabulary from Latin, French, and Germanic roots.',
+            
+            // Technology
+            'ai': 'Artificial Intelligence (AI) involves creating computer systems that can perform tasks normally requiring human intelligence, like learning, reasoning, problem-solving, perception, and language understanding.',
+            'technology': 'Technology refers to the application of scientific knowledge for practical purposes, especially in industry. It includes computers, software, networks, and digital systems that transform how we live and work.'
+        };
 
-        let products = JSON.parse(localStorage.getItem('neonpos_products')) || [
-            { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789', originalStock: 25 },
-            { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790', originalStock: 30 },
-            { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791', originalStock: 50 },
-            { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792', originalStock: 100 },
-            { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793', originalStock: 3 },
-            { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794', originalStock: 10 }
-        ];
-
-        let sellers = JSON.parse(localStorage.getItem('neonpos_sellers')) || [
-            { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
-            { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
-        ];
-
-        let orders = JSON.parse(localStorage.getItem('neonpos_orders')) || [];
+        // Enhanced responses for common questions
+        const detailedResponses = {
+            'what is python': 'Python is a high-level, interpreted programming language known for its clear syntax and readability. It supports multiple programming paradigms including object-oriented, imperative, and functional programming. Python has a comprehensive standard library and is used in web development (Django, Flask), data science (Pandas, NumPy), artificial intelligence (TensorFlow, PyTorch), automation, and scientific computing.',
+            
+            'tell me about quran': 'The Quran is the central religious text of Islam, believed by Muslims to be a revelation from God (Allah). It was revealed to Prophet Muhammad (PBUH) through the angel Gabriel over 23 years. The Quran is divided into 114 chapters (surahs) which are further divided into verses (ayahs). It covers various themes including the oneness of God, morality, law, stories of previous prophets, and the afterlife. The Quran is written in classical Arabic and is considered the literal word of God in Islam.',
+            
+            'explain physics': 'Physics is the fundamental science that studies matter, energy, and their interactions. Key branches include: 1) Mechanics - motion and forces, 2) Thermodynamics - heat and temperature, 3) Electromagnetism - electricity and magnetism, 4) Optics - light and vision, 5) Quantum mechanics - atomic and subatomic particles, and 6) Relativity - space, time and gravity. Physics helps us understand everything from the smallest particles to the entire universe.',
+            
+            'teach me arabic': 'Arabic basics: Common greetings - "As-salamu alaykum" (Peace be upon you), "Marhaba" (Hello). Basic phrases - "Shukran" (Thank you), "Afwan" (You are welcome), "Naam" (Yes), "La" (No). Arabic is written right to left and has 28 letters. The language is based on root words, usually three consonants, that form related words. For example, K-T-B relates to writing: kitab (book), maktab (office), katib (writer).',
+            
+            'what is dhivehi': 'Dhivehi is the official language of the Maldives, spoken by about 400,000 people. It has its own unique script called Thaana, which is written from right to left. Thaana script is unique because it combines elements of Arabic numerals and indigenous characters. Dhivehi has been influenced by Arabic, English, Hindi, and Sinhalese. Common phrases: "Assalaamu alaikum" (Hello), "Shukuriyaa" (Thank you), "Haalu kihineh?" (How are you?).'
+        };
 
         let currentUser = null;
-        let cart = JSON.parse(localStorage.getItem('neonpos_cart')) || [];
-        let selectedPayment = 'cash';
-        let editingProductId = null;
-        let editingSellerId = null;
-        let viewingOrderId = null;
-
-        // Save data to localStorage
-        function saveData() {
-            localStorage.setItem('neonpos_users', JSON.stringify(users));
-            localStorage.setItem('neonpos_products', JSON.stringify(products));
-            localStorage.setItem('neonpos_sellers', JSON.stringify(sellers));
-            localStorage.setItem('neonpos_orders', JSON.stringify(orders));
-            localStorage.setItem('neonpos_cart', JSON.stringify(cart));
-        }
-
-        // Calculate financial totals with 50/50 profit sharing - FIXED VERSION
-        function calculateFinancialTotals() {
-            // Calculate ORIGINAL inventory totals (what you originally paid for)
-            let totalOriginalBuyingCost = 0;
-            let totalOriginalSellingValue = 0;
-            
-            // Calculate based on ORIGINAL stock values
-            products.forEach(product => {
-                const originalStock = product.originalStock || product.stock;
-                totalOriginalBuyingCost += product.cost * originalStock;
-                totalOriginalSellingValue += product.price * originalStock;
-            });
-            
-            // Calculate ACTUAL sales totals with 50/50 profit sharing
-            let totalSalesRevenue = 0;
-            let totalActualProfit = 0;
-            let myTotalActualProfit = 0;
-            let sellerTotalActualProfit = 0;
-            
-            orders.forEach(order => {
-                totalSalesRevenue += order.total;
-                totalActualProfit += order.myProfit + order.sellerProfit;
-                myTotalActualProfit += order.myProfit;
-                sellerTotalActualProfit += order.sellerProfit;
-            });
-            
-            // Calculate CURRENT inventory value (what's left in stock)
-            let currentInventoryBuyingCost = 0;
-            let currentInventorySellingValue = 0;
-            
-            products.forEach(product => {
-                currentInventoryBuyingCost += product.cost * product.stock;
-                currentInventorySellingValue += product.price * product.stock;
-            });
-            
-            // Calculate profit margin percentage
-            const profitMargin = totalOriginalSellingValue > 0 ? 
-                ((totalOriginalSellingValue - totalOriginalBuyingCost) / totalOriginalSellingValue * 100) : 0;
-            
-            // Update financial summary - Show ORIGINAL inventory values
-            document.getElementById('totalBuyingCost').textContent = `$${totalOriginalBuyingCost.toFixed(2)}`;
-            document.getElementById('totalSellingValue').textContent = `$${totalOriginalSellingValue.toFixed(2)}`;
-            document.getElementById('totalProfit').textContent = `$${totalActualProfit.toFixed(2)}`; // ACTUAL profit
-            document.getElementById('myProfit').textContent = `$${myTotalActualProfit.toFixed(2)}`; // ACTUAL your share
-            
-            // Update profit distribution - SHOW ACTUAL PROFITS
-            document.getElementById('myTotalProfit').textContent = `$${myTotalActualProfit.toFixed(2)}`; // ACTUAL
-            document.getElementById('sellerTotalProfit').textContent = `$${sellerTotalActualProfit.toFixed(2)}`; // ACTUAL
-            
-            // Update financial details
-            document.getElementById('detailBuyingCost').textContent = `$${totalOriginalBuyingCost.toFixed(2)}`;
-            document.getElementById('detailSellingValue').textContent = `$${totalOriginalSellingValue.toFixed(2)}`;
-            document.getElementById('detailProfitMargin').textContent = `${profitMargin.toFixed(1)}%`;
-            document.getElementById('detailSalesRevenue').textContent = `$${totalSalesRevenue.toFixed(2)}`;
-            document.getElementById('detailMyProfit').textContent = `$${myTotalActualProfit.toFixed(2)}`; // ACTUAL
-            document.getElementById('detailSellerProfit').textContent = `$${sellerTotalActualProfit.toFixed(2)}`; // ACTUAL
-            
-            // Update seller stats
-            document.getElementById('activeSellers').textContent = sellers.length;
-            
-            // Save data after calculations
-            saveData();
-        }
+        let chatHistory = JSON.parse(localStorage.getItem('ai_chat_history')) || [];
 
         // Initialize the app
         function initApp() {
-            updateDashboard();
-            updateProductGrid();
-            updateProductsTable();
-            updateSellerList();
-            updateSellerSelect();
-            updateOrdersTable();
-            updateCharts();
-            calculateFinancialTotals();
-            updateCartDisplay(); // Make sure cart is displayed correctly
+            loadChatHistory();
+            updateUserGreeting();
         }
 
         // Login function
         function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-            const role = document.getElementById('userRole').value;
             
-            // Find user
-            const user = users.find(u => u.email === email && u.password === password && u.role === role);
-            
-            if (user) {
-                currentUser = user;
+            if (email && password) {
+                currentUser = { name: 'Knowledge Seeker', email: email };
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
-                document.getElementById('userGreeting').textContent = `Welcome, ${user.name}`;
+                document.getElementById('userGreeting').textContent = `Welcome, ${currentUser.name}`;
                 initApp();
-                addLog(`User ${user.name} logged in`, 'info');
                 saveData();
             } else {
-                alert('Invalid login credentials. Please try again.');
+                alert('Please enter email and password');
             }
         }
 
@@ -1376,11 +746,10 @@
             currentUser = null;
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
-            addLog('User logged out', 'info');
             saveData();
         }
 
-        // Tab switching functionality
+        // Tab switching
         function switchTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -1409,991 +778,176 @@
             if (tabIndex >= 0 && navItems[tabIndex]) {
                 navItems[tabIndex].classList.add('active');
             }
+        }
+
+        // Ask question from knowledge cards
+        function askQuestion(topic) {
+            const questions = {
+                'quran': 'What would you like to know about Quran and Islam?',
+                'science': 'What science topic interests you? Physics, Biology, or Mathematics?',
+                'coding': 'Which programming language would you like to learn? Python, Java, or something else?',
+                'languages': 'Which language would you like to learn? Arabic, English, or Dhivehi?',
+                'quran basics': 'The Quran is the holy book of Islam containing divine guidance. It has 114 chapters covering faith, morality, law, and wisdom for all humanity.',
+                'islam pillars': 'The Five Pillars of Islam are: 1) Shahada (faith declaration), 2) Salah (prayer 5 times daily), 3) Zakat (charity), 4) Sawm (Ramadan fasting), 5) Hajj (pilgrimage to Mecca).',
+                'science overview': 'Science includes Physics (matter/energy), Biology (living organisms), Chemistry (substances), and Mathematics (patterns/relationships). Each helps us understand the natural world.',
+                'coding introduction': 'Programming involves writing code to solve problems. Start with Python for beginners, then learn algorithms, data structures, and build projects to practice.',
+                'languages learning': 'Learning languages opens new cultures. Arabic for Quran understanding, English for global communication, Dhivehi for Maldivian culture. Practice daily for best results.'
+            };
             
-            // Refresh data if needed
-            if (tabName === 'dashboard') {
-                updateDashboard();
-            } else if (tabName === 'pos') {
-                updateProductGrid();
-            } else if (tabName === 'products') {
-                updateProductsTable();
-            } else if (tabName === 'sellers') {
-                updateSellerList();
-            } else if (tabName === 'reports') {
-                updateOrdersTable();
-                updateReportsChart();
+            const question = questions[topic] || `What would you like to know about ${topic}?`;
+            addMessage('user', `Tell me about ${topic}`);
+            setTimeout(() => {
+                addMessage('ai', question);
+            }, 500);
+        }
+
+        // Ask quick question
+        function askQuickQuestion(question) {
+            document.getElementById('userInput').value = question;
+            sendMessage();
+        }
+
+        // Send message
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (message) {
+                addMessage('user', message);
+                userInput.value = '';
+                
+                // Simulate AI thinking
+                setTimeout(() => {
+                    const aiResponse = generateAIResponse(message);
+                    addMessage('ai', aiResponse);
+                }, 1000);
             }
         }
 
-        // Update dashboard
-        function updateDashboard() {
-            // Calculate today's sales
-            const today = new Date().toDateString();
-            const todayOrders = orders.filter(order => new Date(order.date).toDateString() === today);
-            const todaySales = todayOrders.reduce((sum, order) => sum + order.total, 0);
-            
-            // Update stats
-            document.getElementById('todaySales').textContent = `$${todaySales.toFixed(2)}`;
-            document.getElementById('todayOrders').textContent = todayOrders.length;
-            
-            // Check low stock
-            const lowStockItems = products.filter(p => p.stock < 5);
-            document.getElementById('lowStockCount').textContent = lowStockItems.length;
-            
-            // Update low stock alerts
-            const alertsContainer = document.getElementById('lowStockAlerts');
-            if (lowStockItems.length === 0) {
-                alertsContainer.innerHTML = '<div class="status info">No low stock items</div>';
-            } else {
-                alertsContainer.innerHTML = lowStockItems.map(item => 
-                    `<div class="status warning">${item.name} - Only ${item.stock} left</div>`
-                ).join('');
+        // Handle Enter key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
             }
-            
-            // Update financial totals
-            calculateFinancialTotals();
-            
-            updateSalesChart();
         }
 
-        // Update product grid for POS
-        function updateProductGrid() {
-            const container = document.getElementById('productGrid');
-            container.innerHTML = '';
+        // Generate AI response
+        function generateAIResponse(question) {
+            const lowerQuestion = question.toLowerCase();
             
-            products.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.onclick = () => addToCart(product);
-                productCard.innerHTML = `
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">$${product.price.toFixed(2)}</div>
-                    <div class="product-stock">Stock: ${product.stock}</div>
+            // Check for exact matches in detailed responses
+            for (const [key, response] of Object.entries(detailedResponses)) {
+                if (lowerQuestion.includes(key)) {
+                    return response;
+                }
+            }
+            
+            // Check for keyword matches in knowledge base
+            for (const [keyword, answer] of Object.entries(knowledgeBase)) {
+                if (lowerQuestion.includes(keyword)) {
+                    return answer;
+                }
+            }
+            
+            // Default responses based on question type
+            if (lowerQuestion.includes('python') || lowerQuestion.includes('programming') || lowerQuestion.includes('code')) {
+                return 'Python is a great programming language for beginners! It has simple syntax and is used in web development, data science, AI, and automation. Would you like to learn specific Python concepts?';
+            }
+            
+            if (lowerQuestion.includes('quran') || lowerQuestion.includes('islam') || lowerQuestion.includes('muslim')) {
+                return 'The Quran is the holy book of Islam containing guidance for all humanity. It emphasizes monotheism, morality, and justice. Islam has Five Pillars that form the foundation of Muslim practice. What specific aspect interests you?';
+            }
+            
+            if (lowerQuestion.includes('physics') || lowerQuestion.includes('biology') || lowerQuestion.includes('math')) {
+                return 'Science helps us understand the natural world! Physics studies matter and energy, Biology studies living organisms, and Mathematics studies patterns and relationships. Which scientific field would you like to explore?';
+            }
+            
+            if (lowerQuestion.includes('arabic') || lowerQuestion.includes('english') || lowerQuestion.includes('dhivehi') || lowerQuestion.includes('language')) {
+                return 'Learning languages opens new opportunities! Arabic is the language of Quran, English is global communication, Dhivehi is the language of Maldives. Would you like to learn basic phrases or grammar?';
+            }
+            
+            // General knowledge response
+            return "I'm your AI knowledge assistant! I can help you learn about:\n\n• Quran & Islamic Studies\n• Science (Physics, Biology, Mathematics)\n• Programming (Python, Java, Coding)\n• Languages (Arabic, English, Dhivehi)\n• Technology & Computer Science\n\nWhat specific topic would you like to explore?";
+        }
+
+        // Add message to chat
+        function addMessage(sender, content) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-sender">${sender === 'user' ? 'You' : 'AI Assistant'}</div>
+                <div class="message-content">${content}</div>
+            `;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Save to chat history
+            chatHistory.push({ sender, content, timestamp: new Date() });
+            if (chatHistory.length > 50) {
+                chatHistory = chatHistory.slice(-50);
+            }
+            localStorage.setItem('ai_chat_history', JSON.stringify(chatHistory));
+        }
+
+        // Load chat history
+        function loadChatHistory() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.innerHTML = '';
+            
+            if (chatHistory.length === 0) {
+                addMessage('ai', 'Assalamu Alaikum! I\'m your AI Knowledge Assistant. I can help you with Quran, Science, Coding, Languages, and many other topics. What would you like to learn today?');
+                return;
+            }
+            
+            chatHistory.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.sender}-message`;
+                messageDiv.innerHTML = `
+                    <div class="message-sender">${msg.sender === 'user' ? 'You' : 'AI Assistant'}</div>
+                    <div class="message-content">${msg.content}</div>
                 `;
-                container.appendChild(productCard);
-            });
-        }
-
-        // Update seller select dropdown
-        function updateSellerSelect() {
-            const select = document.getElementById('sellerSelect');
-            select.innerHTML = '<option value="">Select Seller</option>';
-            
-            sellers.forEach(seller => {
-                const option = document.createElement('option');
-                option.value = seller.id;
-                option.textContent = seller.name;
-                select.appendChild(option);
-            });
-        }
-
-        // Filter products
-        function filterProducts() {
-            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-            const filteredProducts = products.filter(p => 
-                p.name.toLowerCase().includes(searchTerm)
-            );
-            
-            const container = document.getElementById('productGrid');
-            container.innerHTML = '';
-            
-            filteredProducts.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.onclick = () => addToCart(product);
-                productCard.innerHTML = `
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">$${product.price.toFixed(2)}</div>
-                    <div class="product-stock">Stock: ${product.stock}</div>
-                `;
-                container.appendChild(productCard);
-            });
-        }
-
-        // Add to cart
-        function addToCart(product) {
-            // Check if product already in cart
-            const existingItem = cart.find(item => item.id === product.id);
-            
-            if (existingItem) {
-                if (existingItem.quantity < product.stock) {
-                    existingItem.quantity += 1;
-                } else {
-                    alert(`Only ${product.stock} items available in stock`);
-                    return;
-                }
-            } else {
-                if (product.stock > 0) {
-                    cart.push({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        cost: product.cost,
-                        quantity: 1
-                    });
-                } else {
-                    alert('Product out of stock');
-                    return;
-                }
-            }
-            
-            updateCartDisplay();
-            addLog(`Added ${product.name} to cart`, 'info');
-            saveData();
-        }
-
-        // Update cart display
-        function updateCartDisplay() {
-            const cartContainer = document.getElementById('cartItems');
-            const totalElement = document.getElementById('cartTotal');
-            
-            if (cart.length === 0) {
-                cartContainer.innerHTML = '<div class="status info">Cart is empty</div>';
-                totalElement.textContent = 'Total: $0.00';
-                return;
-            }
-            
-            let total = 0;
-            cartContainer.innerHTML = cart.map(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                return `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">$${item.price.toFixed(2)} each</div>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, -1)">-</button>
-                            <span>${item.quantity}</span>
-                            <button class="btn-small" onclick="updateCartQuantity(${item.id}, 1)">+</button>
-                            <span>$${itemTotal.toFixed(2)}</span>
-                            <button class="btn-danger btn-small" onclick="removeFromCart(${item.id})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            // Apply discount
-            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
-            if (discount > 0) {
-                const discountAmount = total * (discount / 100);
-                total -= discountAmount;
-                totalElement.innerHTML = `Subtotal: $${(total + discountAmount).toFixed(2)}<br>Discount: -$${discountAmount.toFixed(2)}<br>Total: $${total.toFixed(2)}`;
-            } else {
-                totalElement.textContent = `Total: $${total.toFixed(2)}`;
-            }
-        }
-
-        // Update cart quantity
-        function updateCartQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                const product = products.find(p => p.id === productId);
-                item.quantity += change;
-                
-                if (item.quantity <= 0) {
-                    removeFromCart(productId);
-                } else if (item.quantity > product.stock) {
-                    item.quantity = product.stock;
-                    alert(`Only ${product.stock} items available in stock`);
-                } else {
-                    updateCartDisplay();
-                }
-            }
-            saveData();
-        }
-
-        // Remove from cart
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCartDisplay();
-            addLog('Item removed from cart', 'info');
-            saveData();
-        }
-
-        // Clear cart
-        function clearCart() {
-            cart = [];
-            updateCartDisplay();
-            addLog('Cart cleared', 'info');
-            saveData();
-        }
-
-        // Select payment method
-        function selectPayment(method) {
-            selectedPayment = method;
-            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-        }
-
-        // Process payment with 50/50 profit sharing
-        function processPayment() {
-            if (cart.length === 0) {
-                alert('Cart is empty. Add items before checkout.');
-                return;
-            }
-            
-            const sellerId = document.getElementById('sellerSelect').value;
-            if (!sellerId) {
-                alert('Please select a seller for this sale');
-                return;
-            }
-            
-            // Calculate total
-            let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
-            if (discount > 0) {
-                total -= total * (discount / 100);
-            }
-            
-            // Calculate profit (50/50 split)
-            let totalProfit = 0;
-            cart.forEach(item => {
-                totalProfit += (item.price - item.cost) * item.quantity;
+                chatContainer.appendChild(messageDiv);
             });
             
-            const myProfit = totalProfit / 2;
-            const sellerProfit = totalProfit / 2;
-            
-            // Create order
-            const order = {
-                id: Math.floor(1000 + Math.random() * 9000),
-                date: new Date(),
-                items: [...cart],
-                total: total,
-                payment: selectedPayment,
-                sellerId: parseInt(sellerId),
-                myProfit: myProfit,
-                sellerProfit: sellerProfit
-            };
-            
-            orders.unshift(order);
-            
-            // Update seller's totals
-            const seller = sellers.find(s => s.id === parseInt(sellerId));
-            if (seller) {
-                seller.totalSales += total;
-                seller.totalProfit += sellerProfit;
-            }
-            
-            // Update product stock
-            cart.forEach(cartItem => {
-                const product = products.find(p => p.id === cartItem.id);
-                if (product) {
-                    product.stock -= cartItem.quantity;
-                    // Preserve original stock value
-                    if (!product.originalStock) {
-                        product.originalStock = product.stock + cartItem.quantity;
-                    }
-                }
-            });
-            
-            // Generate receipt
-            generateReceipt(order);
-            
-            // Clear cart
-            cart = [];
-            updateCartDisplay();
-            document.getElementById('discountAmount').value = '0';
-            
-            // Update dashboard and financial totals
-            updateDashboard();
-            updateProductsTable();
-            updateSellerList();
-            
-            addLog(`Order #${order.id} completed - $${total.toFixed(2)} (My Profit: $${myProfit.toFixed(2)})`, 'success');
-            saveData();
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        // Generate receipt
-        function generateReceipt(order) {
-            const seller = sellers.find(s => s.id === order.sellerId);
-            let receiptText = `=== NEON POS RECEIPT ===\n`;
-            receiptText += `Date: ${order.date.toLocaleString()}\n`;
-            receiptText += `Order: #${order.id}\n`;
-            receiptText += `Seller: ${seller ? seller.name : 'Unknown'}\n`;
-            receiptText += `Cashier: ${currentUser.name}\n`;
-            receiptText += `----------------------------\n`;
-            
-            order.items.forEach(item => {
-                receiptText += `${item.name} x${item.quantity} $${(item.price * item.quantity).toFixed(2)}\n`;
-            });
-            
-            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
-            if (discount > 0) {
-                const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                const discountAmount = subtotal * (discount / 100);
-                receiptText += `----------------------------\n`;
-                receiptText += `Subtotal: $${subtotal.toFixed(2)}\n`;
-                receiptText += `Discount: -$${discountAmount.toFixed(2)}\n`;
-            }
-            
-            receiptText += `----------------------------\n`;
-            receiptText += `TOTAL: $${order.total.toFixed(2)}\n`;
-            receiptText += `Payment: ${order.payment.toUpperCase()}\n`;
-            receiptText += `Profit Split: 50/50\n`;
-            receiptText += `My Share: $${order.myProfit.toFixed(2)}\n`;
-            receiptText += `Seller Share: $${order.sellerProfit.toFixed(2)}\n`;
-            receiptText += `============================\n`;
-            receiptText += `Thank you for your business!\n`;
-            
-            document.getElementById('receiptContent').textContent = receiptText;
-            document.getElementById('receiptModal').style.display = 'block';
-        }
-
-        // Close receipt
-        function closeReceipt() {
-            document.getElementById('receiptModal').style.display = 'none';
-        }
-
-        // Print receipt
-        function printReceipt() {
-            const receiptContent = document.getElementById('receiptContent').textContent;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Receipt #${orders[0]?.id || '0000'}</title>
-                        <style>
-                            body { font-family: monospace; padding: 20px; }
-                            pre { white-space: pre-wrap; }
-                        </style>
-                    </head>
-                    <body>
-                        <pre>${receiptContent}</pre>
-                        <script>
-                            window.onload = function() {
-                                window.print();
-                                setTimeout(function() {
-                                    window.close();
-                                }, 500);
-                            };
-                        <\/script>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-        }
-
-        // Save receipt as PDF
-        function saveReceipt() {
-            alert('Receipt saved as PDF (simulated)');
-            // In a real app, you would use a library like jsPDF here
-        }
-
-        // Add product
-        function addProduct() {
-            const name = document.getElementById('productName').value;
-            const price = parseFloat(document.getElementById('productPrice').value);
-            const cost = parseFloat(document.getElementById('productCost').value);
-            const stock = parseInt(document.getElementById('productStock').value);
-            const barcode = document.getElementById('productBarcode').value;
-            
-            if (!name || !price || !cost || !stock) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            
-            const newProduct = {
-                id: Date.now(),
-                name: name,
-                price: price,
-                cost: cost,
-                stock: stock,
-                originalStock: stock,
-                barcode: barcode
-            };
-            
-            products.push(newProduct);
-            
-            // Update UI
-            updateProductGrid();
-            updateProductsTable();
-            calculateFinancialTotals();
-            
-            // Clear form
-            document.getElementById('productName').value = '';
-            document.getElementById('productPrice').value = '';
-            document.getElementById('productCost').value = '';
-            document.getElementById('productStock').value = '';
-            document.getElementById('productBarcode').value = '';
-            
-            addLog(`Product added: ${name}`, 'success');
-            alert(`Product "${name}" added successfully!`);
-            saveData();
-        }
-
-        // Update products table
-        function updateProductsTable() {
-            const tbody = document.getElementById('productsTableBody');
-            tbody.innerHTML = '';
-            
-            products.forEach(product => {
-                const profit = product.price - product.cost;
-                const profitMargin = (profit / product.price) * 100;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>$${product.cost.toFixed(2)}</td>
-                    <td>$${product.price.toFixed(2)}</td>
-                    <td class="positive">$${profit.toFixed(2)}</td>
-                    <td class="${product.stock < 5 ? 'negative' : 'positive'}">${product.stock}</td>
-                    <td>
-                        <button class="btn-small" onclick="editProduct(${product.id})" style="margin-bottom: 5px;">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-danger btn-small" onclick="deleteProduct(${product.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Edit product
-        function editProduct(productId) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                editingProductId = productId;
-                document.getElementById('editProductName').value = product.name;
-                document.getElementById('editProductPrice').value = product.price;
-                document.getElementById('editProductCost').value = product.cost;
-                document.getElementById('editProductStock').value = product.stock;
-                document.getElementById('editProductBarcode').value = product.barcode;
-                document.getElementById('editProductModal').style.display = 'block';
+        // Clear chat
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat history?')) {
+                chatHistory = [];
+                localStorage.removeItem('ai_chat_history');
+                loadChatHistory();
             }
         }
 
-        // Save product edit
-        function saveProductEdit() {
-            if (editingProductId === null) return;
-            
-            const name = document.getElementById('editProductName').value;
-            const price = parseFloat(document.getElementById('editProductPrice').value);
-            const cost = parseFloat(document.getElementById('editProductCost').value);
-            const stock = parseInt(document.getElementById('editProductStock').value);
-            const barcode = document.getElementById('editProductBarcode').value;
-            
-            if (!name || !price || !cost || !stock) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            
-            const productIndex = products.findIndex(p => p.id === editingProductId);
-            if (productIndex !== -1) {
-                products[productIndex] = {
-                    ...products[productIndex],
-                    name: name,
-                    price: price,
-                    cost: cost,
-                    stock: stock,
-                    barcode: barcode
-                };
-                
-                updateProductGrid();
-                updateProductsTable();
-                calculateFinancialTotals();
-                closeEditModal();
-                
-                addLog(`Product updated: ${name}`, 'success');
-                alert(`Product "${name}" updated successfully!`);
-                saveData();
+        // Update user greeting
+        function updateUserGreeting() {
+            if (currentUser) {
+                document.getElementById('userGreeting').textContent = `Welcome, ${currentUser.name}`;
             }
         }
 
-        // Close edit modal
-        function closeEditModal() {
-            document.getElementById('editProductModal').style.display = 'none';
-            editingProductId = null;
-        }
-
-        // Delete product
-        function deleteProduct(productId) {
-            if (confirm('Are you sure you want to delete this product?')) {
-                products = products.filter(p => p.id !== productId);
-                updateProductGrid();
-                updateProductsTable();
-                calculateFinancialTotals();
-                addLog('Product deleted', 'info');
-                saveData();
+        // Save data
+        function saveData() {
+            localStorage.setItem('ai_chat_history', JSON.stringify(chatHistory));
+            if (currentUser) {
+                localStorage.setItem('ai_current_user', JSON.stringify(currentUser));
             }
         }
 
-        // Add seller
-        function addSeller() {
-            const name = document.getElementById('sellerName').value;
-            const phone = document.getElementById('sellerPhone').value;
-            const email = document.getElementById('sellerEmail').value;
-            
-            if (!name || !phone) {
-                alert('Please fill in name and phone fields');
-                return;
-            }
-            
-            const newSeller = {
-                id: Date.now(),
-                name: name,
-                phone: phone,
-                email: email,
-                totalSales: 0,
-                totalProfit: 0
-            };
-            
-            sellers.push(newSeller);
-            
-            // Update UI
-            updateSellerList();
-            updateSellerSelect();
-            
-            // Clear form
-            document.getElementById('sellerName').value = '';
-            document.getElementById('sellerPhone').value = '';
-            document.getElementById('sellerEmail').value = '';
-            
-            addLog(`Seller added: ${name}`, 'success');
-            alert(`Seller "${name}" added successfully!`);
-            saveData();
-        }
-
-        // Update seller list
-        function updateSellerList() {
-            const container = document.getElementById('sellerList');
-            
-            if (sellers.length === 0) {
-                container.innerHTML = '<div class="status info">No sellers added yet</div>';
-                return;
-            }
-            
-            container.innerHTML = sellers.map(seller => `
-                <div class="team-member">
-                    <div class="member-avatar">${seller.name.split(' ').map(n => n[0]).join('').toUpperCase()}</div>
-                    <div class="member-info">
-                        <div class="member-name">${seller.name}</div>
-                        <div class="member-role">${seller.phone} | Total Sales: $${seller.totalSales.toFixed(2)}</div>
-                    </div>
-                    <div class="member-balance">$${seller.totalProfit.toFixed(2)}</div>
-                    <div>
-                        <button class="btn-small" onclick="editSeller(${seller.id})" style="margin-bottom: 5px;">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-danger btn-small" onclick="deleteSeller(${seller.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Edit seller
-        function editSeller(sellerId) {
-            const seller = sellers.find(s => s.id === sellerId);
-            if (seller) {
-                editingSellerId = sellerId;
-                document.getElementById('editSellerName').value = seller.name;
-                document.getElementById('editSellerPhone').value = seller.phone;
-                document.getElementById('editSellerEmail').value = seller.email || '';
-                document.getElementById('editSellerModal').style.display = 'block';
-            }
-        }
-
-        // Save seller edit
-        function saveSellerEdit() {
-            if (editingSellerId === null) return;
-            
-            const name = document.getElementById('editSellerName').value;
-            const phone = document.getElementById('editSellerPhone').value;
-            const email = document.getElementById('editSellerEmail').value;
-            
-            if (!name || !phone) {
-                alert('Please fill in name and phone fields');
-                return;
-            }
-            
-            const sellerIndex = sellers.findIndex(s => s.id === editingSellerId);
-            if (sellerIndex !== -1) {
-                sellers[sellerIndex] = {
-                    ...sellers[sellerIndex],
-                    name: name,
-                    phone: phone,
-                    email: email
-                };
-                
-                updateSellerList();
-                updateSellerSelect();
-                closeSellerModal();
-                
-                addLog(`Seller updated: ${name}`, 'success');
-                alert(`Seller "${name}" updated successfully!`);
-                saveData();
-            }
-        }
-
-        // Close seller modal
-        function closeSellerModal() {
-            document.getElementById('editSellerModal').style.display = 'none';
-            editingSellerId = null;
-        }
-
-        // Delete seller
-        function deleteSeller(sellerId) {
-            if (confirm('Are you sure you want to delete this seller?')) {
-                sellers = sellers.filter(s => s.id !== sellerId);
-                updateSellerList();
-                updateSellerSelect();
-                addLog('Seller deleted', 'info');
-                saveData();
-            }
-        }
-
-        // Update orders table
-        function updateOrdersTable() {
-            const tbody = document.getElementById('ordersTableBody');
-            tbody.innerHTML = '';
-            
-            // Filter orders based on selection
-            const filter = document.getElementById('reportDate').value;
-            let filteredOrders = [...orders];
-            
-            const now = new Date();
-            if (filter === 'today') {
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                filteredOrders = orders.filter(order => new Date(order.date) >= today);
-            } else if (filter === 'week') {
-                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                filteredOrders = orders.filter(order => new Date(order.date) >= weekAgo);
-            } else if (filter === 'month') {
-                const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-                filteredOrders = orders.filter(order => new Date(order.date) >= monthAgo);
-            }
-            
-            filteredOrders.forEach(order => {
-                const seller = sellers.find(s => s.id === order.sellerId);
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${new Date(order.date).toLocaleDateString()}</td>
-                    <td>${order.items.length} items</td>
-                    <td class="positive">$${order.total.toFixed(2)}</td>
-                    <td>${seller ? seller.name : 'Unknown'}</td>
-                    <td>
-                        <button class="btn-small" onclick="viewOrderDetails(${order.id})" style="margin-bottom: 5px;">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn-danger btn-small" onclick="deleteOrder(${order.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // View order details
-        function viewOrderDetails(orderId) {
-            const order = orders.find(o => o.id === orderId);
-            if (order) {
-                const seller = sellers.find(s => s.id === order.sellerId);
-                viewingOrderId = orderId;
-                let detailsHtml = `
-                    <p><strong>Order #${order.id}</strong></p>
-                    <p>Date: ${new Date(order.date).toLocaleString()}</p>
-                    <p>Seller: ${seller ? seller.name : 'Unknown'}</p>
-                    <p>Payment: ${order.payment}</p>
-                    <p>Total: $${order.total.toFixed(2)}</p>
-                    <p><strong>Profit Distribution (50/50):</strong></p>
-                    <p>My Share: $${order.myProfit.toFixed(2)}</p>
-                    <p>Seller Share: $${order.sellerProfit.toFixed(2)}</p>
-                    <p><strong>Items:</strong></p>
-                    <ul style="margin-left: 20px;">
-                `;
-                
-                order.items.forEach(item => {
-                    detailsHtml += `<li>${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}</li>`;
-                });
-                
-                detailsHtml += `</ul>`;
-                document.getElementById('orderDetailsContent').innerHTML = detailsHtml;
-                document.getElementById('orderDetailsModal').style.display = 'block';
-            }
-        }
-
-        // Delete order
-        function deleteOrder(orderId) {
-            if (confirm('Are you sure you want to delete this order?')) {
-                // Restore product stock and seller profits before deleting
-                const order = orders.find(o => o.id === orderId);
-                if (order) {
-                    // Restore product stock
-                    order.items.forEach(item => {
-                        const product = products.find(p => p.id === item.productId);
-                        if (product) {
-                            product.stock += item.quantity;
-                        }
-                    });
-                    
-                    // Remove seller profits
-                    const seller = sellers.find(s => s.id === order.sellerId);
-                    if (seller) {
-                        seller.totalSales -= order.total;
-                        seller.totalProfit -= order.sellerProfit;
-                    }
-                }
-                
-                orders = orders.filter(o => o.id !== orderId);
-                updateOrdersTable();
-                updateProductsTable();
-                updateSellerList();
-                updateDashboard();
-                calculateFinancialTotals();
-                addLog(`Order #${orderId} deleted`, 'info');
-                saveData();
-            }
-        }
-
-        // Delete current order from modal
-        function deleteCurrentOrder() {
-            if (viewingOrderId) {
-                deleteOrder(viewingOrderId);
-                closeOrderModal();
-            }
-        }
-
-        // Close order modal
-        function closeOrderModal() {
-            document.getElementById('orderDetailsModal').style.display = 'none';
-            viewingOrderId = null;
-        }
-
-        // Delete all orders
-        function deleteAllOrders() {
-            if (confirm('Are you sure you want to delete ALL orders? This cannot be undone!')) {
-                // Restore all product stock and reset seller profits
-                orders.forEach(order => {
-                    order.items.forEach(item => {
-                        const product = products.find(p => p.id === item.productId);
-                        if (product) {
-                            product.stock += item.quantity;
-                        }
-                    });
-                });
-                
-                // Reset all seller profits
-                sellers.forEach(seller => {
-                    seller.totalSales = 0;
-                    seller.totalProfit = 0;
-                });
-                
-                orders = [];
-                updateOrdersTable();
-                updateProductsTable();
-                updateSellerList();
-                updateDashboard();
-                calculateFinancialTotals();
-                addLog('All orders deleted', 'info');
-                alert('All orders have been deleted and product stock has been restored.');
-                saveData();
-            }
-        }
-
-        // Show reset modal
-        function showResetModal() {
-            document.getElementById('resetModal').style.display = 'block';
-        }
-
-        // Close reset modal
-        function closeResetModal() {
-            document.getElementById('resetModal').style.display = 'none';
-        }
-
-        // Reset all data
-        function resetAllData() {
-            if (confirm('Are you absolutely sure you want to reset ALL data? This cannot be undone!')) {
-                // Reset all data to initial state
-                products = [
-                    { id: 1, name: 'Cigarette Light', price: 145.00, cost: 119.00, stock: 25, barcode: '123456789', originalStock: 25 },
-                    { id: 2, name: 'Cigarette Hard', price: 145.00, cost: 119.00, stock: 30, barcode: '123456790', originalStock: 30 },
-                    { id: 3, name: 'Filter', price: 45.00, cost: 22.75, stock: 50, barcode: '123456791', originalStock: 50 },
-                    { id: 4, name: 'Paper', price: 15.00, cost: 8.50, stock: 100, barcode: '123456792', originalStock: 100 },
-                    { id: 5, name: 'Lighter', price: 5.00, cost: 2.50, stock: 3, barcode: '123456793', originalStock: 3 },
-                    { id: 6, name: 'Ashtray', price: 12.00, cost: 6.00, stock: 10, barcode: '123456794', originalStock: 10 }
-                ];
-                
-                sellers = [
-                    { id: 1, name: 'John Seller', phone: '+1234567890', email: 'john@seller.com', totalSales: 0, totalProfit: 0 },
-                    { id: 2, name: 'Sarah Sales', phone: '+1234567891', email: 'sarah@sales.com', totalSales: 0, totalProfit: 0 }
-                ];
-                
-                orders = [];
-                cart = [];
-                
-                // Clear localStorage
-                localStorage.removeItem('neonpos_products');
-                localStorage.removeItem('neonpos_sellers');
-                localStorage.removeItem('neonpos_orders');
-                localStorage.removeItem('neonpos_cart');
-                
-                // Update all UI components
-                updateProductGrid();
-                updateProductsTable();
-                updateSellerList();
-                updateSellerSelect();
-                updateOrdersTable();
-                updateDashboard();
-                calculateFinancialTotals();
-                
-                closeResetModal();
-                addLog('All data reset to initial state', 'info');
-                alert('All data has been reset successfully!');
-                saveData();
-            }
-        }
-
-        // Filter orders
-        function filterOrders() {
-            updateOrdersTable();
-        }
-
-        // Update charts
-        function updateCharts() {
-            updateSalesChart();
-            updateReportsChart();
-        }
-
-        // Update sales chart
-        function updateSalesChart() {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            
-            // Sample data for the chart
-            const data = {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Daily Sales',
-                    data: [120, 190, 300, 250, 200, 350, 400],
-                    backgroundColor: 'rgba(0, 243, 255, 0.2)',
-                    borderColor: 'rgba(0, 243, 255, 1)',
-                    borderWidth: 2,
-                    tension: 0.4
-                }]
-            };
-            
-            const config = {
-                type: 'line',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: 'white'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: 'white'
-                            }
-                        }
-                    }
-                }
-            };
-            
-            // Destroy existing chart if it exists
-            if (window.salesChartInstance) {
-                window.salesChartInstance.destroy();
-            }
-            
-            window.salesChartInstance = new Chart(ctx, config);
-        }
-
-        // Update reports chart
-        function updateReportsChart() {
-            const ctx = document.getElementById('reportsChart').getContext('2d');
-            
-            // Sample data for the chart
-            const data = {
-                labels: ['Cigarettes', 'Filters', 'Paper', 'Lighters', 'Other'],
-                datasets: [{
-                    label: 'Sales by Category',
-                    data: [45, 25, 15, 10, 5],
-                    backgroundColor: [
-                        'rgba(0, 243, 255, 0.7)',
-                        'rgba(255, 0, 255, 0.7)',
-                        'rgba(0, 255, 136, 0.7)',
-                        'rgba(255, 204, 0, 0.7)',
-                        'rgba(255, 0, 102, 0.7)'
-                    ],
-                    borderWidth: 1
-                }]
-            };
-            
-            const config = {
-                type: 'doughnut',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: 'white',
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-            
-            // Destroy existing chart if it exists
-            if (window.reportsChartInstance) {
-                window.reportsChartInstance.destroy();
-            }
-            
-            window.reportsChartInstance = new Chart(ctx, config);
-        }
-
-        // Add entry to system log
-        function addLog(message, type) {
-            const log = document.getElementById('activityLog');
-            const entry = document.createElement('div');
-            entry.className = `log-entry log-${type}`;
-            
-            const timestamp = new Date().toLocaleTimeString();
-            entry.innerHTML = `[${timestamp}] ${message}`;
-            
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        // Initialize the app when page loads
+        // Initialize on load
         window.addEventListener('load', () => {
-            addLog('NEON POS system ready. Please login.', 'info');
-            // Load cart from localStorage
-            updateCartDisplay();
-        });
-
-        // Auto-save data when page is about to close
-        window.addEventListener('beforeunload', () => {
-            saveData();
+            const savedUser = localStorage.getItem('ai_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                initApp();
+            }
         });
     </script>
 </body>
