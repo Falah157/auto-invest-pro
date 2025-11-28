@@ -3,475 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeuroAI - Advanced Knowledge Assistant</title>
+    <title>DeepSeek AI - Chat Interface</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #ec4899;
-            --accent: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg-dark: #0f172a;
-            --bg-darker: #020617;
-            --card-bg: #1e293b;
-            --card-hover: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #64748b;
-            --border: #334155;
-            --sidebar-width: 280px;
+            --primary: #10a37f;
+            --primary-hover: #0d8c6c;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7f7f8;
+            --bg-sidebar: #f7f7f8;
+            --border: #e5e5e5;
+            --text-primary: #374151;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #10a37f;
+                --primary-hover: #0d8c6c;
+                --bg-primary: #343541;
+                --bg-secondary: #444654;
+                --bg-sidebar: #202123;
+                --border: #4a4b57;
+                --text-primary: #ececf1;
+                --text-secondary: #acacbe;
+                --text-muted: #8e8ea0;
+                --shadow: 0 1px 3px rgba(0,0,0,0.3);
+            }
         }
 
         body {
-            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            background: var(--bg-primary);
             color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
         }
 
         .app-container {
             display: flex;
-            min-height: 100vh;
+            height: 100vh;
         }
 
         /* Sidebar */
         .sidebar {
-            width: var(--sidebar-width);
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(20px);
+            width: 260px;
+            background: var(--bg-sidebar);
             border-right: 1px solid var(--border);
-            padding: 20px;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-
-        .logo {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 30px;
-            padding: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 1.5em;
-            font-weight: 800;
+            flex-direction: column;
+            height: 100%;
         }
 
-        .logo-icon {
-            font-size: 1.8em;
-        }
-
-        .nav-section {
-            margin-bottom: 25px;
-        }
-
-        .nav-title {
-            color: var(--text-muted);
-            font-size: 0.8em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            padding-left: 10px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            border-radius: 12px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-bottom: 5px;
-            cursor: pointer;
-        }
-
-        .nav-item:hover {
-            background: var(--card-hover);
+        .new-chat-btn {
+            margin: 8px;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
             color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
-        .nav-item.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        .new-chat-btn:hover {
+            background: var(--bg-secondary);
         }
 
-        .nav-icon {
-            font-size: 1.2em;
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Main Content */
-        .main-content {
+        .chat-history {
             flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 0;
-            min-height: 100vh;
+            overflow-y: auto;
+            padding: 8px;
         }
 
-        /* Header */
-        .header {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 20px 30px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
+        .chat-item {
+            padding: 12px;
+            margin: 2px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
         }
 
-        .header-title {
-            font-size: 1.5em;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .chat-item:hover {
+            background: var(--bg-secondary);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
+        .chat-item.active {
+            background: var(--bg-secondary);
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid var(--border);
         }
 
         .user-profile {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 15px;
-            background: var(--card-bg);
-            border-radius: 25px;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-profile:hover {
+            background: var(--bg-secondary);
         }
 
         .user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-size: 12px;
+            color: white;
         }
 
-        /* Chat Container */
-        .chat-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px;
-            height: calc(100vh - 80px);
+        /* Main Chat Area */
+        .main-content {
+            flex: 1;
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
 
-        .chat-messages {
+        .chat-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-primary);
+        }
+
+        .chat-title {
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .chat-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .message {
-            margin-bottom: 25px;
-            animation: fadeInUp 0.3s ease;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .message:last-child {
+            border-bottom: none;
         }
 
-        .user-message {
-            text-align: right;
+        .message-user {
+            background: var(--bg-primary);
         }
 
-        .ai-message {
-            text-align: left;
-        }
-
-        .message-bubble {
-            display: inline-block;
-            max-width: 70%;
-            padding: 15px 20px;
-            border-radius: 20px;
-            line-height: 1.5;
-        }
-
-        .user-message .message-bubble {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            border-bottom-right-radius: 5px;
-        }
-
-        .ai-message .message-bubble {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-bottom-left-radius: 5px;
-        }
-
-        .message-sender {
-            font-size: 0.8em;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-            padding: 0 10px;
+        .message-assistant {
+            background: var(--bg-primary);
         }
 
         .message-content {
-            font-size: 0.95em;
+            display: flex;
+            gap: 24px;
+            max-width: none;
         }
 
-        .message-time {
-            font-size: 0.75em;
-            color: var(--text-muted);
-            margin-top: 5px;
-            padding: 0 10px;
+        .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .avatar-user {
+            background: #10a37f;
+            color: white;
+        }
+
+        .avatar-assistant {
+            background: #5436da;
+            color: white;
+        }
+
+        .message-text {
+            flex: 1;
+            line-height: 1.6;
+            font-size: 16px;
+            padding-top: 2px;
+        }
+
+        .message-text pre {
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 8px 0;
+            border: 1px solid var(--border);
+        }
+
+        .message-text code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+            border: 1px solid var(--border);
         }
 
         /* Input Area */
         .input-container {
-            background: rgba(30, 41, 59, 0.8);
+            padding: 24px;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border);
+        }
+
+        .input-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 56px;
+            max-height: 200px;
+            padding: 12px 45px 12px 16px;
             border: 1px solid var(--border);
-            border-radius: 25px;
-            padding: 15px;
-            display: flex;
-            gap: 15px;
-            align-items: flex-end;
-        }
-
-        .input-field {
-            flex: 1;
-            background: transparent;
-            border: none;
+            border-radius: 12px;
+            background: var(--bg-primary);
             color: var(--text-primary);
-            font-size: 1em;
+            font-size: 16px;
+            line-height: 1.5;
             resize: none;
-            max-height: 120px;
-            min-height: 40px;
             outline: none;
+            transition: all 0.2s;
         }
 
-        .input-field::placeholder {
-            color: var(--text-muted);
+        .text-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
         }
 
         .send-button {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
             border: none;
+            border-radius: 6px;
             color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
 
         .send-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+            background: var(--primary-hover);
         }
 
-        .send-button:active {
-            transform: scale(0.95);
+        .send-button:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
         }
 
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .quick-action {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 20px;
+        .input-info {
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
         }
 
-        .quick-action:hover {
-            background: var(--card-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        /* Welcome Screen */
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
         }
 
-        .action-icon {
-            font-size: 2em;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #10a37f, #5436da);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .action-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .action-desc {
-            font-size: 0.8em;
-            color: var(--text-muted);
-        }
-
-        /* Knowledge Cards */
-        .knowledge-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .knowledge-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 25px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .knowledge-card:hover {
-            background: var(--card-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-        }
-
-        .card-title {
-            font-size: 1.2em;
-            font-weight: 700;
-        }
-
-        .card-content {
+        .welcome-subtitle {
+            font-size: 20px;
             color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 15px;
+            margin-bottom: 40px;
         }
 
-        .card-topics {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            max-width: 800px;
+            margin-bottom: 40px;
         }
 
-        .topic-tag {
-            background: rgba(99, 102, 241, 0.1);
+        .capability-card {
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .capability-icon {
+            font-size: 24px;
+            margin-bottom: 12px;
             color: var(--primary);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            border: 1px solid rgba(99, 102, 241, 0.3);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .message-bubble {
-                max-width: 85%;
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
+        .capability-title {
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
+        .capability-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-dark);
+        .example-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 600px;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 3px;
+        .example-question {
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
+        .example-question:hover {
+            background: var(--bg-primary);
+            border-color: var(--primary);
         }
 
-        /* Loading Animation */
+        /* Typing Indicator */
         .typing-indicator {
-            display: inline-flex;
-            gap: 5px;
-            padding: 15px 20px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            border-bottom-left-radius: 5px;
+            display: flex;
+            gap: 4px;
+            padding: 4px 0;
         }
 
         .typing-dot {
-            width: 8px;
-            height: 8px;
+            width: 4px;
+            height: 4px;
             background: var(--text-muted);
             border-radius: 50%;
             animation: typing 1.4s infinite;
@@ -495,260 +416,174 @@
                 opacity: 1;
             }
         }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="logo">
-                <i class="fas fa-brain logo-icon"></i>
-                <span>NeuroAI</span>
+            <button class="new-chat-btn" onclick="startNewChat()">
+                <i class="fas fa-plus"></i>
+                New chat
+            </button>
+            
+            <div class="chat-history" id="chatHistory">
+                <!-- Chat history will be populated here -->
             </div>
-
-            <div class="nav-section">
-                <div class="nav-title">Main</div>
-                <div class="nav-item active" onclick="switchSection('chat')">
-                    <i class="fas fa-comments nav-icon"></i>
-                    <span>AI Chat</span>
-                </div>
-                <div class="nav-item" onclick="switchSection('knowledge')">
-                    <i class="fas fa-graduation-cap nav-icon"></i>
-                    <span>Knowledge Base</span>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">Subjects</div>
-                <div class="nav-item" onclick="askSubject('quran')">
-                    <i class="fas fa-book-quran nav-icon"></i>
-                    <span>Quran & Islam</span>
-                </div>
-                <div class="nav-item" onclick="askSubject('science')">
-                    <i class="fas fa-atom nav-icon"></i>
-                    <span>Science</span>
-                </div>
-                <div class="nav-item" onclick="askSubject('coding')">
-                    <i class="fas fa-code nav-icon"></i>
-                    <span>Coding</span>
-                </div>
-                <div class="nav-item" onclick="askSubject('languages')">
-                    <i class="fas fa-language nav-icon"></i>
-                    <span>Languages</span>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">Tools</div>
-                <div class="nav-item" onclick="clearChat()">
-                    <i class="fas fa-trash nav-icon"></i>
-                    <span>Clear Chat</span>
-                </div>
-                <div class="nav-item" onclick="exportChat()">
-                    <i class="fas fa-download nav-icon"></i>
-                    <span>Export Chat</span>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span>User</span>
                 </div>
             </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main Chat Area -->
         <div class="main-content">
-            <!-- Header -->
-            <div class="header">
-                <div class="header-content">
-                    <div class="header-title" id="currentSection">AI Chat Assistant</div>
-                    <div class="header-actions">
-                        <div class="user-profile">
-                            <div class="user-avatar">AI</div>
-                            <div>NeuroAI User</div>
+            <div class="chat-header">
+                <div class="chat-title" id="currentChatTitle">New Chat</div>
+            </div>
+
+            <!-- Welcome Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-title">DeepSeek AI</div>
+                <div class="welcome-subtitle">How can I help you today?</div>
+                
+                <div class="capabilities-grid">
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-book-quran"></i>
                         </div>
+                        <div class="capability-title">Quran & Islamic Studies</div>
+                        <div class="capability-desc">Learn about Quran, Hadith, Islamic history and principles</div>
+                    </div>
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="capability-title">Programming & Coding</div>
+                        <div class="capability-desc">Python, Java, Web development, Algorithms</div>
+                    </div>
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-atom"></i>
+                        </div>
+                        <div class="capability-title">Science & Mathematics</div>
+                        <div class="capability-desc">Physics, Biology, Chemistry, Math concepts</div>
+                    </div>
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <div class="capability-title">Languages</div>
+                        <div class="capability-desc">Arabic, English, Dhivehi learning and translation</div>
+                    </div>
+                </div>
+
+                <div class="example-questions">
+                    <div class="example-question" onclick="askExampleQuestion('Explain Python programming for beginners')">
+                        Explain Python programming for beginners
+                    </div>
+                    <div class="example-question" onclick="askExampleQuestion('Teach me about Quran and its teachings')">
+                        Teach me about Quran and its teachings
+                    </div>
+                    <div class="example-question" onclick="askExampleQuestion('Explain physics and biology basics')">
+                        Explain physics and biology basics
+                    </div>
+                    <div class="example-question" onclick="askExampleQuestion('Teach me Arabic and Dhivehi languages')">
+                        Teach me Arabic and Dhivehi languages
                     </div>
                 </div>
             </div>
 
-            <!-- Chat Section -->
-            <div class="chat-container" id="chatSection">
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <div class="quick-action" onclick="askQuickQuestion('Explain Python programming for beginners')">
-                        <div class="action-icon"><i class="fab fa-python"></i></div>
-                        <div class="action-title">Learn Python</div>
-                        <div class="action-desc">Start coding journey</div>
-                    </div>
-                    <div class="quick-action" onclick="askQuickQuestion('Teach me about Quran and its teachings')">
-                        <div class="action-icon"><i class="fas fa-book-quran"></i></div>
-                        <div class="action-title">Quran Studies</div>
-                        <div class="action-desc">Islamic knowledge</div>
-                    </div>
-                    <div class="quick-action" onclick="askQuickQuestion('Explain physics and biology basics')">
-                        <div class="action-icon"><i class="fas fa-atom"></i></div>
-                        <div class="action-title">Science</div>
-                        <div class="action-desc">Physics & Biology</div>
-                    </div>
-                    <div class="quick-action" onclick="askQuickQuestion('Teach me Arabic and Dhivehi languages')">
-                        <div class="action-icon"><i class="fas fa-language"></i></div>
-                        <div class="action-title">Languages</div>
-                        <div class="action-desc">Arabic & Dhivehi</div>
-                    </div>
-                </div>
+            <!-- Chat Messages Container -->
+            <div class="chat-container" id="chatContainer" style="display: none;">
+                <!-- Messages will be added here dynamically -->
+            </div>
 
-                <!-- Chat Messages -->
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message ai-message">
-                        <div class="message-sender">NeuroAI</div>
-                        <div class="message-bubble">
-                            <div class="message-content">
-                                🎉 Welcome to <strong>NeuroAI Knowledge Assistant</strong>!<br><br>
-                                I'm your advanced AI tutor ready to help you learn:<br>
-                                • 📖 <strong>Quran & Islamic Studies</strong><br>
-                                • 💻 <strong>Programming</strong> (Python, Java, Web Dev)<br>
-                                • 🔬 <strong>Science</strong> (Physics, Biology, Mathematics)<br>
-                                • 🌐 <strong>Languages</strong> (Arabic, English, Dhivehi)<br>
-                                • 🚀 <strong>Technology & AI</strong><br><br>
-                                What would you like to learn today?
-                            </div>
-                        </div>
-                        <div class="message-time" id="currentTime"></div>
-                    </div>
-                </div>
-
-                <!-- Input Area -->
-                <div class="input-container">
+            <!-- Input Area -->
+            <div class="input-container">
+                <div class="input-wrapper">
                     <textarea 
-                        class="input-field" 
-                        id="userInput" 
-                        placeholder="Ask me anything about Quran, Science, Coding, Languages..." 
+                        class="text-input" 
+                        id="messageInput"
+                        placeholder="Message DeepSeek AI..."
                         rows="1"
-                        onkeydown="handleInputKeydown(event)"
+                        onkeydown="handleKeyDown(event)"
+                        oninput="autoResize(this)"
                     ></textarea>
-                    <button class="send-button" onclick="sendMessage()">
+                    <button class="send-button" onclick="sendMessage()" id="sendButton">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
-            </div>
-
-            <!-- Knowledge Base Section -->
-            <div class="chat-container" id="knowledgeSection" style="display: none;">
-                <div class="knowledge-grid">
-                    <!-- Quran Card -->
-                    <div class="knowledge-card" onclick="askSubject('quran')">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class="fas fa-book-quran"></i>
-                            </div>
-                            <div class="card-title">Quran & Islamic Studies</div>
-                        </div>
-                        <div class="card-content">
-                            Comprehensive Islamic knowledge including Quranic teachings, Hadith, Islamic history, and principles of faith. Learn about the Five Pillars, Islamic values, and spiritual development.
-                        </div>
-                        <div class="card-topics">
-                            <span class="topic-tag">Quran Recitation</span>
-                            <span class="topic-tag">Islamic History</span>
-                            <span class="topic-tag">Fiqh</span>
-                            <span class="topic-tag">Tafsir</span>
-                        </div>
-                    </div>
-
-                    <!-- Science Card -->
-                    <div class="knowledge-card" onclick="askSubject('science')">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class="fas fa-atom"></i>
-                            </div>
-                            <div class="card-title">Science & Mathematics</div>
-                        </div>
-                        <div class="card-content">
-                            Explore the wonders of Physics, Biology, Chemistry, and Mathematics. From quantum mechanics to human anatomy, algebra to calculus - master scientific concepts.
-                        </div>
-                        <div class="card-topics">
-                            <span class="topic-tag">Physics</span>
-                            <span class="topic-tag">Biology</span>
-                            <span class="topic-tag">Mathematics</span>
-                            <span class="topic-tag">Chemistry</span>
-                        </div>
-                    </div>
-
-                    <!-- Coding Card -->
-                    <div class="knowledge-card" onclick="askSubject('coding')">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class="fas fa-code"></i>
-                            </div>
-                            <div class="card-title">Programming & Development</div>
-                        </div>
-                        <div class="card-content">
-                            Learn programming from scratch. Python for beginners, Java for applications, web development, algorithms, data structures, and software engineering principles.
-                        </div>
-                        <div class="card-topics">
-                            <span class="topic-tag">Python</span>
-                            <span class="topic-tag">Java</span>
-                            <span class="topic-tag">Web Dev</span>
-                            <span class="topic-tag">Algorithms</span>
-                        </div>
-                    </div>
-
-                    <!-- Languages Card -->
-                    <div class="knowledge-card" onclick="askSubject('languages')">
-                        <div class="card-header">
-                            <div class="card-icon">
-                                <i class="fas fa-language"></i>
-                            </div>
-                            <div class="card-title">Languages & Linguistics</div>
-                        </div>
-                        <div class="card-content">
-                            Master Arabic (Quranic and Modern), English (global communication), and Dhivehi (Maldivian language). Learn grammar, vocabulary, and cultural context.
-                        </div>
-                        <div class="card-topics">
-                            <span class="topic-tag">Arabic</span>
-                            <span class="topic-tag">English</span>
-                            <span class="topic-tag">Dhivehi</span>
-                            <span class="topic-tag">Linguistics</span>
-                        </div>
-                    </div>
+                <div class="input-info">
+                    DeepSeek AI can make mistakes. Consider checking important information.
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Advanced Knowledge Database
+        // Knowledge Database
         const knowledgeBase = {
             // Quran & Islam
-            'quran': `The Quran is the holy book of Islam, revealed to Prophet Muhammad (PBUH) over 23 years. It contains 114 chapters (surahs) with divine guidance covering:
+            'quran': `The Quran is the holy book of Islam, revealed to Prophet Muhammad (PBUH) over 23 years. It contains 114 chapters (surahs) with divine guidance covering all aspects of life.
 
-• **Monotheism (Tawhid)**: Belief in one God
-• **Prophethood**: Stories of previous prophets
-• **Afterlife**: Accountability and judgment
-• **Morality**: Ethical principles and values
-• **Law**: Guidance for personal and social life
+**Key Features:**
+- **Preservation**: Unchanged since revelation
+- **Language**: Classical Arabic
+- **Themes**: Monotheism, morality, law, spirituality
+- **Structure**: 30 parts (juz), 114 chapters
 
-The Quran is preserved in its original Arabic text and has been translated into numerous languages.`,
+The Quran emphasizes compassion, justice, and the pursuit of knowledge.`,
 
-            'islam': `Islam is a complete way of life based on five fundamental pillars:
+            'islam': `Islam is based on five fundamental pillars:
 
-1. **Shahada** - Declaration of faith in one God and Muhammad as His messenger
-2. **Salah** - Five daily prayers facing Mecca
-3. **Zakat** - Charity and purification of wealth (2.5% of savings)
-4. **Sawm** - Fasting during Ramadan from dawn to sunset
-5. **Hajj** - Pilgrimage to Mecca once in lifetime for those able
+1. **Shahada** - Declaration of faith
+2. **Salah** - Five daily prayers  
+3. **Zakat** - Charity (2.5% of wealth)
+4. **Sawm** - Fasting in Ramadan
+5. **Hajj** - Pilgrimage to Mecca
 
-Islam emphasizes peace, justice, compassion, and seeking knowledge.`,
+Islam promotes peace, equality, and social justice.`,
 
             // Programming
-            'python': `Python is a high-level programming language known for its simplicity and readability. Key features:
+            'python': `Python is a versatile programming language perfect for beginners:
 
-• **Easy to Learn**: Clean syntax, great for beginners
-• **Versatile**: Web development, data science, AI, automation
-• **Large Community**: Extensive libraries and frameworks
-• **Cross-Platform**: Runs on Windows, Mac, Linux
+**Key Features:**
+- Simple, readable syntax
+- Extensive libraries
+- Cross-platform compatibility
+- Strong community support
 
-**Popular Libraries:**
-- Django/Flask (Web)
-- Pandas/NumPy (Data Science)
-- TensorFlow/PyTorch (AI)
-- Requests (HTTP)
+**Popular Uses:**
+- Web Development (Django, Flask)
+- Data Science (Pandas, NumPy)
+- AI/ML (TensorFlow, PyTorch)
+- Automation and scripting
 
-**Example Code:**
+**Example:**
 \`\`\`python
 def greet(name):
     return f"Hello, {name}!"
@@ -756,164 +591,222 @@ def greet(name):
 print(greet("World"))
 \`\`\``,
 
-            'java': `Java is an object-oriented programming language for enterprise applications:
+            'java': `Java is an object-oriented language for enterprise applications:
 
-• **Platform Independent**: "Write once, run anywhere" using JVM
-• **Object-Oriented**: Classes, inheritance, polymorphism
-• **Strongly Typed**: Compile-time type checking
-• **Multithreading**: Built-in support for concurrent programming
+**Key Features:**
+- Platform independence (JVM)
+- Strong typing
+- Automatic memory management
+- Multithreading support
 
-**Key Concepts:**
-- Classes and Objects
-- Inheritance and Interfaces
-- Exception Handling
-- Collections Framework
-
-**Used For:**
-- Android Apps
-- Enterprise Systems
-- Web Applications
-- Scientific Computing`,
+**Common Uses:**
+- Android apps
+- Enterprise systems
+- Web applications
+- Scientific computing`,
 
             // Science
-            'physics': `Physics studies matter, energy, and their interactions. Main branches:
+            'physics': `Physics studies matter, energy, and their interactions:
 
-• **Classical Mechanics**: Motion, forces, energy (Newton's Laws)
-• **Thermodynamics**: Heat, temperature, energy transfer
-• **Electromagnetism**: Electricity, magnetism, light
-• **Quantum Mechanics**: Atomic and subatomic particles
-• **Relativity**: Space, time, gravity (Einstein's theories)
+**Main Branches:**
+- **Mechanics**: Motion and forces
+- **Thermodynamics**: Heat and energy  
+- **Electromagnetism**: Electricity and magnetism
+- **Quantum Physics**: Atomic particles
+- **Relativity**: Space and time
 
-**Key Concepts:**
+**Key Laws:**
 - Conservation of Energy
-- Laws of Motion
-- Wave-Particle Duality
-- Theory of Relativity`,
+- Newton's Laws of Motion
+- Laws of Thermodynamics`,
 
-            'biology': `Biology is the science of life and living organisms:
+            'biology': `Biology is the science of life:
 
-• **Cell Biology**: Structure and function of cells
-• **Genetics**: DNA, inheritance, evolution
-• **Ecology**: Organisms and their environments
-• **Anatomy**: Structure of living things
-• **Physiology**: Functions and processes
+**Key Areas:**
+- **Cell Biology**: Basic unit of life
+- **Genetics**: DNA and inheritance
+- **Evolution**: Natural selection
+- **Ecology**: Organisms and environment
+- **Anatomy**: Structure of organisms
 
-**Key Concepts:**
+**Fundamental Concepts:**
 - Cell Theory
-- Evolution by Natural Selection
-- DNA and Genetics
-- Homeostasis
-- Ecosystems and Biodiversity`,
+- DNA as genetic material
+- Evolution by natural selection`,
 
             // Languages
             'arabic': `Arabic is a Semitic language with rich history:
 
-• **Script**: Written right-to-left, 28 letters
-• **Root System**: Words based on 3-consonant roots
-• **Varieties**: Classical (Quranic) and Modern Standard
-• **Influence**: Source of many English words (algebra, alcohol)
+**Characteristics:**
+- Written right to left
+- 28 letter alphabet
+- Root-based word system
+- Classical and modern forms
 
 **Basic Phrases:**
-- السلام عليكم (As-salamu alaykum) - Peace be upon you
-- شكراً (Shukran) - Thank you
-- كيف حالك؟ (Kayf halak?) - How are you?
-- مع السلامة (Ma'a as-salama) - Goodbye`,
+- السلام عليكم (Hello)
+- شكراً (Thank you)
+- كيف حالك؟ (How are you?)
+- مع السلامة (Goodbye)`,
 
-            'dhivehi': `Dhivehi is the official language of Maldives:
+            'dhivehi': `Dhivehi is the language of Maldives:
 
-• **Script**: Thaana, written right-to-left
-• **Unique Features**: Combines Arabic numerals with indigenous characters
-• **Influences**: Arabic, English, Hindi, Sinhalese
-• **Speakers**: ~400,000 people
+**Features:**
+- Thaana script (right to left)
+- Unique character system
+- Arabic and English influences
+- ~400,000 speakers
 
 **Basic Phrases:**
-- އައްސަލާމު ޢަލައިކުމް (Assalaamu alaikum) - Hello
-- ޝުކުރިއްޔާ (Shukuriyaa) - Thank you
-- ހާލު ކިހިނެތް؟ (Haalu kihineh?) - How are you?
-- ވަރުގަތްތެރިޭ (Varugatteherey) - Welcome`
+- އައްސަލާމު ޢަލައިކުމް (Hello)
+- ޝުކުރިއްޔާ (Thank you)
+- ހާލު ކިހިނެތް؟ (How are you?)`
         };
 
-        // Chat functionality
-        let chatHistory = JSON.parse(localStorage.getItem('neuroai_chat')) || [];
+        // Chat Management
+        let currentChat = [];
+        let chatHistory = JSON.parse(localStorage.getItem('deepseek_chats')) || {};
+        let activeChatId = null;
 
         function initApp() {
             loadChatHistory();
-            updateCurrentTime();
-            setInterval(updateCurrentTime, 60000);
-            autoResizeTextarea();
+            updateSendButton();
         }
 
-        function switchSection(section) {
-            // Update navigation
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            
-            // Update content
-            document.getElementById('chatSection').style.display = 'none';
-            document.getElementById('knowledgeSection').style.display = 'none';
-            
-            if (section === 'chat') {
-                document.getElementById('chatSection').style.display = 'flex';
-                document.getElementById('currentSection').textContent = 'AI Chat Assistant';
-            } else {
-                document.getElementById('knowledgeSection').style.display = 'block';
-                document.getElementById('currentSection').textContent = 'Knowledge Base';
-            }
-        }
-
-        function askSubject(subject) {
-            switchSection('chat');
-            const questions = {
-                'quran': 'What would you like to know about Quran and Islamic studies?',
-                'science': 'Which science topic interests you? Physics, Biology, or Mathematics?',
-                'coding': 'Which programming language would you like to learn about?',
-                'languages': 'Which language would you like to learn? Arabic, English, or Dhivehi?'
+        function startNewChat() {
+            activeChatId = 'chat_' + Date.now();
+            currentChat = [];
+            chatHistory[activeChatId] = {
+                title: 'New Chat',
+                messages: [],
+                createdAt: new Date().toISOString()
             };
             
-            addMessage('user', `Tell me about ${subject}`);
-            setTimeout(() => {
-                addMessage('ai', questions[subject] || knowledgeBase[subject] || `I can help you learn about ${subject}. What specific aspect interests you?`);
-            }, 500);
+            showChatInterface();
+            saveChats();
+            updateChatHistorySidebar();
         }
 
-        function askQuickQuestion(question) {
-            document.getElementById('userInput').value = question;
-            sendMessage();
+        function showChatInterface() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('chatContainer').style.display = 'block';
+            document.getElementById('currentChatTitle').textContent = 'DeepSeek AI';
+            
+            renderChatMessages();
+        }
+
+        function showWelcomeScreen() {
+            document.getElementById('welcomeScreen').style.display = 'flex';
+            document.getElementById('chatContainer').style.display = 'none';
+            document.getElementById('currentChatTitle').textContent = 'New Chat';
         }
 
         function sendMessage() {
-            const input = document.getElementById('userInput');
+            const input = document.getElementById('messageInput');
             const message = input.value.trim();
             
-            if (message) {
-                addMessage('user', message);
-                input.value = '';
-                autoResizeTextarea();
-                
-                // Show typing indicator
-                showTypingIndicator();
-                
-                // Generate AI response after delay
-                setTimeout(() => {
-                    removeTypingIndicator();
-                    const response = generateAIResponse(message);
-                    addMessage('ai', response);
-                }, 1500 + Math.random() * 1000);
-            }
+            if (!message) return;
+            
+            // Add user message
+            addMessage('user', message);
+            input.value = '';
+            autoResize(input);
+            updateSendButton();
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Generate AI response
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = generateAIResponse(message);
+                addMessage('assistant', response);
+            }, 1000 + Math.random() * 1000);
         }
 
-        function handleInputKeydown(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
+        function addMessage(role, content) {
+            if (!activeChatId) {
+                startNewChat();
             }
-            autoResizeTextarea();
+            
+            const message = { role, content, timestamp: new Date().toISOString() };
+            currentChat.push(message);
+            chatHistory[activeChatId].messages.push(message);
+            
+            // Update chat title with first message
+            if (chatHistory[activeChatId].messages.length === 1) {
+                const title = content.length > 30 ? content.substring(0, 30) + '...' : content;
+                chatHistory[activeChatId].title = title;
+                document.getElementById('currentChatTitle').textContent = title;
+            }
+            
+            renderChatMessages();
+            saveChats();
+            updateChatHistorySidebar();
         }
 
-        function autoResizeTextarea() {
-            const textarea = document.getElementById('userInput');
-            textarea.style.height = 'auto';
-            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        function renderChatMessages() {
+            const container = document.getElementById('chatContainer');
+            container.innerHTML = '';
+            
+            currentChat.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message message-${message.role}`;
+                
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <div class="avatar avatar-${message.role}">
+                            ${message.role === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>'}
+                        </div>
+                        <div class="message-text">${formatMessageContent(message.content)}</div>
+                    </div>
+                `;
+                
+                container.appendChild(messageDiv);
+            });
+            
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function formatMessageContent(content) {
+            // Convert markdown-like formatting to HTML
+            return content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function showTypingIndicator() {
+            const container = document.getElementById('chatContainer');
+            const indicator = document.createElement('div');
+            indicator.className = 'message message-assistant';
+            indicator.id = 'typingIndicator';
+            
+            indicator.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar avatar-assistant">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-text">
+                        <div class="typing-indicator">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(indicator);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
         }
 
         function generateAIResponse(question) {
@@ -928,154 +821,96 @@ print(greet("World"))
             
             // Contextual responses
             if (lowerQuestion.includes('python') || lowerQuestion.includes('programming') || lowerQuestion.includes('code')) {
-                return knowledgeBase.python + "\n\nWould you like me to explain any specific Python concept in more detail?";
+                return knowledgeBase.python + "\n\nWould you like me to explain any specific programming concept in more detail?";
             }
             
             if (lowerQuestion.includes('quran') || lowerQuestion.includes('islam') || lowerQuestion.includes('muslim')) {
-                return knowledgeBase.quran + "\n\nI can help you with Quranic verses, Islamic history, or principles of faith. What would you like to know?";
+                return knowledgeBase.quran + "\n\nI can help you understand Quranic verses, Islamic principles, or historical context. What would you like to know more about?";
             }
             
             if (lowerQuestion.includes('physics') || lowerQuestion.includes('biology') || lowerQuestion.includes('science')) {
-                return "I can explain various science topics:\n\n" + knowledgeBase.physics + "\n\n" + knowledgeBase.biology + "\n\nWhich scientific concept would you like me to elaborate on?";
+                return "I'd be happy to explain scientific concepts!\n\n" + knowledgeBase.physics + "\n\n" + knowledgeBase.biology + "\n\nWhich specific area would you like to explore further?";
             }
             
             if (lowerQuestion.includes('arabic') || lowerQuestion.includes('dhivehi') || lowerQuestion.includes('language')) {
-                return "Let me help you with languages:\n\n" + knowledgeBase.arabic + "\n\n" + knowledgeBase.dhivehi + "\n\nWould you like to learn basic phrases, grammar, or writing systems?";
+                return "I can help you learn languages!\n\n" + knowledgeBase.arabic + "\n\n" + knowledgeBase.dhivehi + "\n\nWould you like to practice basic phrases, learn grammar, or understand the writing systems?";
             }
             
             // Default intelligent response
-            return `I understand you're asking about "${question}". As your NeuroAI knowledge assistant, I specialize in:
+            return `I understand you're asking about "${question}". I'm DeepSeek AI, and I can help you with:
 
-📚 **Quran & Islamic Studies** - Tafsir, Hadith, Islamic history
-💻 **Programming** - Python, Java, web development, algorithms  
-🔬 **Science** - Physics, Biology, Mathematics, Chemistry
-🌐 **Languages** - Arabic, English, Dhivehi, linguistics
-🚀 **Technology** - AI, computer science, latest developments
+• **Quran & Islamic Studies** - Tafsir, Hadith, Islamic history and principles
+• **Programming & Development** - Python, Java, web development, algorithms
+• **Science & Mathematics** - Physics, Biology, Chemistry, advanced math
+• **Languages** - Arabic, English, Dhivehi translation and learning
+• **Technology & AI** - Computer science, machine learning, latest tech
 
-Which of these areas would you like me to help you with? I can provide detailed explanations, examples, and practical knowledge.`;
+What specific topic would you like me to help you with? I can provide detailed explanations, examples, and practical knowledge.`;
         }
 
-        function addMessage(sender, content) {
-            const container = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}-message`;
-            
-            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            messageDiv.innerHTML = `
-                <div class="message-sender">${sender === 'user' ? 'You' : 'NeuroAI'}</div>
-                <div class="message-bubble">
-                    <div class="message-content">${formatContent(content)}</div>
-                </div>
-                <div class="message-time">${time}</div>
-            `;
-            
-            container.appendChild(messageDiv);
-            container.scrollTop = container.scrollHeight;
-            
-            // Save to history
-            chatHistory.push({sender, content, time: new Date().toISOString()});
-            if (chatHistory.length > 100) chatHistory = chatHistory.slice(-50);
-            localStorage.setItem('neuroai_chat', JSON.stringify(chatHistory));
+        function askExampleQuestion(question) {
+            document.getElementById('messageInput').value = question;
+            sendMessage();
         }
 
-        function formatContent(content) {
-            // Convert markdown-like formatting
-            return content
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>')
-                .replace(/\n/g, '<br>');
-        }
-
-        function showTypingIndicator() {
-            const container = document.getElementById('chatMessages');
-            const indicator = document.createElement('div');
-            indicator.className = 'message ai-message';
-            indicator.id = 'typingIndicator';
-            indicator.innerHTML = `
-                <div class="message-sender">NeuroAI</div>
-                <div class="typing-indicator">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
-            `;
-            container.appendChild(indicator);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function removeTypingIndicator() {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) indicator.remove();
-        }
-
-        function loadChatHistory() {
-            const container = document.getElementById('chatMessages');
-            // Keep the welcome message, add history
-            const welcomeMessage = container.innerHTML;
-            container.innerHTML = welcomeMessage;
-            
-            chatHistory.forEach(msg => {
-                if (msg.sender !== 'system') {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = `message ${msg.sender}-message`;
-                    messageDiv.innerHTML = `
-                        <div class="message-sender">${msg.sender === 'user' ? 'You' : 'NeuroAI'}</div>
-                        <div class="message-bubble">
-                            <div class="message-content">${formatContent(msg.content)}</div>
-                        </div>
-                        <div class="message-time">${new Date(msg.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    `;
-                    container.appendChild(messageDiv);
-                }
-            });
-            
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function clearChat() {
-            if (confirm('Clear all chat history?')) {
-                chatHistory = [];
-                localStorage.removeItem('neuroai_chat');
-                const container = document.getElementById('chatMessages');
-                container.innerHTML = `
-                    <div class="message ai-message">
-                        <div class="message-sender">NeuroAI</div>
-                        <div class="message-bubble">
-                            <div class="message-content">
-                                🎉 Welcome to <strong>NeuroAI Knowledge Assistant</strong>!<br><br>
-                                I'm your advanced AI tutor ready to help you learn. What would you like to explore today?
-                            </div>
-                        </div>
-                        <div class="message-time" id="currentTime"></div>
-                    </div>
-                `;
-                updateCurrentTime();
+        function handleKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
             }
         }
 
-        function exportChat() {
-            const chatText = chatHistory.map(msg => 
-                `${msg.sender === 'user' ? 'You' : 'NeuroAI'} (${msg.time}): ${msg.content}`
-            ).join('\n\n');
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+            updateSendButton();
+        }
+
+        function updateSendButton() {
+            const input = document.getElementById('messageInput');
+            const button = document.getElementById('sendButton');
+            button.disabled = !input.value.trim();
+        }
+
+        function loadChatHistory() {
+            updateChatHistorySidebar();
+        }
+
+        function updateChatHistorySidebar() {
+            const container = document.getElementById('chatHistory');
+            container.innerHTML = '';
             
-            const blob = new Blob([chatText], {type: 'text/plain'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `neuroai-chat-${new Date().toISOString().split('T')[0]}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
+            Object.entries(chatHistory)
+                .sort(([,a], [,b]) => new Date(b.createdAt) - new Date(a.createdAt))
+                .forEach(([id, chat]) => {
+                    const item = document.createElement('div');
+                    item.className = 'chat-item';
+                    if (id === activeChatId) {
+                        item.classList.add('active');
+                    }
+                    
+                    item.innerHTML = `
+                        <i class="fas fa-message"></i>
+                        <span>${chat.title}</span>
+                    `;
+                    
+                    item.onclick = () => loadChat(id);
+                    container.appendChild(item);
+                });
         }
 
-        function updateCurrentTime() {
-            const timeElements = document.querySelectorAll('#currentTime');
-            const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            timeElements.forEach(el => el.textContent = currentTime);
+        function loadChat(chatId) {
+            activeChatId = chatId;
+            currentChat = [...chatHistory[chatId].messages];
+            showChatInterface();
+            updateChatHistorySidebar();
         }
 
-        // Initialize app
+        function saveChats() {
+            localStorage.setItem('deepseek_chats', JSON.stringify(chatHistory));
+        }
+
+        // Initialize the app
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
