@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat - Real AI Assistant</title>
+    <title>AI Chat - Real Hugging Face AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -28,7 +28,6 @@
             max-width: 100%;
         }
 
-        /* Header */
         .header {
             background: #202123;
             padding: 12px 16px;
@@ -40,7 +39,6 @@
         .header h1 {
             font-size: 18px;
             font-weight: 600;
-            color: #ffffff;
         }
 
         .api-status {
@@ -58,7 +56,6 @@
             background: #ef4444;
         }
 
-        /* Chat Container */
         .chat-container {
             flex: 1;
             overflow-y: auto;
@@ -67,7 +64,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Messages */
         .message {
             margin-bottom: 24px;
             animation: fadeIn 0.3s ease;
@@ -114,7 +110,6 @@
             padding: 0 8px;
         }
 
-        /* Input Area */
         .input-container {
             position: fixed;
             bottom: 0;
@@ -165,11 +160,6 @@
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            transition: all 0.2s;
-        }
-
-        .send-button:hover {
-            background: #0d8c6c;
         }
 
         .send-button:disabled {
@@ -177,7 +167,6 @@
             cursor: not-allowed;
         }
 
-        /* Welcome Screen */
         .welcome-screen {
             padding: 40px 20px;
             text-align: center;
@@ -197,28 +186,24 @@
             font-size: 28px;
             font-weight: 600;
             margin-bottom: 8px;
-            background: linear-gradient(135deg, #10a37f, #5436da);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .welcome-subtitle {
             font-size: 16px;
             color: #9ca3af;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        .api-setup {
+        .token-setup {
             background: #40414f;
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 30px;
             max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0 auto 30px;
         }
 
-        .api-input {
+        .token-input {
             width: 100%;
             padding: 12px;
             border: 1px solid #565869;
@@ -226,9 +211,10 @@
             background: #343541;
             color: white;
             margin-bottom: 12px;
+            font-family: monospace;
         }
 
-        .setup-button {
+        .connect-button {
             width: 100%;
             padding: 12px;
             background: #10a37f;
@@ -237,10 +223,6 @@
             border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
-        }
-
-        .setup-button:hover {
-            background: #0d8c6c;
         }
 
         .quick-actions {
@@ -258,11 +240,6 @@
             border-radius: 12px;
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .quick-action:hover {
-            background: #4a4b57;
         }
 
         .action-title {
@@ -278,7 +255,6 @@
             color: #9ca3af;
         }
 
-        /* Typing Indicator */
         .typing-indicator {
             display: inline-flex;
             gap: 4px;
@@ -315,157 +291,93 @@
             }
         }
 
-        /* Settings Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: #343541;
-            padding: 24px;
-            border-radius: 12px;
-            max-width: 500px;
-            margin: 50px auto;
-            border: 1px solid #565869;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            margin-bottom: 16px;
-            color: #ffffff;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .modal-btn {
-            flex: 1;
+        .model-selector {
+            width: 100%;
             padding: 12px;
-            border: none;
+            border: 1px solid #565869;
             border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .modal-btn.primary {
-            background: #10a37f;
+            background: #343541;
             color: white;
-        }
-
-        .modal-btn.secondary {
-            background: #565869;
-            color: white;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #565869;
-            border-radius: 3px;
+            margin-bottom: 12px;
         }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- Header -->
         <div class="header">
-            <h1>AI Chat Assistant</h1>
-            <div class="api-status" id="apiStatus">Ready</div>
+            <h1>Real AI Chat</h1>
+            <div class="api-status" id="apiStatus">Enter Token</div>
         </div>
 
-        <!-- Chat Container -->
         <div class="chat-container" id="chatContainer">
-            <!-- Welcome Screen -->
             <div class="welcome-screen" id="welcomeScreen">
                 <div class="welcome-icon">
                     <i class="fas fa-robot"></i>
                 </div>
-                <div class="welcome-title">AI Assistant</div>
-                <div class="welcome-subtitle">Powered by Real AI - Like ChatGPT & DeepSeek</div>
+                <div class="welcome-title">Real AI Powered</div>
+                <div class="welcome-subtitle">Using Your Hugging Face Token</div>
                 
-                <div class="api-setup">
-                    <h3 style="margin-bottom: 16px;">🔑 Setup AI API (FREE Options)</h3>
+                <div class="token-setup">
+                    <h3 style="margin-bottom: 16px; text-align: center;">🔑 Enter Your Token</h3>
                     
-                    <select class="api-input" id="apiProvider">
-                        <option value="openai">OpenAI GPT-3.5 Turbo</option>
-                        <option value="huggingface">Hugging Face (Free)</option>
-                        <option value="deepseek">DeepSeek API</option>
-                        <option value="custom">Custom API</option>
+                    <input type="text" class="token-input" id="tokenInput" placeholder="Paste your Hugging Face token here">
+                    
+                    <select class="model-selector" id="modelSelector">
+                        <option value="microsoft/DialoGPT-large">Microsoft DialoGPT (Recommended)</option>
+                        <option value="google/flan-t5-xxl">Google Flan-T5 XXL</option>
+                        <option value="facebook/blenderbot-400M-distill">Facebook BlenderBot</option>
+                        <option value="mosaicml/mpt-7b-chat">MPT-7B Chat</option>
                     </select>
                     
-                    <input type="text" class="api-input" id="apiKey" placeholder="Enter your API key" style="display: block;">
-                    
-                    <div id="apiInstructions" style="text-align: left; font-size: 12px; color: #9ca3af; margin-bottom: 12px;">
-                        <p>🔹 <strong>OpenAI:</strong> Get key from platform.openai.com</p>
-                        <p>🔹 <strong>Hugging Face:</strong> Free tier available</p>
-                        <p>🔹 <strong>DeepSeek:</strong> Visit deepseek.com for API</p>
-                    </div>
-                    
-                    <button class="setup-button" onclick="saveAPIKey()">
-                        <i class="fas fa-save"></i> Save & Connect
+                    <button class="connect-button" onclick="connectWithToken()">
+                        <i class="fas fa-plug"></i> Connect to Real AI
                     </button>
+
+                    <div style="text-align: left; font-size: 12px; color: #9ca3af; margin-top: 15px;">
+                        <p>✅ <strong>Your token is ready!</strong> Paste it above and start chatting with real AI</p>
+                        <p>🔒 Your token is stored only in your browser</p>
+                    </div>
                 </div>
 
                 <div class="quick-actions">
-                    <div class="quick-action" onclick="askExampleQuestion('Explain quantum computing in simple terms')">
-                        <div class="action-title">
-                            <i class="fas fa-atom"></i>
-                            Explain quantum computing
-                        </div>
-                        <div class="action-desc">Get a detailed explanation from AI</div>
-                    </div>
-                    <div class="quick-action" onclick="askExampleQuestion('Write a Python function to calculate fibonacci sequence')">
+                    <div class="quick-action" onclick="askExample('Explain Python programming and show me a simple example')">
                         <div class="action-title">
                             <i class="fab fa-python"></i>
-                            Python code help
+                            Python Programming
                         </div>
-                        <div class="action-desc">Generate and explain code</div>
+                        <div class="action-desc">Learn coding with real AI assistance</div>
                     </div>
-                    <div class="quick-action" onclick="askExampleQuestion('What are the main themes in Surah Al-Fatiha?')">
+                    <div class="quick-action" onclick="askExample('Explain the teachings of Quran and Islamic principles')">
                         <div class="action-title">
                             <i class="fas fa-book-quran"></i>
-                            Quran explanation
+                            Quran & Islam
                         </div>
-                        <div class="action-desc">Deep understanding of Islamic texts</div>
+                        <div class="action-desc">Islamic knowledge and guidance</div>
                     </div>
-                    <div class="quick-action" onclick="askExampleQuestion('Help me plan a study schedule for learning web development')">
+                    <div class="quick-action" onclick="askExample('Explain physics concepts and biology fundamentals')">
                         <div class="action-title">
-                            <i class="fas fa-graduation-cap"></i>
-                            Study planning
+                            <i class="fas fa-atom"></i>
+                            Science & Math
                         </div>
-                        <div class="action-desc">Personalized learning advice</div>
+                        <div class="action-desc">Physics, Biology, Mathematics help</div>
+                    </div>
+                    <div class="quick-action" onclick="askExample('Teach me basic Arabic and Dhivehi phrases')">
+                        <div class="action-title">
+                            <i class="fas fa-language"></i>
+                            Languages
+                        </div>
+                        <div class="action-desc">Arabic, English, Dhivehi learning</div>
                     </div>
                 </div>
             </div>
-
-            <!-- Chat messages will be added here dynamically -->
         </div>
 
-        <!-- Input Area -->
         <div class="input-container">
             <div class="input-wrapper">
                 <textarea 
                     class="text-input" 
                     id="messageInput"
-                    placeholder="Ask me anything... (Real AI powered)"
+                    placeholder="Ask me anything... (Real AI Powered)"
                     rows="1"
                     onkeydown="handleKeyDown(event)"
                     oninput="autoResize(this)"
@@ -475,86 +387,77 @@
                 </button>
             </div>
         </div>
-
-        <!-- Settings Modal -->
-        <div class="modal" id="settingsModal">
-            <div class="modal-content">
-                <div class="modal-title">API Settings</div>
-                <select class="api-input" id="modalApiProvider">
-                    <option value="openai">OpenAI GPT-3.5 Turbo</option>
-                    <option value="huggingface">Hugging Face</option>
-                    <option value="deepseek">DeepSeek</option>
-                    <option value="custom">Custom API</option>
-                </select>
-                <input type="text" class="api-input" id="modalApiKey" placeholder="Enter API key">
-                <div class="modal-buttons">
-                    <button class="modal-btn primary" onclick="saveModalAPIKey()">Save</button>
-                    <button class="modal-btn secondary" onclick="closeSettings()">Cancel</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
-        // Real AI API Integration
-        let apiKey = localStorage.getItem('ai_api_key');
-        let apiProvider = localStorage.getItem('ai_api_provider') || 'openai';
+        // Real Hugging Face AI Integration
+        let hfToken = localStorage.getItem('hf_token');
+        let currentModel = localStorage.getItem('hf_model') || 'microsoft/DialoGPT-large';
         let currentChat = [];
 
+        // Initialize app
         function initApp() {
-            updateAPIStatus();
-            loadChatHistory();
+            // Load saved token and model
+            if (hfToken) {
+                document.getElementById('tokenInput').value = hfToken;
+                document.getElementById('modelSelector').value = currentModel;
+                connectWithToken(); // Auto-connect if token exists
+            }
+            
             updateSendButton();
-            
-            // Show API key input if not set
-            if (!apiKey) {
-                showWelcomeScreen();
-            } else {
-                showChatInterface();
-            }
         }
 
-        function updateAPIStatus() {
-            const status = document.getElementById('apiStatus');
-            if (apiKey) {
-                status.textContent = 'Connected';
-                status.style.background = '#10a37f';
-            } else {
-                status.textContent = 'Setup Required';
-                status.style.background = '#ef4444';
-            }
-        }
-
-        function saveAPIKey() {
-            const provider = document.getElementById('apiProvider').value;
-            const key = document.getElementById('apiKey').value.trim();
+        function connectWithToken() {
+            const tokenInput = document.getElementById('tokenInput');
+            const modelSelect = document.getElementById('modelSelector');
             
-            if (!key) {
-                alert('Please enter an API key');
+            hfToken = tokenInput.value.trim();
+            currentModel = modelSelect.value;
+            
+            if (!hfToken) {
+                alert('Please paste your Hugging Face token');
                 return;
             }
             
-            apiKey = key;
-            apiProvider = provider;
+            // Save to localStorage
+            localStorage.setItem('hf_token', hfToken);
+            localStorage.setItem('hf_model', currentModel);
             
-            localStorage.setItem('ai_api_key', apiKey);
-            localStorage.setItem('ai_api_provider', apiProvider);
-            
-            updateAPIStatus();
-            showChatInterface();
-            
-            // Add welcome message
-            addMessage('ai', `🤖 **AI Assistant Connected!**\n\nI'm now powered by real AI (${getProviderName(provider)}). You can ask me anything and I'll provide intelligent, contextual responses like ChatGPT!\n\nWhat would you like to know?`);
+            // Test the connection
+            testConnection();
         }
 
-        function getProviderName(provider) {
+        async function testConnection() {
+            showTypingIndicator();
+            
+            try {
+                // Test with a simple message
+                const response = await callHuggingFaceAPI('Hello! Please respond with a short greeting to confirm the AI is working.');
+                
+                removeTypingIndicator();
+                
+                if (response && response.length > 0) {
+                    document.getElementById('apiStatus').textContent = 'Connected';
+                    showChatInterface();
+                    
+                    addMessage('ai', `🎉 **Real AI Connected Successfully!**\n\nI'm now powered by **${getModelName(currentModel)}** from Hugging Face.\n\nI can help you with:\n\n• **Programming & Coding** - Python, Java, Web development\n• **Quran & Islamic Studies** - Teachings, principles, guidance\n• **Science & Mathematics** - Physics, Biology, advanced math\n• **Languages** - Arabic, English, Dhivehi learning\n• **Creative Writing** - Stories, essays, content creation\n• **Problem Solving** - Logical reasoning, analysis\n\n**What would you like to explore?**`);
+                } else {
+                    throw new Error('No response from AI');
+                }
+            } catch (error) {
+                removeTypingIndicator();
+                alert('Connection failed: ' + error.message + '\n\nPlease check your token and try again.');
+            }
+        }
+
+        function getModelName(model) {
             const names = {
-                'openai': 'OpenAI GPT',
-                'huggingface': 'Hugging Face',
-                'deepseek': 'DeepSeek',
-                'custom': 'Custom AI'
+                'microsoft/DialoGPT-large': 'Microsoft DialoGPT',
+                'google/flan-t5-xxl': 'Google Flan-T5',
+                'facebook/blenderbot-400M-distill': 'Facebook BlenderBot',
+                'mosaicml/mpt-7b-chat': 'MPT-7B Chat'
             };
-            return names[provider] || 'AI';
+            return names[model] || model;
         }
 
         async function sendMessage() {
@@ -563,96 +466,76 @@
             
             if (!message) return;
             
-            if (!apiKey) {
-                showWelcomeScreen();
-                alert('Please setup AI API first');
+            if (!hfToken) {
+                alert('Please connect with your Hugging Face token first');
                 return;
             }
             
-            // Add user message
             addMessage('user', message);
             input.value = '';
             autoResize(input);
             updateSendButton();
             
-            // Show typing indicator
             showTypingIndicator();
             
             try {
-                // Get AI response from real API
-                const response = await getAIResponse(message);
+                const response = await callHuggingFaceAPI(message);
                 removeTypingIndicator();
                 addMessage('ai', response);
             } catch (error) {
                 removeTypingIndicator();
-                addMessage('ai', `❌ **API Error:** ${error.message}\n\nPlease check your API key and try again. You can update settings by refreshing the page.`);
-                console.error('AI API Error:', error);
+                addMessage('ai', `❌ **AI Service Error**\n\nI encountered an issue: ${error.message}\n\nThis might be because:\n• The AI model is loading (first time use)\n• There's high demand on the service\n• Your token needs verification\n\nPlease try again in a moment!`);
+                console.error('Hugging Face Error:', error);
             }
         }
 
-        async function getAIResponse(userMessage) {
-            // This is where we connect to real AI APIs
-            // For now, using a mock implementation that you can replace with real API calls
-            
+        async function callHuggingFaceAPI(message) {
             try {
-                // Mock API call - REPLACE THIS WITH REAL API CALLS
-                return await mockAIAPI(userMessage);
+                const response = await fetch(
+                    `https://api-inference.huggingface.co/models/${currentModel}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${hfToken}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            inputs: message,
+                            parameters: {
+                                max_length: 1000,
+                                temperature: 0.7,
+                                do_sample: true,
+                                return_full_text: false
+                            }
+                        }),
+                    }
+                );
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Handle different response formats
+                if (data[0] && data[0].generated_text) {
+                    return data[0].generated_text;
+                } else if (data.generated_text) {
+                    return data.generated_text;
+                } else if (data[0] && data[0].summary_text) {
+                    return data[0].summary_text;
+                } else {
+                    return "I received your message! The AI is thinking... Please try rephrasing your question if this continues.";
+                }
             } catch (error) {
-                throw new Error('Failed to get AI response. Check API key and connection.');
+                throw new Error(`Hugging Face: ${error.message}`);
             }
         }
-
-        // MOCK AI API - REPLACE THIS WITH REAL API INTEGRATION
-        async function mockAIAPI(message) {
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-            
-            // Enhanced mock responses based on message content
-            const lowerMessage = message.toLowerCase();
-            
-            if (lowerMessage.includes('python') || lowerMessage.includes('code')) {
-                return `**Python Solution:**\n\nBased on your question about coding, here's a helpful approach:\n\n\`\`\`python\n# Example Python solution\ndef solve_problem(input_data):\n    # AI would generate actual code here\n    return "Solution based on your query"\n\n# Usage\nresult = solve_problem("your input")\nprint(result)\n\`\`\`\n\n*Note: This is a mock response. With real API, I would generate specific code based on your exact requirements.*`;
-            }
-            
-            if (lowerMessage.includes('quran') || lowerMessage.includes('islam')) {
-                return `**Islamic Knowledge:**\n\nRegarding your question about Islamic topics, I can provide insights on:\n\n• Quranic interpretations and context\n• Hadith explanations\n• Islamic history and principles\n• Spiritual guidance\n\n*With real AI integration, I would give detailed, contextual explanations based on authentic sources.*`;
-            }
-            
-            if (lowerMessage.includes('science') || lowerMessage.includes('physics') || lowerMessage.includes('biology')) {
-                return `**Scientific Explanation:**\n\nFor science-related questions, I can explain:\n\n• Complex scientific concepts in simple terms\n• Recent discoveries and research\n• Practical applications of scientific principles\n• Interdisciplinary connections\n\n*Real AI would provide up-to-date, accurate scientific information.*`;
-            }
-            
-            // Default intelligent response
-            return `**AI Response:**\n\nI understand you're asking: "${message}"\n\nWith real AI integration (like ChatGPT/DeepSeek), I would:\n\n• Provide detailed, contextual answers\n• Generate code, essays, or creative content\n• Explain complex concepts simply\n• Offer multiple perspectives\n• Cite sources when relevant\n• Adapt to your specific needs\n\n🔧 *To enable real AI: Replace the mockAPI function with actual API calls to OpenAI, Hugging Face, or DeepSeek.*\n\n**Next Steps:**\n1. Get API key from preferred provider\n2. Replace mockAPI function with real API calls\n3. Handle authentication and responses\n4. Enjoy real AI conversations!`;
-        }
-
-        // REAL API INTEGRATION TEMPLATE - UNCOMMENT AND FILL WITH YOUR API DETAILS
-        /*
-        async function realOpenAIAPI(message) {
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: JSON.stringify({
-                    model: "gpt-3.5-turbo",
-                    messages: [
-                        {role: "system", content: "You are a helpful assistant."},
-                        {role: "user", content: message}
-                    ],
-                    max_tokens: 1000
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            return data.choices[0].message.content;
-        }
-        */
 
         function addMessage(role, content) {
             const message = { 
@@ -732,9 +615,10 @@
             currentChat = [];
         }
 
-        function askExampleQuestion(question) {
-            if (!apiKey) {
-                alert('Please setup AI API first');
+        function askExample(question) {
+            if (!hfToken) {
+                document.getElementById('tokenInput').focus();
+                alert('Please enter your Hugging Face token first');
                 return;
             }
             document.getElementById('messageInput').value = question;
@@ -761,7 +645,7 @@
         }
 
         function loadChatHistory() {
-            const saved = localStorage.getItem('ai_chat_history');
+            const saved = localStorage.getItem('hf_chat_history');
             if (saved) {
                 currentChat = JSON.parse(saved);
                 renderChatMessages();
@@ -769,33 +653,10 @@
         }
 
         function saveChatHistory() {
-            localStorage.setItem('ai_chat_history', JSON.stringify(currentChat));
+            localStorage.setItem('hf_chat_history', JSON.stringify(currentChat));
         }
 
-        function openSettings() {
-            document.getElementById('settingsModal').style.display = 'block';
-        }
-
-        function closeSettings() {
-            document.getElementById('settingsModal').style.display = 'none';
-        }
-
-        function saveModalAPIKey() {
-            const provider = document.getElementById('modalApiProvider').value;
-            const key = document.getElementById('modalApiKey').value.trim();
-            
-            if (key) {
-                apiKey = key;
-                apiProvider = provider;
-                localStorage.setItem('ai_api_key', apiKey);
-                localStorage.setItem('ai_api_provider', apiProvider);
-                updateAPIStatus();
-            }
-            
-            closeSettings();
-        }
-
-        // Initialize app
+        // Initialize app when page loads
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
