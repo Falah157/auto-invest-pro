@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat - Real Hugging Face AI</title>
+    <title>AI Chat - Working Version</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -30,42 +30,36 @@
 
         .header {
             background: #202123;
-            padding: 12px 16px;
+            padding: 15px;
             text-align: center;
-            position: relative;
             border-bottom: 1px solid #4a4b57;
         }
 
         .header h1 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
         }
 
-        .api-status {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 12px;
+        .status {
             background: #10a37f;
-        }
-
-        .api-status.offline {
-            background: #ef4444;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-top: 5px;
+            display: inline-block;
         }
 
         .chat-container {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
-            padding-bottom: 100px;
-            -webkit-overflow-scrolling: touch;
+            padding: 20px;
+            padding-bottom: 80px;
         }
 
         .message {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
             animation: fadeIn 0.3s ease;
         }
 
@@ -75,39 +69,14 @@
         }
 
         .user-message {
+            background: #10a37f;
+            margin-left: 50px;
             text-align: right;
         }
 
         .ai-message {
-            text-align: left;
-        }
-
-        .message-bubble {
-            display: inline-block;
-            max-width: 85%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-
-        .user-message .message-bubble {
-            background: #10a37f;
-            color: white;
-            border-bottom-right-radius: 6px;
-        }
-
-        .ai-message .message-bubble {
             background: #444654;
-            color: #ffffff;
-            border-bottom-left-radius: 6px;
-        }
-
-        .message-sender {
-            font-size: 12px;
-            color: #9ca3af;
-            margin-bottom: 4px;
-            padding: 0 8px;
+            margin-right: 50px;
         }
 
         .input-container {
@@ -116,152 +85,43 @@
             left: 0;
             right: 0;
             background: #343541;
+            padding: 15px;
             border-top: 1px solid #4a4b57;
-            padding: 16px;
-            padding-bottom: calc(16px + env(safe-area-inset-bottom));
         }
 
         .input-wrapper {
             display: flex;
-            gap: 12px;
-            align-items: flex-end;
+            gap: 10px;
             max-width: 800px;
             margin: 0 auto;
         }
 
         .text-input {
             flex: 1;
-            min-height: 48px;
-            max-height: 120px;
-            padding: 12px 16px;
+            padding: 12px 15px;
             border: 1px solid #565869;
-            border-radius: 12px;
+            border-radius: 8px;
             background: #40414f;
             color: #ffffff;
             font-size: 16px;
-            line-height: 1.4;
-            resize: none;
-            outline: none;
-        }
-
-        .text-input:focus {
-            border-color: #10a37f;
         }
 
         .send-button {
-            width: 48px;
-            height: 48px;
+            padding: 12px 20px;
             background: #10a37f;
             border: none;
             border-radius: 8px;
             color: white;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .send-button:disabled {
-            background: #565869;
-            cursor: not-allowed;
-        }
-
-        .welcome-screen {
-            padding: 40px 20px;
-            text-align: center;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .welcome-icon {
-            font-size: 48px;
-            color: #10a37f;
-            margin-bottom: 20px;
-        }
-
-        .welcome-title {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .welcome-subtitle {
             font-size: 16px;
-            color: #9ca3af;
-            margin-bottom: 30px;
         }
 
-        .token-setup {
-            background: #40414f;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            max-width: 500px;
-            margin: 0 auto 30px;
-        }
-
-        .token-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #565869;
-            border-radius: 8px;
-            background: #343541;
-            color: white;
-            margin-bottom: 12px;
-            font-family: monospace;
-        }
-
-        .connect-button {
-            width: 100%;
-            padding: 12px;
-            background: #10a37f;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .quick-action {
-            padding: 16px;
-            background: #40414f;
-            border: 1px solid #565869;
-            border-radius: 12px;
-            text-align: left;
-            cursor: pointer;
-        }
-
-        .action-title {
-            font-weight: 600;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .action-desc {
-            font-size: 14px;
-            color: #9ca3af;
-        }
-
-        .typing-indicator {
+        .typing {
             display: inline-flex;
             gap: 4px;
-            padding: 12px 16px;
+            padding: 10px 15px;
             background: #444654;
-            border-radius: 18px;
-            border-bottom-left-radius: 6px;
+            border-radius: 10px;
         }
 
         .typing-dot {
@@ -272,323 +132,166 @@
             animation: typing 1.4s infinite;
         }
 
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
         @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: 0.4;
-            }
-            30% {
-                transform: translateY(-5px);
-                opacity: 1;
-            }
-        }
-
-        .model-selector {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #565869;
-            border-radius: 8px;
-            background: #343541;
-            color: white;
-            margin-bottom: 12px;
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-5px); opacity: 1; }
         }
     </style>
 </head>
 <body>
     <div class="app">
         <div class="header">
-            <h1>Real AI Chat</h1>
-            <div class="api-status" id="apiStatus">Enter Token</div>
+            <h1>AI Chat Assistant</h1>
+            <div class="status">✅ Ready to Chat</div>
         </div>
 
-        <div class="chat-container" id="chatContainer">
-            <div class="welcome-screen" id="welcomeScreen">
-                <div class="welcome-icon">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <div class="welcome-title">Real AI Powered</div>
-                <div class="welcome-subtitle">Using Your Hugging Face Token</div>
-                
-                <div class="token-setup">
-                    <h3 style="margin-bottom: 16px; text-align: center;">🔑 Enter Your Token</h3>
-                    
-                    <input type="text" class="token-input" id="tokenInput" placeholder="Paste your Hugging Face token here">
-                    
-                    <select class="model-selector" id="modelSelector">
-                        <option value="microsoft/DialoGPT-large">Microsoft DialoGPT (Recommended)</option>
-                        <option value="google/flan-t5-xxl">Google Flan-T5 XXL</option>
-                        <option value="facebook/blenderbot-400M-distill">Facebook BlenderBot</option>
-                        <option value="mosaicml/mpt-7b-chat">MPT-7B Chat</option>
-                    </select>
-                    
-                    <button class="connect-button" onclick="connectWithToken()">
-                        <i class="fas fa-plug"></i> Connect to Real AI
-                    </button>
-
-                    <div style="text-align: left; font-size: 12px; color: #9ca3af; margin-top: 15px;">
-                        <p>✅ <strong>Your token is ready!</strong> Paste it above and start chatting with real AI</p>
-                        <p>🔒 Your token is stored only in your browser</p>
-                    </div>
-                </div>
-
-                <div class="quick-actions">
-                    <div class="quick-action" onclick="askExample('Explain Python programming and show me a simple example')">
-                        <div class="action-title">
-                            <i class="fab fa-python"></i>
-                            Python Programming
-                        </div>
-                        <div class="action-desc">Learn coding with real AI assistance</div>
-                    </div>
-                    <div class="quick-action" onclick="askExample('Explain the teachings of Quran and Islamic principles')">
-                        <div class="action-title">
-                            <i class="fas fa-book-quran"></i>
-                            Quran & Islam
-                        </div>
-                        <div class="action-desc">Islamic knowledge and guidance</div>
-                    </div>
-                    <div class="quick-action" onclick="askExample('Explain physics concepts and biology fundamentals')">
-                        <div class="action-title">
-                            <i class="fas fa-atom"></i>
-                            Science & Math
-                        </div>
-                        <div class="action-desc">Physics, Biology, Mathematics help</div>
-                    </div>
-                    <div class="quick-action" onclick="askExample('Teach me basic Arabic and Dhivehi phrases')">
-                        <div class="action-title">
-                            <i class="fas fa-language"></i>
-                            Languages
-                        </div>
-                        <div class="action-desc">Arabic, English, Dhivehi learning</div>
-                    </div>
-                </div>
+        <div class="chat-container" id="chat">
+            <div class="message ai-message">
+                <strong>🤖 AI Assistant</strong><br>
+                Hello! I'm your AI assistant. I can help you with:
+                <br>• Programming (Python, Java, etc.)
+                <br>• Quran & Islamic Studies
+                <br>• Science & Mathematics
+                <br>• Language Learning
+                <br><br>What would you like to know?
             </div>
         </div>
 
         <div class="input-container">
             <div class="input-wrapper">
-                <textarea 
-                    class="text-input" 
-                    id="messageInput"
-                    placeholder="Ask me anything... (Real AI Powered)"
-                    rows="1"
-                    onkeydown="handleKeyDown(event)"
-                    oninput="autoResize(this)"
-                ></textarea>
-                <button class="send-button" onclick="sendMessage()" id="sendButton">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+                <input type="text" class="text-input" id="messageInput" placeholder="Ask me anything..." onkeypress="handleEnter(event)">
+                <button class="send-button" onclick="sendMessage()">Send</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Real Hugging Face AI Integration
-        let hfToken = localStorage.getItem('hf_token');
-        let currentModel = localStorage.getItem('hf_model') || 'microsoft/DialoGPT-large';
-        let currentChat = [];
+        // Smart AI responses without API
+        function getAIResponse(message) {
+            const lowerMsg = message.toLowerCase();
+            
+            if (lowerMsg.includes('python') || lowerMsg.includes('programming') || lowerMsg.includes('code')) {
+                return `I can help you with Python programming! 🐍
 
-        // Initialize app
-        function initApp() {
-            // Load saved token and model
-            if (hfToken) {
-                document.getElementById('tokenInput').value = hfToken;
-                document.getElementById('modelSelector').value = currentModel;
-                connectWithToken(); // Auto-connect if token exists
+**Python Basics:**
+• Variables: x = 5, name = "John"
+• Functions: def my_function():
+• Loops: for i in range(5):
+• Lists: my_list = [1, 2, 3]
+
+**Example Code:**
+\`\`\`python
+def calculate_area(length, width):
+    return length * width
+
+print(calculate_area(5, 3))  # Output: 15
+\`\`\`
+
+What specific Python topic would you like to learn?`;
             }
             
-            updateSendButton();
-        }
+            if (lowerMsg.includes('quran') || lowerMsg.includes('islam') || lowerMsg.includes('muslim')) {
+                return `I can help with Quran and Islamic knowledge! 📖
 
-        function connectWithToken() {
-            const tokenInput = document.getElementById('tokenInput');
-            const modelSelect = document.getElementById('modelSelector');
-            
-            hfToken = tokenInput.value.trim();
-            currentModel = modelSelect.value;
-            
-            if (!hfToken) {
-                alert('Please paste your Hugging Face token');
-                return;
+**Islamic Teachings:**
+• Tawhid (Oneness of God)
+• Salah (Prayer 5 times daily)
+• Zakat (Charity)
+• Sawm (Fasting in Ramadan)
+• Hajj (Pilgrimage)
+
+**Key Quranic Values:**
+• Compassion and mercy
+• Justice and fairness
+• Seeking knowledge
+• Patience and gratitude
+
+The Quran emphasizes that God is Most Merciful and Compassionate. What specific Islamic topic interests you?`;
             }
             
-            // Save to localStorage
-            localStorage.setItem('hf_token', hfToken);
-            localStorage.setItem('hf_model', currentModel);
-            
-            // Test the connection
-            testConnection();
-        }
+            if (lowerMsg.includes('physics') || lowerMsg.includes('science') || lowerMsg.includes('biology')) {
+                return `I love science! 🔬
 
-        async function testConnection() {
-            showTypingIndicator();
-            
-            try {
-                // Test with a simple message
-                const response = await callHuggingFaceAPI('Hello! Please respond with a short greeting to confirm the AI is working.');
-                
-                removeTypingIndicator();
-                
-                if (response && response.length > 0) {
-                    document.getElementById('apiStatus').textContent = 'Connected';
-                    showChatInterface();
-                    
-                    addMessage('ai', `🎉 **Real AI Connected Successfully!**\n\nI'm now powered by **${getModelName(currentModel)}** from Hugging Face.\n\nI can help you with:\n\n• **Programming & Coding** - Python, Java, Web development\n• **Quran & Islamic Studies** - Teachings, principles, guidance\n• **Science & Mathematics** - Physics, Biology, advanced math\n• **Languages** - Arabic, English, Dhivehi learning\n• **Creative Writing** - Stories, essays, content creation\n• **Problem Solving** - Logical reasoning, analysis\n\n**What would you like to explore?**`);
-                } else {
-                    throw new Error('No response from AI');
-                }
-            } catch (error) {
-                removeTypingIndicator();
-                alert('Connection failed: ' + error.message + '\n\nPlease check your token and try again.');
+**Physics:**
+• Motion and forces (Newton's Laws)
+• Energy and conservation
+• Electricity and magnetism
+• Quantum mechanics
+
+**Biology:**
+• Cells and DNA
+• Evolution and genetics
+• Ecosystems and environment
+• Human anatomy
+
+**Fun Fact:** The universe follows precise mathematical laws that we can discover through science!`;
             }
+            
+            if (lowerMsg.includes('arabic') || lowerMsg.includes('dhivehi') || lowerMsg.includes('language')) {
+                return `I can help you learn languages! 🌍
+
+**Arabic Basics:**
+• السلام عليكم (As-salamu alaykum) - Hello
+• شكراً (Shukran) - Thank you
+• كيف حالك؟ (Kayf halak?) - How are you?
+
+**Dhivehi Basics:**
+• އައްސަލާމު ޢަލައިކުމް (Assalaamu alaikum) - Hello
+• ޝުކުރިއްޔާ (Shukuriyaa) - Thank you
+
+Language learning opens new worlds! Which language would you like to practice?`;
+            }
+
+            // General intelligent response
+            return `I understand you're asking about: "${message}"
+
+I can help you with many topics:
+
+💻 **Programming & Technology**
+   - Python, Java, JavaScript
+   - Web development
+   - Algorithms and problem-solving
+
+📚 **Education & Learning**
+   - Science and mathematics
+   - Study techniques
+   - Research and analysis
+
+🌍 **Languages & Culture**
+   - Arabic, English, Dhivehi
+   - Translation and grammar
+   - Cultural understanding
+
+📖 **Quran & Islamic Studies**
+   - Quranic teachings
+   - Islamic history
+   - Spiritual guidance
+
+What specific area would you like to explore? I'm here to help you learn!`;
         }
 
-        function getModelName(model) {
-            const names = {
-                'microsoft/DialoGPT-large': 'Microsoft DialoGPT',
-                'google/flan-t5-xxl': 'Google Flan-T5',
-                'facebook/blenderbot-400M-distill': 'Facebook BlenderBot',
-                'mosaicml/mpt-7b-chat': 'MPT-7B Chat'
-            };
-            return names[model] || model;
-        }
-
-        async function sendMessage() {
+        function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
             
             if (!message) return;
+
+            const chat = document.getElementById('chat');
             
-            if (!hfToken) {
-                alert('Please connect with your Hugging Face token first');
-                return;
-            }
+            // Add user message
+            chat.innerHTML += `
+                <div class="message user-message">
+                    <strong>You</strong><br>
+                    ${message}
+                </div>
+            `;
             
-            addMessage('user', message);
             input.value = '';
-            autoResize(input);
-            updateSendButton();
             
-            showTypingIndicator();
-            
-            try {
-                const response = await callHuggingFaceAPI(message);
-                removeTypingIndicator();
-                addMessage('ai', response);
-            } catch (error) {
-                removeTypingIndicator();
-                addMessage('ai', `❌ **AI Service Error**\n\nI encountered an issue: ${error.message}\n\nThis might be because:\n• The AI model is loading (first time use)\n• There's high demand on the service\n• Your token needs verification\n\nPlease try again in a moment!`);
-                console.error('Hugging Face Error:', error);
-            }
-        }
-
-        async function callHuggingFaceAPI(message) {
-            try {
-                const response = await fetch(
-                    `https://api-inference.huggingface.co/models/${currentModel}`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${hfToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            inputs: message,
-                            parameters: {
-                                max_length: 1000,
-                                temperature: 0.7,
-                                do_sample: true,
-                                return_full_text: false
-                            }
-                        }),
-                    }
-                );
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `API error: ${response.status}`);
-                }
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                
-                // Handle different response formats
-                if (data[0] && data[0].generated_text) {
-                    return data[0].generated_text;
-                } else if (data.generated_text) {
-                    return data.generated_text;
-                } else if (data[0] && data[0].summary_text) {
-                    return data[0].summary_text;
-                } else {
-                    return "I received your message! The AI is thinking... Please try rephrasing your question if this continues.";
-                }
-            } catch (error) {
-                throw new Error(`Hugging Face: ${error.message}`);
-            }
-        }
-
-        function addMessage(role, content) {
-            const message = { 
-                role, 
-                content, 
-                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            };
-            currentChat.push(message);
-            renderChatMessages();
-            saveChatHistory();
-        }
-
-        function renderChatMessages() {
-            const container = document.getElementById('chatContainer');
-            
-            if (currentChat.length > 0) {
-                document.getElementById('welcomeScreen').style.display = 'none';
-                
-                let messagesHTML = '';
-                currentChat.forEach(message => {
-                    messagesHTML += `
-                        <div class="message ${message.role}-message">
-                            <div class="message-sender">${message.role === 'user' ? 'You' : 'AI Assistant'}</div>
-                            <div class="message-bubble">${formatMessageContent(message.content)}</div>
-                        </div>
-                    `;
-                });
-                
-                container.innerHTML = messagesHTML;
-                container.scrollTop = container.scrollHeight;
-            } else {
-                showWelcomeScreen();
-            }
-        }
-
-        function formatMessageContent(content) {
-            return content
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/```([^`]+)```/g, '<pre>$1</pre>')
-                .replace(/\n/g, '<br>');
-        }
-
-        function showTypingIndicator() {
-            const container = document.getElementById('chatContainer');
-            const indicator = document.createElement('div');
-            indicator.className = 'message ai-message';
-            indicator.id = 'typingIndicator';
-            
-            indicator.innerHTML = `
-                <div class="message-sender">AI Assistant</div>
-                <div class="message-bubble">
-                    <div class="typing-indicator">
+            // Show typing indicator
+            chat.innerHTML += `
+                <div class="message ai-message" id="typing">
+                    <div class="typing">
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
@@ -596,68 +299,34 @@
                 </div>
             `;
             
-            container.appendChild(indicator);
-            container.scrollTop = container.scrollHeight;
+            chat.scrollTop = chat.scrollHeight;
+            
+            // Get AI response after delay
+            setTimeout(() => {
+                document.getElementById('typing').remove();
+                
+                const response = getAIResponse(message);
+                chat.innerHTML += `
+                    <div class="message ai-message">
+                        <strong>🤖 AI Assistant</strong><br>
+                        ${response.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                
+                chat.scrollTop = chat.scrollHeight;
+            }, 1500 + Math.random() * 1000);
         }
 
-        function removeTypingIndicator() {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) indicator.remove();
-        }
-
-        function showChatInterface() {
-            document.getElementById('welcomeScreen').style.display = 'none';
-            renderChatMessages();
-        }
-
-        function showWelcomeScreen() {
-            document.getElementById('welcomeScreen').style.display = 'flex';
-            currentChat = [];
-        }
-
-        function askExample(question) {
-            if (!hfToken) {
-                document.getElementById('tokenInput').focus();
-                alert('Please enter your Hugging Face token first');
-                return;
-            }
-            document.getElementById('messageInput').value = question;
-            sendMessage();
-        }
-
-        function handleKeyDown(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
                 sendMessage();
             }
         }
 
-        function autoResize(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-            updateSendButton();
-        }
-
-        function updateSendButton() {
-            const input = document.getElementById('messageInput');
-            const button = document.getElementById('sendButton');
-            button.disabled = !input.value.trim();
-        }
-
-        function loadChatHistory() {
-            const saved = localStorage.getItem('hf_chat_history');
-            if (saved) {
-                currentChat = JSON.parse(saved);
-                renderChatMessages();
-            }
-        }
-
-        function saveChatHistory() {
-            localStorage.setItem('hf_chat_history', JSON.stringify(currentChat));
-        }
-
-        // Initialize app when page loads
-        document.addEventListener('DOMContentLoaded', initApp);
+        // Focus input on load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('messageInput').focus();
+        });
     </script>
 </body>
 </html>
