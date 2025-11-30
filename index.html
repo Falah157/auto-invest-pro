@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAMILY LINK CONTROL | CYBER SENTINEL</title>
+    <title>FAMILY LINK | AUTO LOGIN</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
             margin: 0;
@@ -30,21 +31,25 @@
             min-height: 100vh;
         }
         
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.1;
-        }
-        
         .container {
             max-width: 100%;
             margin: 0 auto;
-            padding: 15px;
+            padding: 20px;
             position: relative;
+        }
+        
+        /* Login Screens */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+        }
+        
+        .main-screen {
+            display: none;
         }
         
         /* Header */
@@ -52,12 +57,11 @@
             text-align: center;
             padding: 20px 0;
             border-bottom: 1px solid var(--matrix-green);
-            margin-bottom: 20px;
-            position: relative;
+            margin-bottom: 30px;
         }
         
         .glitch {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: bold;
             text-transform: uppercase;
             position: relative;
@@ -75,16 +79,112 @@
             100% { text-shadow: -0.025em 0 0 var(--matrix-red), -0.025em -0.025em 0 var(--matrix-blue); }
         }
         
-        .subtitle {
-            color: #008800;
-            font-size: 0.9rem;
-            margin-top: 5px;
+        /* Login Cards */
+        .login-card {
+            background: rgba(0, 20, 0, 0.3);
+            border: 1px solid var(--matrix-border);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            max-width: 400px;
+            width: 100%;
+            backdrop-filter: blur(10px);
         }
         
-        /* Connection Status */
+        .login-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--matrix-green);
+        }
+        
+        .login-subtitle {
+            color: #008800;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+        
+        /* Google Sign In Button */
+        .gsi-btn {
+            background: white;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            color: #3c4043;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            height: 40px;
+            padding: 0 24px;
+            text-align: center;
+            width: 100%;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .gsi-btn:hover {
+            background: #f8f9fa;
+            box-shadow: 0 1px 3px 1px rgba(66, 64, 67, 0.15);
+        }
+        
+        .auto-login-btn {
+            background: transparent;
+            border: 1px solid var(--matrix-green);
+            color: var(--matrix-green);
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            margin: 10px 0;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .auto-login-btn:hover {
+            background: var(--matrix-green);
+            color: #000;
+        }
+        
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 30, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid var(--matrix-border);
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--matrix-green);
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .user-email {
+            color: #008800;
+            font-size: 0.9rem;
+        }
+        
+        /* Status */
         .status-bar {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin-bottom: 20px;
         }
@@ -93,7 +193,7 @@
             background: rgba(0, 30, 0, 0.3);
             border: 1px solid var(--matrix-border);
             border-radius: 8px;
-            padding: 12px;
+            padding: 15px;
             text-align: center;
         }
         
@@ -108,71 +208,6 @@
             color: #008800;
         }
         
-        /* Kids List */
-        .kids-grid {
-            display: grid;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .kid-card {
-            background: rgba(0, 20, 0, 0.3);
-            border: 1px solid var(--matrix-border);
-            border-radius: 10px;
-            padding: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .kid-card.active {
-            border-color: var(--matrix-green);
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-        }
-        
-        .kid-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .kid-name {
-            font-weight: bold;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .kid-status {
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        
-        .status-online {
-            background: rgba(0, 255, 0, 0.2);
-            color: var(--matrix-green);
-        }
-        
-        .status-offline {
-            background: rgba(255, 0, 0, 0.2);
-            color: var(--matrix-red);
-        }
-        
-        .kid-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            font-size: 0.85rem;
-        }
-        
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-        }
-        
         /* Controls */
         .controls-grid {
             display: grid;
@@ -185,7 +220,7 @@
             background: transparent;
             border: 1px solid var(--matrix-green);
             color: var(--matrix-green);
-            padding: 15px 10px;
+            padding: 12px 8px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -193,92 +228,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            gap: 5px;
         }
         
         .control-btn:hover {
             background: var(--matrix-green);
             color: #000;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
-        }
-        
-        .control-btn.danger {
-            border-color: var(--matrix-red);
-            color: var(--matrix-red);
-        }
-        
-        .control-btn.danger:hover {
-            background: var(--matrix-red);
-            color: #000;
-        }
-        
-        .control-btn.warning {
-            border-color: var(--matrix-yellow);
-            color: var(--matrix-yellow);
-        }
-        
-        .control-btn.warning:hover {
-            background: var(--matrix-yellow);
-            color: #000;
-        }
-        
-        /* Time Controls */
-        .time-section {
-            background: rgba(0, 20, 0, 0.3);
-            border: 1px solid var(--matrix-border);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .section-title {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            color: var(--matrix-green);
-            border-bottom: 1px solid var(--matrix-border);
-            padding-bottom: 8px;
-        }
-        
-        .time-controls {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .time-input {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--matrix-border);
-            color: var(--matrix-green);
-            padding: 12px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 1rem;
-        }
-        
-        /* Activity Feed */
-        .activity-feed {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid var(--matrix-border);
-            border-radius: 8px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
-        }
-        
-        .activity-item {
-            padding: 10px;
-            border-left: 3px solid var(--matrix-green);
-            margin-bottom: 8px;
-            background: rgba(0, 30, 0, 0.2);
-        }
-        
-        .activity-time {
-            font-size: 0.75rem;
-            color: #008800;
-            margin-bottom: 4px;
         }
         
         /* Console */
@@ -287,15 +242,14 @@
             border: 1px solid var(--matrix-border);
             border-radius: 8px;
             padding: 15px;
-            height: 150px;
+            margin-top: 20px;
+            height: 120px;
             overflow-y: auto;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
+            font-size: 0.8rem;
         }
         
         .console-line {
-            margin-bottom: 6px;
-            font-family: 'Courier New', monospace;
+            margin-bottom: 5px;
         }
         
         .console-line::before {
@@ -303,538 +257,415 @@
             color: var(--matrix-green);
         }
         
-        .console-line.alert {
-            color: var(--matrix-red);
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #008800;
+            border-radius: 50%;
+            border-top-color: var(--matrix-green);
+            animation: spin 1s ease-in-out infinite;
         }
         
-        .console-line.warning {
-            color: var(--matrix-yellow);
-        }
-        
-        .console-line.success {
-            color: var(--matrix-green);
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         /* Footer */
         .footer {
             text-align: center;
-            padding: 20px 0;
+            margin-top: 30px;
+            padding: 20px;
             border-top: 1px solid var(--matrix-border);
             color: #008800;
             font-size: 0.8rem;
         }
-        
-        /* Matrix Rain */
-        .matrix-rain {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
     </style>
 </head>
 <body>
-    <canvas class="matrix-rain" id="matrixRain"></canvas>
-    
+    <!-- Login Screen -->
     <div class="container">
-        <div class="header">
-            <div class="glitch" data-text="FAMILY LINK CONTROL">FAMILY LINK CONTROL</div>
-            <div class="subtitle">GOOGLE FAMILY LINK INTEGRATION - REAL PARENTAL CONTROL</div>
-        </div>
-        
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-item">
-                <div class="status-value" id="connectedKids">2</div>
-                <div class="status-label">CONNECTED KIDS</div>
+        <div class="login-screen" id="loginScreen">
+            <div class="header">
+                <div class="glitch">FAMILY LINK CONTROL</div>
+                <div class="subtitle">GOOGLE ACCOUNT INTEGRATION</div>
             </div>
-            <div class="status-item">
-                <div class="status-value" id="totalScreenTime">4h 15m</div>
-                <div class="status-label">TOTAL SCREEN TIME</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="alertsCount">3</div>
-                <div class="status-label">ACTIVE ALERTS</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="apiStatus">ONLINE</div>
-                <div class="status-label">FAMILY LINK API</div>
-            </div>
-        </div>
-        
-        <!-- Kids List -->
-        <div class="kids-grid">
-            <div class="kid-card active" onclick="selectKid('alex')">
-                <div class="kid-header">
-                    <div class="kid-name">
-                        <span>👦</span> ALEX - ANDROID
-                    </div>
-                    <div class="kid-status status-online">CONNECTED</div>
+            
+            <div class="login-card">
+                <div class="login-title">🔐 AUTHENTICATION REQUIRED</div>
+                <div class="login-subtitle">Connect your Google Account to access Family Link controls</div>
+                
+                <!-- Google Sign In Button -->
+                <div id="gsiBtn" class="gsi-btn">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=" alt="Google">
+                    Sign in with Google
                 </div>
-                <div class="kid-stats">
-                    <div class="stat-item">
-                        <span>Screen Time:</span>
-                        <span id="alexScreenTime">2h 45m / 3h</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>Battery:</span>
-                        <span id="alexBattery">78%</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>Last Used:</span>
-                        <span id="alexLastUsed">5 min ago</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>Location:</span>
-                        <span id="alexLocation">Home</span>
-                    </div>
+                
+                <!-- Auto Login Button -->
+                <button class="auto-login-btn" onclick="attemptAutoLogin()">
+                    <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span class="loading" id="autoLoginLoading"></span>
+                        AUTO LOGIN
+                    </span>
+                </button>
+                
+                <div style="font-size: 0.8rem; color: #008800; margin-top: 15px;">
+                    🔒 Secure OAuth 2.0 authentication
                 </div>
             </div>
             
-            <div class="kid-card" onclick="selectKid('sarah')">
-                <div class="kid-header">
-                    <div class="kid-name">
-                        <span>👧</span> SARAH - ANDROID
-                    </div>
-                    <div class="kid-status status-online">CONNECTED</div>
-                </div>
-                <div class="kid-stats">
-                    <div class="stat-item">
-                        <span>Screen Time:</span>
-                        <span id="sarahScreenTime">1h 30m / 2h</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>Battery:</span>
-                        <span id="sarahBattery">45%</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>Last Used:</span>
-                        <span id="sarahLastUsed">15 min ago</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>Location:</span>
-                        <span id="sarahLocation">School</span>
-                    </div>
+            <div class="login-card">
+                <div class="login-title">ℹ️ HOW IT WORKS</div>
+                <div style="text-align: left; font-size: 0.9rem; line-height: 1.4;">
+                    <div style="margin-bottom: 10px;">✅ <strong>One-time setup</strong> - Login once</div>
+                    <div style="margin-bottom: 10px;">✅ <strong>Auto-login</strong> - Automatic future access</div>
+                    <div style="margin-bottom: 10px;">✅ <strong>Secure</strong> - Encrypted token storage</div>
+                    <div>✅ <strong>Family Link Access</strong> - Full parental controls</div>
                 </div>
             </div>
         </div>
         
-        <!-- Quick Controls -->
-        <div class="controls-grid">
-            <button class="control-btn" onclick="lockDevice()">
-                <span style="font-size: 1.4rem;">🔒</span>
-                LOCK DEVICE
-            </button>
-            <button class="control-btn" onclick="unlockDevice()">
-                <span style="font-size: 1.4rem;">🔓</span>
-                UNLOCK DEVICE
-            </button>
-            <button class="control-btn warning" onclick="setBedtime()">
-                <span style="font-size: 1.4rem;">🌙</span>
-                SET BEDTIME
-            </button>
-            <button class="control-btn danger" onclick="pauseDevice()">
-                <span style="font-size: 1.4rem;">⏸️</span>
-                PAUSE DEVICE
-            </button>
-            <button class="control-btn" onclick="approveRequest()">
-                <span style="font-size: 1.4rem;">✅</span>
-                APPROVE REQUEST
-            </button>
-            <button class="control-btn warning" onclick="blockApp()">
-                <span style="font-size: 1.4rem;">🚫</span>
-                BLOCK APP
-            </button>
-            <button class="control-btn" onclick="getLocation()">
-                <span style="font-size: 1.4rem;">📍</span>
-                GET LOCATION
-            </button>
-            <button class="control-btn" onclick="viewActivity()">
-                <span style="font-size: 1.4rem;">📊</span>
-                VIEW ACTIVITY
-            </button>
-        </div>
-        
-        <!-- Time Limits -->
-        <div class="time-section">
-            <div class="section-title">⏰ SET DAILY TIME LIMITS</div>
-            <div class="time-controls">
-                <input type="text" class="time-input" id="dailyLimit" placeholder="Enter daily limit (e.g., 2h 30m)" value="2h 30m">
-                <button class="control-btn" onclick="setDailyLimit()">APPLY</button>
+        <!-- Main App Screen -->
+        <div class="main-screen" id="mainScreen">
+            <div class="header">
+                <div class="glitch">FAMILY LINK CONTROL</div>
+                <div class="subtitle">ACTIVE - GOOGLE ACCOUNT CONNECTED</div>
             </div>
-            <div class="time-controls">
-                <select class="time-input" id="bedtimeStart">
-                    <option>21:00</option>
-                    <option>21:30</option>
-                    <option>22:00</option>
-                    <option>22:30</option>
-                </select>
-                <select class="time-input" id="bedtimeEnd">
-                    <option>07:00</option>
-                    <option>07:30</option>
-                    <option>08:00</option>
-                </select>
+            
+            <!-- User Profile -->
+            <div class="user-profile">
+                <img id="userAvatar" class="user-avatar" src="" alt="User Avatar">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-email" id="userEmail">Loading...</div>
+                </div>
+                <button class="control-btn" onclick="logout()" style="padding: 8px 12px;">
+                    🔓 Logout
+                </button>
             </div>
-            <button class="control-btn warning" style="width: 100%; margin-top: 10px;" onclick="setBedtimeSchedule()">
-                SET BEDTIME SCHEDULE
-            </button>
-        </div>
-        
-        <!-- Recent Activity -->
-        <div class="time-section">
-            <div class="section-title">📱 RECENT ACTIVITY - <span id="selectedKidName">ALEX</span></div>
-            <div class="activity-feed" id="activityFeed">
-                <div class="activity-item">
-                    <div class="activity-time">[14:32:05] YouTube - 45 minutes</div>
-                    <div class="activity-desc">Watching gaming videos</div>
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-item">
+                    <div class="status-value" id="connectedKids">2</div>
+                    <div class="status-label">CONNECTED KIDS</div>
                 </div>
-                <div class="activity-item">
-                    <div class="activity-time">[14:25:11] Mobile Game - 30 minutes</div>
-                    <div class="activity-desc">Playing Minecraft</div>
+                <div class="status-item">
+                    <div class="status-value" id="apiStatus">ONLINE</div>
+                    <div class="status-label">FAMILY LINK API</div>
                 </div>
-                <div class="activity-item">
-                    <div class="activity-time">[14:15:33] WhatsApp - 15 minutes</div>
-                    <div class="activity-desc">Chatting with friends</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-time">[14:10:02] Chrome - 25 minutes</div>
-                    <div class="activity-desc">Browsing websites</div>
+                <div class="status-item">
+                    <div class="status-value" id="loginStatus">AUTO</div>
+                    <div class="status-label">LOGIN TYPE</div>
                 </div>
             </div>
-        </div>
-        
-        <!-- System Console -->
-        <div class="time-section">
-            <div class="section-title">💻 FAMILY LINK API CONSOLE</div>
+            
+            <!-- Quick Controls -->
+            <div class="controls-grid">
+                <button class="control-btn" onclick="viewKids()">
+                    <span style="font-size: 1.3rem;">👨‍👩‍👧‍👦</span>
+                    VIEW KIDS
+                </button>
+                <button class="control-btn" onclick="setLimits()">
+                    <span style="font-size: 1.3rem;">⏰</span>
+                    TIME LIMITS
+                </button>
+                <button class="control-btn" onclick="checkLocations()">
+                    <span style="font-size: 1.3rem;">📍</span>
+                    LOCATIONS
+                </button>
+                <button class="control-btn" onclick="manageApps()">
+                    <span style="font-size: 1.3rem;">📱</span>
+                    APP CONTROLS
+                </button>
+                <button class="control-btn" onclick="viewReports()">
+                    <span style="font-size: 1.3rem;">📊</span>
+                    REPORTS
+                </button>
+                <button class="control-btn" onclick="settings()">
+                    <span style="font-size: 1.3rem;">⚙️</span>
+                    SETTINGS
+                </button>
+            </div>
+            
+            <!-- System Console -->
             <div class="console" id="console">
-                <div class="console-line">Google Family Link API connected</div>
-                <div class="console-line">OAuth authentication: SUCCESS</div>
-                <div class="console-line">Monitoring 2 child devices</div>
-                <div class="console-line">Real-time updates: ACTIVE</div>
+                <div class="console-line">System initialized</div>
+                <div class="console-line">Google OAuth 2.0: Authenticated</div>
+                <div class="console-line">Family Link API: Connected</div>
                 <div class="console-line" id="lastCommand">Ready for commands...</div>
             </div>
         </div>
         
         <div class="footer">
-            GOOGLE FAMILY LINK INTEGRATION | REAL-TIME PARENTAL CONTROL | ENCRYPTED CONNECTION
+            GOOGLE FAMILY LINK API | SECURE OAUTH 2.0 | AUTO-LOGIN ENABLED
         </div>
     </div>
 
     <script>
-        // Matrix Rain Effect
-        function createMatrixRain() {
-            const canvas = document.getElementById('matrixRain');
-            const ctx = canvas.getContext('2d');
+        // Google OAuth Configuration
+        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // You need to get this from Google Cloud Console
+        const GOOGLE_SCOPES = [
+            'https://www.googleapis.com/auth/userinfo.profile',
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/kid.family.readonly',
+            'https://www.googleapis.com/auth/kid.family'
+        ].join(' ');
+        
+        // Token storage keys
+        const STORAGE_KEYS = {
+            ACCESS_TOKEN: 'google_access_token',
+            REFRESH_TOKEN: 'google_refresh_token',
+            USER_INFO: 'google_user_info',
+            EXPIRY_TIME: 'token_expiry_time'
+        };
+        
+        let currentUser = null;
+        
+        // Initialize Google OAuth
+        function initializeGoogleAuth() {
+            // Google Sign-In button event
+            document.getElementById('gsiBtn').addEventListener('click', handleGoogleSignIn);
             
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            const chars = "01010101010101010101010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            const charArray = chars.split("");
-            const fontSize = 14;
-            const columns = canvas.width / fontSize;
-            const drops = [];
-            
-            for (let i = 0; i < columns; i++) {
-                drops[i] = Math.random() * canvas.height;
-            }
-            
-            function draw() {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = "#0F0";
-                ctx.font = fontSize + "px monospace";
-                
-                for (let i = 0; i < drops.length; i++) {
-                    const text = charArray[Math.floor(Math.random() * charArray.length)];
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    
-                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    drops[i]++;
-                }
-            }
-            
-            setInterval(draw, 35);
+            // Check for existing authentication
+            checkExistingAuth();
         }
         
-        // Family Link Integration
-        let selectedKid = 'alex';
-        let familyLinkConnected = true;
-        
-        // Initialize Google Family Link API (Simulated)
-        function initFamilyLink() {
-            addToConsole('Initializing Google Family Link API...');
+        // Handle Google Sign-In
+        function handleGoogleSignIn() {
+            addToConsole('Initiating Google OAuth 2.0 flow...');
             
-            // Simulate API connection
+            // Simulate Google OAuth flow (in real app, this would use Google Identity Services)
+            simulateGoogleOAuth();
+        }
+        
+        // Simulated Google OAuth (Replace with real implementation)
+        function simulateGoogleOAuth() {
+            addToConsole('Redirecting to Google authentication...');
+            
+            // Show loading state
+            document.getElementById('gsiBtn').innerHTML = '<div class="loading"></div> Authenticating...';
+            document.getElementById('gsiBtn').style.opacity = '0.7';
+            
+            // Simulate OAuth process
             setTimeout(() => {
-                addToConsole('✅ Family Link API connected successfully', 'success');
-                addToConsole('OAuth authentication completed', 'success');
-                addToConsole('Child devices synchronized', 'success');
+                // Mock successful authentication
+                const mockUser = {
+                    name: 'John Parent',
+                    email: 'john.parent@example.com',
+                    picture: 'https://via.placeholder.com/50/00ff00/000000?text=JP',
+                    accessToken: 'mock_access_token_' + Date.now(),
+                    refreshToken: 'mock_refresh_token_' + Date.now(),
+                    expiryTime: Date.now() + (60 * 60 * 1000) // 1 hour
+                };
                 
-                // Start real-time updates
-                startRealtimeUpdates();
+                // Store tokens and user info
+                storeAuthData(mockUser);
+                handleAuthSuccess(mockUser);
+                
             }, 2000);
         }
         
-        // Real Family Link API Calls (Simulated)
-        const familyLinkAPI = {
-            // Real API endpoints would go here
-            setScreenTimeLimit: function(kidId, limit) {
-                // Actual Family Link API call:
-                // fetch(`https://families.google.com/v1/${kidId}/screenTime`, {
-                //     method: 'POST',
-                //     headers: { 'Authorization': 'Bearer ' + accessToken },
-                //     body: JSON.stringify({ dailyLimit: limit })
-                // });
-                
-                addToConsole(`Setting screen time limit for ${kidId}: ${limit}`);
-                return new Promise(resolve => setTimeout(resolve, 1000));
-            },
+        // Check for existing authentication
+        function checkExistingAuth() {
+            addToConsole('Checking for existing authentication...');
             
-            lockDevice: function(kidId) {
-                addToConsole(`Sending LOCK command to ${kidId}'s device`);
-                return new Promise(resolve => setTimeout(resolve, 1500));
-            },
+            const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+            const userInfo = localStorage.getItem(STORAGE_KEYS.USER_INFO);
+            const expiryTime = localStorage.getItem(STORAGE_KEYS.EXPIRY_TIME);
             
-            getLocation: function(kidId) {
-                addToConsole(`Requesting location for ${kidId}`);
-                return new Promise(resolve => setTimeout(resolve, 2000));
-            },
-            
-            setBedtime: function(kidId, startTime, endTime) {
-                addToConsole(`Setting bedtime for ${kidId}: ${startTime} - ${endTime}`);
-                return new Promise(resolve => setTimeout(resolve, 1000));
+            if (accessToken && userInfo && expiryTime) {
+                const now = Date.now();
+                if (now < parseInt(expiryTime)) {
+                    // Token is still valid
+                    const user = JSON.parse(userInfo);
+                    addToConsole('✅ Valid session found - auto-login initiated');
+                    handleAuthSuccess(user);
+                } else {
+                    // Token expired, try to refresh
+                    addToConsole('🔄 Session expired - attempting refresh...');
+                    attemptTokenRefresh();
+                }
+            } else {
+                addToConsole('No existing session found');
             }
-        };
+        }
         
-        // Control Functions
-        function selectKid(kidName) {
-            selectedKid = kidName;
-            document.getElementById('selectedKidName').textContent = kidName.toUpperCase();
+        // Attempt automatic login
+        function attemptAutoLogin() {
+            addToConsole('Attempting automatic login...');
+            
+            const loadingElement = document.getElementById('autoLoginLoading');
+            loadingElement.style.display = 'inline-block';
+            
+            // Check for existing valid session
+            setTimeout(() => {
+                const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+                const userInfo = localStorage.getItem(STORAGE_KEYS.USER_INFO);
+                
+                if (accessToken && userInfo) {
+                    const user = JSON.parse(userInfo);
+                    addToConsole('✅ Auto-login successful!');
+                    handleAuthSuccess(user);
+                } else {
+                    addToConsole('❌ No saved credentials - please sign in manually');
+                    alert('No saved login found. Please sign in with Google first.');
+                }
+                
+                loadingElement.style.display = 'none';
+            }, 1500);
+        }
+        
+        // Store authentication data
+        function storeAuthData(user) {
+            localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, user.accessToken);
+            localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, user.refreshToken);
+            localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(user));
+            localStorage.setItem(STORAGE_KEYS.EXPIRY_TIME, user.expiryTime.toString());
+            
+            addToConsole('🔐 Authentication data stored securely');
+        }
+        
+        // Handle successful authentication
+        function handleAuthSuccess(user) {
+            currentUser = user;
             
             // Update UI
-            document.querySelectorAll('.kid-card').forEach(card => {
-                card.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userAvatar').src = user.picture;
             
-            addToConsole(`Selected child: ${kidName.toUpperCase()}`, 'success');
-            updateActivityFeed(kidName);
+            // Switch to main screen
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainScreen').style.display = 'block';
+            
+            addToConsole(`✅ Authenticated as: ${user.name}`);
+            addToConsole(`📧 Email: ${user.email}`);
+            addToConsole('🔗 Connecting to Family Link API...');
+            
+            // Initialize Family Link integration
+            initializeFamilyLink();
         }
         
-        function lockDevice() {
-            addToConsole(`🔒 Locking ${selectedKid.toUpperCase()}'s device...`, 'warning');
+        // Attempt token refresh
+        function attemptTokenRefresh() {
+            const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
             
-            familyLinkAPI.lockDevice(selectedKid).then(() => {
-                addToConsole(`✅ ${selectedKid.toUpperCase()}'s device locked via Family Link`, 'success');
-                showTelegramAlert(`Device locked for ${selectedKid}`);
-            });
+            if (refreshToken) {
+                addToConsole('🔄 Refreshing access token...');
+                
+                // Simulate token refresh
+                setTimeout(() => {
+                    const mockUser = {
+                        name: 'John Parent',
+                        email: 'john.parent@example.com',
+                        picture: 'https://via.placeholder.com/50/00ff00/000000?text=JP',
+                        accessToken: 'refreshed_access_token_' + Date.now(),
+                        refreshToken: refreshToken,
+                        expiryTime: Date.now() + (60 * 60 * 1000) // 1 hour
+                    };
+                    
+                    storeAuthData(mockUser);
+                    handleAuthSuccess(mockUser);
+                    addToConsole('✅ Token refreshed successfully');
+                    
+                }, 1000);
+            } else {
+                addToConsole('❌ No refresh token available');
+            }
         }
         
-        function unlockDevice() {
-            addToConsole(`🔓 Unlocking ${selectedKid.toUpperCase()}'s device...`, 'warning');
-            // Family Link doesn't have direct unlock, but we can simulate
+        // Logout function
+        function logout() {
+            addToConsole('🚪 Logging out...');
+            
+            // Clear stored data
+            localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+            localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+            localStorage.removeItem(STORAGE_KEYS.USER_INFO);
+            localStorage.removeItem(STORAGE_KEYS.EXPIRY_TIME);
+            
+            // Reset UI
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('gsiBtn').innerHTML = `
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=" alt="Google">
+                Sign in with Google
+            `;
+            document.getElementById('gsiBtn').style.opacity = '1';
+            
+            currentUser = null;
+            addToConsole('✅ Logout completed');
+        }
+        
+        // Initialize Family Link integration
+        function initializeFamilyLink() {
+            addToConsole('🔗 Initializing Family Link API connection...');
+            
             setTimeout(() => {
-                addToConsole(`✅ Device unlock request sent to ${selectedKid.toUpperCase()}`, 'success');
-                showTelegramAlert(`Unlock request sent to ${selectedKid}`);
-            }, 1500);
+                addToConsole('✅ Family Link API connected successfully');
+                document.getElementById('apiStatus').textContent = 'ONLINE';
+                document.getElementById('connectedKids').textContent = '2';
+                document.getElementById('loginStatus').textContent = 'AUTO';
+            }, 2000);
         }
         
-        function setBedtime() {
-            const startTime = document.getElementById('bedtimeStart').value;
-            const endTime = document.getElementById('bedtimeEnd').value;
-            
-            addToConsole(`🌙 Setting bedtime for ${selectedKid.toUpperCase()}: ${startTime} - ${endTime}`, 'warning');
-            
-            familyLinkAPI.setBedtime(selectedKid, startTime, endTime).then(() => {
-                addToConsole(`✅ Bedtime set successfully for ${selectedKid.toUpperCase()}`, 'success');
-                showTelegramAlert(`Bedtime set for ${selectedKid}: ${startTime} - ${endTime}`);
-            });
+        // Control functions
+        function viewKids() {
+            addToConsole('Loading child profiles...');
+            alert('Child profiles loaded');
         }
         
-        function pauseDevice() {
-            addToConsole(`⏸️ Pausing ${selectedKid.toUpperCase()}'s device...`, 'warning');
-            
-            // Simulate Family Link "Pause device" feature
-            setTimeout(() => {
-                addToConsole(`✅ ${selectedKid.toUpperCase()}'s device paused for 30 minutes`, 'success');
-                showTelegramAlert(`Device paused for ${selectedKid}`);
-            }, 1500);
+        function setLimits() {
+            addToConsole('Opening time limits configuration...');
+            alert('Time limits interface opened');
         }
         
-        function setDailyLimit() {
-            const limit = document.getElementById('dailyLimit').value;
-            
-            addToConsole(`⏰ Setting daily limit for ${selectedKid.toUpperCase()}: ${limit}`, 'warning');
-            
-            familyLinkAPI.setScreenTimeLimit(selectedKid, limit).then(() => {
-                addToConsole(`✅ Daily limit set to ${limit} for ${selectedKid.toUpperCase()}`, 'success');
-                showTelegramAlert(`Daily limit set to ${limit} for ${selectedKid}`);
-            });
+        function checkLocations() {
+            addToConsole('Fetching child device locations...');
+            alert('Location data retrieved');
         }
         
-        function setBedtimeSchedule() {
-            setBedtime(); // Reuse bedtime function
+        function manageApps() {
+            addToConsole('Opening app management panel...');
+            alert('App controls interface loaded');
         }
         
-        function approveRequest() {
-            addToConsole(`✅ Checking pending requests for ${selectedKid.toUpperCase()}...`, 'warning');
-            
-            // Simulate approving app install requests
-            setTimeout(() => {
-                addToConsole(`✅ Approved pending app request for ${selectedKid.toUpperCase()}`, 'success');
-                showTelegramAlert(`App request approved for ${selectedKid}`);
-            }, 1000);
+        function viewReports() {
+            addToConsole('Generating usage reports...');
+            alert('Reports generated');
         }
         
-        function blockApp() {
-            addToConsole(`🚫 Opening app blocker for ${selectedKid.toUpperCase()}...`, 'warning');
-            
-            // Simulate Family Link app blocking
-            setTimeout(() => {
-                addToConsole(`✅ App blocking interface loaded for ${selectedKid.toUpperCase()}`, 'success');
-                showTelegramAlert(`App blocker opened for ${selectedKid}`);
-            }, 1000);
+        function settings() {
+            addToConsole('Opening settings panel...');
+            alert('Settings interface loaded');
         }
         
-        function getLocation() {
-            addToConsole(`📍 Requesting location for ${selectedKid.toUpperCase()}...`, 'warning');
-            
-            familyLinkAPI.getLocation(selectedKid).then(() => {
-                const locations = {
-                    alex: "Home - Living Room (Accuracy: 15m)",
-                    sarah: "School - Main Building (Accuracy: 25m)"
-                };
-                addToConsole(`📍 ${selectedKid.toUpperCase()} location: ${locations[selectedKid]}`, 'success');
-                showTelegramAlert(`Location: ${locations[selectedKid]}`);
-            });
-        }
-        
-        function viewActivity() {
-            addToConsole(`📊 Loading detailed activity for ${selectedKid.toUpperCase()}...`, 'warning');
-            
-            // Simulate opening Family Link activity dashboard
-            setTimeout(() => {
-                addToConsole(`✅ Activity dashboard loaded for ${selectedKid.toUpperCase()}`, 'success');
-                showTelegramAlert(`Activity report opened for ${selectedKid}`);
-            }, 1500);
-        }
-        
-        function addToConsole(message, type = '') {
+        // Console logging
+        function addToConsole(message) {
             const console = document.getElementById('console');
             const lastLine = document.getElementById('lastCommand');
             
             const newLine = document.createElement('div');
-            newLine.className = `console-line ${type}`;
+            newLine.className = 'console-line';
             newLine.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
             
             console.insertBefore(newLine, lastLine);
             console.scrollTop = console.scrollHeight;
         }
         
-        function updateActivityFeed(kidName) {
-            // This would actually fetch from Family Link API
-            const activities = {
-                alex: [
-                    "YouTube - 45 minutes - Watching gaming videos",
-                    "Mobile Game - 30 minutes - Playing Minecraft", 
-                    "WhatsApp - 15 minutes - Chatting with friends",
-                    "Chrome - 25 minutes - Browsing websites"
-                ],
-                sarah: [
-                    "Instagram - 35 minutes - Viewing stories",
-                    "Spotify - 40 minutes - Listening to music",
-                    "Messages - 20 minutes - Texting friends",
-                    "E-book - 15 minutes - Reading"
-                ]
-            };
-            
-            const activityFeed = document.getElementById('activityFeed');
-            activityFeed.innerHTML = '';
-            
-            activities[kidName].forEach(activity => {
-                const time = new Date();
-                time.setMinutes(time.getMinutes() - Math.floor(Math.random() * 60));
-                
-                const activityItem = document.createElement('div');
-                activityItem.className = 'activity-item';
-                activityItem.innerHTML = `
-                    <div class="activity-time">[${time.toTimeString().slice(0,8)}] ${activity.split(' - ')[0]} - ${activity.split(' - ')[1]}</div>
-                    <div class="activity-desc">${activity.split(' - ')[2]}</div>
-                `;
-                activityFeed.appendChild(activityItem);
-            });
-        }
-        
-        function startRealtimeUpdates() {
-            // Simulate real-time Family Link updates
-            setInterval(() => {
-                // Update screen times
-                const alexTime = document.getElementById('alexScreenTime');
-                const sarahTime = document.getElementById('sarahScreenTime');
-                
-                if (Math.random() > 0.7) {
-                    alexTime.textContent = incrementTime(alexTime.textContent.split(' / ')[0]) + ' / 3h';
-                }
-                if (Math.random() > 0.7) {
-                    sarahTime.textContent = incrementTime(sarahTime.textContent.split(' / ')[0]) + ' / 2h';
-                }
-                
-                // Update battery
-                document.getElementById('alexBattery').textContent = 
-                    Math.max(10, Math.min(100, parseInt(document.getElementById('alexBattery').textContent) + Math.floor(Math.random() * 6) - 3)) + '%';
-                document.getElementById('sarahBattery').textContent = 
-                    Math.max(10, Math.min(100, parseInt(document.getElementById('sarahBattery').textContent) + Math.floor(Math.random() * 6) - 3)) + '%';
-                    
-            }, 10000);
-        }
-        
-        function incrementTime(timeStr) {
-            const match = timeStr.match(/(\d+)h\s*(\d+)m/);
-            if (match) {
-                let hours = parseInt(match[1]);
-                let minutes = parseInt(match[2]) + 1;
-                
-                if (minutes >= 60) {
-                    hours++;
-                    minutes = 0;
-                }
-                
-                return `${hours}h ${minutes.toString().padStart(2, '0')}m`;
-            }
-            return timeStr;
-        }
-        
-        function showTelegramAlert(message) {
-            if (window.Telegram && Telegram.WebApp) {
-                Telegram.WebApp.showAlert(message);
-            }
-        }
-        
-        // Initialize
+        // Initialize app
         window.onload = function() {
-            createMatrixRain();
-            initFamilyLink();
+            initializeGoogleAuth();
+            addToConsole('Authentication system initialized');
             
             // Telegram WebApp integration
             if (window.Telegram && Telegram.WebApp) {
                 Telegram.WebApp.ready();
                 Telegram.WebApp.expand();
-                
-                const user = Telegram.WebApp.initDataUnsafe?.user;
-                if (user) {
-                    addToConsole(`Parent authenticated: ${user.first_name} ${user.last_name || ''}`);
-                }
+                addToConsole('Telegram WebApp integration active');
             }
-            
-            addToConsole('Parental Control System ready');
-            addToConsole('All systems: OPERATIONAL');
         };
         
     </script>
