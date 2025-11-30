@@ -1,113 +1,837 @@
-# bot.py - Python backend for Telegram bot
-import os
-import logging
-from telegram import Update
-from telegram.ext import Application, CommandHandler, CallbackContext
-import json
-from datetime import datetime
-
-# Enable logging
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-
-class SecurityBot:
-    def __init__(self, token):
-        self.application = Application.builder().token(token).build()
-        self.setup_handlers()
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Sentinel | Telegram Security</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
         
-    def setup_handlers(self):
-        self.application.add_handler(CommandHandler("start", self.start))
-        self.application.add_handler(CommandHandler("security", self.security))
-        self.application.add_handler(CommandHandler("status", self.status))
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #001a00;
+            --text-primary: #00ff00;
+            --text-secondary: #008800;
+            --accent-green: #00ff00;
+            --accent-red: #ff3333;
+            --accent-yellow: #ffff00;
+            --border-color: #004400;
+        }
         
-    async def start(self, update: Update, context: CallbackContext):
-        """Send welcome message with mini app button"""
-        user = update.effective_user
-        welcome_text = f"""
-🛡️ Welcome to Cyber Sentinel, {user.first_name}!
-
-I'm your security monitoring assistant. Use the buttons below to:
-
-🔍 Run security scans
-📍 Track device location
-🚨 Get intrusion alerts
-📊 Check security status
-
-Click the button below to open the Security Monitor:
-        """
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
         
-        # Create keyboard with mini app button
-        keyboard = [
-            [{
-                "text": "Open Security Monitor",
-                "web_app": {"url": "https://yourdomain.com/security-app.html"}
-            }]
-        ]
+        .app-container {
+            max-width: 100%;
+            min-height: 100vh;
+            padding: 15px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #001500 100%);
+        }
         
-        await update.message.reply_text(
-            welcome_text,
-            reply_markup={
-                "inline_keyboard": keyboard
+        /* Header Styles */
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px var(--accent-green);
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+        
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .user-info {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Status Panel */
+        .status-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .status-card {
+            background: rgba(0, 30, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        
+        .status-card .value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .status-card .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Device Cards */
+        .devices-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid var(--accent-green);
+        }
+        
+        .device-card {
+            background: rgba(0, 20, 0, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .device-card:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+        
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .device-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+        
+        .device-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-online {
+            background: rgba(0, 255, 0, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .status-offline {
+            background: rgba(255, 0, 0, 0.2);
+            color: var(--accent-red);
+        }
+        
+        .device-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+        
+        /* Controls */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: transparent;
+            border: 1px solid var(--accent-green);
+            color: var(--text-primary);
+            padding: 12px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn:hover {
+            background: var(--accent-green);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-danger {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+        
+        .btn-danger:hover {
+            background: var(--accent-red);
+            color: #000;
+        }
+        
+        .btn-warning {
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+        
+        .btn-warning:hover {
+            background: var(--accent-yellow);
+            color: #000;
+        }
+        
+        /* Alerts Section */
+        .alerts-section {
+            margin-bottom: 20px;
+        }
+        
+        .alert-item {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--accent-red);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            animation: alertPulse 2s infinite;
+        }
+        
+        @keyframes alertPulse {
+            0%, 100% { border-color: var(--accent-red); }
+            50% { border-color: transparent; }
+        }
+        
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .alert-time {
+            color: var(--text-secondary);
+        }
+        
+        .alert-type {
+            color: var(--accent-red);
+            font-weight: bold;
+        }
+        
+        .alert-message {
+            font-size: 0.9rem;
+        }
+        
+        /* Activity Log */
+        .log-section {
+            background: #000;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .log-title {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .log-content {
+            height: 120px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        
+        .log-entry {
+            margin-bottom: 6px;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .log-entry::before {
+            content: ">";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+        
+        .log-entry.warning {
+            color: var(--accent-yellow);
+        }
+        
+        .log-entry.danger {
+            color: var(--accent-red);
+        }
+        
+        .log-entry.success {
+            color: var(--accent-green);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 15px 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #001a00;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 10px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
             }
-        )
-    
-    async def security(self, update: Update, context: CallbackContext):
-        """Security status command"""
-        status_text = """
-🔒 Security Status: ACTIVE
-
-📱 Monitored Devices:
-• Mobile Phone: ✅ Online
-• Laptop: ✅ Secure
-• Tablet: ⚠️ No recent data
-
-🚨 Recent Alerts: None
-📍 Last Location: Home Network
-        """
+            
+            .device-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛡️ CYBER SENTINEL</h1>
+            <div class="subtitle">TELEGRAM SECURITY MONITOR</div>
+            <div class="user-info" id="userInfo">Loading...</div>
+        </div>
         
-        await update.message.reply_text(status_text)
-    
-    async def status(self, update: Update, context: CallbackContext):
-        """Quick status check"""
-        await update.message.reply_text("🟢 All systems operational")
-    
-    def handle_webapp_data(self, data):
-        """Process data from mini app"""
-        try:
-            data_dict = json.loads(data)
-            action = data_dict.get('action')
-            user_id = data_dict.get('user_id')
+        <!-- Status Panel -->
+        <div class="status-panel">
+            <div class="status-card">
+                <div class="icon">🔒</div>
+                <div class="value" id="securityStatus">ACTIVE</div>
+                <div class="label">Security Level</div>
+            </div>
+            <div class="status-card">
+                <div class="icon">📱</div>
+                <div class="value" id="devicesOnline">2</div>
+                <div class="label">Devices Online</div>
+            </div>
+            <div class="status-card">
+                <div class="icon">🚨</div>
+                <div class="value" id="alertsCount">0</div>
+                <div class="label">Active Alerts</div>
+            </div>
+            <div class="status-card">
+                <div class="icon">📍</div>
+                <div class="value" id="locationStatus">ON</div>
+                <div class="label">Location Tracking</div>
+            </div>
+        </div>
+        
+        <!-- Devices Section -->
+        <div class="devices-section">
+            <div class="section-title">MONITORED DEVICES</div>
             
-            if action == 'intrusion_alert':
-                self.send_alert_to_user(user_id, "🚨 SECURITY ALERT: Intrusion detected!")
-            elif action == 'location_update':
-                self.log_location(user_id, data_dict)
-            elif action == 'test_notification':
-                self.log_test(user_id)
-                
-            logging.info(f"Processed {action} from user {user_id}")
+            <div class="device-card">
+                <div class="device-header">
+                    <div class="device-name">
+                        <span>📱</span> Personal Phone
+                    </div>
+                    <div class="device-status status-online">ONLINE</div>
+                </div>
+                <div class="device-details">
+                    <div class="detail-item">
+                        <span>Last Access:</span>
+                        <span id="phoneLastAccess">2 min ago</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Failed Logins:</span>
+                        <span id="phoneFailedLogins">0</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Battery:</span>
+                        <span id="phoneBattery">85%</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Network:</span>
+                        <span id="phoneNetwork">WiFi</span>
+                    </div>
+                </div>
+            </div>
             
-        except Exception as e:
-            logging.error(f"Error processing webapp data: {e}")
-    
-    def send_alert_to_user(self, user_id, message):
-        """Send security alert to user"""
-        # This would actually send a message to the user
-        logging.info(f"Alert for {user_id}: {message}")
-    
-    def log_location(self, user_id, data):
-        """Log user location"""
-        logging.info(f"Location update from {user_id}: {data}")
-    
-    def log_test(self, user_id):
-        """Log test event"""
-        logging.info(f"Test from user {user_id}")
+            <div class="device-card">
+                <div class="device-header">
+                    <div class="device-name">
+                        <span>💻</span> Work Laptop
+                    </div>
+                    <div class="device-status status-online">ONLINE</div>
+                </div>
+                <div class="device-details">
+                    <div class="detail-item">
+                        <span>Last Access:</span>
+                        <span id="laptopLastAccess">5 min ago</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Failed Logins:</span>
+                        <span id="laptopFailedLogins">0</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>CPU Load:</span>
+                        <span id="laptopCpu">42%</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Connection:</span>
+                        <span id="laptopConnection">Secure</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls-grid">
+            <button class="btn" onclick="runSecurityScan()">
+                <span style="font-size: 1.2rem;">🔍</span>
+                Security Scan
+            </button>
+            <button class="btn" onclick="checkLocation()">
+                <span style="font-size: 1.2rem;">📍</span>
+                Get Location
+            </button>
+            <button class="btn btn-warning" onclick="simulateIntrusion()">
+                <span style="font-size: 1.2rem;">🚨</span>
+                Test Alert
+            </button>
+            <button class="btn" onclick="checkDeviceStatus()">
+                <span style="font-size: 1.2rem;">📊</span>
+                Status Report
+            </button>
+            <button class="btn" onclick="toggleMonitoring()">
+                <span style="font-size: 1.2rem;">⚡</span>
+                Toggle Monitor
+            </button>
+            <button class="btn btn-danger" onclick="emergencyLock()">
+                <span style="font-size: 1.2rem;">🔐</span>
+                Emergency Lock
+            </button>
+        </div>
+        
+        <!-- Alerts Section -->
+        <div class="alerts-section">
+            <div class="section-title">SECURITY ALERTS</div>
+            <div id="alertsContainer">
+                <!-- Alerts will be dynamically added here -->
+            </div>
+        </div>
+        
+        <!-- Activity Log -->
+        <div class="log-section">
+            <div class="log-title">
+                <span>ACTIVITY LOG</span>
+                <button class="btn" style="padding: 5px 10px; font-size: 0.7rem;" onclick="clearLog()">Clear</button>
+            </div>
+            <div class="log-content" id="logContent">
+                <div class="log-entry">System initialized</div>
+                <div class="log-entry">Telegram WebApp connected</div>
+                <div class="log-entry">Security monitoring started</div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            CYBER SENTINEL v2.0 | TELEGRAM MINI APP | SECURE CONNECTION ACTIVE
+        </div>
+    </div>
 
-# Usage
-if __name__ == '__main__':
-    BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
-    bot = SecurityBot(BOT_TOKEN)
-    bot.application.run_polling()
-    
+    <script>
+        // Telegram WebApp initialization
+        let tg = window.Telegram.WebApp;
+        
+        // Initialize the app
+        tg.ready();
+        tg.expand(); // Expand to full screen
+        
+        // User data
+        const user = tg.initDataUnsafe?.user;
+        let monitoringActive = true;
+        let alertCount = 0;
+        
+        // Initialize the app
+        function initApp() {
+            // Set user info
+            if (user) {
+                const userName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || `User ${user.id}`;
+                document.getElementById('userInfo').textContent = userName;
+                addLog(`Welcome ${userName}!`, 'success');
+            }
+            
+            // Set initial status
+            updateStatusPanel();
+            
+            // Start background monitoring simulation
+            startBackgroundMonitoring();
+            
+            addLog('Security system initialized', 'success');
+            addLog('All monitoring systems active', 'success');
+        }
+        
+        // Add log entry
+        function addLog(message, type = '') {
+            const logContent = document.getElementById('logContent');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContent.appendChild(logEntry);
+            logContent.scrollTop = logContent.scrollHeight;
+            
+            // Keep only last 20 entries
+            while (logContent.children.length > 20) {
+                logContent.removeChild(logContent.firstChild);
+            }
+        }
+        
+        // Add security alert
+        function addAlert(type, message) {
+            alertCount++;
+            document.getElementById('alertsCount').textContent = alertCount;
+            
+            const alertsContainer = document.getElementById('alertsContainer');
+            const alertItem = document.createElement('div');
+            alertItem.className = 'alert-item fade-in';
+            alertItem.innerHTML = `
+                <div class="alert-header">
+                    <div class="alert-type">${type}</div>
+                    <div class="alert-time">${new Date().toLocaleTimeString()}</div>
+                </div>
+                <div class="alert-message">${message}</div>
+            `;
+            
+            alertsContainer.appendChild(alertItem);
+            
+            // Send data to Telegram bot
+            tg.sendData(JSON.stringify({
+                action: 'security_alert',
+                user_id: user?.id,
+                alert_type: type,
+                message: message,
+                timestamp: new Date().toISOString()
+            }));
+            
+            // Show popup for critical alerts
+            if (type.includes('CRITICAL')) {
+                tg.showPopup({
+                    title: '🚨 SECURITY ALERT',
+                    message: message,
+                    buttons: [{ type: 'default', text: 'ACKNOWLEDGE' }]
+                });
+            }
+            
+            addLog(`ALERT: ${message}`, 'danger');
+            
+            // Auto-remove alert after 30 seconds
+            setTimeout(() => {
+                if (alertItem.parentNode) {
+                    alertItem.parentNode.removeChild(alertItem);
+                    alertCount = Math.max(0, alertCount - 1);
+                    document.getElementById('alertsCount').textContent = alertCount;
+                }
+            }, 30000);
+        }
+        
+        // Update status panel
+        function updateStatusPanel() {
+            const devices = document.querySelectorAll('.device-status.status-online');
+            document.getElementById('devicesOnline').textContent = devices.length;
+            document.getElementById('securityStatus').textContent = monitoringActive ? 'ACTIVE' : 'INACTIVE';
+            document.getElementById('securityStatus').style.color = monitoringActive ? 'var(--accent-green)' : 'var(--accent-red)';
+        }
+        
+        // Security scan function
+        function runSecurityScan() {
+            addLog('Starting comprehensive security scan...');
+            
+            tg.showPopup({
+                title: '🔍 Security Scan',
+                message: 'Scanning system for vulnerabilities...',
+                buttons: [{ type: 'default', text: 'OK' }]
+            });
+            
+            // Simulate scanning process
+            setTimeout(() => {
+                const threats = Math.random() > 0.8 ? Math.floor(Math.random() * 3) + 1 : 0;
+                
+                if (threats > 0) {
+                    addAlert('SECURITY THREAT', `Found ${threats} potential security vulnerabilities!`);
+                    tg.showAlert(`Security scan completed: ${threats} threats detected`);
+                } else {
+                    addLog('Security scan: No threats detected', 'success');
+                    tg.showAlert('Security scan completed: No threats detected');
+                }
+                
+                // Update device status
+                updateDeviceStatus();
+            }, 3000);
+        }
+        
+        // Location check
+        function checkLocation() {
+            addLog('Requesting location access...');
+            
+            if (navigator.geolocation) {
+                tg.showPopup({
+                    title: '📍 Location Access',
+                    message: 'Requesting your current location...',
+                    buttons: [{ type: 'default', text: 'OK' }]
+                });
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(4);
+                        const lng = position.coords.longitude.toFixed(4);
+                        
+                        addLog(`Location acquired: ${lat}, ${lng}`, 'success');
+                        
+                        tg.showPopup({
+                            title: '📍 Location Found',
+                            message: `Latitude: ${lat}\nLongitude: ${lng}\nAccuracy: ${position.coords.accuracy}m`,
+                            buttons: [{ type: 'default', text: 'OK' }]
+                        });
+                        
+                        // Send location to bot
+                        tg.sendData(JSON.stringify({
+                            action: 'location_update',
+                            user_id: user?.id,
+                            latitude: lat,
+                            longitude: lng,
+                            accuracy: position.coords.accuracy,
+                            timestamp: new Date().toISOString()
+                        }));
+                    },
+                    (error) => {
+                        addLog('Location access denied or unavailable', 'warning');
+                        tg.showAlert('Could not access location services');
+                    },
+                    { timeout: 10000 }
+                );
+            } else {
+                addLog('Geolocation not supported', 'warning');
+                tg.showAlert('Geolocation is not supported by your device');
+            }
+        }
+        
+        // Simulate intrusion for testing
+        function simulateIntrusion() {
+            addLog('Simulating security intrusion...', 'warning');
+            
+            const intrusionTypes = [
+                'Multiple failed login attempts detected',
+                'Unauthorized access from unknown IP',
+                'Suspicious network activity detected',
+                'Device tampering detected'
+            ];
+            
+            const randomIntrusion = intrusionTypes[Math.floor(Math.random() * intrusionTypes.length)];
+            
+            addAlert('INTRUSION DETECTED', randomIntrusion);
+            
+            // Update failed login counters
+            const phoneLogins = document.getElementById('phoneFailedLogins');
+            const laptopLogins = document.getElementById('laptopFailedLogins');
+            
+            phoneLogins.textContent = parseInt(phoneLogins.textContent) + 1;
+            laptopLogins.textContent = parseInt(laptopLogins.textContent) + 1;
+            
+            tg.showPopup({
+                title: '🚨 INTRUSION SIMULATION',
+                message: 'Security breach simulation activated!\nCheck alerts for details.',
+                buttons: [{ type: 'default', text: 'UNDERSTOOD' }]
+            });
+        }
+        
+        // Device status check
+        function checkDeviceStatus() {
+            addLog('Generating device status report...');
+            
+            updateDeviceStatus();
+            
+            const report = `
+📊 DEVICE STATUS REPORT:
+
+📱 Personal Phone:
+• Status: ONLINE
+• Battery: ${document.getElementById('phoneBattery').textContent}
+• Failed Logins: ${document.getElementById('phoneFailedLogins').textContent}
+
+💻 Work Laptop:
+• Status: ONLINE
+• CPU Load: ${document.getElementById('laptopCpu').textContent}
+• Failed Logins: ${document.getElementById('laptopFailedLogins').textContent}
+
+🛡️ Security: ${monitoringActive ? 'ACTIVE' : 'INACTIVE'}
+            `.trim();
+            
+            tg.showPopup({
+                title: '📊 Status Report',
+                message: report,
+                buttons: [{ type: 'default', text: 'OK' }]
+            });
+            
+            addLog('Status report generated', 'success');
+        }
+        
+        // Toggle monitoring
+        function toggleMonitoring() {
+            monitoringActive = !monitoringActive;
+            
+            if (monitoringActive) {
+                addLog('Security monitoring activated', 'success');
+                tg.showAlert('Security monitoring ACTIVATED');
+            } else {
+                addLog('Security monitoring deactivated', 'warning');
+                tg.showAlert('Security monitoring DEACTIVATED');
+            }
+            
+            updateStatusPanel();
+        }
+        
+        // Emergency lock
+        function emergencyLock() {
+            addLog('EMERGENCY LOCK ACTIVATED!', 'danger');
+            
+            addAlert('CRITICAL', 'EMERGENCY LOCK ACTIVATED - All devices locked');
+            
+            tg.showPopup({
+                title: '🔐 EMERGENCY LOCK',
+                message: 'All monitored devices will be locked immediately!\nThis action cannot be undone.',
+                buttons: [
+                    { type: 'destructive', text: 'CONFIRM LOCK' },
+                    { type: 'cancel', text: 'CANCEL' }
+                ]
+            });
+            
+            // In real app, this would send lock commands to all devices
+            setTimeout(() => {
+                addLog('Emergency lock commands sent to all devices', 'danger');
+            }, 2000);
+        }
+        
+        // Clear log
+        function clearLog() {
+            const logContent = document.getElementById('logContent');
+            logContent.innerHTML = '<div class="log-entry">Log cleared</div>';
+            addLog('Activity log cleared');
+        }
+        
+        // Update device status (simulated)
+        function updateDeviceStatus() {
+            // Simulate battery and CPU changes
+            const phoneBattery = document.getElementById('phoneBattery');
+            const laptopCpu = document.getElementById('laptopCpu');
+            
+            phoneBattery.textContent = Math.max(10, Math.min(100, parseInt(phoneBattery.textContent) + Math.floor(Math.random() * 10) - 5)) + '%';
+            laptopCpu.textContent = Math.max(5, Math.min(95, parseInt(laptopCpu.textContent) + Math.floor(Math.random() * 20) - 10)) + '%';
+            
+            // Update last access times
+            const now = new Date();
+            document.getElementById('phoneLastAccess').textContent = 'Just now';
+            document.getElementById('laptopLastAccess').textContent = 'Just now';
+        }
+        
+        // Background monitoring simulation
+        function startBackgroundMonitoring() {
+            setInterval(() => {
+                if (monitoringActive) {
+                    // Random security events
+                    if (Math.random() > 0.95) {
+                        const events = [
+                            'Network security check completed',
+                            'Device integrity verified',
+                            'Encryption status: SECURE',
+                            'Background scan: No threats found'
+                        ];
+                        addLog(events[Math.floor(Math.random() * events.length)]);
+                    }
+                    
+                    updateDeviceStatus();
+                }
+            }, 10000);
+        }
+        
+        // Handle Telegram events
+        tg.onEvent('viewportChanged', (params) => {
+            addLog('Viewport updated');
+        });
+        
+        // Initialize app when loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+        
+    </script>
+</body>
+</html>
