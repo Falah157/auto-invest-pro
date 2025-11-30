@@ -3,1764 +3,587 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOLDEN SITE MANAGER - Construction Dashboard</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <title>CYBER SENTINEL | Security Monitor</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', monospace;
         }
-
-        :root {
-            --gold: #FFD700;
-            --dark-gold: #B8860B;
-            --light-gold: #FFEC8B;
-            --black: #0a0a0a;
-            --dark-gray: #1a1a1a;
-            --medium-gray: #2a2a2a;
-            --light-gray: #3a3a3a;
-            --success: #00ff88;
-            --warning: #ffaa00;
-            --danger: #ff4444;
-            --info: #00a8ff;
-        }
-
+        
         body {
-            background: var(--black);
-            color: var(--light-gold);
+            background-color: #0a0a0a;
+            color: #00ff00;
+            overflow-x: hidden;
             min-height: 100vh;
-            padding: 15px;
-            padding-bottom: 80px;
         }
-
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--dark-gray), var(--black));
-            border-radius: 15px;
-            border: 2px solid var(--gold);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
+        
+        .matrix-bg {
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--gold), var(--dark-gold), var(--light-gold));
-            animation: pulse 3s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
-
-        .logo {
-            font-size: 2.2em;
-            background: linear-gradient(90deg, var(--gold), var(--light-gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-
-        .tagline {
-            color: var(--light-gold);
-            font-size: 0.9em;
-            margin-bottom: 15px;
-            opacity: 0.8;
-        }
-
-        .access-control {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 15px;
-        }
-
-        .mode-btn {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid var(--gold);
-            background: var(--dark-gray);
-            color: var(--light-gold);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .mode-btn.active {
-            background: var(--gold);
-            color: var(--black);
-            font-weight: bold;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, var(--dark-gray), var(--medium-gray));
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--light-gray);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--gold), var(--dark-gold));
-        }
-
-        .stat-value {
-            font-size: 1.6em;
-            font-weight: bold;
-            margin: 5px 0;
-            color: var(--gold);
-        }
-
-        .stat-label {
-            color: var(--light-gold);
-            font-size: 0.8em;
-            opacity: 0.8;
-        }
-
-        .gold { color: var(--gold); }
-        .success { color: var(--success); }
-        .warning { color: var(--warning); }
-        .danger { color: var(--danger); }
-        .info { color: var(--info); }
-
-        /* Mobile Tabs */
-        .mobile-tabs {
-            display: flex;
-            margin-bottom: 15px;
-            background: var(--dark-gray);
-            border-radius: 12px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 5px;
-            border: 1px solid var(--light-gray);
-        }
-
-        .mobile-tab {
-            padding: 12px 15px;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 8px;
-            margin: 0 2px;
-            flex: 1;
-            text-align: center;
-            font-size: 0.85em;
-            color: var(--light-gold);
-        }
-
-        .mobile-tab.active {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid var(--gold);
-            color: var(--gold);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Cards */
-        .card {
-            background: linear-gradient(135deg, var(--dark-gray), var(--medium-gray));
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--light-gray);
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .card h3 {
-            color: var(--gold);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid var(--light-gray);
-            padding-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--light-gold);
-            font-size: 0.95em;
-            font-weight: 500;
-        }
-
-        input, select, button, textarea {
             width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            border: 1px solid var(--light-gray);
-            background: var(--black);
-            color: var(--light-gold);
-            font-size: 1em;
-            transition: all 0.3s;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
         }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-
-        button {
-            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
-            color: var(--black);
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            margin-top: 5px;
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #00ff00;
+            margin-bottom: 30px;
+            position: relative;
         }
-
-        button:active {
-            transform: scale(0.98);
+        
+        h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 10px;
         }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #00cc66);
-            color: white;
+        
+        .subtitle {
+            color: #008800;
+            font-size: 1rem;
         }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning), #cc9900);
-            color: black;
+        
+        .status-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger), #cc0000);
-            color: white;
+        
+        .device-card {
+            background: rgba(0, 20, 0, 0.3);
+            border: 1px solid #00aa00;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            transition: all 0.3s ease;
         }
-
-        .btn-info {
-            background: linear-gradient(135deg, var(--info), #0099cc);
-            color: white;
+        
+        .device-card:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+            transform: translateY(-5px);
         }
-
-        .btn-small {
-            padding: 10px 15px;
-            font-size: 0.85em;
-            width: auto;
-        }
-
-        /* Maps */
-        #map, #detailedMap {
-            height: 300px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 2px solid var(--light-gray);
-        }
-
-        /* Items List */
-        .report-item, .issue-item, .task-item {
-            background: var(--black);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--gold);
-            border: 1px solid var(--light-gray);
-            transition: all 0.3s;
-        }
-
-        .issue-item {
-            border-left-color: var(--warning);
-        }
-
-        .task-item {
-            border-left-color: var(--info);
-        }
-
-        .report-header, .issue-header, .task-header {
+        
+        .device-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #004400;
+            padding-bottom: 10px;
         }
-
-        .report-id, .issue-id, .task-id {
-            font-weight: bold;
-            color: var(--gold);
-            font-size: 1.1em;
-        }
-
-        .report-date, .issue-date, .task-date {
-            color: var(--light-gold);
-            font-size: 0.8em;
-            opacity: 0.7;
-        }
-
-        .report-progress {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--gold);
-            color: black;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-right: 10px;
+        
+        .device-name {
+            font-size: 1.2rem;
             font-weight: bold;
         }
-
-        .issue-priority, .task-priority {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
-        .priority-high { background: var(--danger); color: white; }
-        .priority-medium { background: var(--warning); color: black; }
-        .priority-low { background: var(--success); color: white; }
-
-        .task-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-left: 10px;
-            font-weight: bold;
-        }
-
-        .status-pending { background: var(--warning); color: black; }
-        .status-inprogress { background: var(--info); color: white; }
-        .status-completed { background: var(--success); color: white; }
-
-        /* Status Messages */
+        
         .status {
-            padding: 12px;
-            border-radius: 8px;
-            margin: 12px 0;
-            text-align: center;
-            font-size: 0.95em;
-            border: 1px solid;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.8rem;
         }
-
-        .status.success {
-            background: rgba(0, 255, 136, 0.1);
-            border-color: var(--success);
-            color: var(--success);
+        
+        .status-active {
+            background: #003300;
+            color: #00ff00;
         }
-
-        .status.info {
-            background: rgba(0, 168, 255, 0.1);
-            border-color: var(--info);
-            color: var(--info);
+        
+        .status-inactive {
+            background: #330000;
+            color: #ff3300;
         }
-
-        .status.warning {
-            background: rgba(255, 170, 0, 0.1);
-            border-color: var(--warning);
-            color: var(--warning);
+        
+        .device-details {
+            margin-bottom: 15px;
         }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--dark-gray);
+        
+        .detail-item {
             display: flex;
-            padding: 12px;
-            border-top: 2px solid var(--gold);
-            z-index: 100;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
         }
-
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            padding: 8px 5px;
-            color: var(--light-gold);
-            font-size: 0.75em;
-            transition: all 0.3s;
-            opacity: 0.7;
-        }
-
-        .nav-item.active {
-            color: var(--gold);
-            opacity: 1;
-        }
-
-        .nav-icon {
-            font-size: 1.4em;
-            margin-bottom: 3px;
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        /* Photo Preview */
-        .photo-preview {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin: 10px 0;
-            border: 2px solid var(--gold);
-        }
-
-        /* Location Button */
-        .location-btn {
-            background: linear-gradient(135deg, var(--info), #0099cc);
-        }
-
-        /* Progress Bars */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--black);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold), var(--dark-gold));
-            transition: width 0.3s ease;
-        }
-
-        /* Photo Gallery */
-        .photo-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .gallery-item {
-            border-radius: 8px;
-            overflow: hidden;
+        
+        .btn {
+            background: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 15px;
             cursor: pointer;
-            border: 2px solid var(--light-gray);
-            transition: all 0.3s;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
         }
-
-        .gallery-item:hover {
-            border-color: var(--gold);
-            transform: scale(1.05);
+        
+        .btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px #00ff00;
         }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100px;
-            object-fit: cover;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
+        
+        .alerts-panel {
+            background: rgba(0, 10, 0, 0.5);
+            border: 1px solid #00aa00;
+            border-radius: 5px;
             padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .panel-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .panel-title::before {
+            content: ">> ";
+            color: #00ff00;
+        }
+        
+        .alert-list {
+            max-height: 300px;
             overflow-y: auto;
         }
-
-        .modal-content {
-            background: linear-gradient(135deg, var(--dark-gray), var(--black));
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px solid var(--gold);
-            max-width: 500px;
-            margin: 0 auto;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-        }
-
-        /* Login */
-        .login-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 20px;
-            background: var(--black);
-        }
-
-        .login-card {
-            background: linear-gradient(135deg, var(--dark-gray), var(--black));
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid var(--gold);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-        }
-
-        .login-logo {
-            font-size: 2.5em;
-            background: linear-gradient(90deg, var(--gold), var(--light-gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        /* Responsive */
-        @media (max-width: 380px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .mobile-tab {
-                padding: 10px 12px;
-                font-size: 0.8em;
-            }
-            
-            .action-buttons {
-                grid-template-columns: 1fr;
-            }
-            
-            .photo-gallery {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            }
-        }
-
-        /* View Mode Styles */
-        .view-mode .edit-only {
-            display: none !important;
-        }
-
-        .public-note {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid var(--gold);
+        
+        .alert-item {
             padding: 10px;
-            border-radius: 8px;
+            border-left: 3px solid #ff3300;
+            margin-bottom: 10px;
+            background: rgba(50, 0, 0, 0.3);
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { border-left-color: #ff3300; }
+            50% { border-left-color: transparent; }
+        }
+        
+        .alert-time {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .alert-message {
+            margin: 5px 0;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .console {
+            background: #000;
+            border: 1px solid #00aa00;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            height: 150px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+        
+        .console-line {
+            margin-bottom: 5px;
+        }
+        
+        .console-line::before {
+            content: "> ";
+            color: #00ff00;
+        }
+        
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(42px, 9999px, 44px, 0); }
+            5% { clip: rect(12px, 9999px, 59px, 0); }
+            10% { clip: rect(48px, 9999px, 29px, 0); }
+            15% { clip: rect(42px, 9999px, 73px, 0); }
+            20% { clip: rect(63px, 9999px, 27px, 0); }
+            25% { clip: rect(34px, 9999px, 55px, 0); }
+            30% { clip: rect(86px, 9999px, 73px, 0); }
+            35% { clip: rect(20px, 9999px, 20px, 0); }
+            40% { clip: rect(26px, 9999px, 60px, 0); }
+            45% { clip: rect(25px, 9999px, 66px, 0); }
+            50% { clip: rect(57px, 9999px, 98px, 0); }
+            55% { clip: rect(5px, 9999px, 46px, 0); }
+            60% { clip: rect(82px, 9999px, 31px, 0); }
+            65% { clip: rect(54px, 9999px, 27px, 0); }
+            70% { clip: rect(28px, 9999px, 99px, 0); }
+            75% { clip: rect(45px, 9999px, 69px, 0); }
+            80% { clip: rect(23px, 9999px, 85px, 0); }
+            85% { clip: rect(54px, 9999px, 84px, 0); }
+            90% { clip: rect(45px, 9999px, 47px, 0); }
+            95% { clip: rect(37px, 9999px, 20px, 0); }
+            100% { clip: rect(4px, 9999px, 91px, 0); }
+        }
+        
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            5% { clip: rect(52px, 9999px, 74px, 0); }
+            10% { clip: rect(79px, 9999px, 85px, 0); }
+            15% { clip: rect(75px, 9999px, 5px, 0); }
+            20% { clip: rect(67px, 9999px, 61px, 0); }
+            25% { clip: rect(14px, 9999px, 79px, 0); }
+            30% { clip: rect(1px, 9999px, 66px, 0); }
+            35% { clip: rect(86px, 9999px, 30px, 0); }
+            40% { clip: rect(23px, 9999px, 98px, 0); }
+            45% { clip: rect(85px, 9999px, 72px, 0); }
+            50% { clip: rect(71px, 9999px, 75px, 0); }
+            55% { clip: rect(2px, 9999px, 48px, 0); }
+            60% { clip: rect(30px, 9999px, 16px, 0); }
+            65% { clip: rect(59px, 9999px, 50px, 0); }
+            70% { clip: rect(41px, 9999px, 62px, 0); }
+            75% { clip: rect(2px, 9999px, 82px, 0); }
+            80% { clip: rect(47px, 9999px, 73px, 0); }
+            85% { clip: rect(3px, 9999px, 27px, 0); }
+            90% { clip: rect(26px, 9999px, 55px, 0); }
+            95% { clip: rect(42px, 9999px, 97px, 0); }
+            100% { clip: rect(38px, 9999px, 49px, 0); }
+        }
+        
+        footer {
             text-align: center;
-            margin: 10px 0;
-            font-size: 0.9em;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid #004400;
+            font-size: 0.8rem;
+            color: #008800;
+        }
+        
+        /* Matrix rain effect */
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div class="login-screen" id="loginScreen">
-        <div class="login-card">
-            <div class="login-logo">GOLDEN SITE</div>
-            <h3 style="color: var(--gold); margin-bottom: 20px;">Construction Manager</h3>
-            
-            <div class="form-group">
-                <label for="loginPassword">Team Access Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter team password" value="site123">
+    <div class="matrix-rain" id="matrixRain"></div>
+    
+    <div class="container">
+        <header>
+            <h1 class="glitch" data-text="CYBER SENTINEL">CYBER SENTINEL</h1>
+            <p class="subtitle">SECURITY MONITORING SYSTEM // INTRUDER DETECTION ACTIVE</p>
+        </header>
+        
+        <div class="status-panel">
+            <div class="device-card">
+                <div class="device-header">
+                    <div class="device-name">MOBILE DEVICE</div>
+                    <div class="status status-active">ACTIVE</div>
+                </div>
+                <div class="device-details">
+                    <div class="detail-item">
+                        <span>Last Access:</span>
+                        <span id="mobileLastAccess">2 minutes ago</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Failed Attempts:</span>
+                        <span id="mobileFailedAttempts">0</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Location:</span>
+                        <span id="mobileLocation">Home Network</span>
+                    </div>
+                </div>
+                <button class="btn" onclick="simulateMobileIntrusion()">Simulate Intrusion</button>
             </div>
             
-            <button class="btn-success" onclick="login()" style="margin-bottom: 15px;">
-                <i class="fas fa-lock-open"></i> Team Login
-            </button>
+            <div class="device-card">
+                <div class="device-header">
+                    <div class="device-name">LAPTOP DEVICE</div>
+                    <div class="status status-active">ACTIVE</div>
+                </div>
+                <div class="device-details">
+                    <div class="detail-item">
+                        <span>Last Access:</span>
+                        <span id="laptopLastAccess">5 minutes ago</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Failed Attempts:</span>
+                        <span id="laptopFailedAttempts">0</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Location:</span>
+                        <span id="laptopLocation">Home Network</span>
+                    </div>
+                </div>
+                <button class="btn" onclick="simulateLaptopIntrusion()">Simulate Intrusion</button>
+            </div>
             
-            <button class="mode-btn active" onclick="enterPublicMode()">
-                <i class="fas fa-eye"></i> Public View Mode
-            </button>
-            
-            <div class="status info" style="margin-top: 15px;">
-                <i class="fas fa-info-circle"></i> Public: View Only | Team: Full Access
+            <div class="device-card">
+                <div class="device-header">
+                    <div class="device-name">TABLET DEVICE</div>
+                    <div class="status status-inactive">INACTIVE</div>
+                </div>
+                <div class="device-details">
+                    <div class="detail-item">
+                        <span>Last Access:</span>
+                        <span>3 hours ago</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Failed Attempts:</span>
+                        <span>0</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Location:</span>
+                        <span>Unknown</span>
+                    </div>
+                </div>
+                <button class="btn" disabled>Device Offline</button>
             </div>
         </div>
+        
+        <div class="alerts-panel">
+            <div class="panel-title">SECURITY ALERTS</div>
+            <div class="alert-list" id="alertList">
+                <div class="alert-item">
+                    <div class="alert-time">[2023-11-05 14:32:11]</div>
+                    <div class="alert-message">System initialized. Security monitoring active.</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="console">
+            <div class="console-line">Initializing security protocols...</div>
+            <div class="console-line">Monitoring devices: MOBILE, LAPTOP, TABLET</div>
+            <div class="console-line">Intrusion detection: ACTIVE</div>
+            <div class="console-line">Camera monitoring: STANDBY</div>
+            <div class="console-line">Network security: ENCRYPTED</div>
+            <div class="console-line" id="lastConsoleLine">Awaiting commands...</div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="enableAllMonitoring()">Enable All Monitoring</button>
+            <button class="btn" onclick="disableAllMonitoring()">Disable Monitoring</button>
+            <button class="btn" onclick="clearAlerts()">Clear Alerts</button>
+            <button class="btn" onclick="testNotification()">Test Notification</button>
+        </div>
+        
+        <footer>
+            CYBER SENTINEL v1.0 | SECURITY SYSTEM ACTIVE | UNAUTHORIZED ACCESS WILL BE LOGGED AND REPORTED
+        </footer>
     </div>
 
-    <!-- Main Application -->
-    <div class="main-app" id="mainApp">
-        <div class="container">
-            <div class="header">
-                <div class="logo">GOLDEN SITE MANAGER</div>
-                <p class="tagline" id="userGreeting">Complete Construction Management System</p>
-                <div class="access-control">
-                    <button class="mode-btn" id="publicModeBtn" onclick="switchToPublicMode()">
-                        <i class="fas fa-eye"></i> Public View
-                    </button>
-                    <button class="mode-btn active" id="teamModeBtn" onclick="switchToTeamMode()">
-                        <i class="fas fa-users"></i> Team Mode
-                    </button>
-                    <button class="btn-danger btn-small" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> 
-                    </button>
-                </div>
-            </div>
-
-            <!-- Stats Dashboard -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Active Tasks</div>
-                    <div class="stat-value gold" id="activeTasks">0</div>
-                    <div class="stat-label">Today's Progress</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Completed Areas</div>
-                    <div class="stat-value success" id="completedAreas">0%</div>
-                    <div class="stat-label">Overall Progress</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Team Members</div>
-                    <div class="stat-value info" id="teamMembers">0</div>
-                    <div class="stat-label">On Site</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Open Issues</div>
-                    <div class="stat-value warning" id="openIssues">0</div>
-                    <div class="stat-label">Need Attention</div>
-                </div>
-            </div>
-
-            <!-- Progress Overview -->
-            <div class="card">
-                <h3><i class="fas fa-chart-line"></i> Project Progress</h3>
-                <div style="margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span>Overall Completion</span>
-                        <span id="overallProgress">0%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="overallProgressBar" style="width: 0%"></div>
-                    </div>
-                </div>
-                <div class="action-buttons">
-                    <button class="btn-info" onclick="switchTab('progress')">
-                        <i class="fas fa-chart-bar"></i> View Details
-                    </button>
-                    <button class="gold" onclick="switchTab('map')">
-                        <i class="fas fa-map-marked-alt"></i> Site Map
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile Tabs -->
-            <div class="mobile-tabs">
-                <div class="mobile-tab active" onclick="switchTab('dashboard')">
-                    <i class="fas fa-tachometer-alt"></i><br>Dashboard
-                </div>
-                <div class="mobile-tab" onclick="switchTab('tasks')">
-                    <i class="fas fa-tasks"></i><br>Tasks
-                </div>
-                <div class="mobile-tab" onclick="switchTab('progress')">
-                    <i class="fas fa-chart-bar"></i><br>Progress
-                </div>
-                <div class="mobile-tab" onclick="switchTab('map')">
-                    <i class="fas fa-map"></i><br>Site Map
-                </div>
-                <div class="mobile-tab" onclick="switchTab('gallery')">
-                    <i class="fas fa-images"></i><br>Gallery
-                </div>
-                <div class="mobile-tab" onclick="switchTab('team')">
-                    <i class="fas fa-users"></i><br>Team
-                </div>
-            </div>
-
-            <!-- Dashboard Tab -->
-            <div id="dashboard" class="tab-content active">
-                <div class="card">
-                    <h3><i class="fas fa-bell"></i> Recent Activity</h3>
-                    <div id="recentActivity">
-                        <div class="status info">No recent activity</div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Priority Items</h3>
-                    <div id="priorityItems">
-                        <div class="status info">No priority items</div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-tasks"></i> Quick Actions</h3>
-                    <div class="action-buttons">
-                        <button class="btn-success edit-only" onclick="switchTab('tasks'); showCreateTask();">
-                            <i class="fas fa-plus"></i> New Task
-                        </button>
-                        <button class="btn-warning edit-only" onclick="switchTab('progress'); showAddProgress();">
-                            <i class="fas fa-chart-line"></i> Add Progress
-                        </button>
-                        <button class="btn-info" onclick="switchTab('gallery'); showAddPhoto();">
-                            <i class="fas fa-camera"></i> Add Photo
-                        </button>
-                        <button class="gold" onclick="switchTab('map')">
-                            <i class="fas fa-map-marker-alt"></i> View Map
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tasks Tab -->
-            <div id="tasks" class="tab-content">
-                <div class="card edit-only">
-                    <h3><i class="fas fa-plus-circle"></i> Create New Task</h3>
-                    <div class="form-group">
-                        <label for="taskTitle">Task Title</label>
-                        <input type="text" id="taskTitle" placeholder="What needs to be done?">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="taskDescription">Description</label>
-                        <textarea id="taskDescription" rows="3" placeholder="Task details..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="taskAssignedTo">Assign To</label>
-                        <select id="taskAssignedTo">
-                            <option value="">Select Team Member</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="taskPriority">Priority</label>
-                        <select id="taskPriority">
-                            <option value="low">Low</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="taskDueDate">Due Date</label>
-                        <input type="date" id="taskDueDate">
-                    </div>
-                    
-                    <button class="btn-success" onclick="createTask()">
-                        <i class="fas fa-save"></i> Create Task
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-list"></i> Active Tasks</h3>
-                    <div class="form-group">
-                        <input type="text" id="taskSearch" placeholder="Search tasks..." onkeyup="filterTasks()">
-                    </div>
-                    <div id="tasksList">
-                        <div class="status info">No active tasks</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Progress Tab -->
-            <div id="progress" class="tab-content">
-                <div class="card edit-only">
-                    <h3><i class="fas fa-chart-line"></i> Update Progress</h3>
-                    <div class="form-group">
-                        <label for="progressArea">Area/Section</label>
-                        <select id="progressArea">
-                            <option value="foundation">Foundation</option>
-                            <option value="structure">Structure</option>
-                            <option value="electrical">Electrical</option>
-                            <option value="plumbing">Plumbing</option>
-                            <option value="finishing">Finishing</option>
-                            <option value="landscaping">Landscaping</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="progressPercentage">Completion (%)</label>
-                        <input type="range" id="progressPercentage" min="0" max="100" value="0">
-                        <div style="text-align: center; font-size: 1.2em; color: var(--gold);" id="progressValue">0%</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="progressNotes">Notes</label>
-                        <textarea id="progressNotes" rows="3" placeholder="Progress details..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Progress Photo</label>
-                        <input type="file" id="progressPhoto" accept="image/*" onchange="previewProgressPhoto()">
-                        <img id="progressPhotoPreview" class="photo-preview" style="display: none;">
-                    </div>
-                    
-                    <button class="btn-success" onclick="saveProgress()">
-                        <i class="fas fa-save"></i> Save Progress
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-chart-pie"></i> Progress Overview</h3>
-                    <div id="progressOverview">
-                        <div class="status info">No progress data available</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Map Tab -->
-            <div id="map" class="tab-content">
-                <div class="card">
-                    <h3><i class="fas fa-map-marked-alt"></i> Site Map</h3>
-                    <div id="siteMap" style="height: 400px;"></div>
-                    <div class="action-buttons">
-                        <button class="location-btn edit-only" onclick="addMapMarker()">
-                            <i class="fas fa-map-marker-alt"></i> Add Marker
-                        </button>
-                        <button class="btn-info" onclick="refreshMap()">
-                            <i class="fas fa-sync-alt"></i> Refresh
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h3><i class="fas fa-info-circle"></i> Map Legend</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="width: 12px; height: 12px; background: var(--gold); border-radius: 50%;"></div>
-                            <span>Work Areas</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="width: 12px; height: 12px; background: var(--success); border-radius: 50%;"></div>
-                            <span>Completed</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="width: 12px; height: 12px; background: var(--warning); border-radius: 50%;"></div>
-                            <span>In Progress</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="width: 12px; height: 12px; background: var(--info); border-radius: 50%;"></div>
-                            <span>Tasks</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gallery Tab -->
-            <div id="gallery" class="tab-content">
-                <div class="card edit-only">
-                    <h3><i class="fas fa-camera"></i> Add Progress Photo</h3>
-                    <div class="form-group">
-                        <label for="photoArea">Area/Location</label>
-                        <select id="photoArea">
-                            <option value="site-entrance">Site Entrance</option>
-                            <option value="foundation">Foundation</option>
-                            <option value="structure">Structure</option>
-                            <option value="roof">Roof</option>
-                            <option value="interior">Interior</option>
-                            <option value="exterior">Exterior</option>
-                            <option value="landscape">Landscape</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="photoDescription">Description</label>
-                        <textarea id="photoDescription" rows="2" placeholder="What does this photo show?"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Select Photo</label>
-                        <input type="file" id="galleryPhoto" accept="image/*" onchange="previewGalleryPhoto()">
-                        <img id="galleryPhotoPreview" class="photo-preview" style="display: none;">
-                    </div>
-                    
-                    <button class="btn-success" onclick="saveGalleryPhoto()">
-                        <i class="fas fa-save"></i> Save Photo
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-images"></i> Photo Gallery</h3>
-                    <div class="form-group">
-                        <select id="galleryFilter" onchange="filterGallery()">
-                            <option value="all">All Areas</option>
-                            <option value="site-entrance">Site Entrance</option>
-                            <option value="foundation">Foundation</option>
-                            <option value="structure">Structure</option>
-                            <option value="roof">Roof</option>
-                            <option value="interior">Interior</option>
-                            <option value="exterior">Exterior</option>
-                            <option value="landscape">Landscape</option>
-                        </select>
-                    </div>
-                    <div id="photoGallery" class="photo-gallery">
-                        <div class="status info">No photos yet</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Team Tab -->
-            <div id="team" class="tab-content">
-                <div class="card edit-only">
-                    <h3><i class="fas fa-user-plus"></i> Add Team Member</h3>
-                    <div class="form-group">
-                        <label for="memberName">Full Name</label>
-                        <input type="text" id="memberName" placeholder="Team member name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="memberRole">Role</label>
-                        <select id="memberRole">
-                            <option value="worker">Worker</option>
-                            <option value="supervisor">Supervisor</option>
-                            <option value="foreman">Foreman</option>
-                            <option value="engineer">Engineer</option>
-                            <option value="manager">Manager</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="memberPhone">Phone</label>
-                        <input type="text" id="memberPhone" placeholder="Phone number">
-                    </div>
-                    
-                    <button class="btn-success" onclick="addTeamMember()">
-                        <i class="fas fa-user-plus"></i> Add Member
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-users"></i> Team Members</h3>
-                    <div id="teamList">
-                        <div class="status info">No team members added</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-chart-bar"></i> Team Performance</h3>
-                    <div id="teamPerformance">
-                        <div class="status info">No performance data available</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchTab('dashboard')">
-                <div class="nav-icon"><i class="fas fa-tachometer-alt"></i></div>
-                <div>Dashboard</div>
-            </div>
-            <div class="nav-item" onclick="switchTab('tasks')">
-                <div class="nav-icon"><i class="fas fa-tasks"></i></div>
-                <div>Tasks</div>
-            </div>
-            <div class="nav-item" onclick="switchTab('progress')">
-                <div class="nav-icon"><i class="fas fa-chart-bar"></i></div>
-                <div>Progress</div>
-            </div>
-            <div class="nav-item" onclick="switchTab('map')">
-                <div class="nav-icon"><i class="fas fa-map"></i></div>
-                <div>Map</div>
-            </div>
-            <div class="nav-item" onclick="switchTab('gallery')">
-                <div class="nav-icon"><i class="fas fa-images"></i></div>
-                <div>Gallery</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Photo Modal -->
-    <div class="modal" id="photoModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-image"></i> Photo Details</h3>
-            <div id="modalPhotoContent">
-                <!-- Photo content will be loaded here -->
-            </div>
-            <div class="action-buttons" style="margin-top: 15px;">
-                <button class="btn-warning" onclick="closePhotoModal()">
-                    <i class="fas fa-times"></i> Close
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // ===== DATA STORAGE =====
-        let currentUser = null;
-        let isPublicMode = false;
-        
-        let tasks = JSON.parse(localStorage.getItem('golden_tasks')) || [];
-        let progress = JSON.parse(localStorage.getItem('golden_progress')) || [];
-        let teamMembers = JSON.parse(localStorage.getItem('golden_team')) || [
-            { id: 1, name: 'Site Manager', role: 'manager', phone: '+1234567890', active: true }
-        ];
-        let photos = JSON.parse(localStorage.getItem('golden_photos')) || [];
-        let mapMarkers = JSON.parse(localStorage.getItem('golden_map_markers')) || [];
-        
-        let siteMap = null;
-
-        // ===== INITIALIZATION =====
-        function initApp() {
-            updateDashboard();
-            initMap();
-            updateTasksList();
-            updateProgressOverview();
-            updateTeamList();
-            updateGallery();
-            checkAccessMode();
-        }
-
-        function checkAccessMode() {
-            if (isPublicMode) {
-                document.body.classList.add('view-mode');
-                document.getElementById('userGreeting').textContent = 'Public View Mode - Construction Progress';
-            } else {
-                document.body.classList.remove('view-mode');
-                document.getElementById('userGreeting').textContent = 'Team Mode - Full Access';
-            }
-        }
-
-        // ===== ACCESS CONTROL =====
-        function login() {
-            const password = document.getElementById('loginPassword').value;
-            if (password === 'site123') {
-                currentUser = { name: 'Team Member', role: 'team' };
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                isPublicMode = false;
-                checkAccessMode();
-                showStatus('Team access granted!', 'success');
-            } else {
-                showStatus('Invalid password', 'danger');
-            }
-        }
-
-        function enterPublicMode() {
-            currentUser = { name: 'Public Viewer', role: 'public' };
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            isPublicMode = true;
-            checkAccessMode();
-            showStatus('Public view mode activated', 'info');
-        }
-
-        function switchToPublicMode() {
-            isPublicMode = true;
-            checkAccessMode();
-            document.getElementById('publicModeBtn').classList.add('active');
-            document.getElementById('teamModeBtn').classList.remove('active');
-            showStatus('Switched to public view mode', 'info');
-        }
-
-        function switchToTeamMode() {
-            if (currentUser && currentUser.role === 'team') {
-                isPublicMode = false;
-                checkAccessMode();
-                document.getElementById('teamModeBtn').classList.add('active');
-                document.getElementById('publicModeBtn').classList.remove('active');
-                showStatus('Switched to team mode', 'success');
-            } else {
-                showStatus('Please login for team access', 'warning');
-            }
-        }
-
-        function logout() {
-            currentUser = null;
-            document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
-            showStatus('Logged out successfully', 'info');
-        }
-
-        // ===== MAP SYSTEM =====
-        function initMap() {
-            siteMap = L.map('siteMap').setView([4.1755, 73.5093], 16);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: ''
-            }).addTo(siteMap);
+        // Matrix rain effect
+        function createMatrixRain() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const matrixRain = document.getElementById('matrixRain');
             
-            // Add sample markers
-            addSampleMarkers();
-            updateMapMarkers();
-        }
-
-        function addSampleMarkers() {
-            const sampleMarkers = [
-                { lat: 4.1755, lng: 73.5093, title: 'Main Site', type: 'site', progress: 75 },
-                { lat: 4.1760, lng: 73.5088, title: 'Foundation Work', type: 'work', progress: 100 },
-                { lat: 4.1750, lng: 73.5098, title: 'Structure Work', type: 'work', progress: 60 },
-                { lat: 4.1765, lng: 73.5100, title: 'Landscaping', type: 'work', progress: 20 }
-            ];
+            matrixRain.appendChild(canvas);
             
-            sampleMarkers.forEach(marker => {
-                const color = getMarkerColor(marker.type, marker.progress);
-                const circle = L.circleMarker([marker.lat, marker.lng], {
-                    radius: 15,
-                    color: color,
-                    fillColor: color,
-                    fillOpacity: 0.7
-                }).addTo(siteMap);
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const chars = "01010101010101010101010101ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$+-*/=%\"'#&_(),.;:?!\\|{}<>[]^~";
+            const charArray = chars.split("");
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+            
+            function draw() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                circle.bindPopup(`
-                    <b>${marker.title}</b><br>
-                    Progress: ${marker.progress}%<br>
-                    <button onclick="viewLocationPhotos(${marker.lat}, ${marker.lng})" style="margin-top: 5px; padding: 5px 10px; background: var(--gold); color: black; border: none; border-radius: 3px; cursor: pointer;">
-                        View Photos
-                    </button>
-                `);
+                ctx.fillStyle = "#0F0";
+                ctx.font = fontSize + "px monospace";
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = charArray[Math.floor(Math.random() * charArray.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 35);
+            
+            window.addEventListener('resize', function() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
             });
         }
-
-        function getMarkerColor(type, progress) {
-            if (type === 'site') return '#FFD700'; // Gold
-            if (progress >= 90) return '#00ff88'; // Green
-            if (progress >= 50) return '#ffaa00'; // Orange
-            return '#ff4444'; // Red
-        }
-
-        function addMapMarker() {
-            if (isPublicMode) {
-                showStatus('Public view mode - cannot add markers', 'warning');
-                return;
-            }
-            // Implementation for adding custom markers
-            showStatus('Click on map to add marker', 'info');
-        }
-
-        function refreshMap() {
-            siteMap.invalidateSize();
-            showStatus('Map refreshed', 'info');
-        }
-
-        function viewLocationPhotos(lat, lng) {
-            const locationPhotos = photos.filter(photo => 
-                Math.abs(photo.lat - lat) < 0.001 && Math.abs(photo.lng - lng) < 0.001
-            );
+        
+        // Alert system
+        function addAlert(message) {
+            const alertList = document.getElementById('alertList');
+            const now = new Date();
+            const timestamp = `[${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}]`;
             
-            let content = `<h4>Photos at this location</h4>`;
-            if (locationPhotos.length === 0) {
-                content += '<div class="status info">No photos available</div>';
-            } else {
-                content += '<div class="photo-gallery">';
-                locationPhotos.forEach(photo => {
-                    content += `
-                        <div class="gallery-item" onclick="showPhotoDetail(${photo.id})">
-                            <img src="${photo.data}" alt="${photo.description}">
-                        </div>
-                    `;
+            const alertItem = document.createElement('div');
+            alertItem.className = 'alert-item';
+            alertItem.innerHTML = `
+                <div class="alert-time">${timestamp}</div>
+                <div class="alert-message">${message}</div>
+            `;
+            
+            alertList.prepend(alertItem);
+            
+            // Add to console
+            addConsoleMessage(`ALERT: ${message}`);
+            
+            // Show browser notification if permitted
+            if (Notification.permission === 'granted') {
+                new Notification('Security Alert', {
+                    body: message,
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMgOUgyMUwyMCAxM0wxMyAxMlYyWiIgZmlsbD0iIzAwZmYwMCIvPgo8cGF0aCBkPSJNMTIgMkwxMSA5SDNMNCAxM0wxMSAxMlYyWiIgZmlsbD0iIzAwZmYwMCIvPgo8L3N2Zz4K'
                 });
-                content += '</div>';
             }
             
-            document.getElementById('modalPhotoContent').innerHTML = content;
-            document.getElementById('photoModal').style.display = 'block';
-        }
-
-        // ===== TASK MANAGEMENT =====
-        function showCreateTask() {
-            // Scroll to top of tasks tab
-            document.getElementById('taskTitle').focus();
-        }
-
-        function createTask() {
-            if (isPublicMode) {
-                showStatus('Public view mode - cannot create tasks', 'warning');
-                return;
+            // Keep only last 10 alerts
+            if (alertList.children.length > 10) {
+                alertList.removeChild(alertList.lastChild);
             }
-
-            const title = document.getElementById('taskTitle').value;
-            const description = document.getElementById('taskDescription').value;
-            const assignedTo = document.getElementById('taskAssignedTo').value;
-            const priority = document.getElementById('taskPriority').value;
-            const dueDate = document.getElementById('taskDueDate').value;
-
-            if (!title) {
-                showStatus('Please enter task title', 'warning');
-                return;
-            }
-
-            const newTask = {
-                id: Date.now(),
-                title: title,
-                description: description,
-                assignedTo: assignedTo,
-                priority: priority,
-                dueDate: dueDate,
-                status: 'pending',
-                createdAt: new Date().toISOString(),
-                createdBy: currentUser.name
-            };
-
-            tasks.unshift(newTask);
-            saveData();
-            updateTasksList();
-            updateDashboard();
+        }
+        
+        function addConsoleMessage(message) {
+            const consoleElement = document.querySelector('.console');
+            const lastLine = document.getElementById('lastConsoleLine');
             
-            // Clear form
-            document.getElementById('taskTitle').value = '';
-            document.getElementById('taskDescription').value = '';
-            document.getElementById('taskAssignedTo').value = '';
-            document.getElementById('taskPriority').value = 'medium';
-            document.getElementById('taskDueDate').value = '';
+            const newLine = document.createElement('div');
+            newLine.className = 'console-line';
+            newLine.textContent = message;
             
-            showStatus('Task created successfully!', 'success');
-        }
-
-        function updateTaskStatus(taskId, status) {
-            if (isPublicMode) {
-                showStatus('Public view mode - cannot update tasks', 'warning');
-                return;
-            }
-
-            const task = tasks.find(t => t.id === taskId);
-            if (task) {
-                task.status = status;
-                task.updatedAt = new Date().toISOString();
-                saveData();
-                updateTasksList();
-                updateDashboard();
-                showStatus('Task status updated!', 'success');
-            }
-        }
-
-        function updateTasksList() {
-            const container = document.getElementById('tasksList');
-            const activeTasks = tasks.filter(task => task.status !== 'completed');
+            consoleElement.insertBefore(newLine, lastLine);
             
-            if (activeTasks.length === 0) {
-                container.innerHTML = '<div class="status info">No active tasks</div>';
-                return;
-            }
-
-            container.innerHTML = activeTasks.map(task => `
-                <div class="task-item">
-                    <div class="task-header">
-                        <div class="task-id">${task.title}</div>
-                        <div class="task-date">${new Date(task.createdAt).toLocaleDateString()}</div>
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        <span class="task-priority priority-${task.priority}">${task.priority.toUpperCase()}</span>
-                        <span class="task-status status-${task.status}">${task.status.toUpperCase()}</span>
-                    </div>
-                    <div style="color: #ccc; font-size: 0.9em; margin-bottom: 10px;">
-                        ${task.description || 'No description'}
-                    </div>
-                    <div style="font-size: 0.8em; color: #aaa; margin-bottom: 10px;">
-                        Assigned to: ${task.assignedTo || 'Unassigned'} | Due: ${task.dueDate || 'No due date'}
-                    </div>
-                    <div class="action-buttons edit-only">
-                        <button class="btn-small btn-success" onclick="updateTaskStatus(${task.id}, 'completed')">
-                            <i class="fas fa-check"></i> Complete
-                        </button>
-                        <button class="btn-small btn-warning" onclick="updateTaskStatus(${task.id}, 'inprogress')">
-                            <i class="fas fa-play"></i> Start
-                        </button>
-                        <button class="btn-small btn-danger" onclick="deleteTask(${task.id})">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+            // Auto scroll to bottom
+            consoleElement.scrollTop = consoleElement.scrollHeight;
         }
-
-        function filterTasks() {
-            // Implementation for task filtering
-            updateTasksList();
-        }
-
-        function deleteTask(taskId) {
-            if (isPublicMode) return;
-            if (confirm('Are you sure you want to delete this task?')) {
-                tasks = tasks.filter(t => t.id !== taskId);
-                saveData();
-                updateTasksList();
-                updateDashboard();
-                showStatus('Task deleted', 'info');
-            }
-        }
-
-        // ===== PROGRESS TRACKING =====
-        function showAddProgress() {
-            document.getElementById('progressPercentage').addEventListener('input', function() {
-                document.getElementById('progressValue').textContent = this.value + '%';
-            });
-        }
-
-        function saveProgress() {
-            if (isPublicMode) {
-                showStatus('Public view mode - cannot update progress', 'warning');
-                return;
-            }
-
-            const area = document.getElementById('progressArea').value;
-            const percentage = parseInt(document.getElementById('progressPercentage').value);
-            const notes = document.getElementById('progressNotes').value;
-            const photo = document.getElementById('progressPhotoPreview').src;
-
-            const progressUpdate = {
-                id: Date.now(),
-                area: area,
-                percentage: percentage,
-                notes: notes,
-                photo: photo,
-                date: new Date().toISOString(),
-                updatedBy: currentUser.name
-            };
-
-            // Update or add progress
-            const existingIndex = progress.findIndex(p => p.area === area);
-            if (existingIndex !== -1) {
-                progress[existingIndex] = { ...progress[existingIndex], ...progressUpdate };
-            } else {
-                progress.push(progressUpdate);
-            }
-
-            saveData();
-            updateProgressOverview();
-            updateDashboard();
+        
+        // Simulation functions
+        function simulateMobileIntrusion() {
+            const failedAttempts = document.getElementById('mobileFailedAttempts');
+            let attempts = parseInt(failedAttempts.textContent);
+            attempts++;
+            failedAttempts.textContent = attempts;
             
-            // Clear form
-            document.getElementById('progressPercentage').value = 0;
-            document.getElementById('progressValue').textContent = '0%';
-            document.getElementById('progressNotes').value = '';
-            document.getElementById('progressPhotoPreview').style.display = 'none';
-            document.getElementById('progressPhoto').value = '';
+            addAlert(`UNAUTHORIZED ACCESS ATTEMPT DETECTED on MOBILE DEVICE. Failed attempts: ${attempts}`);
             
-            showStatus('Progress updated successfully!', 'success');
-        }
-
-        function updateProgressOverview() {
-            const container = document.getElementById('progressOverview');
-            
-            if (progress.length === 0) {
-                container.innerHTML = '<div class="status info">No progress data available</div>';
-                return;
-            }
-
-            let html = '';
-            progress.forEach(p => {
-                html += `
-                    <div style="margin-bottom: 15px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="text-transform: capitalize;">${p.area}</span>
-                            <span style="color: var(--gold); font-weight: bold;">${p.percentage}%</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${p.percentage}%"></div>
-                        </div>
-                        <div style="font-size: 0.8em; color: #aaa; margin-top: 5px;">
-                            ${p.notes || 'No notes'} | ${new Date(p.date).toLocaleDateString()}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        // ===== PHOTO GALLERY =====
-        function showAddPhoto() {
-            // Scroll to photo upload section
-        }
-
-        function previewGalleryPhoto() {
-            const file = document.getElementById('galleryPhoto').files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('galleryPhotoPreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+            if (attempts >= 3) {
+                addAlert(`CRITICAL: Multiple failed attempts on MOBILE DEVICE. Locking device.`);
             }
         }
-
-        function saveGalleryPhoto() {
-            if (isPublicMode) {
-                showStatus('Public view mode - cannot upload photos', 'warning');
-                return;
-            }
-
-            const area = document.getElementById('photoArea').value;
-            const description = document.getElementById('photoDescription').value;
-            const photoData = document.getElementById('galleryPhotoPreview').src;
-
-            if (!photoData || photoData === '') {
-                showStatus('Please select a photo', 'warning');
-                return;
-            }
-
-            const newPhoto = {
-                id: Date.now(),
-                area: area,
-                description: description,
-                data: photoData,
-                date: new Date().toISOString(),
-                uploadedBy: currentUser.name,
-                lat: 4.1755 + (Math.random() - 0.5) * 0.01, // Sample coordinates
-                lng: 73.5093 + (Math.random() - 0.5) * 0.01
-            };
-
-            photos.unshift(newPhoto);
-            saveData();
-            updateGallery();
+        
+        function simulateLaptopIntrusion() {
+            const failedAttempts = document.getElementById('laptopFailedAttempts');
+            let attempts = parseInt(failedAttempts.textContent);
+            attempts++;
+            failedAttempts.textContent = attempts;
             
-            // Clear form
-            document.getElementById('photoDescription').value = '';
-            document.getElementById('galleryPhotoPreview').style.display = 'none';
-            document.getElementById('galleryPhoto').value = '';
+            addAlert(`INTRUSION DETECTED on LAPTOP DEVICE. Failed attempts: ${attempts}`);
             
-            showStatus('Photo added to gallery!', 'success');
+            if (attempts >= 3) {
+                addAlert(`CRITICAL: Multiple failed attempts on LAPTOP DEVICE. Camera activated.`);
+            }
         }
-
-        function updateGallery() {
-            const container = document.getElementById('photoGallery');
-            const filter = document.getElementById('galleryFilter').value;
+        
+        function enableAllMonitoring() {
+            addAlert("All security monitoring systems activated.");
+            addConsoleMessage("All monitoring systems: ONLINE");
+        }
+        
+        function disableAllMonitoring() {
+            addAlert("Security monitoring systems disabled by user.");
+            addConsoleMessage("WARNING: Monitoring systems offline");
+        }
+        
+        function clearAlerts() {
+            const alertList = document.getElementById('alertList');
+            alertList.innerHTML = '<div class="alert-item"><div class="alert-time">[SYSTEM]</div><div class="alert-message">Alerts cleared by user.</div></div>';
+            addConsoleMessage("Alert history cleared");
+        }
+        
+        function testNotification() {
+            addAlert("TEST: Security notification system functional.");
             
-            let filteredPhotos = photos;
-            if (filter !== 'all') {
-                filteredPhotos = photos.filter(photo => photo.area === filter);
+            // Request notification permission if not already granted
+            if (Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+        
+        // Initialize
+        window.onload = function() {
+            createMatrixRain();
+            
+            // Request notification permission
+            if (Notification.permission === 'default') {
+                Notification.requestPermission();
             }
             
-            if (filteredPhotos.length === 0) {
-                container.innerHTML = '<div class="status info">No photos found</div>';
-                return;
-            }
-
-            container.innerHTML = filteredPhotos.map(photo => `
-                <div class="gallery-item" onclick="showPhotoDetail(${photo.id})">
-                    <img src="${photo.data}" alt="${photo.description}">
-                </div>
-            `).join('');
-        }
-
-        function filterGallery() {
-            updateGallery();
-        }
-
-        function showPhotoDetail(photoId) {
-            const photo = photos.find(p => p.id === photoId);
-            if (photo) {
-                const content = `
-                    <img src="${photo.data}" style="width: 100%; border-radius: 8px; margin-bottom: 15px;">
-                    <div style="margin-bottom: 10px;">
-                        <strong>Area:</strong> <span style="text-transform: capitalize;">${photo.area}</span>
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        <strong>Description:</strong> ${photo.description || 'No description'}
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        <strong>Date:</strong> ${new Date(photo.date).toLocaleString()}
-                    </div>
-                    <div>
-                        <strong>Uploaded by:</strong> ${photo.uploadedBy}
-                    </div>
-                `;
-                document.getElementById('modalPhotoContent').innerHTML = content;
-                document.getElementById('photoModal').style.display = 'block';
-            }
-        }
-
-        function closePhotoModal() {
-            document.getElementById('photoModal').style.display = 'none';
-        }
-
-        // ===== TEAM MANAGEMENT =====
-        function addTeamMember() {
-            if (isPublicMode) {
-                showStatus('Public view mode - cannot add team members', 'warning');
-                return;
-            }
-
-            const name = document.getElementById('memberName').value;
-            const role = document.getElementById('memberRole').value;
-            const phone = document.getElementById('memberPhone').value;
-
-            if (!name) {
-                showStatus('Please enter team member name', 'warning');
-                return;
-            }
-
-            const newMember = {
-                id: Date.now(),
-                name: name,
-                role: role,
-                phone: phone,
-                active: true,
-                joinedDate: new Date().toISOString()
-            };
-
-            teamMembers.push(newMember);
-            saveData();
-            updateTeamList();
-            updateDashboard();
-            
-            // Clear form
-            document.getElementById('memberName').value = '';
-            document.getElementById('memberPhone').value = '';
-            
-            showStatus('Team member added!', 'success');
-        }
-
-        function updateTeamList() {
-            const container = document.getElementById('teamList');
-            
-            if (teamMembers.length === 0) {
-                container.innerHTML = '<div class="status info">No team members added</div>';
-                return;
-            }
-
-            // Update task assignment dropdown
-            const assignSelect = document.getElementById('taskAssignedTo');
-            assignSelect.innerHTML = '<option value="">Select Team Member</option>';
-            teamMembers.forEach(member => {
-                const option = document.createElement('option');
-                option.value = member.name;
-                option.textContent = member.name;
-                assignSelect.appendChild(option);
-            });
-
-            container.innerHTML = teamMembers.map(member => `
-                <div class="report-item">
-                    <div class="report-header">
-                        <div class="report-id">${member.name}</div>
-                        <div style="font-size: 0.8em; color: ${member.active ? '#00ff88' : '#ff4444'}">
-                            ${member.active ? 'Active' : 'Inactive'}
-                        </div>
-                    </div>
-                    <div style="color: #ccc; font-size: 0.9em; margin-bottom: 5px;">
-                        ${member.role.toUpperCase()} | ${member.phone}
-                    </div>
-                    <div style="font-size: 0.8em; color: #aaa;">
-                        Joined: ${new Date(member.joinedDate).toLocaleDateString()}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // ===== DASHBOARD UPDATES =====
-        function updateDashboard() {
-            // Update stats
-            const activeTasks = tasks.filter(task => task.status !== 'completed').length;
-            const completedTasks = tasks.filter(task => task.status === 'completed').length;
-            const totalTasks = tasks.length;
-            const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-            
-            // Calculate overall progress from area progress
-            const overallProgress = progress.length > 0 ? 
-                Math.round(progress.reduce((sum, p) => sum + p.percentage, 0) / progress.length) : 0;
-
-            document.getElementById('activeTasks').textContent = activeTasks;
-            document.getElementById('completedAreas').textContent = overallProgress + '%';
-            document.getElementById('teamMembers').textContent = teamMembers.filter(m => m.active).length;
-            document.getElementById('openIssues').textContent = tasks.filter(t => t.priority === 'high' && t.status !== 'completed').length;
-
-            // Update progress bar
-            document.getElementById('overallProgress').textContent = overallProgress + '%';
-            document.getElementById('overallProgressBar').style.width = overallProgress + '%';
-
-            // Update recent activity
-            updateRecentActivity();
-            updatePriorityItems();
-        }
-
-        function updateRecentActivity() {
-            const container = document.getElementById('recentActivity');
-            const allActivities = [
-                ...tasks.map(t => ({ type: 'task', ...t })),
-                ...progress.map(p => ({ type: 'progress', ...p })),
-                ...photos.map(p => ({ type: 'photo', ...p }))
-            ].sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt)).slice(0, 5);
-
-            if (allActivities.length === 0) {
-                container.innerHTML = '<div class="status info">No recent activity</div>';
-                return;
-            }
-
-            container.innerHTML = allActivities.map(activity => {
-                let icon, color, text;
-                if (activity.type === 'task') {
-                    icon = 'tasks';
-                    color = '#00a8ff';
-                    text = `Task: ${activity.title} (${activity.status})`;
-                } else if (activity.type === 'progress') {
-                    icon = 'chart-line';
-                    color = '#00ff88';
-                    text = `Progress: ${activity.area} ${activity.percentage}%`;
-                } else {
-                    icon = 'camera';
-                    color = '#FFD700';
-                    text = `Photo: ${activity.area}`;
-                }
-
-                return `
-                    <div class="report-item" style="border-left-color: ${color};">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-${icon}" style="color: ${color};"></i>
-                            <div style="flex: 1;">
-                                <div style="font-size: 0.9em;">${text}</div>
-                                <div style="font-size: 0.8em; color: #aaa;">${new Date(activity.date || activity.createdAt).toLocaleString()}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updatePriorityItems() {
-            const container = document.getElementById('priorityItems');
-            const highPriorityTasks = tasks.filter(task => task.priority === 'high' && task.status !== 'completed');
-            
-            if (highPriorityTasks.length === 0) {
-                container.innerHTML = '<div class="status info">No priority items</div>';
-                return;
-            }
-
-            container.innerHTML = highPriorityTasks.slice(0, 3).map(task => `
-                <div class="issue-item">
-                    <div class="issue-header">
-                        <div class="issue-id">${task.title}</div>
-                        <div class="issue-priority priority-high">HIGH</div>
-                    </div>
-                    <div style="color: #ccc; font-size: 0.9em;">
-                        ${task.description || 'No description'}
-                    </div>
-                    <div style="font-size: 0.8em; color: #aaa; margin-top: 5px;">
-                        Due: ${task.dueDate || 'No due date'} | Assigned to: ${task.assignedTo || 'Unassigned'}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // ===== UTILITY FUNCTIONS =====
-        function switchTab(tabName) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Remove active class from all tabs
-            document.querySelectorAll('.mobile-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.nav-item').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected tab content
-            document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to clicked tab
-            const clickedTab = event.currentTarget;
-            clickedTab.classList.add('active');
-            
-            // Find and activate corresponding bottom nav item
-            const navItems = document.querySelectorAll('.nav-item');
-            const tabIndex = Array.from(document.querySelectorAll('.mobile-tab')).indexOf(clickedTab);
-            if (tabIndex >= 0 && navItems[tabIndex]) {
-                navItems[tabIndex].classList.add('active');
-            }
-
-            // Special handling for map tab
-            if (tabName === 'map' && siteMap) {
-                setTimeout(() => siteMap.invalidateSize(), 100);
-            }
-        }
-
-        function showStatus(message, type) {
-            // Create temporary status message
-            const status = document.createElement('div');
-            status.className = `status ${type}`;
-            status.textContent = message;
-            status.style.position = 'fixed';
-            status.style.top = '20px';
-            status.style.left = '50%';
-            status.style.transform = 'translateX(-50%)';
-            status.style.zIndex = '1000';
-            status.style.minWidth = '200px';
-            status.style.textAlign = 'center';
-            status.style.maxWidth = '90%';
-            
-            document.body.appendChild(status);
-            
-            setTimeout(() => {
-                if (status.parentNode) {
-                    status.parentNode.removeChild(status);
-                }
-            }, 3000);
-        }
-
-        function saveData() {
-            localStorage.setItem('golden_tasks', JSON.stringify(tasks));
-            localStorage.setItem('golden_progress', JSON.stringify(progress));
-            localStorage.setItem('golden_team', JSON.stringify(teamMembers));
-            localStorage.setItem('golden_photos', JSON.stringify(photos));
-            localStorage.setItem('golden_map_markers', JSON.stringify(mapMarkers));
-        }
-
-        function previewProgressPhoto() {
-            const file = document.getElementById('progressPhoto').files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('progressPhotoPreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function updateMapMarkers() {
-            // Implementation for updating map markers based on data
-        }
-
-        // Initialize the app when page loads
-        window.addEventListener('load', function() {
-            // Check if user was previously logged in
-            const savedUser = localStorage.getItem('golden_current_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                isPublicMode = false;
-                initApp();
-            }
-            // Otherwise, show login screen
-        });
-
-        // Auto-save data
-        setInterval(saveData, 30000); // Save every 30 seconds
+            // Simulate occasional system updates
+            setInterval(() => {
+                const messages = [
+                    "System integrity check: PASSED",
+                    "Network encryption: ACTIVE",
+                    "Device heartbeat: RECEIVED",
+                    "Security protocols: NOMINAL"
+                ];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                addConsoleMessage(randomMessage);
+            }, 30000);
+        };
     </script>
 </body>
 </html>
