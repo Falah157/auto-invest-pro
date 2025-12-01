@@ -98,8 +98,7 @@
             height: 100%;
             border-radius: 15px;
             position: relative;
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
-                        url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80');
+            background: linear-gradient(45deg, #1e3a8a, #3b82f6);
             background-size: cover;
             background-position: center;
             overflow: hidden;
@@ -414,7 +413,7 @@
                 <div class="panel-section">
                     <div class="panel-title">🏗️ Road Sections Control</div>
                     <div id="progressList">
-                        <!-- Dynamic content -->
+                        <!-- Dynamic content will be loaded here -->
                     </div>
                 </div>
 
@@ -455,7 +454,7 @@
                         <div class="road-lines"></div>
                     </div>
                     
-                    <!-- Animated elements will be added here -->
+                    <!-- Animated elements -->
                     <div class="worker" style="left: 15%;"></div>
                     <div class="worker" style="left: 25%; animation-delay: 0.5s;"></div>
                     <div class="construction-machine" style="left: 40%;"></div>
@@ -510,11 +509,21 @@
             updateRoadProgress();
             updateAnimations();
             startLiveActivity();
+            
+            // Initialize progress slider display
+            document.getElementById('zoneProgress').addEventListener('input', function() {
+                document.getElementById('progressValue').textContent = this.value + '%';
+            });
         }
 
         // ===== PROGRESS LIST RENDERING =====
         function renderProgressList() {
             const container = document.getElementById('progressList');
+            
+            if (roadSections.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #6b7280; padding: 20px;">No work zones added yet</div>';
+                return;
+            }
             
             container.innerHTML = roadSections.map(section => `
                 <div class="progress-item ${section.status === 'progress' ? 'active' : ''}">
@@ -522,16 +531,17 @@
                         <div class="progress-icon icon-${section.status}">
                             ${getStatusIcon(section.status)}
                         </div>
-                        <div>
+                        <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 1.1em;">${section.name}</div>
-                            <div style="font-size: 0.9em; opacity: 0.8;">
+                            <div style="font-size: 0.9em; opacity: 0.8; margin: 5px 0;">
                                 ${section.workers} workers • ${section.progress}% complete
                             </div>
                             <input type="range" 
                                    class="progress-slider" 
                                    value="${section.progress}" 
                                    min="0" max="100"
-                                   onchange="updateSectionProgress(${section.id}, this.value)">
+                                   onchange="updateSectionProgress(${section.id}, this.value)"
+                                   style="width: 100%;">
                         </div>
                     </div>
                     <div class="progress-controls">
@@ -588,10 +598,16 @@
             
             // Show vehicles only if road is somewhat complete
             if (totalProgress > 70) {
-                vehicles.forEach(vehicle => vehicle.style.display = 'block');
+                vehicles.forEach(vehicle => {
+                    vehicle.style.display = 'block';
+                    vehicle.style.animationPlayState = 'running';
+                });
                 addActivity('🚗 Vehicles started using the completed road sections');
             } else {
-                vehicles.forEach(vehicle => vehicle.style.display = 'none');
+                vehicles.forEach(vehicle => {
+                    vehicle.style.display = 'none';
+                    vehicle.style.animationPlayState = 'paused';
+                });
             }
             
             // Update worker count based on actual workers
@@ -599,12 +615,24 @@
             
             // Show/hide workers based on active count
             workers.forEach((worker, index) => {
-                worker.style.display = index < Math.min(activeWorkers, 4) ? 'block' : 'none';
+                if (index < Math.min(activeWorkers, 4)) {
+                    worker.style.display = 'block';
+                    worker.style.animationPlayState = 'running';
+                } else {
+                    worker.style.display = 'none';
+                    worker.style.animationPlayState = 'paused';
+                }
             });
             
             // Show machines only if work is in progress
             machines.forEach(machine => {
-                machine.style.display = totalProgress < 90 ? 'block' : 'none';
+                if (totalProgress < 90 && totalProgress > 0) {
+                    machine.style.display = 'block';
+                    machine.style.animationPlayState = 'running';
+                } else {
+                    machine.style.display = 'none';
+                    machine.style.animationPlayState = 'paused';
+                }
             });
         }
 
@@ -670,24 +698,21 @@
 
         // ===== LIVE ACTIVITY =====
         function startLiveActivity() {
-            // Update progress value display
-            document.getElementById('zoneProgress').addEventListener('input', function() {
-                document.getElementById('progressValue').textContent = this.value + '%';
-            });
-            
             // Simulate live updates
             setInterval(() => {
-                if (Math.random() > 0.7) {
+                if (Math.random() > 0.7 && roadSections.length > 0) {
                     const activities = [
                         '👷 Workers moving to new section',
                         '🚜 Excavator preparing ground',
                         '🔄 Quality check in progress',
                         '📊 Survey team on site',
-                        '🛠️ Equipment maintenance'
+                        '🛠️ Equipment maintenance',
+                        '🌧️ Weather monitoring',
+                        '📝 Daily progress report generated'
                     ];
                     addActivity(activities[Math.floor(Math.random() * activities.length)]);
                 }
-            }, 10000);
+            }, 8000);
         }
 
         function addActivity(message) {
@@ -698,14 +723,16 @@
             
             activityContainer.insertBefore(activityItem, activityContainer.firstChild);
             
-            // Keep only last 10 activities
-            while (activityContainer.children.length > 10) {
+            // Keep only last 8 activities
+            while (activityContainer.children.length > 8) {
                 activityContainer.removeChild(activityContainer.lastChild);
             }
         }
 
-        // Initialize the app
-        window.addEventListener('load', initApp);
+        // Initialize the app when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
     </script>
 </body>
 </html>
