@@ -3,1030 +3,705 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KANDITHWWM - Live Construction Map</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>KANDITHEEM - Road Progress Map</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Arial', sans-serif;
         }
 
         :root {
-            --gold: #FFD700;
-            --dark-gold: #B8860B;
-            --light-gold: #FFEC8B;
-            --black: #0a0a0a;
-            --dark-gray: #1a1a1a;
-            --medium-gray: #2a2a2a;
-            --light-gray: #3a3a3a;
-            --success: #00ff88;
-            --warning: #ffaa00;
-            --danger: #ff4444;
-            --info: #00a8ff;
-            --done: #00ff88;
-            --progress: #ffaa00;
-            --not-started: #666666;
-            --delayed: #ff4444;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-100: #f3f4f6;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
         }
 
         body {
-            background: var(--black);
-            color: var(--light-gold);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            max-width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 15px;
-            padding-bottom: 80px;
         }
 
         .header {
-            text-align: center;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
             margin-bottom: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--dark-gray), var(--black));
-            border-radius: 15px;
-            border: 2px solid var(--gold);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
         .logo {
-            font-size: 2.2em;
-            background: linear-gradient(90deg, var(--gold), var(--light-gold));
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 10px;
         }
 
-        .tagline {
-            color: var(--light-gold);
-            font-size: 0.9em;
+        .subtitle {
+            color: var(--gray-800);
+            font-size: 1.1em;
             opacity: 0.8;
         }
 
-        /* Map Controls */
-        .map-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .map-btn {
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: 1px solid var(--gold);
-            background: var(--dark-gray);
-            color: var(--light-gold);
-            cursor: pointer;
-            transition: all 0.3s;
-            flex: 1;
-            min-width: 120px;
-            text-align: center;
-        }
-
-        .map-btn.active {
-            background: var(--gold);
-            color: var(--black);
-            font-weight: bold;
-        }
-
-        /* Progress Legend */
-        .progress-legend {
+        /* Main Dashboard */
+        .dashboard {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-            padding: 15px;
-            background: var(--dark-gray);
-            border-radius: 10px;
-            border: 1px solid var(--light-gray);
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: 80vh;
         }
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9em;
-        }
-
-        .color-done, .color-progress, .color-not-started, .color-delayed {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-
-        .color-done { background: var(--done); }
-        .color-progress { background: var(--progress); }
-        .color-not-started { background: var(--not-started); }
-        .color-delayed { 
-            background: repeating-linear-gradient(
-                45deg,
-                var(--delayed),
-                var(--delayed) 5px,
-                #ff8888 5px,
-                #ff8888 10px
-            );
-        }
-
-        /* Map Containers */
-        .map-container {
-            height: 400px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            border: 3px solid var(--gold);
-            overflow: hidden;
-            position: relative;
-        }
-
-        #map2d, #map3d {
-            width: 100%;
-            height: 100%;
-        }
-
-        .map-overlay {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--gold);
-            z-index: 1000;
-        }
-
-        /* Area Details Panel */
-        .area-details {
-            background: linear-gradient(135deg, var(--dark-gray), var(--medium-gray));
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px solid var(--gold);
-            margin-top: 15px;
-            display: none;
-        }
-
-        .area-details.active {
-            display: block;
-        }
-
-        .area-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--light-gray);
-            padding-bottom: 10px;
-        }
-
-        .area-title {
-            font-size: 1.4em;
-            color: var(--gold);
-            font-weight: bold;
-        }
-
-        .area-progress {
-            font-size: 1.2em;
-            font-weight: bold;
-            padding: 5px 15px;
+        /* Control Panel */
+        .control-panel {
+            background: white;
             border-radius: 20px;
-            background: var(--dark-gray);
-        }
-
-        /* Progress Bars */
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: var(--black);
-            border-radius: 6px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold), var(--dark-gold));
-            transition: width 0.5s ease;
-        }
-
-        /* Worker List */
-        .worker-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .worker-card {
-            background: var(--black);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--light-gray);
-            text-align: center;
-        }
-
-        .worker-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--gold);
-            margin: 0 auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--black);
-        }
-
-        /* Discussion Panel */
-        .discussion-panel {
-            background: var(--black);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            border: 1px solid var(--light-gray);
-            max-height: 300px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow-y: auto;
         }
 
-        .message {
-            padding: 10px;
-            margin: 5px 0;
+        .panel-section {
+            margin-bottom: 30px;
+        }
+
+        .panel-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--gray-800);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        /* Progress Overview */
+        .progress-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: var(--gray-100);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .progress-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .progress-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .progress-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .status-completed { background: var(--success); }
+        .status-in-progress { background: var(--warning); }
+        .status-not-started { background: var(--danger); }
+        .status-delayed { 
+            background: repeating-linear-gradient(
+                45deg,
+                var(--danger),
+                var(--danger) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+        }
+
+        /* Road Map Container */
+        .road-map-container {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #roadMap {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #f8fafc 25%, transparent 25%),
+                        linear-gradient(-45deg, #f8fafc 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #f8fafc 75%),
+                        linear-gradient(-45deg, transparent 75%, #f8fafc 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        /* Road Line */
+        .road-line {
+            position: absolute;
+            top: 50%;
+            left: 50px;
+            right: 50px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            transform: translateY(-50%);
+        }
+
+        .road-progress {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Markers */
+        .marker {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 10;
+        }
+
+        .marker.completed { border-color: var(--success); }
+        .marker.in-progress { border-color: var(--warning); }
+        .marker.not-started { border-color: var(--danger); }
+        .marker.delayed { border-color: var(--danger); }
+
+        .marker::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: currentColor;
+            transform: translateX(-50%);
+        }
+
+        /* Marker Info */
+        .marker-info {
+            position: absolute;
+            bottom: calc(100% + 30px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-width: 200px;
+            display: none;
+            z-index: 100;
+        }
+
+        .marker:hover .marker-info {
+            display: block;
+        }
+
+        /* Add Marker Button */
+        .add-marker-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .add-marker-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Photo Gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .photo-thumb {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
             border-radius: 8px;
-            background: var(--dark-gray);
+            cursor: pointer;
+            transition: transform 0.3s ease;
         }
 
-        .message.owner {
-            background: rgba(255, 215, 0, 0.2);
-            border-left: 3px solid var(--gold);
+        .photo-thumb:hover {
+            transform: scale(1.1);
         }
 
-        .message.worker {
-            background: rgba(0, 168, 255, 0.2);
-            border-left: 3px solid var(--info);
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
-        .message-time {
-            font-size: 0.7em;
-            color: #aaa;
-            float: right;
-        }
-
-        /* Quick Update Form */
-        .quick-update-card {
-            background: linear-gradient(135deg, var(--dark-gray), var(--medium-gray));
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            color: white;
             padding: 20px;
             border-radius: 15px;
-            border: 2px solid var(--info);
-            margin-top: 15px;
+            text-align: center;
         }
 
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        /* Forms */
         .form-group {
             margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            color: var(--light-gold);
-            font-weight: 500;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--gray-800);
         }
 
-        input, select, textarea, button {
+        input, select, textarea {
             width: 100%;
             padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--light-gray);
-            background: var(--black);
-            color: var(--light-gold);
-            font-size: 1em;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
         button {
-            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
-            color: var(--black);
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #00cc66);
+            background: var(--primary);
             color: white;
-        }
-
-        .photo-preview {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
             width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin: 10px 0;
-            border: 2px solid var(--gold);
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
             display: none;
-        }
-
-        /* Health Grid */
-        .health-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .health-card {
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid;
-        }
-
-        .health-card.green { border-color: var(--success); background: rgba(0, 255, 136, 0.1); }
-        .health-card.yellow { border-color: var(--warning); background: rgba(255, 170, 0, 0.1); }
-        .health-card.red { border-color: var(--danger); background: rgba(255, 68, 68, 0.1); }
-        .health-card.blue { border-color: var(--info); background: rgba(0, 168, 255, 0.1); }
-
-        .health-value {
-            font-size: 2em;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-
-        /* Alert Cards */
-        .alert-card {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            border-left: 5px solid;
-        }
-
-        .alert-card.danger {
-            background: rgba(255, 68, 68, 0.1);
-            border-left-color: var(--danger);
-        }
-
-        .alert-item {
-            padding: 10px;
-            margin: 5px 0;
-            background: rgba(0,0,0,0.3);
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-small {
-            padding: 5px 10px;
-            font-size: 0.8em;
-            width: auto;
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             right: 0;
-            background: var(--dark-gray);
-            display: flex;
-            padding: 12px;
-            border-top: 2px solid var(--gold);
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
             z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
 
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            padding: 8px 5px;
-            color: var(--light-gold);
-            font-size: 0.75em;
-            transition: all 0.3s;
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .nav-item.active {
-            color: var(--gold);
-        }
-
-        .nav-icon {
-            font-size: 1.4em;
-            margin-bottom: 3px;
-        }
-
-        /* 3D Canvas */
-        #map3d {
-            background: #1a1a1a;
-        }
-
-        .hidden {
-            display: none;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .control-panel {
+                order: 2;
+            }
+            
+            .road-map-container {
+                order: 1;
+                height: 50vh;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">KANDITHWWM PROJECT</div>
-            <p class="tagline">Live Construction Map - 100% Transparent</p>
+            <div class="logo">KANDITHEEM ROAD PROJECT</div>
+            <div class="subtitle">Live Road Construction Progress Map</div>
         </div>
 
-        <!-- Project Health Overview -->
-        <div class="health-grid">
-            <div class="health-card green">
-                <div class="health-title">On Track</div>
-                <div class="health-value">6</div>
-                <div class="health-label">Areas</div>
-            </div>
-            <div class="health-card yellow">
-                <div class="health-title">In Progress</div>
-                <div class="health-value">4</div>
-                <div class="health-label">Areas</div>
-            </div>
-            <div class="health-card red">
-                <div class="health-title">Delayed</div>
-                <div class="health-value">2</div>
-                <div class="health-label">Areas</div>
-            </div>
-            <div class="health-card blue">
-                <div class="health-title">Workers On Site</div>
-                <div class="health-value">12/15</div>
-                <div class="health-label">Present</div>
-            </div>
-        </div>
+        <div class="dashboard">
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="completedLength">2.8km</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalLength">5.2km</div>
+                        <div class="stat-label">Total Road</div>
+                    </div>
+                </div>
 
-        <!-- Bottleneck Alerts -->
-        <div class="alert-card danger">
-            <h4><i class="fas fa-exclamation-triangle"></i> Critical Delays - Attention Needed</h4>
-            <div class="alert-item">
-                <strong>Electrical Work</strong> - Material delivery delayed by 3 days
-                <button class="btn-small" onclick="viewAreaDetails('electrical')">View Details</button>
-            </div>
-            <div class="alert-item">
-                <strong>Plumbing</strong> - 2 workers absent today
-                <button class="btn-small" onclick="viewAreaDetails('plumbing')">View Details</button>
-            </div>
-        </div>
+                <div class="panel-section">
+                    <div class="panel-title">Road Sections</div>
+                    <div id="progressList">
+                        <!-- Progress items will be populated here -->
+                    </div>
+                </div>
 
-        <!-- Map Controls -->
-        <div class="map-controls">
-            <button class="map-btn active" onclick="switchMapMode('2d')">
-                <i class="fas fa-map"></i> 2D Floor Plan
-            </button>
-            <button class="map-btn" onclick="switchMapMode('3d')">
-                <i class="fas fa-cube"></i> 3D View
-            </button>
-            <button class="map-btn" onclick="switchMapMode('satellite')">
-                <i class="fas fa-satellite"></i> Satellite
-            </button>
-        </div>
+                <div class="panel-section">
+                    <div class="panel-title">Add New Marker</div>
+                    <div class="form-group">
+                        <label>Location Name</label>
+                        <input type="text" id="markerName" placeholder="Enter location name">
+                    </div>
+                    <div class="form-group">
+                        <label>Progress Status</label>
+                        <select id="markerStatus">
+                            <option value="completed">Completed</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="not-started">Not Started</option>
+                            <option value="delayed">Delayed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="markerNotes" rows="3" placeholder="Add notes about this location"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload Photo</label>
+                        <input type="file" id="markerPhoto" accept="image/*">
+                    </div>
+                    <button onclick="addNewMarker()">Add Location Marker</button>
+                </div>
+            </div>
 
-        <!-- Progress Legend -->
-        <div class="progress-legend">
-            <div class="legend-item">
-                <div class="color-done"></div>
-                <span>Completed (100%)</span>
-            </div>
-            <div class="legend-item">
-                <div class="color-progress"></div>
-                <span>In Progress (1-99%)</span>
-            </div>
-            <div class="legend-item">
-                <div class="color-not-started"></div>
-                <span>Not Started (0%)</span>
-            </div>
-            <div class="legend-item">
-                <div class="color-delayed"></div>
-                <span>Delayed</span>
-            </div>
-        </div>
-
-        <!-- 2D Map Container -->
-        <div class="map-container" id="map2dContainer">
-            <div class="map-overlay">
-                <button class="btn-small" onclick="refreshMap()">
-                    <i class="fas fa-sync-alt"></i> Refresh
+            <!-- Road Map -->
+            <div class="road-map-container">
+                <button class="add-marker-btn" onclick="enableMarkerPlacement()">
+                    📍 Add Marker on Road
                 </button>
-            </div>
-            <div id="map2d"></div>
-        </div>
-
-        <!-- 3D Map Container -->
-        <div class="map-container hidden" id="map3dContainer">
-            <div class="map-overlay">
-                <button class="btn-small" onclick="reset3dView()">
-                    <i class="fas fa-home"></i> Reset View
-                </button>
-            </div>
-            <canvas id="map3d"></canvas>
-        </div>
-
-        <!-- Area Details Panel -->
-        <div class="area-details" id="areaDetails">
-            <div class="area-header">
-                <div class="area-title" id="detailAreaTitle">Area Details</div>
-                <div class="area-progress" id="detailAreaProgress">0%</div>
-            </div>
-            
-            <div class="progress-bar">
-                <div class="progress-fill" id="detailProgressBar" style="width: 0%"></div>
-            </div>
-
-            <div class="worker-grid" id="detailWorkers">
-                <!-- Workers will be populated here -->
-            </div>
-
-            <div class="discussion-panel" id="areaDiscussion">
-                <!-- Discussion messages will appear here -->
-            </div>
-
-            <div class="quick-update-card">
-                <h4><i class="fas fa-edit"></i> Quick Update</h4>
-                <div class="form-group">
-                    <label>Progress Update</label>
-                    <input type="range" id="progressUpdate" min="0" max="100" value="0" oninput="updateProgressValue(this.value)">
-                    <span id="progressValue">0%</span>
-                </div>
                 
-                <div class="form-group">
-                    <label>Add Note</label>
-                    <textarea id="updateNote" placeholder="What did you complete? Any issues?" rows="2"></textarea>
+                <div id="roadMap">
+                    <div class="road-line">
+                        <div class="road-progress" id="roadProgress" style="width: 54%"></div>
+                    </div>
+                    <!-- Markers will be added here dynamically -->
                 </div>
-                
-                <div class="form-group">
-                    <label>Upload Photo</label>
-                    <input type="file" id="updatePhoto" accept="image/*" onchange="previewUpdatePhoto()">
-                    <img id="photoPreview" class="photo-preview">
-                </div>
-                
-                <div class="form-group">
-                    <label>Report Delay (if any)</label>
-                    <select id="delayReason">
-                        <option value="">No delays</option>
-                        <option value="material">Materials delayed</option>
-                        <option value="workers">Workers shortage</option>
-                        <option value="weather">Weather issues</option>
-                        <option value="equipment">Equipment problems</option>
-                        <option value="other">Other issues</option>
-                    </select>
-                </div>
-                
-                <button class="btn-success" onclick="submitProgressUpdate()">
-                    <i class="fas fa-check"></i> Submit Update
-                </button>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('map')">
-            <div class="nav-icon">🗺️</div>
-            <div>Live Map</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('progress')">
-            <div class="nav-icon">📊</div>
-            <div>Progress</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('team')">
-            <div class="nav-icon">👷</div>
-            <div>Team</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('gallery')">
-            <div class="nav-icon">🖼️</div>
-            <div>Gallery</div>
+    <!-- Photo Modal -->
+    <div class="modal" id="photoModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Photo Details</h3>
+            <div id="modalContent">
+                <!-- Content will be loaded here -->
+            </div>
+            <button onclick="closeModal()" style="margin-top: 15px;">Close</button>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
-        // ===== PROJECT DATA =====
-        const projectAreas = {
-            'foundation': { 
-                name: 'Foundation Work', 
-                progress: 100, 
-                workers: ['Ahmed', 'Hassan'], 
-                color: 'done',
-                coordinates: [[4.1755, 73.5093], [4.1757, 73.5095]]
-            },
-            'structure': { 
-                name: 'Structural Framing', 
-                progress: 100, 
-                workers: ['Mohamed', 'Ibrahim'], 
-                color: 'done',
-                coordinates: [[4.1753, 73.5091], [4.1755, 73.5093]]
-            },
-            'electrical': { 
-                name: 'Electrical Work', 
-                progress: 65, 
-                workers: ['Ali', 'Omar', 'Khalid'], 
-                color: 'progress',
-                coordinates: [[4.1751, 73.5089], [4.1753, 73.5091]],
-                delayed: true,
-                delayReason: 'Materials delayed by supplier'
-            },
-            'plumbing': { 
-                name: 'Plumbing System', 
-                progress: 45, 
-                workers: ['Yusuf', 'Abdullah'], 
-                color: 'progress',
-                coordinates: [[4.1749, 73.5087], [4.1751, 73.5089]],
-                delayed: true,
-                delayReason: '2 workers absent today'
-            },
-            'walls': { 
-                name: 'Wall Construction', 
-                progress: 30, 
-                workers: ['Hamza', 'Bilal'], 
-                color: 'progress',
-                coordinates: [[4.1747, 73.5085], [4.1749, 73.5087]]
-            },
-            'roof': { 
-                name: 'Roof Work', 
-                progress: 0, 
-                workers: [], 
-                color: 'not-started',
-                coordinates: [[4.1745, 73.5083], [4.1747, 73.5085]]
-            }
-        };
+        // ===== ROAD DATA =====
+        const roadSections = [
+            { id: 1, name: 'Start Point - Junction A', progress: 100, status: 'completed', position: 10, photos: [] },
+            { id: 2, name: 'Junction A - Residential Area', progress: 100, status: 'completed', position: 25, photos: [] },
+            { id: 3, name: 'Residential Area - School', progress: 75, status: 'in-progress', position: 40, photos: [] },
+            { id: 4, name: 'School - Market Area', progress: 30, status: 'in-progress', position: 55, photos: [] },
+            { id: 5, name: 'Market Area - Hospital', progress: 0, status: 'delayed', position: 70, photos: [], delayReason: 'Material shortage' },
+            { id: 6, name: 'Hospital - End Point', progress: 0, status: 'not-started', position: 85, photos: [] }
+        ];
 
-        let currentMapMode = '2d';
-        let map2d = null;
-        let scene3d = null, camera3d = null, renderer3d = null;
-        let selectedArea = null;
+        let markers = [];
+        let isPlacingMarker = false;
 
         // ===== INITIALIZATION =====
         function initApp() {
-            init2dMap();
-            init3dMap();
-            updateHealthGrid();
+            renderProgressList();
+            renderRoadMarkers();
+            updateStats();
         }
 
-        // ===== 2D MAP SYSTEM =====
-        function init2dMap() {
-            map2d = L.map('map2d').setView([4.1755, 73.5093], 18);
+        // ===== PROGRESS LIST =====
+        function renderProgressList() {
+            const container = document.getElementById('progressList');
             
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: ''
-            }).addTo(map2d);
-
-            // Add project area rectangles
-            Object.keys(projectAreas).forEach(areaId => {
-                const area = projectAreas[areaId];
-                const color = getAreaColor(area);
-                
-                const rectangle = L.rectangle(area.coordinates, {
-                    color: color,
-                    fillColor: color,
-                    fillOpacity: 0.7,
-                    weight: 2
-                }).addTo(map2d);
-
-                rectangle.bindPopup(`
-                    <div style="min-width: 200px;">
-                        <h3 style="color: var(--gold); margin-bottom: 10px;">${area.name}</h3>
-                        <div style="margin-bottom: 5px;">
-                            <strong>Progress:</strong> ${area.progress}%
+            container.innerHTML = roadSections.map(section => `
+                <div class="progress-item ${section.status === 'in-progress' ? 'active' : ''}" 
+                     onclick="focusOnSection(${section.id})">
+                    <div style="display: flex; align-items: center;">
+                        <div class="progress-status status-${section.status}"></div>
+                        <div>
+                            <div style="font-weight: 600;">${section.name}</div>
+                            <div style="font-size: 0.8em; opacity: 0.7;">
+                                ${section.progress}% Complete
+                                ${section.delayReason ? ` • ${section.delayReason}` : ''}
+                            </div>
                         </div>
-                        <div style="margin-bottom: 5px;">
-                            <strong>Workers:</strong> ${area.workers.join(', ') || 'None'}
-                        </div>
-                        ${area.delayed ? `
-                        <div style="color: var(--danger); margin: 5px 0;">
-                            <i class="fas fa-exclamation-triangle"></i> DELAYED: ${area.delayReason}
-                        </div>
-                        ` : ''}
-                        <button onclick="viewAreaDetails('${areaId}')" 
-                                style="width: 100%; padding: 8px; background: var(--gold); color: black; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer;">
-                            View Details & Discuss
-                        </button>
                     </div>
-                `);
-
-                rectangle.on('click', function() {
-                    viewAreaDetails(areaId);
-                });
-            });
-        }
-
-        function getAreaColor(area) {
-            if (area.delayed) return '#ff4444';
-            if (area.progress === 100) return '#00ff88';
-            if (area.progress > 0) return '#ffaa00';
-            return '#666666';
-        }
-
-        // ===== 3D MAP SYSTEM =====
-        function init3dMap() {
-            const canvas = document.getElementById('map3d');
-            const width = canvas.parentElement.clientWidth;
-            const height = canvas.parentElement.clientHeight;
-
-            // Scene
-            scene3d = new THREE.Scene();
-            scene3d.background = new THREE.Color(0x1a1a1a);
-
-            // Camera
-            camera3d = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-            camera3d.position.set(10, 10, 10);
-            camera3d.lookAt(0, 0, 0);
-
-            // Renderer
-            renderer3d = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-            renderer3d.setSize(width, height);
-
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0x404040, 2);
-            scene3d.add(ambientLight);
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(10, 10, 5);
-            scene3d.add(directionalLight);
-
-            // Create simple building blocks for 3D view
-            create3dBuildingBlocks();
-
-            // Start animation
-            animate3d();
-        }
-
-        function create3dBuildingBlocks() {
-            // Foundation (green - completed)
-            const foundationGeometry = new THREE.BoxGeometry(8, 1, 6);
-            const foundationMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff88 });
-            const foundation = new THREE.Mesh(foundationGeometry, foundationMaterial);
-            foundation.position.y = 0.5;
-            scene3d.add(foundation);
-
-            // Structure (green - completed)
-            const structureGeometry = new THREE.BoxGeometry(7, 4, 5);
-            const structureMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff88 });
-            const structure = new THREE.Mesh(structureGeometry, structureMaterial);
-            structure.position.y = 3;
-            scene3d.add(structure);
-
-            // Electrical (yellow - in progress)
-            const electricalGeometry = new THREE.BoxGeometry(3, 2, 2);
-            const electricalMaterial = new THREE.MeshPhongMaterial({ color: 0xffaa00 });
-            const electrical = new THREE.Mesh(electricalGeometry, electricalMaterial);
-            electrical.position.set(0, 5, 0);
-            scene3d.add(electrical);
-
-            // Plumbing (yellow - in progress)
-            const plumbingGeometry = new THREE.BoxGeometry(2, 1.5, 2);
-            const plumbingMaterial = new THREE.MeshPhongMaterial({ color: 0xffaa00 });
-            const plumbing = new THREE.Mesh(plumbingGeometry, plumbingMaterial);
-            plumbing.position.set(3, 4.5, 1);
-            scene3d.add(plumbing);
-        }
-
-        function animate3d() {
-            requestAnimationFrame(animate3d);
-            renderer3d.render(scene3d, camera3d);
-        }
-
-        // ===== MAP MODE SWITCHING =====
-        function switchMapMode(mode) {
-            currentMapMode = mode;
-            
-            // Update button states
-            document.querySelectorAll('.map-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Show/hide map containers
-            document.getElementById('map2dContainer').classList.add('hidden');
-            document.getElementById('map3dContainer').classList.add('hidden');
-            
-            if (mode === '2d') {
-                document.getElementById('map2dContainer').classList.remove('hidden');
-                setTimeout(() => map2d.invalidateSize(), 100);
-            } else if (mode === '3d') {
-                document.getElementById('map3dContainer').classList.remove('hidden');
-            } else if (mode === 'satellite') {
-                document.getElementById('map2dContainer').classList.remove('hidden');
-                // Switch to satellite tiles
-                map2d.eachLayer(layer => {
-                    if (layer._url && layer._url.includes('openstreetmap')) {
-                        map2d.removeLayer(layer);
-                    }
-                });
-                L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-                    maxZoom: 20,
-                    subdomains: ['mt0','mt1','mt2','mt3']
-                }).addTo(map2d);
-            }
-        }
-
-        function reset3dView() {
-            camera3d.position.set(10, 10, 10);
-            camera3d.lookAt(0, 0, 0);
-        }
-
-        function refreshMap() {
-            if (currentMapMode === '2d' || currentMapMode === 'satellite') {
-                map2d.invalidateSize();
-            }
-        }
-
-        // ===== AREA DETAILS =====
-        function viewAreaDetails(areaId) {
-            selectedArea = areaId;
-            const area = projectAreas[areaId];
-            
-            // Update details panel
-            document.getElementById('detailAreaTitle').textContent = area.name;
-            document.getElementById('detailAreaProgress').textContent = area.progress + '%';
-            document.getElementById('detailAreaProgress').style.color = getAreaColor(area);
-            document.getElementById('detailProgressBar').style.width = area.progress + '%';
-            document.getElementById('detailProgressBar').style.background = `linear-gradient(90deg, ${getAreaColor(area)}, ${getAreaColor(area)})`;
-            
-            // Update workers list
-            const workersContainer = document.getElementById('detailWorkers');
-            if (area.workers.length > 0) {
-                workersContainer.innerHTML = area.workers.map(worker => `
-                    <div class="worker-card">
-                        <div class="worker-avatar">${worker.charAt(0)}</div>
-                        <div style="font-weight: bold;">${worker}</div>
-                        <div style="font-size: 0.8em; color: #aaa;">Worker</div>
+                    <div style="font-weight: bold; color: ${getStatusColor(section.status)}">
+                        ${section.status.replace('-', ' ').toUpperCase()}
                     </div>
-                `).join('');
-            } else {
-                workersContainer.innerHTML = '<div class="status info">No workers assigned</div>';
-            }
-            
-            // Load discussion
-            loadAreaDiscussion(areaId);
-            
-            // Show details panel
-            document.getElementById('areaDetails').classList.add('active');
-            
-            // Scroll to details
-            document.getElementById('areaDetails').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function loadAreaDiscussion(areaId) {
-            const discussionContainer = document.getElementById('areaDiscussion');
-            // Sample discussion data
-            const discussion = [
-                { user: 'Owner', message: 'How is the progress here?', time: '10:30 AM', type: 'owner' },
-                { user: 'Ahmed', message: 'Working on wiring, 65% done', time: '10:35 AM', type: 'worker' },
-                { user: 'Owner', message: 'Any issues with materials?', time: '10:40 AM', type: 'owner' },
-                { user: 'Ahmed', message: 'Yes, some cables delayed by supplier', time: '10:45 AM', type: 'worker' }
-            ];
-            
-            discussionContainer.innerHTML = discussion.map(msg => `
-                <div class="message ${msg.type}">
-                    <strong>${msg.user}:</strong> ${msg.message}
-                    <span class="message-time">${msg.time}</span>
                 </div>
             `).join('');
-            
-            discussionContainer.scrollTop = discussionContainer.scrollHeight;
         }
 
-        // ===== PROGRESS UPDATES =====
-        function updateProgressValue(value) {
-            document.getElementById('progressValue').textContent = value + '%';
-        }
-
-        function previewUpdatePhoto() {
-            const file = document.getElementById('updatePhoto').files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('photoPreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function submitProgressUpdate() {
-            if (!selectedArea) {
-                alert('Please select an area first');
-                return;
-            }
-
-            const progress = parseInt(document.getElementById('progressUpdate').value);
-            const note = document.getElementById('updateNote').value;
-            const delayReason = document.getElementById('delayReason').value;
-            
-            // Update project data
-            projectAreas[selectedArea].progress = progress;
-            projectAreas[selectedArea].delayed = delayReason !== '';
-            if (delayReason) {
-                projectAreas[selectedArea].delayReason = getDelayReasonText(delayReason);
-            }
-            
-            // Update color
-            projectAreas[selectedArea].color = progress === 100 ? 'done' : 
-                                              progress > 0 ? 'progress' : 'not-started';
-            
-            // Refresh display
-            updateHealthGrid();
-            refreshMapDisplay();
-            viewAreaDetails(selectedArea);
-            
-            // Show success message
-            alert('Progress updated successfully!');
-            
-            // Reset form
-            document.getElementById('progressUpdate').value = 0;
-            document.getElementById('progressValue').textContent = '0%';
-            document.getElementById('updateNote').value = '';
-            document.getElementById('delayReason').value = '';
-            document.getElementById('photoPreview').style.display = 'none';
-            document.getElementById('updatePhoto').value = '';
-        }
-
-        function getDelayReasonText(reason) {
-            const reasons = {
-                'material': 'Materials delayed by supplier',
-                'workers': 'Workers shortage',
-                'weather': 'Weather issues',
-                'equipment': 'Equipment problems',
-                'other': 'Other issues reported'
+        function getStatusColor(status) {
+            const colors = {
+                'completed': '#10b981',
+                'in-progress': '#f59e0b',
+                'not-started': '#ef4444',
+                'delayed': '#ef4444'
             };
-            return reasons[reason] || 'Delay reported';
+            return colors[status];
         }
 
-        function refreshMapDisplay() {
-            // Clear and recreate map layers
-            map2d.eachLayer(layer => {
-                if (layer instanceof L.Rectangle) {
-                    map2d.removeLayer(layer);
+        function focusOnSection(sectionId) {
+            const section = roadSections.find(s => s.id === sectionId);
+            if (section) {
+                // Highlight the section on the road
+                const marker = document.querySelector(`.marker[data-id="${sectionId}"]`);
+                if (marker) {
+                    marker.style.transform = 'translate(-50%, -50%) scale(1.3)';
+                    marker.style.zIndex = '10';
+                    setTimeout(() => {
+                        marker.style.transform = 'translate(-50%, -50%) scale(1)';
+                    }, 1000);
                 }
-            });
-            
-            // Readd areas with updated colors
-            Object.keys(projectAreas).forEach(areaId => {
-                const area = projectAreas[areaId];
-                const color = getAreaColor(area);
-                
-                const rectangle = L.rectangle(area.coordinates, {
-                    color: color,
-                    fillColor: color,
-                    fillOpacity: 0.7,
-                    weight: 2
-                }).addTo(map2d);
+            }
+        }
 
-                rectangle.bindPopup(`
-                    <div style="min-width: 200px;">
-                        <h3 style="color: var(--gold); margin-bottom: 10px;">${area.name}</h3>
-                        <div style="margin-bottom: 5px;">
-                            <strong>Progress:</strong> ${area.progress}%
+        // ===== ROAD MAP RENDERING =====
+        function renderRoadMarkers() {
+            const roadMap = document.getElementById('roadMap');
+            
+            // Clear existing markers
+            document.querySelectorAll('.marker').forEach(marker => marker.remove());
+            
+            // Add markers for each section
+            roadSections.forEach(section => {
+                const marker = document.createElement('div');
+                marker.className = `marker ${section.status}`;
+                marker.style.left = `${section.position}%`;
+                marker.setAttribute('data-id', section.id);
+                
+                marker.innerHTML = `
+                    <div class="marker-info">
+                        <strong>${section.name}</strong>
+                        <div style="margin: 8px 0; font-size: 0.9em;">
+                            Status: <span style="color: ${getStatusColor(section.status)}; font-weight: bold;">
+                                ${section.status.replace('-', ' ').toUpperCase()}
+                            </span>
                         </div>
-                        <div style="margin-bottom: 5px;">
-                            <strong>Workers:</strong> ${area.workers.join(', ') || 'None'}
+                        <div style="font-size: 0.9em;">
+                            Progress: ${section.progress}%
                         </div>
-                        ${area.delayed ? `
-                        <div style="color: var(--danger); margin: 5px 0;">
-                            <i class="fas fa-exclamation-triangle"></i> DELAYED: ${area.delayReason}
+                        ${section.delayReason ? `
+                        <div style="color: #ef4444; font-size: 0.8em; margin-top: 5px;">
+                            ⚠️ ${section.delayReason}
                         </div>
                         ` : ''}
-                        <button onclick="viewAreaDetails('${areaId}')" 
-                                style="width: 100%; padding: 8px; background: var(--gold); color: black; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer;">
-                            View Details & Discuss
+                        ${section.photos.length > 0 ? `
+                        <div style="margin-top: 10px;">
+                            <div style="font-size: 0.8em; margin-bottom: 5px;">Photos:</div>
+                            <div class="photo-gallery">
+                                ${section.photos.map(photo => `
+                                    <img src="${photo}" class="photo-thumb" onclick="showPhoto('${section.name}', '${photo}')">
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        <button onclick="editSection(${section.id})" 
+                                style="margin-top: 10px; padding: 5px 10px; font-size: 0.8em;">
+                            Edit
                         </button>
                     </div>
-                `);
-
-                rectangle.on('click', function() {
-                    viewAreaDetails(areaId);
-                });
+                `;
+                
+                roadMap.appendChild(marker);
             });
         }
 
-        // ===== HEALTH GRID UPDATES =====
-        function updateHealthGrid() {
-            let onTrack = 0, inProgress = 0, delayed = 0;
+        // ===== MARKER MANAGEMENT =====
+        function enableMarkerPlacement() {
+            isPlacingMarker = true;
+            alert('Click anywhere on the road to place a new marker');
             
-            Object.values(projectAreas).forEach(area => {
-                if (area.delayed) delayed++;
-                else if (area.progress === 100) onTrack++;
-                else if (area.progress > 0) inProgress++;
-            });
+            const roadMap = document.getElementById('roadMap');
+            roadMap.style.cursor = 'crosshair';
             
-            document.querySelector('.health-card.green .health-value').textContent = onTrack;
-            document.querySelector('.health-card.yellow .health-value').textContent = inProgress;
-            document.querySelector('.health-card.red .health-value').textContent = delayed;
+            roadMap.onclick = function(e) {
+                if (isPlacingMarker) {
+                    const rect = roadMap.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    
+                    // Show marker placement form
+                    document.getElementById('markerName').value = `Road Point at ${Math.round(x)}%`;
+                    document.getElementById('markerName').focus();
+                    
+                    // Store the position for later use
+                    window.newMarkerPosition = x;
+                    
+                    isPlacingMarker = false;
+                    roadMap.style.cursor = 'default';
+                    roadMap.onclick = null;
+                }
+            };
         }
 
-        // ===== TAB SWITCHING =====
-        function switchTab(tabName) {
-            // Simple tab switching - you can expand this
-            alert(`Switching to ${tabName} tab - This would show ${tabName} content`);
+        function addNewMarker() {
+            const name = document.getElementById('markerName').value;
+            const status = document.getElementById('markerStatus').value;
+            const notes = document.getElementById('markerNotes').value;
+            const photoFile = document.getElementById('markerPhoto').files[0];
             
-            // Update nav active state
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            if (!name) {
+                alert('Please enter a location name');
+                return;
+            }
+            
+            const position = window.newMarkerPosition || 50; // Default to middle if not placed
+            
+            // Handle photo upload
+            let photoUrl = '';
+            if (photoFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoUrl = e.target.result;
+                    completeMarkerAddition(name, status, notes, photoUrl, position);
+                };
+                reader.readAsDataURL(photoFile);
+            } else {
+                completeMarkerAddition(name, status, notes, photoUrl, position);
+            }
+        }
+
+        function completeMarkerAddition(name, status, notes, photoUrl, position) {
+            const newSection = {
+                id: Date.now(),
+                name: name,
+                progress: status === 'completed' ? 100 : status === 'in-progress' ? 50 : 0,
+                status: status,
+                position: position,
+                photos: photoUrl ? [photoUrl] : [],
+                notes: notes
+            };
+            
+            roadSections.push(newSection);
+            renderProgressList();
+            renderRoadMarkers();
+            updateStats();
+            
+            // Clear form
+            document.getElementById('markerName').value = '';
+            document.getElementById('markerNotes').value = '';
+            document.getElementById('markerPhoto').value = '';
+            document.getElementById('markerStatus').value = 'completed';
+            
+            alert('New location marker added successfully!');
+        }
+
+        function editSection(sectionId) {
+            const section = roadSections.find(s => s.id === sectionId);
+            if (section) {
+                document.getElementById('markerName').value = section.name;
+                document.getElementById('markerStatus').value = section.status;
+                document.getElementById('markerNotes').value = section.notes || '';
+                
+                // Scroll to form
+                document.querySelector('.control-panel').scrollTop = document.querySelector('.control-panel').scrollHeight;
+            }
+        }
+
+        // ===== STATS UPDATES =====
+        function updateStats() {
+            const totalLength = 5.2; // km
+            const completedLength = roadSections.reduce((sum, section) => {
+                return sum + (section.progress / 100) * (totalLength / roadSections.length);
+            }, 0);
+            
+            document.getElementById('completedLength').textContent = completedLength.toFixed(1) + 'km';
+            document.getElementById('totalLength').textContent = totalLength.toFixed(1) + 'km';
+            
+            // Update progress bar
+            const totalProgress = roadSections.reduce((sum, section) => sum + section.progress, 0) / roadSections.length;
+            document.getElementById('roadProgress').style.width = totalProgress + '%';
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function showPhoto(title, photoUrl) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalContent').innerHTML = `
+                <img src="${photoUrl}" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
+                <p>Location: ${title}</p>
+            `;
+            document.getElementById('photoModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('photoModal').style.display = 'none';
         }
 
         // Initialize the app
