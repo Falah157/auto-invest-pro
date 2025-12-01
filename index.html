@@ -3,28 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KANDITHEEM - Live Animated Road Map</title>
+    <title>EduConnect Pro - Complete Workflow</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         :root {
-            --primary: #2563eb;
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --road-color: #4b5563;
-            --road-complete: #374151;
+            --info: #3b82f6;
+            --gray-100: #f3f4f6;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
             min-height: 100vh;
             padding: 20px;
+            color: var(--gray-900);
         }
 
         .container {
@@ -33,17 +37,16 @@
         }
 
         .header {
-            background: rgba(255,255,255,0.95);
-            padding: 25px;
+            background: white;
+            padding: 30px;
             border-radius: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             text-align: center;
-            backdrop-filter: blur(10px);
         }
 
         .logo {
-            font-size: 2.5em;
+            font-size: 2.8em;
             font-weight: bold;
             background: linear-gradient(135deg, var(--primary), #7c3aed);
             -webkit-background-clip: text;
@@ -51,340 +54,361 @@
             margin-bottom: 10px;
         }
 
-        /* Main Layout */
-        .dashboard {
+        .subtitle {
+            color: var(--gray-800);
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+
+        /* Workflow Container */
+        .workflow-container {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 25px;
-            height: 85vh;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            min-height: 80vh;
         }
 
-        /* Control Panel */
-        .control-panel {
-            background: rgba(255,255,255,0.95);
+        /* Flow Navigation */
+        .flow-nav {
+            background: white;
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow-y: auto;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
         }
 
-        .panel-section {
-            margin-bottom: 30px;
-        }
-
-        .panel-title {
-            font-size: 1.3em;
+        .flow-title {
+            font-size: 1.5em;
             font-weight: bold;
-            color: #1f2937;
+            color: var(--primary);
             margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 3px solid #e5e7eb;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--gray-100);
         }
 
-        /* Road Map Container */
-        .road-map-container {
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-
-        #roadMap {
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
-            position: relative;
-            background: linear-gradient(45deg, #1e3a8a, #3b82f6);
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
-        }
-
-        /* Animated Road */
-        .road {
-            position: absolute;
-            top: 45%;
-            left: 5%;
-            right: 5%;
-            height: 120px;
-            background: var(--road-color);
-            border-radius: 60px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .road-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background: var(--road-complete);
-            border-radius: 60px;
-            width: 0%;
-            transition: width 1s ease;
-        }
-
-        .road-lines {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: repeating-linear-gradient(
-                90deg,
-                yellow,
-                yellow 20px,
-                transparent 20px,
-                transparent 40px
-            );
-            transform: translateY(-50%);
-            animation: roadLineMove 2s linear infinite;
-        }
-
-        @keyframes roadLineMove {
-            0% { transform: translateY(-50%) translateX(0); }
-            100% { transform: translateY(-50%) translateX(-40px); }
-        }
-
-        /* Animated Elements */
-        .worker {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: #f59e0b;
-            border-radius: 50%;
-            top: 42%;
-            animation: workerMove 3s linear infinite;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .worker::before {
-            content: '👷';
-            position: absolute;
-            top: -5px;
-            left: 2px;
-            font-size: 24px;
-        }
-
-        @keyframes workerMove {
-            0% { transform: translateX(-50px) translateY(0px); }
-            25% { transform: translateX(0px) translateY(-10px); }
-            50% { transform: translateX(50px) translateY(0px); }
-            75% { transform: translateX(100px) translateY(10px); }
-            100% { transform: translateX(150px) translateY(0px); }
-        }
-
-        .vehicle {
-            position: absolute;
-            width: 60px;
-            height: 30px;
-            background: #ef4444;
-            border-radius: 8px;
-            top: 48%;
-            animation: vehicleMove 8s linear infinite;
-            display: none;
-        }
-
-        .vehicle::before {
-            content: '🚗';
-            position: absolute;
-            top: -15px;
-            left: 5px;
-            font-size: 30px;
-        }
-
-        @keyframes vehicleMove {
-            0% { transform: translateX(-100px); }
-            100% { transform: translateX(1200px); }
-        }
-
-        .construction-machine {
-            position: absolute;
-            width: 80px;
-            height: 50px;
-            top: 40%;
-            animation: machineWork 2s ease-in-out infinite;
-        }
-
-        .construction-machine::before {
-            content: '🚜';
-            font-size: 40px;
-            position: absolute;
-        }
-
-        @keyframes machineWork {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-5px) rotate(2deg); }
-        }
-
-        /* Progress Items */
-        .progress-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .flow-step {
             padding: 15px;
             margin: 10px 0;
-            background: #f8fafc;
-            border-radius: 15px;
+            background: var(--gray-100);
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            border-left: 4px solid transparent;
         }
 
-        .progress-item:hover {
-            transform: translateX(8px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            border-color: var(--primary);
+        .flow-step:hover {
+            transform: translateX(5px);
+            background: #e0e7ff;
         }
 
-        .progress-item.active {
+        .flow-step.active {
+            background: #e0e7ff;
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .step-icon {
+            width: 30px;
+            height: 30px;
             background: var(--primary);
             color: white;
-        }
-
-        .progress-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .progress-icon {
-            width: 40px;
-            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2em;
+            margin-right: 10px;
         }
 
-        .icon-completed { background: var(--success); color: white; }
-        .icon-progress { background: var(--warning); color: white; }
-        .icon-delayed { background: var(--danger); color: white; }
-
-        .progress-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .progress-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-
-        .btn-edit { background: #dbeafe; color: var(--primary); }
-        .btn-delete { background: #fee2e2; color: var(--danger); }
-
-        /* Progress Slider */
-        .progress-slider {
-            width: 100%;
-            margin: 10px 0;
-        }
-
-        /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, var(--primary), #7c3aed);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-        }
-
-        .stat-number {
-            font-size: 2.2em;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-            font-size: 1em;
-        }
-
-        button:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-        }
-
-        /* Live Activity */
-        .live-activity {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 20px;
-            max-height: 200px;
+        /* Workflow Content */
+        .workflow-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             overflow-y: auto;
         }
 
-        .activity-item {
-            padding: 10px;
-            margin: 5px 0;
-            background: white;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .content-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--gray-900);
+        }
+
+        .content-subtitle {
+            color: var(--gray-800);
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        /* Progress Flow */
+        .progress-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .flow-node {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+        }
+
+        .flow-node.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        .flow-node.active {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 5px rgba(79, 70, 229, 0.2);
+        }
+
+        .flow-connector {
+            flex: 1;
+            height: 3px;
+            background: var(--gray-100);
+            margin: 0 10px;
+        }
+
+        .flow-connector.completed {
+            background: var(--success);
+        }
+
+        .flow-label {
+            position: absolute;
+            top: 60px;
             font-size: 0.9em;
+            color: var(--gray-800);
+            text-align: center;
+            width: 100px;
+            left: -25px;
+        }
+
+        /* User Roles */
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .role-card {
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .role-card.student {
+            background: linear-gradient(135deg, #dbeafe, #93c5fd);
+            border: 2px solid var(--info);
+        }
+
+        .role-card.parent {
+            background: linear-gradient(135deg, #fef3c7, #fcd34d);
+            border: 2px solid var(--warning);
+        }
+
+        .role-card.teacher {
+            background: linear-gradient(135deg, #dcfce7, #86efac);
+            border: 2px solid var(--success);
+        }
+
+        .role-card.admin {
+            background: linear-gradient(135deg, #f3e8ff, #d8b4fe);
+            border: 2px solid #a855f7;
+        }
+
+        .role-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        /* Dashboard Preview */
+        .dashboard-preview {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .widget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .widget {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .widget-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        /* Flow Diagram */
+        .flow-diagram {
+            background: var(--gray-100);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .flow-arrow {
+            margin: 0 20px;
+            color: var(--primary);
+            font-size: 1.5em;
+        }
+
+        /* Features List */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            padding: 20px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            margin: 40px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 30px 0;
+        }
+
+        .timeline-marker {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: var(--gray-100);
+            padding: 20px;
+            border-radius: 10px;
+            margin-left: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         /* Responsive */
         @media (max-width: 1024px) {
-            .dashboard {
+            .workflow-container {
                 grid-template-columns: 1fr;
+            }
+            
+            .flow-nav {
+                position: static;
             }
         }
     </style>
@@ -392,346 +416,352 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">KANDITHEEM ISLAND ROAD PROJECT</div>
-            <div style="color: #6b7280; font-size: 1.1em;">Live Animated Construction Map - Real-time Worker & Vehicle Tracking</div>
+            <div class="logo">EduConnect Pro</div>
+            <div class="subtitle">Complete Parent-Student Workflow Management System</div>
+            <div style="margin-top: 15px; color: var(--gray-800);">
+                From Enrollment to Graduation - Every Step Managed
+            </div>
         </div>
 
-        <div class="dashboard">
-            <!-- Control Panel -->
-            <div class="control-panel">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number" id="completedPercent">54%</div>
-                        <div class="stat-label">Road Completed</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="activeWorkers">8</div>
-                        <div class="stat-label">Workers Active</div>
+        <div class="workflow-container">
+            <!-- Navigation -->
+            <div class="flow-nav">
+                <div class="flow-title">📋 Workflow Steps</div>
+                <div class="flow-step active" onclick="showStep('overview')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="step-icon">1</div>
+                        <div>System Overview</div>
                     </div>
                 </div>
-
-                <div class="panel-section">
-                    <div class="panel-title">🏗️ Road Sections Control</div>
-                    <div id="progressList">
-                        <!-- Dynamic content will be loaded here -->
+                <div class="flow-step" onclick="showStep('roles')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="step-icon">2</div>
+                        <div>User Roles & Permissions</div>
                     </div>
                 </div>
-
-                <div class="panel-section">
-                    <div class="panel-title">📍 Add New Work Zone</div>
-                    <div class="form-group">
-                        <label>Zone Name</label>
-                        <input type="text" id="zoneName" placeholder="e.g., Beach Road Section">
+                <div class="flow-step" onclick="showStep('student-flow')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="step-icon">3</div>
+                        <div>Student Daily Workflow</div>
                     </div>
-                    <div class="form-group">
-                        <label>Progress Percentage</label>
-                        <input type="range" id="zoneProgress" min="0" max="100" value="0" class="progress-slider">
-                        <div style="text-align: center; font-weight: bold; color: var(--primary);" id="progressValue">0%</div>
-                    </div>
-                    <div class="form-group">
-                        <label>Workers Assigned</label>
-                        <input type="number" id="zoneWorkers" min="0" max="20" value="2" placeholder="Number of workers">
-                    </div>
-                    <button onclick="addWorkZone()">➕ Add Work Zone</button>
                 </div>
-
-                <div class="panel-section">
-                    <div class="panel-title">📊 Live Activity</div>
-                    <div class="live-activity" id="liveActivity">
-                        <div class="activity-item">🚜 Excavator started working on North Section</div>
-                        <div class="activity-item">👷 4 workers assigned to Beach Road</div>
-                        <div class="activity-item">🔄 Progress updated: Main Road 65% complete</div>
+                <div class="flow-step" onclick="showStep('parent-flow')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="step-icon">4</div>
+                        <div>Parent Monitoring Flow</div>
+                    </div>
+                </div>
+                <div class="flow-step" onclick="showStep('communication')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="step-icon">5</div>
+                        <div>Communication Workflow</div>
+                    </div>
+                </div>
+                <div class="flow-step" onclick="showStep('analytics')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="step-icon">6</div>
+                        <div>Analytics & Reporting</div>
+                    </div>
+                </div>
+                <div class="flow-step" onclick="showStep('integration')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="step-icon">7</div>
+                        <div>System Integration</div>
+                    </div>
+                </div>
+                <div class="flow-step" onclick="showStep('notifications')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="step-icon">8</div>
+                        <div>Notification Flow</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Animated Road Map -->
-            <div class="road-map-container">
-                <div id="roadMap">
-                    <!-- Road -->
-                    <div class="road">
-                        <div class="road-progress" id="roadProgressFill"></div>
-                        <div class="road-lines"></div>
+            <!-- Content Area -->
+            <div class="workflow-content" id="workflowContent">
+                <!-- Step 1: Overview -->
+                <div id="step-overview" class="step-content">
+                    <div class="content-header">
+                        <div>
+                            <div class="content-title">🚀 System Overview</div>
+                            <div class="content-subtitle">Complete Workflow Management for Education</div>
+                        </div>
+                        <div style="color: var(--success); font-weight: bold; background: #d1fae5; padding: 8px 16px; border-radius: 20px;">
+                            📊 8-Step Workflow
+                        </div>
                     </div>
-                    
-                    <!-- Animated elements -->
-                    <div class="worker" style="left: 15%;"></div>
-                    <div class="worker" style="left: 25%; animation-delay: 0.5s;"></div>
-                    <div class="construction-machine" style="left: 40%;"></div>
-                    <div class="worker" style="left: 60%; animation-delay: 1s;"></div>
-                    <div class="vehicle" id="vehicle1"></div>
-                    <div class="vehicle" id="vehicle2" style="animation-delay: 4s;"></div>
+
+                    <!-- Progress Flow -->
+                    <div class="progress-flow">
+                        <div class="flow-node completed">🎯</div>
+                        <div class="flow-connector completed"></div>
+                        <div class="flow-node active">👥</div>
+                        <div class="flow-connector"></div>
+                        <div class="flow-node">📚</div>
+                        <div class="flow-connector"></div>
+                        <div class="flow-node">👁️</div>
+                        <div class="flow-connector"></div>
+                        <div class="flow-node">💬</div>
+                        <div class="flow-connector"></div>
+                        <div class="flow-node">📊</div>
+                        <div class="flow-connector"></div>
+                        <div class="flow-node">🔗</div>
+                        <div class="flow-connector"></div>
+                        <div class="flow-node">🔔</div>
+                    </div>
+
+                    <div class="dashboard-preview">
+                        <h3 style="color: white; margin-bottom: 20px;">📱 Parent Dashboard Preview</h3>
+                        <div class="widget-grid">
+                            <div class="widget">
+                                <div>Attendance</div>
+                                <div class="widget-value">95%</div>
+                                <div style="font-size: 0.8em;">This Month</div>
+                            </div>
+                            <div class="widget">
+                                <div>Assignments</div>
+                                <div class="widget-value">3</div>
+                                <div style="font-size: 0.8em;">Pending</div>
+                            </div>
+                            <div class="widget">
+                                <div>Grades</div>
+                                <div class="widget-value">A-</div>
+                                <div style="font-size: 0.8em;">Average</div>
+                            </div>
+                            <div class="widget">
+                                <div>Events</div>
+                                <div class="widget-value">2</div>
+                                <div style="font-size: 0.8em;">This Week</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 15px 0; color: var(--gray-900);">📈 Key Workflow Components</h3>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">📅</div>
+                            <h4>Smart Scheduling</h4>
+                            <p>Auto-generates study timetables based on workload and performance</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🤖</div>
+                            <h4>AI-Powered Insights</h4>
+                            <p>Predictive analysis of performance trends and early warning system</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🔒</div>
+                            <h4>Secure Communication</h4>
+                            <p>Encrypted messaging between parents, teachers, and students</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h4>Progress Analytics</h4>
+                            <p>Visual dashboards showing academic and extracurricular growth</p>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Step 2: User Roles -->
+                <div id="step-roles" class="step-content" style="display: none;">
+                    <div class="content-header">
+                        <div>
+                            <div class="content-title">👥 User Roles & Permissions</div>
+                            <div class="content-subtitle">Role-based access and functionality</div>
+                        </div>
+                    </div>
+
+                    <div class="role-grid">
+                        <div class="role-card student">
+                            <div class="role-icon">👨‍🎓</div>
+                            <h3>Student</h3>
+                            <p style="margin-top: 10px; opacity: 0.9;">Homework tracker, grade view, study planner, resource access</p>
+                            <div style="margin-top: 15px; font-size: 0.9em;">
+                                <div>✓ View assignments</div>
+                                <div>✓ Submit work</div>
+                                <div>✓ Track grades</div>
+                                <div>✓ Join study groups</div>
+                            </div>
+                        </div>
+                        <div class="role-card parent">
+                            <div class="role-icon">👨‍👩‍👧‍👦</div>
+                            <h3>Parent</h3>
+                            <p style="margin-top: 10px; opacity: 0.9;">Progress monitoring, communication, fee payment, attendance tracking</p>
+                            <div style="margin-top: 15px; font-size: 0.9em;">
+                                <div>✓ View child's progress</div>
+                                <div>✓ Message teachers</div>
+                                <div>✓ Pay fees online</div>
+                                <div>✓ Set study limits</div>
+                            </div>
+                        </div>
+                        <div class="role-card teacher">
+                            <div class="role-icon">👨‍🏫</div>
+                            <h3>Teacher</h3>
+                            <p style="margin-top: 10px; opacity: 0.9;">Grade management, assignment creation, parent communication, analytics</p>
+                            <div style="margin-top: 15px; font-size: 0.9em;">
+                                <div>✓ Create assignments</div>
+                                <div>✓ Grade submissions</div>
+                                <div>✓ Send announcements</div>
+                                <div>✓ View class analytics</div>
+                            </div>
+                        </div>
+                        <div class="role-card admin">
+                            <div class="role-icon">👨‍💼</div>
+                            <h3>Admin</h3>
+                            <p style="margin-top: 10px; opacity: 0.9;">System management, user accounts, reports, fee structure, settings</p>
+                            <div style="margin-top: 15px; font-size: 0.9em;">
+                                <div>✓ Manage users</div>
+                                <div>✓ Generate reports</div>
+                                <div>✓ Set fee structure</div>
+                                <div>✓ System configuration</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 40px 0 20px 0; color: var(--gray-900);">🔄 Role Interaction Flow</h3>
+                    <div class="flow-diagram">
+                        <div class="flow-row">
+                            <div style="font-weight: bold; min-width: 100px;">Student</div>
+                            <div style="flex: 1; margin-left: 20px;">
+                                Submits assignment → Receives grade → Views progress → Joins study group
+                            </div>
+                        </div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-row">
+                            <div style="font-weight: bold; min-width: 100px;">Teacher</div>
+                            <div style="flex: 1; margin-left: 20px;">
+                                Reviews submission → Grades work → Provides feedback → Updates parent
+                            </div>
+                        </div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-row">
+                            <div style="font-weight: bold; min-width: 100px;">Parent</div>
+                            <div style="flex: 1; margin-left: 20px;">
+                                Receives notification → Views grade → Messages teacher → Sets study schedule
+                            </div>
+                        </div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-row">
+                            <div style="font-weight: bold; min-width: 100px;">Admin</div>
+                            <div style="flex: 1; margin-left: 20px;">
+                                Monitors system → Generates reports → Manages accounts → Ensures compliance
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Student Workflow -->
+                <div id="step-student-flow" class="step-content" style="display: none;">
+                    <div class="content-header">
+                        <div>
+                            <div class="content-title">📚 Student Daily Workflow</div>
+                            <div class="content-subtitle">From morning check-in to homework completion</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker">🌅</div>
+                            <div class="timeline-content">
+                                <h4>7:00 AM - Morning Check-in</h4>
+                                <p>Student opens app → Views today's schedule → Checks homework due → Receives daily motivation quote</p>
+                                <div style="margin-top: 10px; padding: 10px; background: #dbeafe; border-radius: 5px;">
+                                    <strong>System Action:</strong> Sends attendance notification to parent
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-marker">🏫</div>
+                            <div class="timeline-content">
+                                <h4>8:00 AM - School Hours</h4>
+                                <p>App runs in background → Tracks attendance → Logs quiz scores → Notes teacher announcements</p>
+                                <div style="margin-top: 10px; padding: 10px; background: #dcfce7; border-radius: 5px;">
+                                    <strong>Parent Alert:</strong> "Child marked present in Math class"
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-marker">📝</div>
+                            <div class="timeline-content">
+                                <h4>3:00 PM - After School</h4>
+                                <p>Review assignments → Set priority order → Allocate study time → Start timer for focused study</p>
+                                <div style="margin-top: 10px; padding: 10px; background: #fef3c7; border-radius: 5px;">
+                                    <strong>AI Suggestion:</strong> "Start with Math homework - due tomorrow"
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-marker">📱</div>
+                            <div class="timeline-content">
+                                <h4>5:00 PM - Study Session</h4>
+                                <p>Pomodoro timer activated → Resource access → Doubt resolution → Progress tracking</p>
+                                <div style="margin-top: 10px; padding: 10px; background: #e0e7ff; border-radius: 5px;">
+                                    <strong>Auto-log:</strong> "Completed 2 study sessions (60 mins total)"
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-marker">✅</div>
+                            <div class="timeline-content">
+                                <h4>7:00 PM - Work Submission</h4>
+                                <p>Scan/upload homework → Submit to teacher → Mark as complete → Update progress bar</p>
+                                <div style="margin-top: 10px; padding: 10px; background: #fce7f3; border-radius: 5px;">
+                                    <strong>Notification:</strong> "Assignment submitted successfully to Mr. Smith"
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-marker">📊</div>
+                            <div class="timeline-content">
+                                <h4>8:00 PM - Daily Review</h4>
+                                <p>View daily productivity → Check grades received → Plan tomorrow's schedule → Set goals</p>
+                                <div style="margin-top: 10px; padding: 10px; background: #d1fae5; border-radius: 5px;">
+                                    <strong>Summary:</strong> "Today: 4 hours study, 2 assignments submitted, Math quiz: 85%"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="showStep('parent-flow')">
+                            Next: Parent Workflow →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Additional steps would continue here... -->
             </div>
         </div>
     </div>
 
     <script>
-        // ===== ROAD DATA =====
-        let roadSections = [
-            { 
-                id: 1, 
-                name: 'North Beach Road', 
-                progress: 100, 
-                workers: 3,
-                position: 20,
-                status: 'completed'
-            },
-            { 
-                id: 2, 
-                name: 'Main Highway Section', 
-                progress: 65, 
-                workers: 4,
-                position: 40,
-                status: 'progress'
-            },
-            { 
-                id: 3, 
-                name: 'School Access Road', 
-                progress: 30, 
-                workers: 2,
-                position: 60,
-                status: 'progress'
-            },
-            { 
-                id: 4, 
-                name: 'Market Connection', 
-                progress: 0, 
-                workers: 0,
-                position: 80,
-                status: 'delayed'
-            }
-        ];
-
-        // ===== INITIALIZATION =====
-        function initApp() {
-            renderProgressList();
-            updateRoadProgress();
-            updateAnimations();
-            startLiveActivity();
-            
-            // Initialize progress slider display
-            document.getElementById('zoneProgress').addEventListener('input', function() {
-                document.getElementById('progressValue').textContent = this.value + '%';
-            });
-        }
-
-        // ===== PROGRESS LIST RENDERING =====
-        function renderProgressList() {
-            const container = document.getElementById('progressList');
-            
-            if (roadSections.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #6b7280; padding: 20px;">No work zones added yet</div>';
-                return;
-            }
-            
-            container.innerHTML = roadSections.map(section => `
-                <div class="progress-item ${section.status === 'progress' ? 'active' : ''}">
-                    <div class="progress-info">
-                        <div class="progress-icon icon-${section.status}">
-                            ${getStatusIcon(section.status)}
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 1.1em;">${section.name}</div>
-                            <div style="font-size: 0.9em; opacity: 0.8; margin: 5px 0;">
-                                ${section.workers} workers • ${section.progress}% complete
-                            </div>
-                            <input type="range" 
-                                   class="progress-slider" 
-                                   value="${section.progress}" 
-                                   min="0" max="100"
-                                   onchange="updateSectionProgress(${section.id}, this.value)"
-                                   style="width: 100%;">
-                        </div>
-                    </div>
-                    <div class="progress-controls">
-                        <button class="progress-btn btn-edit" onclick="editSection(${section.id})">
-                            ✏️
-                        </button>
-                        <button class="progress-btn btn-delete" onclick="deleteSection(${section.id})">
-                            🗑️
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function getStatusIcon(status) {
-            const icons = {
-                'completed': '✅',
-                'progress': '🔄',
-                'delayed': '⚠️'
-            };
-            return icons[status] || '📌';
-        }
-
-        // ===== PROGRESS UPDATES =====
-        function updateSectionProgress(sectionId, progress) {
-            const section = roadSections.find(s => s.id === sectionId);
-            if (section) {
-                section.progress = parseInt(progress);
-                section.status = progress == 100 ? 'completed' : progress > 0 ? 'progress' : 'delayed';
-                
-                renderProgressList();
-                updateRoadProgress();
-                updateAnimations();
-                addActivity(`Progress updated: ${section.name} ${progress}% complete`);
-            }
-        }
-
-        function updateRoadProgress() {
-            const totalProgress = roadSections.reduce((sum, section) => sum + section.progress, 0) / roadSections.length;
-            document.getElementById('roadProgressFill').style.width = totalProgress + '%';
-            document.getElementById('completedPercent').textContent = Math.round(totalProgress) + '%';
-            
-            // Update workers count
-            const activeWorkers = roadSections.reduce((sum, section) => sum + section.workers, 0);
-            document.getElementById('activeWorkers').textContent = activeWorkers;
-        }
-
-        // ===== ANIMATION UPDATES =====
-        function updateAnimations() {
-            const totalProgress = roadSections.reduce((sum, section) => sum + section.progress, 0) / roadSections.length;
-            const vehicles = document.querySelectorAll('.vehicle');
-            const workers = document.querySelectorAll('.worker');
-            const machines = document.querySelectorAll('.construction-machine');
-            
-            // Show vehicles only if road is somewhat complete
-            if (totalProgress > 70) {
-                vehicles.forEach(vehicle => {
-                    vehicle.style.display = 'block';
-                    vehicle.style.animationPlayState = 'running';
-                });
-                addActivity('🚗 Vehicles started using the completed road sections');
-            } else {
-                vehicles.forEach(vehicle => {
-                    vehicle.style.display = 'none';
-                    vehicle.style.animationPlayState = 'paused';
-                });
-            }
-            
-            // Update worker count based on actual workers
-            const activeWorkers = roadSections.reduce((sum, section) => sum + section.workers, 0);
-            
-            // Show/hide workers based on active count
-            workers.forEach((worker, index) => {
-                if (index < Math.min(activeWorkers, 4)) {
-                    worker.style.display = 'block';
-                    worker.style.animationPlayState = 'running';
-                } else {
-                    worker.style.display = 'none';
-                    worker.style.animationPlayState = 'paused';
-                }
+        // Workflow Navigation
+        function showStep(stepId) {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(step => {
+                step.style.display = 'none';
             });
             
-            // Show machines only if work is in progress
-            machines.forEach(machine => {
-                if (totalProgress < 90 && totalProgress > 0) {
-                    machine.style.display = 'block';
-                    machine.style.animationPlayState = 'running';
-                } else {
-                    machine.style.display = 'none';
-                    machine.style.animationPlayState = 'paused';
-                }
+            // Remove active class from all nav items
+            document.querySelectorAll('.flow-step').forEach(item => {
+                item.classList.remove('active');
             });
+            
+            // Show selected step
+            document.getElementById(`step-${stepId}`).style.display = 'block';
+            
+            // Add active class to clicked nav item
+            event.currentTarget.classList.add('active');
         }
 
-        // ===== WORK ZONE MANAGEMENT =====
-        function addWorkZone() {
-            const name = document.getElementById('zoneName').value;
-            const progress = parseInt(document.getElementById('zoneProgress').value);
-            const workers = parseInt(document.getElementById('zoneWorkers').value);
-            
-            if (!name) {
-                alert('Please enter a zone name');
-                return;
-            }
-            
-            const newSection = {
-                id: Date.now(),
-                name: name,
-                progress: progress,
-                workers: workers,
-                position: Math.random() * 60 + 20, // Random position between 20-80%
-                status: progress == 100 ? 'completed' : progress > 0 ? 'progress' : 'delayed'
-            };
-            
-            roadSections.push(newSection);
-            renderProgressList();
-            updateRoadProgress();
-            updateAnimations();
-            
-            // Clear form
-            document.getElementById('zoneName').value = '';
-            document.getElementById('zoneProgress').value = 0;
-            document.getElementById('progressValue').textContent = '0%';
-            document.getElementById('zoneWorkers').value = 2;
-            
-            addActivity(`📍 New work zone added: ${name} with ${workers} workers`);
-        }
-
-        function editSection(sectionId) {
-            const section = roadSections.find(s => s.id === sectionId);
-            if (section) {
-                document.getElementById('zoneName').value = section.name;
-                document.getElementById('zoneProgress').value = section.progress;
-                document.getElementById('progressValue').textContent = section.progress + '%';
-                document.getElementById('zoneWorkers').value = section.workers;
-                
-                // Remove the section being edited
-                roadSections = roadSections.filter(s => s.id !== sectionId);
-                renderProgressList();
-                updateRoadProgress();
-            }
-        }
-
-        function deleteSection(sectionId) {
-            if (confirm('Are you sure you want to delete this work zone?')) {
-                const section = roadSections.find(s => s.id === sectionId);
-                roadSections = roadSections.filter(s => s.id !== sectionId);
-                renderProgressList();
-                updateRoadProgress();
-                updateAnimations();
-                addActivity(`🗑️ Work zone removed: ${section.name}`);
-            }
-        }
-
-        // ===== LIVE ACTIVITY =====
-        function startLiveActivity() {
-            // Simulate live updates
-            setInterval(() => {
-                if (Math.random() > 0.7 && roadSections.length > 0) {
-                    const activities = [
-                        '👷 Workers moving to new section',
-                        '🚜 Excavator preparing ground',
-                        '🔄 Quality check in progress',
-                        '📊 Survey team on site',
-                        '🛠️ Equipment maintenance',
-                        '🌧️ Weather monitoring',
-                        '📝 Daily progress report generated'
-                    ];
-                    addActivity(activities[Math.floor(Math.random() * activities.length)]);
-                }
-            }, 8000);
-        }
-
-        function addActivity(message) {
-            const activityContainer = document.getElementById('liveActivity');
-            const activityItem = document.createElement('div');
-            activityItem.className = 'activity-item';
-            activityItem.textContent = message;
-            
-            activityContainer.insertBefore(activityItem, activityContainer.firstChild);
-            
-            // Keep only last 8 activities
-            while (activityContainer.children.length > 8) {
-                activityContainer.removeChild(activityContainer.lastChild);
-            }
-        }
-
-        // Initialize the app when page loads
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            initApp();
+            // Show first step by default
+            showStep('overview');
         });
     </script>
 </body>
