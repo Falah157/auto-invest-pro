@@ -3,672 +3,1034 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAMILY LINK | AUTO LOGIN</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <title>KANDITHWWM - Live Construction Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Courier New', monospace;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         :root {
-            --matrix-green: #00ff00;
-            --matrix-dark: #0a0a0a;
-            --matrix-darker: #001100;
-            --matrix-border: #004400;
-            --matrix-red: #ff3333;
-            --matrix-yellow: #ffff00;
-            --matrix-blue: #0099ff;
+            --gold: #FFD700;
+            --dark-gold: #B8860B;
+            --light-gold: #FFEC8B;
+            --black: #0a0a0a;
+            --dark-gray: #1a1a1a;
+            --medium-gray: #2a2a2a;
+            --light-gray: #3a3a3a;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --danger: #ff4444;
+            --info: #00a8ff;
+            --done: #00ff88;
+            --progress: #ffaa00;
+            --not-started: #666666;
+            --delayed: #ff4444;
         }
-        
+
         body {
-            background-color: var(--matrix-dark);
-            color: var(--matrix-green);
-            overflow-x: hidden;
+            background: var(--black);
+            color: var(--light-gold);
             min-height: 100vh;
         }
-        
+
         .container {
             max-width: 100%;
             margin: 0 auto;
-            padding: 20px;
-            position: relative;
+            padding: 15px;
+            padding-bottom: 80px;
         }
-        
-        /* Login Screens */
-        .login-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 80vh;
-            text-align: center;
-        }
-        
-        .main-screen {
-            display: none;
-        }
-        
-        /* Header */
+
         .header {
             text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--matrix-green);
-            margin-bottom: 30px;
-        }
-        
-        .glitch {
-            font-size: 2rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            position: relative;
-            text-shadow: 0.05em 0 0 var(--matrix-red), -0.05em -0.025em 0 var(--matrix-blue);
-            animation: glitch 500ms infinite;
-        }
-        
-        @keyframes glitch {
-            0% { text-shadow: 0.05em 0 0 var(--matrix-red), -0.05em -0.025em 0 var(--matrix-blue); }
-            14% { text-shadow: 0.05em 0 0 var(--matrix-red), -0.05em -0.025em 0 var(--matrix-blue); }
-            15% { text-shadow: -0.05em -0.025em 0 var(--matrix-red), 0.025em 0.025em 0 var(--matrix-blue); }
-            49% { text-shadow: -0.05em -0.025em 0 var(--matrix-red), 0.025em 0.025em 0 var(--matrix-blue); }
-            50% { text-shadow: 0.025em 0.05em 0 var(--matrix-red), 0.05em 0 0 var(--matrix-blue); }
-            99% { text-shadow: 0.025em 0.05em 0 var(--matrix-red), 0.05em 0 0 var(--matrix-blue); }
-            100% { text-shadow: -0.025em 0 0 var(--matrix-red), -0.025em -0.025em 0 var(--matrix-blue); }
-        }
-        
-        /* Login Cards */
-        .login-card {
-            background: rgba(0, 20, 0, 0.3);
-            border: 1px solid var(--matrix-border);
-            border-radius: 15px;
-            padding: 30px;
-            margin: 20px 0;
-            max-width: 400px;
-            width: 100%;
-            backdrop-filter: blur(10px);
-        }
-        
-        .login-title {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: var(--matrix-green);
-        }
-        
-        .login-subtitle {
-            color: #008800;
-            margin-bottom: 25px;
-            font-size: 0.9rem;
-        }
-        
-        /* Google Sign In Button */
-        .gsi-btn {
-            background: white;
-            border: 1px solid #dadce0;
-            border-radius: 4px;
-            color: #3c4043;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            height: 40px;
-            padding: 0 24px;
-            text-align: center;
-            width: 100%;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-        }
-        
-        .gsi-btn:hover {
-            background: #f8f9fa;
-            box-shadow: 0 1px 3px 1px rgba(66, 64, 67, 0.15);
-        }
-        
-        .auto-login-btn {
-            background: transparent;
-            border: 1px solid var(--matrix-green);
-            color: var(--matrix-green);
-            border-radius: 8px;
-            padding: 15px;
-            width: 100%;
-            margin: 10px 0;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .auto-login-btn:hover {
-            background: var(--matrix-green);
-            color: #000;
-        }
-        
-        /* User Profile */
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 15px;
             margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(0, 30, 0, 0.2);
-            border-radius: 10px;
-            border: 1px solid var(--matrix-border);
+            padding: 20px;
+            background: linear-gradient(135deg, var(--dark-gray), var(--black));
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            position: relative;
+            overflow: hidden;
         }
-        
-        .user-avatar {
+
+        .logo {
+            font-size: 2.2em;
+            background: linear-gradient(90deg, var(--gold), var(--light-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .tagline {
+            color: var(--light-gold);
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        /* Map Controls */
+        .map-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .map-btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--gold);
+            background: var(--dark-gray);
+            color: var(--light-gold);
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .map-btn.active {
+            background: var(--gold);
+            color: var(--black);
+            font-weight: bold;
+        }
+
+        /* Progress Legend */
+        .progress-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: var(--dark-gray);
+            border-radius: 10px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .color-done, .color-progress, .color-not-started, .color-delayed {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .color-done { background: var(--done); }
+        .color-progress { background: var(--progress); }
+        .color-not-started { background: var(--not-started); }
+        .color-delayed { 
+            background: repeating-linear-gradient(
+                45deg,
+                var(--delayed),
+                var(--delayed) 5px,
+                #ff8888 5px,
+                #ff8888 10px
+            );
+        }
+
+        /* Map Containers */
+        .map-container {
+            height: 400px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 3px solid var(--gold);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #map2d, #map3d {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--gold);
+            z-index: 1000;
+        }
+
+        /* Area Details Panel */
+        .area-details {
+            background: linear-gradient(135deg, var(--dark-gray), var(--medium-gray));
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            margin-top: 15px;
+            display: none;
+        }
+
+        .area-details.active {
+            display: block;
+        }
+
+        .area-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 10px;
+        }
+
+        .area-title {
+            font-size: 1.4em;
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .area-progress {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: var(--dark-gray);
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: var(--black);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--dark-gold));
+            transition: width 0.5s ease;
+        }
+
+        /* Worker List */
+        .worker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .worker-card {
+            background: var(--black);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--light-gray);
+            text-align: center;
+        }
+
+        .worker-avatar {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            border: 2px solid var(--matrix-green);
-        }
-        
-        .user-info {
-            flex: 1;
-        }
-        
-        .user-name {
+            background: var(--gold);
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
-            font-size: 1.1rem;
+            color: var(--black);
         }
-        
-        .user-email {
-            color: #008800;
-            font-size: 0.9rem;
-        }
-        
-        /* Status */
-        .status-bar {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .status-item {
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px solid var(--matrix-border);
-            border-radius: 8px;
+
+        /* Discussion Panel */
+        .discussion-panel {
+            background: var(--black);
             padding: 15px;
-            text-align: center;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid var(--light-gray);
+            max-height: 300px;
+            overflow-y: auto;
         }
-        
-        .status-value {
-            font-size: 1.2rem;
-            font-weight: bold;
+
+        .message {
+            padding: 10px;
             margin: 5px 0;
+            border-radius: 8px;
+            background: var(--dark-gray);
         }
-        
-        .status-label {
-            font-size: 0.8rem;
-            color: #008800;
+
+        .message.owner {
+            background: rgba(255, 215, 0, 0.2);
+            border-left: 3px solid var(--gold);
         }
-        
-        /* Controls */
-        .controls-grid {
+
+        .message.worker {
+            background: rgba(0, 168, 255, 0.2);
+            border-left: 3px solid var(--info);
+        }
+
+        .message-time {
+            font-size: 0.7em;
+            color: #aaa;
+            float: right;
+        }
+
+        /* Quick Update Form */
+        .quick-update-card {
+            background: linear-gradient(135deg, var(--dark-gray), var(--medium-gray));
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--info);
+            margin-top: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light-gold);
+            font-weight: 500;
+        }
+
+        input, select, textarea, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--light-gray);
+            background: var(--black);
+            color: var(--light-gold);
+            font-size: 1em;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--black);
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00cc66);
+            color: white;
+        }
+
+        .photo-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid var(--gold);
+            display: none;
+        }
+
+        /* Health Grid */
+        .health-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin-bottom: 20px;
+            margin: 15px 0;
         }
-        
-        .control-btn {
-            background: transparent;
-            border: 1px solid var(--matrix-green);
-            color: var(--matrix-green);
-            padding: 12px 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Courier New', monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .control-btn:hover {
-            background: var(--matrix-green);
-            color: #000;
-        }
-        
-        /* Console */
-        .console {
-            background: #000;
-            border: 1px solid var(--matrix-border);
-            border-radius: 8px;
+
+        .health-card {
             padding: 15px;
-            margin-top: 20px;
-            height: 120px;
-            overflow-y: auto;
-            font-size: 0.8rem;
-        }
-        
-        .console-line {
-            margin-bottom: 5px;
-        }
-        
-        .console-line::before {
-            content: "> ";
-            color: var(--matrix-green);
-        }
-        
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #008800;
-            border-radius: 50%;
-            border-top-color: var(--matrix-green);
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Footer */
-        .footer {
+            border-radius: 10px;
             text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            border-top: 1px solid var(--matrix-border);
-            color: #008800;
-            font-size: 0.8rem;
+            border: 2px solid;
+        }
+
+        .health-card.green { border-color: var(--success); background: rgba(0, 255, 136, 0.1); }
+        .health-card.yellow { border-color: var(--warning); background: rgba(255, 170, 0, 0.1); }
+        .health-card.red { border-color: var(--danger); background: rgba(255, 68, 68, 0.1); }
+        .health-card.blue { border-color: var(--info); background: rgba(0, 168, 255, 0.1); }
+
+        .health-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        /* Alert Cards */
+        .alert-card {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 5px solid;
+        }
+
+        .alert-card.danger {
+            background: rgba(255, 68, 68, 0.1);
+            border-left-color: var(--danger);
+        }
+
+        .alert-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.8em;
+            width: auto;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--dark-gray);
+            display: flex;
+            padding: 12px;
+            border-top: 2px solid var(--gold);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 5px;
+            color: var(--light-gold);
+            font-size: 0.75em;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: var(--gold);
+        }
+
+        .nav-icon {
+            font-size: 1.4em;
+            margin-bottom: 3px;
+        }
+
+        /* 3D Canvas */
+        #map3d {
+            background: #1a1a1a;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
     <div class="container">
-        <div class="login-screen" id="loginScreen">
-            <div class="header">
-                <div class="glitch">FAMILY LINK CONTROL</div>
-                <div class="subtitle">GOOGLE ACCOUNT INTEGRATION</div>
+        <div class="header">
+            <div class="logo">KANDITHWWM PROJECT</div>
+            <p class="tagline">Live Construction Map - 100% Transparent</p>
+        </div>
+
+        <!-- Project Health Overview -->
+        <div class="health-grid">
+            <div class="health-card green">
+                <div class="health-title">On Track</div>
+                <div class="health-value">6</div>
+                <div class="health-label">Areas</div>
             </div>
-            
-            <div class="login-card">
-                <div class="login-title">🔐 AUTHENTICATION REQUIRED</div>
-                <div class="login-subtitle">Connect your Google Account to access Family Link controls</div>
-                
-                <!-- Google Sign In Button -->
-                <div id="gsiBtn" class="gsi-btn">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=" alt="Google">
-                    Sign in with Google
-                </div>
-                
-                <!-- Auto Login Button -->
-                <button class="auto-login-btn" onclick="attemptAutoLogin()">
-                    <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span class="loading" id="autoLoginLoading"></span>
-                        AUTO LOGIN
-                    </span>
-                </button>
-                
-                <div style="font-size: 0.8rem; color: #008800; margin-top: 15px;">
-                    🔒 Secure OAuth 2.0 authentication
-                </div>
+            <div class="health-card yellow">
+                <div class="health-title">In Progress</div>
+                <div class="health-value">4</div>
+                <div class="health-label">Areas</div>
             </div>
-            
-            <div class="login-card">
-                <div class="login-title">ℹ️ HOW IT WORKS</div>
-                <div style="text-align: left; font-size: 0.9rem; line-height: 1.4;">
-                    <div style="margin-bottom: 10px;">✅ <strong>One-time setup</strong> - Login once</div>
-                    <div style="margin-bottom: 10px;">✅ <strong>Auto-login</strong> - Automatic future access</div>
-                    <div style="margin-bottom: 10px;">✅ <strong>Secure</strong> - Encrypted token storage</div>
-                    <div>✅ <strong>Family Link Access</strong> - Full parental controls</div>
-                </div>
+            <div class="health-card red">
+                <div class="health-title">Delayed</div>
+                <div class="health-value">2</div>
+                <div class="health-label">Areas</div>
+            </div>
+            <div class="health-card blue">
+                <div class="health-title">Workers On Site</div>
+                <div class="health-value">12/15</div>
+                <div class="health-label">Present</div>
             </div>
         </div>
-        
-        <!-- Main App Screen -->
-        <div class="main-screen" id="mainScreen">
-            <div class="header">
-                <div class="glitch">FAMILY LINK CONTROL</div>
-                <div class="subtitle">ACTIVE - GOOGLE ACCOUNT CONNECTED</div>
+
+        <!-- Bottleneck Alerts -->
+        <div class="alert-card danger">
+            <h4><i class="fas fa-exclamation-triangle"></i> Critical Delays - Attention Needed</h4>
+            <div class="alert-item">
+                <strong>Electrical Work</strong> - Material delivery delayed by 3 days
+                <button class="btn-small" onclick="viewAreaDetails('electrical')">View Details</button>
             </div>
-            
-            <!-- User Profile -->
-            <div class="user-profile">
-                <img id="userAvatar" class="user-avatar" src="" alt="User Avatar">
-                <div class="user-info">
-                    <div class="user-name" id="userName">Loading...</div>
-                    <div class="user-email" id="userEmail">Loading...</div>
-                </div>
-                <button class="control-btn" onclick="logout()" style="padding: 8px 12px;">
-                    🔓 Logout
-                </button>
-            </div>
-            
-            <!-- Status Bar -->
-            <div class="status-bar">
-                <div class="status-item">
-                    <div class="status-value" id="connectedKids">2</div>
-                    <div class="status-label">CONNECTED KIDS</div>
-                </div>
-                <div class="status-item">
-                    <div class="status-value" id="apiStatus">ONLINE</div>
-                    <div class="status-label">FAMILY LINK API</div>
-                </div>
-                <div class="status-item">
-                    <div class="status-value" id="loginStatus">AUTO</div>
-                    <div class="status-label">LOGIN TYPE</div>
-                </div>
-            </div>
-            
-            <!-- Quick Controls -->
-            <div class="controls-grid">
-                <button class="control-btn" onclick="viewKids()">
-                    <span style="font-size: 1.3rem;">👨‍👩‍👧‍👦</span>
-                    VIEW KIDS
-                </button>
-                <button class="control-btn" onclick="setLimits()">
-                    <span style="font-size: 1.3rem;">⏰</span>
-                    TIME LIMITS
-                </button>
-                <button class="control-btn" onclick="checkLocations()">
-                    <span style="font-size: 1.3rem;">📍</span>
-                    LOCATIONS
-                </button>
-                <button class="control-btn" onclick="manageApps()">
-                    <span style="font-size: 1.3rem;">📱</span>
-                    APP CONTROLS
-                </button>
-                <button class="control-btn" onclick="viewReports()">
-                    <span style="font-size: 1.3rem;">📊</span>
-                    REPORTS
-                </button>
-                <button class="control-btn" onclick="settings()">
-                    <span style="font-size: 1.3rem;">⚙️</span>
-                    SETTINGS
-                </button>
-            </div>
-            
-            <!-- System Console -->
-            <div class="console" id="console">
-                <div class="console-line">System initialized</div>
-                <div class="console-line">Google OAuth 2.0: Authenticated</div>
-                <div class="console-line">Family Link API: Connected</div>
-                <div class="console-line" id="lastCommand">Ready for commands...</div>
+            <div class="alert-item">
+                <strong>Plumbing</strong> - 2 workers absent today
+                <button class="btn-small" onclick="viewAreaDetails('plumbing')">View Details</button>
             </div>
         </div>
-        
-        <div class="footer">
-            GOOGLE FAMILY LINK API | SECURE OAUTH 2.0 | AUTO-LOGIN ENABLED
+
+        <!-- Map Controls -->
+        <div class="map-controls">
+            <button class="map-btn active" onclick="switchMapMode('2d')">
+                <i class="fas fa-map"></i> 2D Floor Plan
+            </button>
+            <button class="map-btn" onclick="switchMapMode('3d')">
+                <i class="fas fa-cube"></i> 3D View
+            </button>
+            <button class="map-btn" onclick="switchMapMode('satellite')">
+                <i class="fas fa-satellite"></i> Satellite
+            </button>
+        </div>
+
+        <!-- Progress Legend -->
+        <div class="progress-legend">
+            <div class="legend-item">
+                <div class="color-done"></div>
+                <span>Completed (100%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-progress"></div>
+                <span>In Progress (1-99%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-not-started"></div>
+                <span>Not Started (0%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-delayed"></div>
+                <span>Delayed</span>
+            </div>
+        </div>
+
+        <!-- 2D Map Container -->
+        <div class="map-container" id="map2dContainer">
+            <div class="map-overlay">
+                <button class="btn-small" onclick="refreshMap()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div id="map2d"></div>
+        </div>
+
+        <!-- 3D Map Container -->
+        <div class="map-container hidden" id="map3dContainer">
+            <div class="map-overlay">
+                <button class="btn-small" onclick="reset3dView()">
+                    <i class="fas fa-home"></i> Reset View
+                </button>
+            </div>
+            <canvas id="map3d"></canvas>
+        </div>
+
+        <!-- Area Details Panel -->
+        <div class="area-details" id="areaDetails">
+            <div class="area-header">
+                <div class="area-title" id="detailAreaTitle">Area Details</div>
+                <div class="area-progress" id="detailAreaProgress">0%</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="detailProgressBar" style="width: 0%"></div>
+            </div>
+
+            <div class="worker-grid" id="detailWorkers">
+                <!-- Workers will be populated here -->
+            </div>
+
+            <div class="discussion-panel" id="areaDiscussion">
+                <!-- Discussion messages will appear here -->
+            </div>
+
+            <div class="quick-update-card">
+                <h4><i class="fas fa-edit"></i> Quick Update</h4>
+                <div class="form-group">
+                    <label>Progress Update</label>
+                    <input type="range" id="progressUpdate" min="0" max="100" value="0" oninput="updateProgressValue(this.value)">
+                    <span id="progressValue">0%</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Add Note</label>
+                    <textarea id="updateNote" placeholder="What did you complete? Any issues?" rows="2"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Upload Photo</label>
+                    <input type="file" id="updatePhoto" accept="image/*" onchange="previewUpdatePhoto()">
+                    <img id="photoPreview" class="photo-preview">
+                </div>
+                
+                <div class="form-group">
+                    <label>Report Delay (if any)</label>
+                    <select id="delayReason">
+                        <option value="">No delays</option>
+                        <option value="material">Materials delayed</option>
+                        <option value="workers">Workers shortage</option>
+                        <option value="weather">Weather issues</option>
+                        <option value="equipment">Equipment problems</option>
+                        <option value="other">Other issues</option>
+                    </select>
+                </div>
+                
+                <button class="btn-success" onclick="submitProgressUpdate()">
+                    <i class="fas fa-check"></i> Submit Update
+                </button>
+            </div>
         </div>
     </div>
 
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('map')">
+            <div class="nav-icon">🗺️</div>
+            <div>Live Map</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('progress')">
+            <div class="nav-icon">📊</div>
+            <div>Progress</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('team')">
+            <div class="nav-icon">👷</div>
+            <div>Team</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('gallery')">
+            <div class="nav-icon">🖼️</div>
+            <div>Gallery</div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
-        // Google OAuth Configuration
-        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // You need to get this from Google Cloud Console
-        const GOOGLE_SCOPES = [
-            'https://www.googleapis.com/auth/userinfo.profile',
-            'https://www.googleapis.com/auth/userinfo.email',
-            'https://www.googleapis.com/auth/kid.family.readonly',
-            'https://www.googleapis.com/auth/kid.family'
-        ].join(' ');
-        
-        // Token storage keys
-        const STORAGE_KEYS = {
-            ACCESS_TOKEN: 'google_access_token',
-            REFRESH_TOKEN: 'google_refresh_token',
-            USER_INFO: 'google_user_info',
-            EXPIRY_TIME: 'token_expiry_time'
+        // ===== PROJECT DATA =====
+        const projectAreas = {
+            'foundation': { 
+                name: 'Foundation Work', 
+                progress: 100, 
+                workers: ['Ahmed', 'Hassan'], 
+                color: 'done',
+                coordinates: [[4.1755, 73.5093], [4.1757, 73.5095]]
+            },
+            'structure': { 
+                name: 'Structural Framing', 
+                progress: 100, 
+                workers: ['Mohamed', 'Ibrahim'], 
+                color: 'done',
+                coordinates: [[4.1753, 73.5091], [4.1755, 73.5093]]
+            },
+            'electrical': { 
+                name: 'Electrical Work', 
+                progress: 65, 
+                workers: ['Ali', 'Omar', 'Khalid'], 
+                color: 'progress',
+                coordinates: [[4.1751, 73.5089], [4.1753, 73.5091]],
+                delayed: true,
+                delayReason: 'Materials delayed by supplier'
+            },
+            'plumbing': { 
+                name: 'Plumbing System', 
+                progress: 45, 
+                workers: ['Yusuf', 'Abdullah'], 
+                color: 'progress',
+                coordinates: [[4.1749, 73.5087], [4.1751, 73.5089]],
+                delayed: true,
+                delayReason: '2 workers absent today'
+            },
+            'walls': { 
+                name: 'Wall Construction', 
+                progress: 30, 
+                workers: ['Hamza', 'Bilal'], 
+                color: 'progress',
+                coordinates: [[4.1747, 73.5085], [4.1749, 73.5087]]
+            },
+            'roof': { 
+                name: 'Roof Work', 
+                progress: 0, 
+                workers: [], 
+                color: 'not-started',
+                coordinates: [[4.1745, 73.5083], [4.1747, 73.5085]]
+            }
         };
-        
-        let currentUser = null;
-        
-        // Initialize Google OAuth
-        function initializeGoogleAuth() {
-            // Google Sign-In button event
-            document.getElementById('gsiBtn').addEventListener('click', handleGoogleSignIn);
-            
-            // Check for existing authentication
-            checkExistingAuth();
+
+        let currentMapMode = '2d';
+        let map2d = null;
+        let scene3d = null, camera3d = null, renderer3d = null;
+        let selectedArea = null;
+
+        // ===== INITIALIZATION =====
+        function initApp() {
+            init2dMap();
+            init3dMap();
+            updateHealthGrid();
         }
-        
-        // Handle Google Sign-In
-        function handleGoogleSignIn() {
-            addToConsole('Initiating Google OAuth 2.0 flow...');
+
+        // ===== 2D MAP SYSTEM =====
+        function init2dMap() {
+            map2d = L.map('map2d').setView([4.1755, 73.5093], 18);
             
-            // Simulate Google OAuth flow (in real app, this would use Google Identity Services)
-            simulateGoogleOAuth();
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: ''
+            }).addTo(map2d);
+
+            // Add project area rectangles
+            Object.keys(projectAreas).forEach(areaId => {
+                const area = projectAreas[areaId];
+                const color = getAreaColor(area);
+                
+                const rectangle = L.rectangle(area.coordinates, {
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.7,
+                    weight: 2
+                }).addTo(map2d);
+
+                rectangle.bindPopup(`
+                    <div style="min-width: 200px;">
+                        <h3 style="color: var(--gold); margin-bottom: 10px;">${area.name}</h3>
+                        <div style="margin-bottom: 5px;">
+                            <strong>Progress:</strong> ${area.progress}%
+                        </div>
+                        <div style="margin-bottom: 5px;">
+                            <strong>Workers:</strong> ${area.workers.join(', ') || 'None'}
+                        </div>
+                        ${area.delayed ? `
+                        <div style="color: var(--danger); margin: 5px 0;">
+                            <i class="fas fa-exclamation-triangle"></i> DELAYED: ${area.delayReason}
+                        </div>
+                        ` : ''}
+                        <button onclick="viewAreaDetails('${areaId}')" 
+                                style="width: 100%; padding: 8px; background: var(--gold); color: black; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer;">
+                            View Details & Discuss
+                        </button>
+                    </div>
+                `);
+
+                rectangle.on('click', function() {
+                    viewAreaDetails(areaId);
+                });
+            });
         }
-        
-        // Simulated Google OAuth (Replace with real implementation)
-        function simulateGoogleOAuth() {
-            addToConsole('Redirecting to Google authentication...');
+
+        function getAreaColor(area) {
+            if (area.delayed) return '#ff4444';
+            if (area.progress === 100) return '#00ff88';
+            if (area.progress > 0) return '#ffaa00';
+            return '#666666';
+        }
+
+        // ===== 3D MAP SYSTEM =====
+        function init3dMap() {
+            const canvas = document.getElementById('map3d');
+            const width = canvas.parentElement.clientWidth;
+            const height = canvas.parentElement.clientHeight;
+
+            // Scene
+            scene3d = new THREE.Scene();
+            scene3d.background = new THREE.Color(0x1a1a1a);
+
+            // Camera
+            camera3d = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            camera3d.position.set(10, 10, 10);
+            camera3d.lookAt(0, 0, 0);
+
+            // Renderer
+            renderer3d = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer3d.setSize(width, height);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene3d.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(10, 10, 5);
+            scene3d.add(directionalLight);
+
+            // Create simple building blocks for 3D view
+            create3dBuildingBlocks();
+
+            // Start animation
+            animate3d();
+        }
+
+        function create3dBuildingBlocks() {
+            // Foundation (green - completed)
+            const foundationGeometry = new THREE.BoxGeometry(8, 1, 6);
+            const foundationMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff88 });
+            const foundation = new THREE.Mesh(foundationGeometry, foundationMaterial);
+            foundation.position.y = 0.5;
+            scene3d.add(foundation);
+
+            // Structure (green - completed)
+            const structureGeometry = new THREE.BoxGeometry(7, 4, 5);
+            const structureMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff88 });
+            const structure = new THREE.Mesh(structureGeometry, structureMaterial);
+            structure.position.y = 3;
+            scene3d.add(structure);
+
+            // Electrical (yellow - in progress)
+            const electricalGeometry = new THREE.BoxGeometry(3, 2, 2);
+            const electricalMaterial = new THREE.MeshPhongMaterial({ color: 0xffaa00 });
+            const electrical = new THREE.Mesh(electricalGeometry, electricalMaterial);
+            electrical.position.set(0, 5, 0);
+            scene3d.add(electrical);
+
+            // Plumbing (yellow - in progress)
+            const plumbingGeometry = new THREE.BoxGeometry(2, 1.5, 2);
+            const plumbingMaterial = new THREE.MeshPhongMaterial({ color: 0xffaa00 });
+            const plumbing = new THREE.Mesh(plumbingGeometry, plumbingMaterial);
+            plumbing.position.set(3, 4.5, 1);
+            scene3d.add(plumbing);
+        }
+
+        function animate3d() {
+            requestAnimationFrame(animate3d);
+            renderer3d.render(scene3d, camera3d);
+        }
+
+        // ===== MAP MODE SWITCHING =====
+        function switchMapMode(mode) {
+            currentMapMode = mode;
             
-            // Show loading state
-            document.getElementById('gsiBtn').innerHTML = '<div class="loading"></div> Authenticating...';
-            document.getElementById('gsiBtn').style.opacity = '0.7';
+            // Update button states
+            document.querySelectorAll('.map-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
             
-            // Simulate OAuth process
-            setTimeout(() => {
-                // Mock successful authentication
-                const mockUser = {
-                    name: 'John Parent',
-                    email: 'john.parent@example.com',
-                    picture: 'https://via.placeholder.com/50/00ff00/000000?text=JP',
-                    accessToken: 'mock_access_token_' + Date.now(),
-                    refreshToken: 'mock_refresh_token_' + Date.now(),
-                    expiryTime: Date.now() + (60 * 60 * 1000) // 1 hour
+            // Show/hide map containers
+            document.getElementById('map2dContainer').classList.add('hidden');
+            document.getElementById('map3dContainer').classList.add('hidden');
+            
+            if (mode === '2d') {
+                document.getElementById('map2dContainer').classList.remove('hidden');
+                setTimeout(() => map2d.invalidateSize(), 100);
+            } else if (mode === '3d') {
+                document.getElementById('map3dContainer').classList.remove('hidden');
+            } else if (mode === 'satellite') {
+                document.getElementById('map2dContainer').classList.remove('hidden');
+                // Switch to satellite tiles
+                map2d.eachLayer(layer => {
+                    if (layer._url && layer._url.includes('openstreetmap')) {
+                        map2d.removeLayer(layer);
+                    }
+                });
+                L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains: ['mt0','mt1','mt2','mt3']
+                }).addTo(map2d);
+            }
+        }
+
+        function reset3dView() {
+            camera3d.position.set(10, 10, 10);
+            camera3d.lookAt(0, 0, 0);
+        }
+
+        function refreshMap() {
+            if (currentMapMode === '2d' || currentMapMode === 'satellite') {
+                map2d.invalidateSize();
+            }
+        }
+
+        // ===== AREA DETAILS =====
+        function viewAreaDetails(areaId) {
+            selectedArea = areaId;
+            const area = projectAreas[areaId];
+            
+            // Update details panel
+            document.getElementById('detailAreaTitle').textContent = area.name;
+            document.getElementById('detailAreaProgress').textContent = area.progress + '%';
+            document.getElementById('detailAreaProgress').style.color = getAreaColor(area);
+            document.getElementById('detailProgressBar').style.width = area.progress + '%';
+            document.getElementById('detailProgressBar').style.background = `linear-gradient(90deg, ${getAreaColor(area)}, ${getAreaColor(area)})`;
+            
+            // Update workers list
+            const workersContainer = document.getElementById('detailWorkers');
+            if (area.workers.length > 0) {
+                workersContainer.innerHTML = area.workers.map(worker => `
+                    <div class="worker-card">
+                        <div class="worker-avatar">${worker.charAt(0)}</div>
+                        <div style="font-weight: bold;">${worker}</div>
+                        <div style="font-size: 0.8em; color: #aaa;">Worker</div>
+                    </div>
+                `).join('');
+            } else {
+                workersContainer.innerHTML = '<div class="status info">No workers assigned</div>';
+            }
+            
+            // Load discussion
+            loadAreaDiscussion(areaId);
+            
+            // Show details panel
+            document.getElementById('areaDetails').classList.add('active');
+            
+            // Scroll to details
+            document.getElementById('areaDetails').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function loadAreaDiscussion(areaId) {
+            const discussionContainer = document.getElementById('areaDiscussion');
+            // Sample discussion data
+            const discussion = [
+                { user: 'Owner', message: 'How is the progress here?', time: '10:30 AM', type: 'owner' },
+                { user: 'Ahmed', message: 'Working on wiring, 65% done', time: '10:35 AM', type: 'worker' },
+                { user: 'Owner', message: 'Any issues with materials?', time: '10:40 AM', type: 'owner' },
+                { user: 'Ahmed', message: 'Yes, some cables delayed by supplier', time: '10:45 AM', type: 'worker' }
+            ];
+            
+            discussionContainer.innerHTML = discussion.map(msg => `
+                <div class="message ${msg.type}">
+                    <strong>${msg.user}:</strong> ${msg.message}
+                    <span class="message-time">${msg.time}</span>
+                </div>
+            `).join('');
+            
+            discussionContainer.scrollTop = discussionContainer.scrollHeight;
+        }
+
+        // ===== PROGRESS UPDATES =====
+        function updateProgressValue(value) {
+            document.getElementById('progressValue').textContent = value + '%';
+        }
+
+        function previewUpdatePhoto() {
+            const file = document.getElementById('updatePhoto').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('photoPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
                 };
-                
-                // Store tokens and user info
-                storeAuthData(mockUser);
-                handleAuthSuccess(mockUser);
-                
-            }, 2000);
+                reader.readAsDataURL(file);
+            }
         }
-        
-        // Check for existing authentication
-        function checkExistingAuth() {
-            addToConsole('Checking for existing authentication...');
+
+        function submitProgressUpdate() {
+            if (!selectedArea) {
+                alert('Please select an area first');
+                return;
+            }
+
+            const progress = parseInt(document.getElementById('progressUpdate').value);
+            const note = document.getElementById('updateNote').value;
+            const delayReason = document.getElementById('delayReason').value;
             
-            const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-            const userInfo = localStorage.getItem(STORAGE_KEYS.USER_INFO);
-            const expiryTime = localStorage.getItem(STORAGE_KEYS.EXPIRY_TIME);
+            // Update project data
+            projectAreas[selectedArea].progress = progress;
+            projectAreas[selectedArea].delayed = delayReason !== '';
+            if (delayReason) {
+                projectAreas[selectedArea].delayReason = getDelayReasonText(delayReason);
+            }
             
-            if (accessToken && userInfo && expiryTime) {
-                const now = Date.now();
-                if (now < parseInt(expiryTime)) {
-                    // Token is still valid
-                    const user = JSON.parse(userInfo);
-                    addToConsole('✅ Valid session found - auto-login initiated');
-                    handleAuthSuccess(user);
-                } else {
-                    // Token expired, try to refresh
-                    addToConsole('🔄 Session expired - attempting refresh...');
-                    attemptTokenRefresh();
+            // Update color
+            projectAreas[selectedArea].color = progress === 100 ? 'done' : 
+                                              progress > 0 ? 'progress' : 'not-started';
+            
+            // Refresh display
+            updateHealthGrid();
+            refreshMapDisplay();
+            viewAreaDetails(selectedArea);
+            
+            // Show success message
+            alert('Progress updated successfully!');
+            
+            // Reset form
+            document.getElementById('progressUpdate').value = 0;
+            document.getElementById('progressValue').textContent = '0%';
+            document.getElementById('updateNote').value = '';
+            document.getElementById('delayReason').value = '';
+            document.getElementById('photoPreview').style.display = 'none';
+            document.getElementById('updatePhoto').value = '';
+        }
+
+        function getDelayReasonText(reason) {
+            const reasons = {
+                'material': 'Materials delayed by supplier',
+                'workers': 'Workers shortage',
+                'weather': 'Weather issues',
+                'equipment': 'Equipment problems',
+                'other': 'Other issues reported'
+            };
+            return reasons[reason] || 'Delay reported';
+        }
+
+        function refreshMapDisplay() {
+            // Clear and recreate map layers
+            map2d.eachLayer(layer => {
+                if (layer instanceof L.Rectangle) {
+                    map2d.removeLayer(layer);
                 }
-            } else {
-                addToConsole('No existing session found');
-            }
-        }
-        
-        // Attempt automatic login
-        function attemptAutoLogin() {
-            addToConsole('Attempting automatic login...');
+            });
             
-            const loadingElement = document.getElementById('autoLoginLoading');
-            loadingElement.style.display = 'inline-block';
-            
-            // Check for existing valid session
-            setTimeout(() => {
-                const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-                const userInfo = localStorage.getItem(STORAGE_KEYS.USER_INFO);
+            // Readd areas with updated colors
+            Object.keys(projectAreas).forEach(areaId => {
+                const area = projectAreas[areaId];
+                const color = getAreaColor(area);
                 
-                if (accessToken && userInfo) {
-                    const user = JSON.parse(userInfo);
-                    addToConsole('✅ Auto-login successful!');
-                    handleAuthSuccess(user);
-                } else {
-                    addToConsole('❌ No saved credentials - please sign in manually');
-                    alert('No saved login found. Please sign in with Google first.');
-                }
-                
-                loadingElement.style.display = 'none';
-            }, 1500);
+                const rectangle = L.rectangle(area.coordinates, {
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.7,
+                    weight: 2
+                }).addTo(map2d);
+
+                rectangle.bindPopup(`
+                    <div style="min-width: 200px;">
+                        <h3 style="color: var(--gold); margin-bottom: 10px;">${area.name}</h3>
+                        <div style="margin-bottom: 5px;">
+                            <strong>Progress:</strong> ${area.progress}%
+                        </div>
+                        <div style="margin-bottom: 5px;">
+                            <strong>Workers:</strong> ${area.workers.join(', ') || 'None'}
+                        </div>
+                        ${area.delayed ? `
+                        <div style="color: var(--danger); margin: 5px 0;">
+                            <i class="fas fa-exclamation-triangle"></i> DELAYED: ${area.delayReason}
+                        </div>
+                        ` : ''}
+                        <button onclick="viewAreaDetails('${areaId}')" 
+                                style="width: 100%; padding: 8px; background: var(--gold); color: black; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer;">
+                            View Details & Discuss
+                        </button>
+                    </div>
+                `);
+
+                rectangle.on('click', function() {
+                    viewAreaDetails(areaId);
+                });
+            });
         }
-        
-        // Store authentication data
-        function storeAuthData(user) {
-            localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, user.accessToken);
-            localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, user.refreshToken);
-            localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(user));
-            localStorage.setItem(STORAGE_KEYS.EXPIRY_TIME, user.expiryTime.toString());
+
+        // ===== HEALTH GRID UPDATES =====
+        function updateHealthGrid() {
+            let onTrack = 0, inProgress = 0, delayed = 0;
             
-            addToConsole('🔐 Authentication data stored securely');
+            Object.values(projectAreas).forEach(area => {
+                if (area.delayed) delayed++;
+                else if (area.progress === 100) onTrack++;
+                else if (area.progress > 0) inProgress++;
+            });
+            
+            document.querySelector('.health-card.green .health-value').textContent = onTrack;
+            document.querySelector('.health-card.yellow .health-value').textContent = inProgress;
+            document.querySelector('.health-card.red .health-value').textContent = delayed;
         }
-        
-        // Handle successful authentication
-        function handleAuthSuccess(user) {
-            currentUser = user;
+
+        // ===== TAB SWITCHING =====
+        function switchTab(tabName) {
+            // Simple tab switching - you can expand this
+            alert(`Switching to ${tabName} tab - This would show ${tabName} content`);
             
-            // Update UI
-            document.getElementById('userName').textContent = user.name;
-            document.getElementById('userEmail').textContent = user.email;
-            document.getElementById('userAvatar').src = user.picture;
-            
-            // Switch to main screen
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainScreen').style.display = 'block';
-            
-            addToConsole(`✅ Authenticated as: ${user.name}`);
-            addToConsole(`📧 Email: ${user.email}`);
-            addToConsole('🔗 Connecting to Family Link API...');
-            
-            // Initialize Family Link integration
-            initializeFamilyLink();
+            // Update nav active state
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
         }
-        
-        // Attempt token refresh
-        function attemptTokenRefresh() {
-            const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-            
-            if (refreshToken) {
-                addToConsole('🔄 Refreshing access token...');
-                
-                // Simulate token refresh
-                setTimeout(() => {
-                    const mockUser = {
-                        name: 'John Parent',
-                        email: 'john.parent@example.com',
-                        picture: 'https://via.placeholder.com/50/00ff00/000000?text=JP',
-                        accessToken: 'refreshed_access_token_' + Date.now(),
-                        refreshToken: refreshToken,
-                        expiryTime: Date.now() + (60 * 60 * 1000) // 1 hour
-                    };
-                    
-                    storeAuthData(mockUser);
-                    handleAuthSuccess(mockUser);
-                    addToConsole('✅ Token refreshed successfully');
-                    
-                }, 1000);
-            } else {
-                addToConsole('❌ No refresh token available');
-            }
-        }
-        
-        // Logout function
-        function logout() {
-            addToConsole('🚪 Logging out...');
-            
-            // Clear stored data
-            localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-            localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-            localStorage.removeItem(STORAGE_KEYS.USER_INFO);
-            localStorage.removeItem(STORAGE_KEYS.EXPIRY_TIME);
-            
-            // Reset UI
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('mainScreen').style.display = 'none';
-            document.getElementById('gsiBtn').innerHTML = `
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=" alt="Google">
-                Sign in with Google
-            `;
-            document.getElementById('gsiBtn').style.opacity = '1';
-            
-            currentUser = null;
-            addToConsole('✅ Logout completed');
-        }
-        
-        // Initialize Family Link integration
-        function initializeFamilyLink() {
-            addToConsole('🔗 Initializing Family Link API connection...');
-            
-            setTimeout(() => {
-                addToConsole('✅ Family Link API connected successfully');
-                document.getElementById('apiStatus').textContent = 'ONLINE';
-                document.getElementById('connectedKids').textContent = '2';
-                document.getElementById('loginStatus').textContent = 'AUTO';
-            }, 2000);
-        }
-        
-        // Control functions
-        function viewKids() {
-            addToConsole('Loading child profiles...');
-            alert('Child profiles loaded');
-        }
-        
-        function setLimits() {
-            addToConsole('Opening time limits configuration...');
-            alert('Time limits interface opened');
-        }
-        
-        function checkLocations() {
-            addToConsole('Fetching child device locations...');
-            alert('Location data retrieved');
-        }
-        
-        function manageApps() {
-            addToConsole('Opening app management panel...');
-            alert('App controls interface loaded');
-        }
-        
-        function viewReports() {
-            addToConsole('Generating usage reports...');
-            alert('Reports generated');
-        }
-        
-        function settings() {
-            addToConsole('Opening settings panel...');
-            alert('Settings interface loaded');
-        }
-        
-        // Console logging
-        function addToConsole(message) {
-            const console = document.getElementById('console');
-            const lastLine = document.getElementById('lastCommand');
-            
-            const newLine = document.createElement('div');
-            newLine.className = 'console-line';
-            newLine.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-            
-            console.insertBefore(newLine, lastLine);
-            console.scrollTop = console.scrollHeight;
-        }
-        
-        // Initialize app
-        window.onload = function() {
-            initializeGoogleAuth();
-            addToConsole('Authentication system initialized');
-            
-            // Telegram WebApp integration
-            if (window.Telegram && Telegram.WebApp) {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();
-                addToConsole('Telegram WebApp integration active');
-            }
-        };
-        
+
+        // Initialize the app
+        window.addEventListener('load', initApp);
     </script>
 </body>
 </html>
-
