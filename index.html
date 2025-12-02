@@ -33,7 +33,7 @@
             position: relative;
         }
         
-        /* MATRIX RAIN BACKGROUND - FIXED POSITION */
+        /* MATRIX RAIN COVERS ENTIRE SCREEN */
         #matrixCanvas {
             position: fixed;
             top: 0;
@@ -41,10 +41,10 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            z-index: -1;
+            z-index: -1; /* BEHIND EVERYTHING */
         }
         
-        /* SCAN LINE EFFECT */
+        /* SCAN LINE EFFECT - NOW ON TOP OF RAIN */
         .scan-line {
             position: fixed;
             top: 0;
@@ -55,8 +55,8 @@
             box-shadow: 0 0 10px var(--matrix-green);
             animation: scan 3s linear infinite;
             pointer-events: none;
-            z-index: 9998;
-            opacity: 0.5;
+            z-index: 9997; /* Above rain but below content */
+            opacity: 0.7;
         }
         
         @keyframes scan {
@@ -64,22 +64,21 @@
             100% { top: 100%; }
         }
         
-        /* TERMINAL CONTAINER */
+        /* TERMINAL CONTAINER - HAS ITS OWN BACKGROUND */
         .terminal {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
             border: 1px solid var(--matrix-green);
             box-shadow: 
                 0 0 20px var(--matrix-green),
                 0 0 40px var(--matrix-green),
                 inset 0 0 20px rgba(0, 255, 65, 0.1);
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(0, 0, 0, 0.95); /* SOLID BLACK WITH SLIGHT TRANSPARENCY */
             position: relative;
-            margin-top: 20px;
-            margin-bottom: 20px;
             overflow: hidden;
-            z-index: 1;
+            z-index: 1; /* ABOVE THE RAIN */
+            backdrop-filter: blur(2px); /* SLIGHT BLUR FOR MATRIX EFFECT */
         }
         
         .terminal::before {
@@ -97,6 +96,7 @@
                 var(--matrix-green), 
                 transparent);
             animation: rgbBorder 3s linear infinite;
+            z-index: 2;
         }
         
         @keyframes rgbBorder {
@@ -119,7 +119,7 @@
             100% { transform: translate(0); }
         }
         
-        /* REST OF YOUR STYLES REMAIN THE SAME */
+        /* HEADER */
         .header {
             text-align: center;
             padding: 20px 0;
@@ -139,8 +139,65 @@
             letter-spacing: 5px;
             margin-bottom: 10px;
             font-weight: bold;
+            background: rgba(0, 0, 0, 0.7);
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 5px;
         }
         
+        /* KEYBOARD ASCII - ON TOP OF RAIN */
+        .keyboard-ascii {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 20, 0, 0.95);
+            border: 1px solid var(--cyber-blue);
+            padding: 15px;
+            font-size: 0.7em;
+            line-height: 1;
+            z-index: 1000;
+            box-shadow: 
+                0 0 20px rgba(0, 179, 255, 0.5),
+                0 0 40px rgba(0, 179, 255, 0.3);
+            backdrop-filter: blur(3px);
+        }
+        
+        /* SYSTEM STATUS BAR - ON TOP OF RAIN */
+        .system-status {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 30, 0, 0.98);
+            padding: 8px 20px;
+            border-top: 1px solid var(--matrix-green);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(3px);
+        }
+        
+        /* ALL INTERFACE ELEMENTS HAVE BACKGROUNDS TO BE VISIBLE OVER RAIN */
+        .user-terminal,
+        .module,
+        .log-terminal,
+        .asset-hack,
+        .calligraphy-terminal {
+            background: rgba(0, 0, 0, 0.85) !important;
+            backdrop-filter: blur(2px);
+        }
+        
+        /* Add glowing effect to make elements stand out against rain */
+        .module:hover,
+        .asset-hack:hover {
+            box-shadow: 
+                0 0 25px var(--matrix-green),
+                0 0 50px rgba(0, 255, 65, 0.3) !important;
+        }
+        
+        /* Rest of your styles remain the same */
         .ascii-art {
             color: var(--terminal-yellow);
             font-size: 0.6em;
@@ -148,10 +205,12 @@
             margin: 10px 0;
             white-space: pre;
             text-shadow: 0 0 5px var(--terminal-yellow);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
         }
         
         .user-terminal {
-            background: rgba(0, 20, 0, 0.8);
             border: 1px solid var(--cyber-blue);
             padding: 15px;
             margin-bottom: 30px;
@@ -197,7 +256,7 @@
         }
         
         .nav-command {
-            background: rgba(0, 30, 0, 0.8);
+            background: rgba(0, 30, 0, 0.9);
             color: var(--terminal-text);
             border: 1px solid var(--matrix-green);
             padding: 12px 24px;
@@ -208,6 +267,7 @@
             letter-spacing: 1px;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(2px);
         }
         
         .nav-command:hover, .nav-command.active {
@@ -258,16 +318,10 @@
         }
         
         .module {
-            background: rgba(0, 40, 0, 0.5);
             border: 1px solid rgba(0, 255, 65, 0.2);
             padding: 20px;
             margin-bottom: 20px;
             position: relative;
-        }
-        
-        .module:hover {
-            border-color: var(--matrix-green);
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
         }
         
         .module-title {
@@ -295,7 +349,6 @@
         }
         
         .calligraphy-terminal {
-            background: black;
             border: 2px solid var(--neon-pink);
             height: 180px;
             margin: 20px 0;
@@ -344,7 +397,7 @@
         }
         
         .hack-button {
-            background: transparent;
+            background: rgba(0, 30, 0, 0.9);
             color: var(--terminal-text);
             border: 1px solid var(--cyber-blue);
             padding: 12px 30px;
@@ -356,6 +409,7 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(2px);
         }
         
         .hack-button::before {
@@ -389,20 +443,11 @@
         }
         
         .asset-hack {
-            background: rgba(0, 20, 40, 0.8);
             border: 1px solid var(--cyber-blue);
             padding: 15px;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
-        }
-        
-        .asset-hack:hover {
-            border-color: var(--matrix-green);
-            transform: translateY(-5px);
-            box-shadow: 
-                0 5px 20px rgba(0, 255, 65, 0.3),
-                0 10px 40px rgba(0, 255, 65, 0.2);
         }
         
         .asset-display {
@@ -465,7 +510,6 @@
         }
         
         .log-terminal {
-            background: rgba(0, 10, 0, 0.9);
             border: 1px solid var(--matrix-green);
             padding: 15px;
             max-height: 300px;
@@ -486,33 +530,6 @@
             position: absolute;
             left: 0;
             color: var(--neon-pink);
-        }
-        
-        .keyboard-ascii {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 20, 0, 0.9);
-            border: 1px solid var(--cyber-blue);
-            padding: 15px;
-            font-size: 0.7em;
-            line-height: 1;
-            z-index: 1000;
-            box-shadow: 0 0 20px rgba(0, 179, 255, 0.5);
-        }
-        
-        .system-status {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 30, 0, 0.95);
-            padding: 8px 20px;
-            border-top: 1px solid var(--matrix-green);
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8em;
-            z-index: 1000;
         }
         
         .status-item {
@@ -549,7 +566,7 @@
     </style>
 </head>
 <body>
-    <!-- MATRIX RAIN CANVAS - NOW WITH PROPER FALLING -->
+    <!-- MATRIX RAIN COVERS ENTIRE BACKGROUND -->
     <canvas id="matrixCanvas"></canvas>
     
     <!-- SCAN LINE -->
@@ -583,7 +600,7 @@
 ▓                                                          ▓
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
             </div>
-            <div style="color: var(--cyber-blue); margin-top: 10px; font-size: 0.9em;">
+            <div style="color: var(--cyber-blue); margin-top: 10px; font-size: 0.9em; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 3px;">
                 [SYSTEM] Halal P2P Digital Art Marketplace - No Gambling, No Speculation
             </div>
         </div>
@@ -678,7 +695,7 @@
                 <span style="color: var(--neon-pink);">[SYSTEM]</span> Digital Asset Creation Terminal Online...
             </div>
             
-            <div class="module" style="background: rgba(20, 0, 40, 0.5);">
+            <div class="module" style="background: rgba(20, 0, 40, 0.7);">
                 <div class="module-title">
                     <span>DIGITAL_ASSET_CREATOR v3.1</span>
                     <span style="color: var(--matrix-green);">[ACTIVE]</span>
@@ -686,7 +703,7 @@
                 
                 <div style="margin-bottom: 20px;">
                     <div style="color: var(--cyber-blue); margin-bottom: 10px;">> ASSET_TYPE:</div>
-                    <select id="assetType" style="width: 100%; padding: 10px; background: black; color: var(--terminal-text); border: 1px solid var(--cyber-blue); font-family: monospace;">
+                    <select id="assetType" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.8); color: var(--terminal-text); border: 1px solid var(--cyber-blue); font-family: monospace;">
                         <option value="calligraphy">[01] CALLIGRAPHY_PANEL</option>
                         <option value="geometric">[02] GEOMETRIC_PATTERN</option>
                         <option value="illuminated">[03] ILLUMINATED_MANUSCRIPT</option>
@@ -695,7 +712,7 @@
                 
                 <div style="margin-bottom: 20px;">
                     <div style="color: var(--cyber-blue); margin-bottom: 10px;">> ARABIC_TEXT_INPUT:</div>
-                    <input type="text" id="arabicText" style="width: 100%; padding: 10px; background: black; color: white; border: 1px solid var(--neon-pink); font-family: 'Traditional Arabic', serif;" placeholder="ENTER ARABIC TEXT HERE...">
+                    <input type="text" id="arabicText" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.8); color: white; border: 1px solid var(--neon-pink); font-family: 'Traditional Arabic', serif;" placeholder="ENTER ARABIC TEXT HERE...">
                 </div>
                 
                 <div style="margin-bottom: 20px;">
@@ -713,11 +730,11 @@
                     </div>
                 </div>
                 
-                <button class="hack-button" onclick="createAsset()" style="background: var(--warning-red); margin-top: 20px;">
+                <button class="hack-button" onclick="createAsset()" style="background: linear-gradient(45deg, var(--warning-red), #ff3366); margin-top: 20px;">
                     [EXECUTE] GENERATE_DIGITAL_ASSET
                 </button>
                 
-                <div id="creationStatus" style="margin-top: 20px; padding: 15px; background: rgba(0, 40, 0, 0.7); border: 1px solid var(--matrix-green); display: none;"></div>
+                <div id="creationStatus" style="margin-top: 20px; padding: 15px; background: rgba(0, 40, 0, 0.8); border: 1px solid var(--matrix-green); display: none;"></div>
             </div>
             
             <div id="userAssetsList">
@@ -735,8 +752,8 @@
                 <!-- Marketplace items will be loaded here -->
             </div>
             
-            <div style="margin-top: 30px; padding: 20px; background: rgba(0, 20, 40, 0.7); border: 1px solid var(--cyber-blue);">
-                <div style="color: var(--matrix-green); margin-bottom: 10px;">> MARKET_RULES [HALAL_COMPLIANCE]:</div>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0, 20, 40, 0.8); border: 1px solid var(--cyber-blue); border-radius: 5px;">
+                <div style="color: var(--matrix-green); margin-bottom: 10px; font-weight: bold;">> MARKET_RULES [HALAL_COMPLIANCE]:</div>
                 <div style="color: #aaa; font-size: 0.9em;">
                     • NO GAMBLING (MAISIR) - Fixed prices only<br>
                     • NO UNCERTAINTY (GHARAR) - Clear asset descriptions<br>
@@ -819,7 +836,7 @@
 
     <script>
         // ============================================
-        // FIXED MATRIX RAIN WITH PROPER FALLING EFFECT
+        // ENHANCED MATRIX RAIN - COVERS ENTIRE SCREEN
         // ============================================
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
@@ -828,75 +845,106 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         
-        // Matrix characters
-        const matrixChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$+-*/=%\"#&_(){}[]!?<>|\\;:.,~アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+        // Matrix characters - INCLUDING MORE SYMBOLS
+        const matrixChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$+-*/=%\"#&_(){}[]!?<>|\\;:.,~アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∀∃∈∉⊆⊂∪∩→↔¬∧∨⊕⊗";
         const chars = matrixChars.split('');
         
-        // Rain settings
-        const fontSize = 16;
+        // Rain settings - MORE DENSE
+        const fontSize = 14;
         const columns = canvas.width / fontSize;
         const drops = [];
         
-        // Initialize drops
+        // Color palette for different intensity levels
+        const colors = [
+            '#00ff41', // Bright green
+            '#00ff88', // Light green
+            '#00ff00', // Pure green
+            '#00cc00', // Dark green
+            '#009900', // Very dark green
+            '#ffffff', // White for highlights
+            '#00b3ff', // Blue
+            '#ff00ff', // Pink
+            '#ffff00', // Yellow
+        ];
+        
+        // Initialize drops - MORE DROPS
         for(let i = 0; i < columns; i++) {
-            drops[i] = Math.floor(Math.random() * -100); // Start at random negative positions
+            drops[i] = {
+                y: Math.floor(Math.random() * -canvas.height), // Start above screen
+                speed: Math.random() * 3 + 1, // Random speed
+                char: chars[Math.floor(Math.random() * chars.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
+                brightness: Math.random() * 0.5 + 0.5, // Random brightness
+                trailLength: Math.floor(Math.random() * 15) + 5 // Random trail length
+            };
         }
         
-        // Draw function
+        // Draw function with enhanced effects
         function drawMatrix() {
-            // Semi-transparent black to create trail effect
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            // Semi-transparent black for trail effect - LIGHTER FOR BETTER VISIBILITY
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.font = `${fontSize}px 'Courier New', monospace`;
+            ctx.font = `bold ${fontSize}px 'Courier New', monospace`;
+            ctx.textAlign = 'center';
             
             for(let i = 0; i < drops.length; i++) {
-                // Random character
-                const char = chars[Math.floor(Math.random() * chars.length)];
+                const drop = drops[i];
                 
-                // Color based on position and randomness
-                let color;
-                const rand = Math.random();
-                
-                if(rand < 0.1) {
-                    color = '#ff00ff'; // Pink
-                } else if(rand < 0.3) {
-                    color = '#00b3ff'; // Blue
-                } else if(rand < 0.4) {
-                    color = '#ffff00'; // Yellow
-                } else {
-                    color = '#00ff41'; // Green (Matrix default)
+                // Randomly change character sometimes
+                if(Math.random() > 0.97) {
+                    drop.char = chars[Math.floor(Math.random() * chars.length)];
                 }
                 
-                // Bright first character
-                if(drops[i] >= 0 && drops[i] < 2) {
-                    color = '#ffffff'; // Bright white for leading character
-                    ctx.fillStyle = color;
-                    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+                // Randomly change color sometimes
+                if(Math.random() > 0.99) {
+                    drop.color = colors[Math.floor(Math.random() * colors.length)];
+                    drop.brightness = Math.random() * 0.5 + 0.5;
                 }
                 
-                // Main falling character
-                ctx.fillStyle = color;
-                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+                const x = i * fontSize + fontSize/2;
                 
-                // Trail effect - lighter characters behind
-                for(let j = 1; j < 10; j++) {
-                    if(drops[i] - j > 0) {
-                        const trailChar = chars[Math.floor(Math.random() * chars.length)];
-                        const opacity = 1 - (j * 0.1);
-                        ctx.fillStyle = `rgba(0, 255, 65, ${opacity * 0.3})`;
-                        ctx.fillText(trailChar, i * fontSize, (drops[i] - j) * fontSize);
+                // Draw trail (characters behind)
+                for(let j = 0; j < drop.trailLength; j++) {
+                    const trailY = drop.y - j * fontSize;
+                    if(trailY > -fontSize) { // Only draw if on screen
+                        const opacity = 1 - (j / drop.trailLength);
+                        const trailChar = j === 0 ? drop.char : chars[Math.floor(Math.random() * chars.length)];
+                        
+                        // First character is brightest
+                        if(j === 0) {
+                            ctx.fillStyle = drop.color;
+                            ctx.shadowBlur = 15;
+                            ctx.shadowColor = drop.color;
+                        } else {
+                            // Trail characters get darker
+                            const trailOpacity = opacity * 0.3;
+                            ctx.fillStyle = `rgba(0, 255, 65, ${trailOpacity})`;
+                            ctx.shadowBlur = 0;
+                        }
+                        
+                        ctx.fillText(trailChar, x, trailY);
                     }
                 }
                 
                 // Move drop down
-                drops[i] += 1;
+                drop.y += drop.speed;
                 
-                // Randomly reset drop
-                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = Math.floor(Math.random() * -50); // Reset above screen
+                // Reset if off screen
+                if(drop.y > canvas.height + drop.trailLength * fontSize) {
+                    drops[i] = {
+                        y: Math.floor(Math.random() * -100),
+                        speed: Math.random() * 3 + 1,
+                        char: chars[Math.floor(Math.random() * chars.length)],
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        brightness: Math.random() * 0.5 + 0.5,
+                        trailLength: Math.floor(Math.random() * 15) + 5
+                    };
                 }
             }
+            
+            // Reset shadow
+            ctx.shadowBlur = 0;
         }
         
         // Animation loop
@@ -912,6 +960,21 @@
         window.addEventListener('resize', function() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            
+            // Reinitialize drops for new width
+            const newColumns = canvas.width / fontSize;
+            drops.length = 0; // Clear existing drops
+            
+            for(let i = 0; i < newColumns; i++) {
+                drops[i] = {
+                    y: Math.floor(Math.random() * -canvas.height),
+                    speed: Math.random() * 3 + 1,
+                    char: chars[Math.floor(Math.random() * chars.length)],
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    brightness: Math.random() * 0.5 + 0.5,
+                    trailLength: Math.floor(Math.random() * 15) + 5
+                };
+            }
         });
         
         // ============================================
@@ -1086,7 +1149,7 @@
             gameState.creationQuality = quality;
             ['basicBtn', 'advancedBtn', 'masterBtn'].forEach(btnId => {
                 const btn = document.getElementById(btnId);
-                btn.style.background = "transparent";
+                btn.style.background = "rgba(0, 30, 0, 0.9)";
                 btn.style.color = "var(--terminal-text)";
             });
             
@@ -1163,7 +1226,7 @@
             const statusEl = document.getElementById('creationStatus');
             statusEl.style.display = 'block';
             statusEl.innerHTML = `
-                <div style="color: var(--matrix-green); margin-bottom: 10px;">
+                <div style="color: var(--matrix-green); margin-bottom: 10px; font-weight: bold;">
                     > ASSET_CREATED_SUCCESSFULLY
                 </div>
                 <div style="color: #aaa; font-size: 0.9em;">
@@ -1172,7 +1235,7 @@
                     TYPE: ${assetTypeName}<br>
                     QUALITY: ${gameState.creationQuality.toUpperCase()}
                 </div>
-                <button class="hack-button" onclick="listAssetForSale(${assetId})" style="margin-top: 15px; padding: 8px 15px; font-size: 0.9em;">
+                <button class="hack-button" onclick="listAssetForSale(${assetId})" style="margin-top: 15px; padding: 8px 15px; font-size: 0.9em; background: var(--matrix-green); color: black;">
                     [LIST] MARKETPLACE_SALE
                 </button>
             `;
@@ -1243,7 +1306,7 @@
             
             if(gameState.marketplaceItems.length === 0) {
                 marketplaceItemsEl.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: var(--cyber-blue); border: 1px dashed var(--cyber-blue);">
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: var(--cyber-blue); border: 1px dashed var(--cyber-blue); background: rgba(0,0,0,0.8); border-radius: 5px;">
                         > NO_ASSETS_AVAILABLE<br>
                         <span style="color: #666; font-size: 0.9em;">Be the first to list an asset!</span>
                     </div>
@@ -1292,7 +1355,7 @@
             
             if(gameState.user.createdAssets.length === 0) {
                 userAssetsListEl.innerHTML = `
-                    <div class="output-line" style="text-align: center; padding: 40px; color: var(--cyber-blue);">
+                    <div class="output-line" style="text-align: center; padding: 40px; color: var(--cyber-blue); background: rgba(0,0,0,0.8); border-radius: 5px;">
                         > NO_ASSETS_CREATED<br>
                         <span style="color: #666; font-size: 0.9em;">Use the creation terminal above</span>
                     </div>
@@ -1329,7 +1392,7 @@
             
             if(gameState.user.ownedAssets.length === 0) {
                 ownedAssetsListEl.innerHTML = `
-                    <div class="output-line" style="text-align: center; padding: 50px; color: var(--cyber-blue);">
+                    <div class="output-line" style="text-align: center; padding: 50px; color: var(--cyber-blue); background: rgba(0,0,0,0.8); border-radius: 5px;">
                         > NO_OWNED_ASSETS<br>
                         <span style="color: #666; font-size: 0.9em;">Buy from marketplace or create assets</span>
                     </div>
