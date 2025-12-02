@@ -1,548 +1,885 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حرفي | Harfiyy Hackers</title>
+    <title>HARFIYY ハッカーズ | Halal Digital Marketplace</title>
     <style>
+        /* CORE HACKER STYLES */
         :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #0f1a2d;
-            --terminal-green: #00ff9d;
-            --cyber-blue: #00b3ff;
             --matrix-green: #00ff41;
+            --cyber-blue: #00b3ff;
+            --neon-pink: #ff00ff;
             --warning-red: #ff0040;
-            --text-light: #e0e0e0;
-            --gold: #ffd700;
-            --border-glow: 0 0 10px;
+            --terminal-yellow: #ffff00;
+            --dark-bg: #000000;
+            --darker-bg: #0a0a0a;
+            --terminal-text: #00ff00;
+            --scan-line: rgba(0, 255, 65, 0.1);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', 'MS Gothic', monospace;
         }
         
         body {
-            background: var(--primary-bg);
-            color: var(--text-light);
+            background: var(--dark-bg);
+            color: var(--terminal-text);
             min-height: 100vh;
-            padding: 20px;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 179, 255, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(0, 255, 157, 0.05) 0%, transparent 20%);
+            overflow-x: hidden;
+            position: relative;
         }
         
-        .container {
-            max-width: 800px;
+        /* MATRIX RAIN BACKGROUND */
+        #matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        /* GLITCH EFFECTS */
+        .glitch {
+            position: relative;
+            animation: glitch 5s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); text-shadow: 2px 0 var(--neon-pink); }
+            40% { transform: translate(-3px, -3px); text-shadow: -2px 0 var(--cyber-blue); }
+            60% { transform: translate(3px, 3px); text-shadow: 0 2px var(--matrix-green); }
+            80% { transform: translate(3px, -3px); text-shadow: 0 -2px var(--terminal-yellow); }
+            100% { transform: translate(0); }
+        }
+        
+        /* SCAN LINE EFFECT */
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to bottom, transparent, var(--matrix-green), transparent);
+            box-shadow: 0 0 10px var(--matrix-green);
+            animation: scan 3s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.5;
+        }
+        
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+        
+        /* TERMINAL CONTAINER */
+        .terminal {
+            max-width: 1200px;
             margin: 0 auto;
-            border: 1px solid rgba(0, 179, 255, 0.3);
-            border-radius: 10px;
             padding: 20px;
-            box-shadow: var(--border-glow) var(--cyber-blue);
+            border: 1px solid var(--matrix-green);
+            box-shadow: 
+                0 0 20px var(--matrix-green),
+                0 0 40px var(--matrix-green),
+                inset 0 0 20px rgba(0, 255, 65, 0.1);
+            background: rgba(10, 10, 10, 0.95);
+            position: relative;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .terminal::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--matrix-green), 
+                var(--cyber-blue), 
+                var(--neon-pink), 
+                var(--matrix-green), 
+                transparent);
+            animation: rgbBorder 3s linear infinite;
+        }
+        
+        @keyframes rgbBorder {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        /* HEADER WITH HACKER ASCII ART */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
             position: relative;
             overflow: hidden;
         }
         
-        .container::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(0, 255, 157, 0.03) 50%,
-                transparent 70%
-            );
-            animation: matrix-scan 10s linear infinite;
-            z-index: 0;
-        }
-        
-        @keyframes matrix-scan {
-            0% { transform: translateY(0) translateX(0); }
-            100% { transform: translateY(-100%) translateX(-100%); }
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(0, 255, 157, 0.3);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .title {
-            font-size: 2.5em;
-            color: var(--terminal-green);
-            text-shadow: 0 0 15px var(--terminal-green);
+        .hacker-title {
+            font-size: 2.8em;
+            color: var(--matrix-green);
+            text-shadow: 
+                0 0 10px var(--matrix-green),
+                0 0 20px var(--matrix-green),
+                0 0 40px var(--matrix-green);
+            letter-spacing: 5px;
             margin-bottom: 10px;
-            letter-spacing: 3px;
+            font-weight: bold;
         }
         
-        .subtitle {
-            color: var(--cyber-blue);
-            font-size: 1.1em;
-            opacity: 0.9;
+        .ascii-art {
+            color: var(--terminal-yellow);
+            font-size: 0.6em;
+            line-height: 1.2;
+            margin: 10px 0;
+            white-space: pre;
+            text-shadow: 0 0 5px var(--terminal-yellow);
         }
         
-        .user-info {
-            background: rgba(15, 26, 45, 0.8);
+        /* USER INFO TERMINAL */
+        .user-terminal {
+            background: rgba(0, 20, 0, 0.8);
             border: 1px solid var(--cyber-blue);
-            border-radius: 5px;
             padding: 15px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 30px;
             position: relative;
-            z-index: 1;
-            backdrop-filter: blur(5px);
+            overflow: hidden;
         }
         
-        .wallet {
-            background: linear-gradient(45deg, #0a0e17, #0f1a2d);
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: 1px solid var(--matrix-green);
+        .user-terminal::after {
+            content: "_";
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            animation: blink 1s infinite;
+            color: var(--matrix-green);
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .prompt {
+            color: var(--cyber-blue);
+            margin-right: 10px;
+        }
+        
+        .user-line {
+            margin-bottom: 10px;
         }
         
         .balance {
-            color: var(--gold);
-            font-size: 1.5em;
-            font-weight: bold;
+            color: var(--terminal-yellow);
+            font-size: 1.8em;
+            text-shadow: 0 0 10px var(--terminal-yellow);
         }
         
-        .menu {
+        /* TERMINAL NAVIGATION */
+        .terminal-nav {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
             flex-wrap: wrap;
-            position: relative;
-            z-index: 1;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
         }
         
-        .menu-btn {
-            background: transparent;
-            color: var(--cyber-blue);
-            border: 1px solid var(--cyber-blue);
+        .nav-command {
+            background: rgba(0, 30, 0, 0.8);
+            color: var(--terminal-text);
+            border: 1px solid var(--matrix-green);
             padding: 12px 24px;
-            border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 1em;
             font-weight: bold;
-        }
-        
-        .menu-btn:hover, .menu-btn.active {
-            background: var(--cyber-blue);
-            color: var(--primary-bg);
-            box-shadow: 0 0 15px var(--cyber-blue);
-        }
-        
-        .section {
-            display: none;
-            animation: fadeIn 0.5s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             position: relative;
-            z-index: 1;
+            overflow: hidden;
         }
         
-        .section.active {
+        .nav-command:hover, .nav-command.active {
+            background: var(--matrix-green);
+            color: black;
+            box-shadow: 
+                0 0 15px var(--matrix-green),
+                0 0 30px var(--matrix-green);
+            text-shadow: none;
+            transform: translateY(-2px);
+        }
+        
+        .nav-command::before {
+            content: ">";
+            margin-right: 10px;
+            color: var(--neon-pink);
+        }
+        
+        /* TERMINAL SECTIONS */
+        .terminal-section {
+            display: none;
+            animation: terminalIn 0.5s;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .terminal-section.active {
             display: block;
         }
         
-        @keyframes fadeIn {
+        @keyframes terminalIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .learning-module {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 255, 157, 0.2);
-            border-radius: 8px;
+        /* COMMAND OUTPUT */
+        .output-line {
+            margin: 15px 0;
+            padding-left: 20px;
+            position: relative;
+            border-left: 2px solid var(--cyber-blue);
+            padding-left: 10px;
+        }
+        
+        .output-line::before {
+            content: "$";
+            position: absolute;
+            left: 0;
+            color: var(--neon-pink);
+        }
+        
+        .module {
+            background: rgba(0, 40, 0, 0.5);
+            border: 1px solid rgba(0, 255, 65, 0.2);
             padding: 20px;
             margin-bottom: 20px;
-            backdrop-filter: blur(5px);
+            position: relative;
+        }
+        
+        .module:hover {
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
         }
         
         .module-title {
-            color: var(--terminal-green);
-            margin-bottom: 15px;
+            color: var(--cyber-blue);
+            font-size: 1.2em;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .skill-badge {
-            background: linear-gradient(45deg, var(--cyber-blue), var(--terminal-green));
-            color: var(--primary-bg);
+        .hacker-badge {
+            background: linear-gradient(45deg, var(--matrix-green), var(--cyber-blue));
+            color: black;
             padding: 5px 15px;
-            border-radius: 20px;
             font-weight: bold;
             font-size: 0.9em;
+            border-radius: 2px;
+            animation: badgeGlow 2s infinite;
         }
         
-        .calligraphy-canvas {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid var(--cyber-blue);
-            border-radius: 5px;
-            height: 200px;
+        @keyframes badgeGlow {
+            0%, 100% { box-shadow: 0 0 10px var(--matrix-green); }
+            50% { box-shadow: 0 0 20px var(--matrix-green); }
+        }
+        
+        /* ARABIC CALLIGRAPHY DISPLAY */
+        .calligraphy-terminal {
+            background: black;
+            border: 2px solid var(--neon-pink);
+            height: 180px;
             margin: 20px 0;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
         }
         
-        .arabic-text {
+        .calligraphy-terminal::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 0, 255, 0.1) 50%,
+                transparent 70%
+            );
+            animation: scanDiagonal 10s linear infinite;
+        }
+        
+        @keyframes scanDiagonal {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+        
+        .arabic-neon {
             font-family: 'Traditional Arabic', 'Amiri', serif;
             font-size: 4em;
-            color: var(--gold);
-            text-shadow: 0 0 10px var(--gold);
-            animation: pulse 2s infinite;
+            color: var(--neon-pink);
+            text-shadow: 
+                0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink),
+                0 0 30px var(--neon-pink);
+            animation: textPulse 2s infinite;
         }
         
-        @keyframes pulse {
+        @keyframes textPulse {
             0%, 100% { opacity: 0.8; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.05); }
         }
         
-        .action-btn {
-            background: linear-gradient(45deg, var(--terminal-green), var(--cyber-blue));
-            color: var(--primary-bg);
-            border: none;
+        /* HACKER BUTTONS */
+        .hack-button {
+            background: transparent;
+            color: var(--terminal-text);
+            border: 1px solid var(--cyber-blue);
             padding: 12px 30px;
-            border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1.1em;
-            margin: 10px 5px;
-            transition: transform 0.3s;
-            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 5px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
         
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 157, 0.4);
+        .hack-button::before {
+            content: "[";
+            position: absolute;
+            left: 10px;
+            color: var(--matrix-green);
         }
         
-        .marketplace-grid {
+        .hack-button::after {
+            content: "]";
+            position: absolute;
+            right: 10px;
+            color: var(--matrix-green);
+        }
+        
+        .hack-button:hover {
+            background: var(--cyber-blue);
+            color: black;
+            box-shadow: 
+                0 0 20px var(--cyber-blue),
+                0 0 40px var(--cyber-blue);
+            transform: translateY(-3px);
+        }
+        
+        /* MARKETPLACE GRID */
+        .hacker-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
         
-        .asset-card {
-            background: rgba(15, 26, 45, 0.9);
+        .asset-hack {
+            background: rgba(0, 20, 40, 0.8);
             border: 1px solid var(--cyber-blue);
-            border-radius: 8px;
             padding: 15px;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
         
-        .asset-card:hover {
+        .asset-hack:hover {
+            border-color: var(--matrix-green);
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 179, 255, 0.2);
-            border-color: var(--terminal-green);
+            box-shadow: 
+                0 5px 20px rgba(0, 255, 65, 0.3),
+                0 10px 40px rgba(0, 255, 65, 0.2);
         }
         
-        .asset-image {
+        .asset-display {
             height: 120px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--neon-pink);
             margin-bottom: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
             overflow: hidden;
         }
         
-        .asset-owner {
-            color: var(--terminal-green);
-            font-size: 0.9em;
-            margin-bottom: 10px;
+        .asset-display::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 65, 0.1) 2px,
+                rgba(0, 255, 65, 0.1) 4px
+            );
+            animation: scanUp 10s linear infinite;
         }
         
-        .asset-price {
-            color: var(--gold);
-            font-size: 1.3em;
-            font-weight: bold;
+        @keyframes scanUp {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100%); }
+        }
+        
+        .crypto-price {
+            color: var(--terminal-yellow);
+            font-size: 1.4em;
+            text-shadow: 0 0 10px var(--terminal-yellow);
             margin: 10px 0;
         }
         
-        .buy-btn {
+        .buy-hack {
             background: var(--warning-red);
             color: white;
             border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+            padding: 10px;
             width: 100%;
+            cursor: pointer;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             transition: all 0.3s;
         }
         
-        .buy-btn:hover {
+        .buy-hack:hover {
             background: #ff3366;
-            box-shadow: 0 0 10px var(--warning-red);
+            box-shadow: 0 0 20px var(--warning-red);
         }
         
-        .transaction-log {
-            background: rgba(0, 0, 0, 0.5);
+        /* TRANSACTION LOG */
+        .log-terminal {
+            background: rgba(0, 10, 0, 0.9);
             border: 1px solid var(--matrix-green);
-            border-radius: 5px;
             padding: 15px;
-            margin-top: 30px;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
+            margin-top: 20px;
         }
         
         .log-entry {
             padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 255, 157, 0.1);
-            color: var(--text-light);
+            border-bottom: 1px solid rgba(0, 255, 65, 0.1);
             font-size: 0.9em;
+            position: relative;
+            padding-left: 20px;
         }
         
-        .log-entry.success {
-            color: var(--terminal-green);
+        .log-entry::before {
+            content: ">";
+            position: absolute;
+            left: 0;
+            color: var(--neon-pink);
         }
         
-        .log-entry.sale {
-            color: var(--gold);
+        /* HACKER ASCII KEYBOARD */
+        .keyboard-ascii {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 20, 0, 0.9);
+            border: 1px solid var(--cyber-blue);
+            padding: 15px;
+            font-size: 0.7em;
+            line-height: 1;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 179, 255, 0.5);
         }
         
-        .status-bar {
+        /* STATUS BAR */
+        .system-status {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--secondary-bg);
-            padding: 10px;
-            border-top: 1px solid var(--cyber-blue);
+            background: rgba(0, 30, 0, 0.95);
+            padding: 8px 20px;
+            border-top: 1px solid var(--matrix-green);
             display: flex;
             justify-content: space-between;
-            font-size: 0.9em;
+            font-size: 0.8em;
             z-index: 1000;
         }
         
-        .hackers-arabic {
-            font-family: 'Traditional Arabic', 'Amiri', serif;
-            color: var(--gold);
-            text-shadow: 0 0 5px var(--gold);
+        .status-item {
+            animation: statusPulse 3s infinite;
         }
         
-        .glitch-text {
-            position: relative;
-            animation: glitch 3s infinite;
+        @keyframes statusPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
         }
         
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-        
+        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
+            .terminal {
+                padding: 10px;
+                margin: 10px;
             }
             
-            .marketplace-grid {
+            .hacker-grid {
                 grid-template-columns: 1fr;
             }
             
-            .title {
+            .hacker-title {
                 font-size: 1.8em;
             }
             
-            .arabic-text {
+            .arabic-neon {
                 font-size: 2.5em;
+            }
+            
+            .keyboard-ascii {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- MATRIX RAIN BACKGROUND -->
+    <canvas id="matrix-rain"></canvas>
+    
+    <!-- SCAN LINE -->
+    <div class="scan-line"></div>
+    
+    <!-- HACKER KEYBOARD ASCII -->
+    <div class="keyboard-ascii">
+        <pre style="color: var(--cyber-blue);">
+┌─────────────────────────────┐
+│ [F1]HELP [F2]MARKET [F3]NET │
+│ 1 2 3 4 5 6 7 8 9 0 - =     │
+│ Q W E R T Y U I O P [ ]     │
+│ A S D F G H J K L ; ' #     │
+│ Z X C V B N M , . /         │
+│ [CTRL][ALT][SHIFT][SPACE]   │
+└─────────────────────────────┘
+        </pre>
+    </div>
+    
+    <!-- MAIN TERMINAL -->
+    <div class="terminal glitch">
         <div class="header">
-            <h1 class="title glitch-text">حرفي هاكرز</h1>
-            <p class="subtitle">منصة التصميم بالخط العربي - السوق الحلال للمقتنيات الرقمية</p>
-            <p style="color: var(--matrix-green); margin-top: 10px; font-size: 0.9em;">
-                نظام تجريبي لأول 10 مستخدمين | نظام الشهادة الرقمية: مفعل
-            </p>
+            <div class="hacker-title">HARFIYY ハッカーズ</div>
+            <div class="ascii-art">
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+▓                                                          ▓
+▓  HALAL DIGITAL MARKETPLACE v2.0                          ▓
+▓  SYSTEM: HARFIYY_CYBER_TERMINAL                          ▓
+▓  STATUS: ONLINE - SHARIAH_COMPLIANT                      ▓
+▓  USERS: 10/10 ACTIVE                                     ▓
+▓                                                          ▓
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+            </div>
+            <div style="color: var(--cyber-blue); margin-top: 10px; font-size: 0.9em;">
+                [SYSTEM] Halal P2P Digital Art Marketplace - No Gambling, No Speculation
+            </div>
         </div>
         
-        <div class="user-info">
-            <div>
-                <h3 style="color: var(--cyber-blue);">المستخدم: <span id="userName">هاكر الخطوط</span></h3>
-                <p style="color: var(--terminal-green); font-size: 0.9em;">
-                    <span id="userSkill">مبتدئ</span> | الرصيد الحالي:
+        <!-- USER TERMINAL -->
+        <div class="user-terminal">
+            <div class="user-line">
+                <span class="prompt">user@harfiyy:~$</span> whoami
+            </div>
+            <div class="user-line">
+                <span style="color: var(--neon-pink);">user:</span> CYBER_CALIGRAPHER_01
+            </div>
+            <div class="user-line">
+                <span class="prompt">user@harfiyy:~$</span> balance --check
+            </div>
+            <div class="user-line">
+                <span style="color: var(--terminal-yellow);">USDT BALANCE:</span> 
+                <span class="balance">$<span id="userBalance">100.00</span></span>
+                <span style="color: var(--matrix-green); margin-left: 20px;">[HALAL CERTIFIED]</span>
+            </div>
+            <div class="user-line">
+                <span class="prompt">user@harfiyy:~$</span> skill --level
+            </div>
+            <div class="user-line">
+                <span style="color: var(--cyber-blue);">SKILL LEVEL:</span> 
+                <span id="userSkill" style="color: var(--matrix-green);">BEGINNER</span>
+            </div>
+        </div>
+        
+        <!-- TERMINAL NAVIGATION -->
+        <div class="terminal-nav">
+            <button class="nav-command active" onclick="showSection('learn')">learn_module</button>
+            <button class="nav-command" onclick="showSection('create')">create_workshop</button>
+            <button class="nav-command" onclick="showSection('market')">market_access</button>
+            <button class="nav-command" onclick="showSection('assets')">my_assets</button>
+            <button class="nav-command" onclick="showSection('transactions')">transaction_log</button>
+            <button class="nav-command" onclick="showSection('system')">system_info</button>
+        </div>
+        
+        <!-- LEARNING MODULE SECTION -->
+        <div id="learn" class="terminal-section active">
+            <div class="output-line">
+                <span style="color: var(--neon-pink);">[SYSTEM]</span> Loading Arabic Calligraphy Hacking Modules...
+            </div>
+            
+            <div class="module">
+                <div class="module-title">
+                    <span>MODULE_01: THULUTH_SCRIPT_BASICS</span>
+                    <span class="hacker-badge" id="level1Badge">[UNLOCKED]</span>
+                </div>
+                <p style="color: #aaa; margin-bottom: 15px;">
+                    > Learn fundamental Thuluth script structures and letter formations.
+                    > Master basic stroke techniques and proportions.
                 </p>
+                <div class="calligraphy-terminal">
+                    <div class="arabic-neon">بسم الله</div>
+                </div>
+                <button class="hack-button" onclick="completeModule(1)">[EXECUTE] COMPLETE_MODULE</button>
+                <div style="margin-top: 15px; color: var(--cyber-blue); font-size: 0.9em;">
+                    > REWARD: "BEGINNER_THULUTH" Certificate [DIGITAL_ASSET]
+                </div>
             </div>
-            <div class="wallet">
-                <div class="balance">$<span id="userBalance">100.00</span></div>
-                <p style="font-size: 0.8em; margin-top: 5px;">USDT حلال</p>
+            
+            <div class="module">
+                <div class="module-title">
+                    <span>MODULE_02: GEOMETRIC_PATTERNS_ADVANCED</span>
+                    <span class="hacker-badge" id="level2Badge">[LOCKED]</span>
+                </div>
+                <p style="color: #aaa; margin-bottom: 15px;">
+                    > Islamic geometric pattern construction and symmetry.
+                    > Complex star patterns and tessellations.
+                </p>
+                <button class="hack-button" disabled onclick="completeModule(2)">[LOCKED] REQUIRE_MODULE_01</button>
+            </div>
+            
+            <div class="module">
+                <div class="module-title">
+                    <span>MODULE_03: GILDING_ILLUMINATION_PRO</span>
+                    <span class="hacker-badge" id="level3Badge">[LOCKED]</span>
+                </div>
+                <p style="color: #aaa; margin-bottom: 15px;">
+                    > Advanced gold leaf simulation techniques.
+                    > Professional illumination and shadow effects.
+                </p>
+                <button class="hack-button" disabled onclick="completeModule(3)">[LOCKED] REQUIRE_MODULE_02</button>
             </div>
         </div>
         
-        <div class="menu">
-            <button class="menu-btn active" onclick="showSection('learn')">مركز التعلم</button>
-            <button class="menu-btn" onclick="showSection('create')">ورشة الإبداع</button>
-            <button class="menu-btn" onclick="showSection('marketplace')">سوق حرفي</button>
-            <button class="menu-btn" onclick="showSection('myAssets')">مقتنياتي</button>
-            <button class="menu-btn" onclick="showSection('transactions')">سجل المعاملات</button>
-        </div>
-        
-        <!-- Learning Center Section -->
-        <div id="learn" class="section active">
-            <h2 style="color: var(--terminal-green); margin-bottom: 20px;">مركز التعلم - اختراق فن الخط</h2>
-            
-            <div class="learning-module">
-                <div class="module-title">
-                    <span>المستوى 1: أساسيات الخط الثلث</span>
-                    <span class="skill-badge" id="level1Badge">مستحق</span>
-                </div>
-                <p>تعلم أساسيات خط الثلث وكيفية بناء الحروف بشكل صحيح. هذا المستوى يؤهلك لإنشاء أعمال بسيطة.</p>
-                <div class="calligraphy-canvas">
-                    <div class="arabic-text">بسم الله</div>
-                </div>
-                <button class="action-btn" onclick="completeModule(1)">إكمال الدورة</button>
-                <div style="margin-top: 10px; font-size: 0.9em; color: var(--cyber-blue);">
-                    المكافأة: <span id="module1Reward">شهادة "مبتدئ في الثلث"</span>
-                </div>
+        <!-- CREATION WORKSHOP SECTION -->
+        <div id="create" class="terminal-section">
+            <div class="output-line">
+                <span style="color: var(--neon-pink);">[SYSTEM]</span> Digital Asset Creation Terminal Online...
             </div>
             
-            <div class="learning-module">
+            <div class="module" style="background: rgba(20, 0, 40, 0.5);">
                 <div class="module-title">
-                    <span>المستوى 2: الزخرفة الهندسية الإسلامية</span>
-                    <span class="skill-badge" id="level2Badge">مقفل</span>
-                </div>
-                <p>دمج الخط العربي مع الزخارف الهندسية لإنشاء تصميمات معقدة.</p>
-                <button class="action-btn" disabled onclick="completeModule(2)">مقفل - أكمل المستوى 1 أولاً</button>
-            </div>
-            
-            <div class="learning-module">
-                <div class="module-title">
-                    <span>المستوى 3: اللمسة الذهبية المتقدمة</span>
-                    <span class="skill-badge" id="level3Badge">مقفل</span>
-                </div>
-                <p>تقنيات متقدمة لإضافة تأثيرات ذهبية وإضاءة احترافية.</p>
-                <button class="action-btn" disabled onclick="completeModule(3)">مقفل - أكمل المستوى 2 أولاً</button>
-            </div>
-        </div>
-        
-        <!-- Creation Workshop Section -->
-        <div id="create" class="section">
-            <h2 style="color: var(--terminal-green); margin-bottom: 20px;">ورشة الإبداع</h2>
-            
-            <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="color: var(--cyber-blue); margin-bottom: 15px;">إنشاء قطعة جديدة</h3>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; color: var(--terminal-green);">نوع القطعة:</label>
-                    <select id="assetType" style="width: 100%; padding: 10px; background: var(--secondary-bg); color: white; border: 1px solid var(--cyber-blue); border-radius: 5px;">
-                        <option value="calligraphy">لوحة خطية</option>
-                        <option value="geometric">زخرفة هندسية</option>
-                        <option value="illuminated">مخطوطة مذهبة</option>
-                    </select>
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; color: var(--terminal-green);">النص (اختياري):</label>
-                    <input type="text" id="arabicText" style="width: 100%; padding: 10px; background: var(--secondary-bg); color: white; border: 1px solid var(--cyber-blue); border-radius: 5px; font-family: 'Traditional Arabic', serif;" placeholder="اكتب نصاً عربياً هنا">
+                    <span>DIGITAL_ASSET_CREATOR v3.1</span>
+                    <span style="color: var(--matrix-green);">[ACTIVE]</span>
                 </div>
                 
                 <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; color: var(--terminal-green);">مستوى الجودة:</label>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="action-btn" onclick="setQuality('basic')" id="basicBtn">أساسي (1-2 ساعة)</button>
-                        <button class="action-btn" onclick="setQuality('advanced')" id="advancedBtn">متقدم (3-4 ساعات)</button>
-                        <button class="action-btn" onclick="setQuality('master')" id="masterBtn">احترافي (5+ ساعات)</button>
+                    <div style="color: var(--cyber-blue); margin-bottom: 10px;">> ASSET_TYPE:</div>
+                    <select id="assetType" style="width: 100%; padding: 10px; background: black; color: var(--terminal-text); border: 1px solid var(--cyber-blue); font-family: monospace;">
+                        <option value="calligraphy">[01] CALLIGRAPHY_PANEL</option>
+                        <option value="geometric">[02] GEOMETRIC_PATTERN</option>
+                        <option value="illuminated">[03] ILLUMINATED_MANUSCRIPT</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="color: var(--cyber-blue); margin-bottom: 10px;">> ARABIC_TEXT_INPUT:</div>
+                    <input type="text" id="arabicText" style="width: 100%; padding: 10px; background: black; color: white; border: 1px solid var(--neon-pink); font-family: 'Traditional Arabic', serif;" placeholder="ENTER ARABIC TEXT HERE...">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="color: var(--cyber-blue); margin-bottom: 10px;">> QUALITY_SETTING:</div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="hack-button" onclick="setQuality('basic')" id="basicBtn">[BASIC] 1-2 HOURS</button>
+                        <button class="hack-button" onclick="setQuality('advanced')" id="advancedBtn">[ADVANCED] 3-4 HOURS</button>
+                        <button class="hack-button" onclick="setQuality('master')" id="masterBtn">[MASTER] 5+ HOURS</button>
                     </div>
                 </div>
                 
-                <div class="calligraphy-canvas" style="height: 150px; margin: 20px 0;">
-                    <div id="previewCanvas" style="font-family: 'Traditional Arabic', 'Amiri', serif; font-size: 3em; color: var(--gold);">
-                        معاينة القطعة
+                <div class="calligraphy-terminal" style="height: 150px;">
+                    <div id="previewCanvas" class="arabic-neon" style="font-size: 3em;">
+                        ASSET_PREVIEW
                     </div>
                 </div>
                 
-                <button class="action-btn" onclick="createAsset()" style="background: linear-gradient(45deg, var(--warning-red), #ff3366);">إنشاء القطعة الرقمية</button>
+                <button class="hack-button" onclick="createAsset()" style="background: var(--warning-red); margin-top: 20px;">
+                    [EXECUTE] GENERATE_DIGITAL_ASSET
+                </button>
                 
-                <div id="creationStatus" style="margin-top: 15px; padding: 10px; border-radius: 5px; display: none;"></div>
+                <div id="creationStatus" style="margin-top: 20px; padding: 15px; background: rgba(0, 40, 0, 0.7); border: 1px solid var(--matrix-green); display: none;"></div>
             </div>
             
             <div id="userAssetsList">
-                <!-- User's created assets will appear here -->
+                <!-- User assets will appear here -->
             </div>
         </div>
         
-        <!-- Marketplace Section -->
-        <div id="marketplace" class="section">
-            <h2 style="color: var(--terminal-green); margin-bottom: 20px;">سوق حرفي</h2>
-            <p style="color: var(--cyber-blue); margin-bottom: 20px;">سوق حلال لبيع وشراء القطع الرقمية. جميع الأسعار ثابتة (لا مزايدة).</p>
+        <!-- MARKETPLACE SECTION -->
+        <div id="market" class="terminal-section">
+            <div class="output-line">
+                <span style="color: var(--neon-pink);">[SYSTEM]</span> Accessing Halal P2P Marketplace...
+            </div>
             
-            <div class="marketplace-grid" id="marketplaceItems">
+            <div class="hacker-grid" id="marketplaceItems">
                 <!-- Marketplace items will be loaded here -->
             </div>
-        </div>
-        
-        <!-- My Assets Section -->
-        <div id="myAssets" class="section">
-            <h2 style="color: var(--terminal-green); margin-bottom: 20px;">مقتنياتي الرقمية</h2>
-            <div id="ownedAssetsList">
-                <!-- User's owned assets will appear here -->
+            
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0, 20, 40, 0.7); border: 1px solid var(--cyber-blue);">
+                <div style="color: var(--matrix-green); margin-bottom: 10px;">> MARKET_RULES [HALAL_COMPLIANCE]:</div>
+                <div style="color: #aaa; font-size: 0.9em;">
+                    • NO GAMBLING (MAISIR) - Fixed prices only<br>
+                    • NO UNCERTAINTY (GHARAR) - Clear asset descriptions<br>
+                    • 5% PLATFORM FEE (UJRAH) - Transparent service charge<br>
+                    • SKILL-BASED EARNING - No random rewards<br>
+                    • PEER-TO-PEER SALES ONLY - Direct user transactions
+                </div>
             </div>
         </div>
         
-        <!-- Transactions Section -->
-        <div id="transactions" class="section">
-            <h2 style="color: var(--terminal-green); margin-bottom: 20px;">سجل المعاملات الحلال</h2>
+        <!-- MY ASSETS SECTION -->
+        <div id="assets" class="terminal-section">
+            <div class="output-line">
+                <span style="color: var(--neon-pink);">[SYSTEM]</span> Loading Digital Asset Portfolio...
+            </div>
             
-            <div class="transaction-log">
-                <div id="transactionList">
-                    <!-- Transactions will appear here -->
+            <div id="ownedAssetsList">
+                <!-- Owned assets will appear here -->
+            </div>
+        </div>
+        
+        <!-- TRANSACTIONS SECTION -->
+        <div id="transactions" class="terminal-section">
+            <div class="output-line">
+                <span style="color: var(--neon-pink);">[SYSTEM]</span> Transaction Log - Halal Certified Records
+            </div>
+            
+            <div class="log-terminal" id="transactionList">
+                <!-- Transactions will appear here -->
+            </div>
+        </div>
+        
+        <!-- SYSTEM INFO SECTION -->
+        <div id="system" class="terminal-section">
+            <div class="output-line">
+                <span style="color: var(--neon-pink);">[SYSTEM]</span> HARFIYY System Information
+            </div>
+            
+            <div class="module">
+                <div class="module-title">SYSTEM_SPECS</div>
+                <div style="color: #aaa; line-height: 1.8;">
+                    > VERSION: HARFIYY_CYBER_v2.0<br>
+                    > BLOCKCHAIN: PRIVATE_HALAL_NETWORK<br>
+                    > SMART_CONTRACTS: SHARIAH_COMPLIANT<br>
+                    > PLATFORM_FEE: 5% FIXED (UJRAH)<br>
+                    > MAX_USERS: 10 [BETA_TESTING]<br>
+                    > STATUS: ONLINE_24_7<br>
+                    > COMPLIANCE: HALAL_CERTIFIED<br>
+                    > SUPPORT: FATWA_BOARD_APPROVED
                 </div>
             </div>
             
-            <div style="margin-top: 30px; padding: 20px; background: rgba(0, 255, 157, 0.05); border-radius: 8px; border: 1px solid rgba(0, 255, 157, 0.3);">
-                <h3 style="color: var(--terminal-green); margin-bottom: 15px;">ملاحظات فقهية:</h3>
-                <ul style="padding-right: 20px;">
-                    <li style="margin-bottom: 10px;">جميع المعاملات تعتمد على عقد البيع (البيع) وليست قماراً</li>
-                    <li style="margin-bottom: 10px;">الأرباح من بيع الجهد والإبداع وليست من الحظ</li>
-                    <li style="margin-bottom: 10px;">المنصة تأخذ 5% فقط كأجر خدمة معلوم (إجارة)</li>
-                    <li>جميع الأصول الرقمية موصوفة بوضوح قبل الشراء (لا غرر)</li>
-                </ul>
+            <div class="module">
+                <div class="module-title">SHARIAH_COMPLIANCE</div>
+                <div style="color: var(--matrix-green); line-height: 1.8;">
+                    > NO MAISIR (Gambling)<br>
+                    > NO GHARAR (Uncertainty)<br>
+                    > NO RIBA (Interest)<br>
+                    > VALID BAY' (Sales Contract)<br>
+                    > CLEAR OWNERSHIP<br>
+                    > SKILL-BASED EARNING<br>
+                    > TRANSPARENT FEES
+                </div>
             </div>
         </div>
     </div>
     
-    <div class="status-bar">
-        <div>
-            <span class="hackers-arabic">حرفي هاكرز</span> | نظام تجريبي | المستخدمون النشطون: <span id="activeUsers">10</span>/10
+    <!-- SYSTEM STATUS BAR -->
+    <div class="system-status">
+        <div class="status-item" style="color: var(--matrix-green);">
+            SYSTEM: <span id="systemStatus">ONLINE</span> | USERS: <span id="activeUsers">10</span>/10
         </div>
-        <div style="color: var(--matrix-green);">
-            حالة النظام: <span id="systemStatus">مستقر</span>
+        <div class="status-item" style="color: var(--cyber-blue);">
+            NETWORK: HALAL_P2P_ACTIVE | BLOCK: #<span id="blockNumber">892347</span>
+        </div>
+        <div class="status-item" style="color: var(--terminal-yellow);">
+            TIME: <span id="hackerTime">00:00:00</span> | PROFIT: $<span id="totalProfit">0.00</span>
         </div>
     </div>
 
     <script>
+        // MATRIX RAIN EFFECT
+        const canvas = document.getElementById('matrix-rain');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$+-*/=%"#&_(){}[]!?<>|\\;:.,~';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for(let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * canvas.height / fontSize) * fontSize;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.font = `${fontSize}px monospace`;
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                
+                // Different colors for different columns
+                let color;
+                if(i % 5 === 0) color = '#00ff41'; // Green
+                else if(i % 3 === 0) color = '#00b3ff'; // Blue
+                else if(i % 7 === 0) color = '#ff00ff'; // Pink
+                else color = '#ffffff'; // White
+                
+                ctx.fillStyle = color;
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+        
         // Game State
         const gameState = {
             user: {
-                name: "هاكر الخطوط",
+                name: "CYBER_CALIGRAPHER_01",
                 balance: 100.00,
-                skill: "مبتدئ",
-                completedModules: [0],
+                skill: "BEGINNER",
+                completedModules: [],
                 createdAssets: [],
                 ownedAssets: []
             },
@@ -550,56 +887,55 @@
             marketplaceItems: [
                 {
                     id: 1,
-                    name: "لوحة 'بسم الله' ذهبية",
-                    owner: "فنان_إسلامي",
-                    price: 25.00,
+                    name: "[CALLIGRAPHY] 'BISMILLAH' GOLD",
+                    owner: "ARTIST_ALI",
+                    price: 45.00,
                     type: "calligraphy",
-                    quality: "advanced",
-                    description: "لوحة خطية بخط الثلث مع تذهيب احترافي",
+                    quality: "master",
+                    description: "Thuluth script with advanced gold effects",
                     createdAt: "2024-01-15"
                 },
                 {
                     id: 2,
-                    name: "زخرفة هندسية سداسية",
-                    owner: "هندسي_دوت_كوم",
-                    price: 18.50,
+                    name: "[GEOMETRIC] HEXAGON_PATTERN_BLUE",
+                    owner: "GEOMETRY_PRO",
+                    price: 28.50,
                     type: "geometric",
                     quality: "advanced",
-                    description: "تصميم هندسي معقد مع ألوان أزرق وذهبي",
+                    description: "6-fold symmetry pattern with cyber theme",
                     createdAt: "2024-01-14"
                 },
                 {
                     id: 3,
-                    name: "آية الكرسي مذهبة",
-                    owner: "خطاط_متمكن",
-                    price: 45.00,
+                    name: "[ILLUMINATED] AYAT_AL_KURSI_PRO",
+                    owner: "MASTER_IBRAHIM",
+                    price: 75.00,
                     type: "illuminated",
                     quality: "master",
-                    description: "آية الكرسي كاملة بتذهيب وإضاءة متقدمة",
+                    description: "Full verse with professional illumination",
                     createdAt: "2024-01-13"
                 },
                 {
                     id: 4,
-                    name: "لوحة 'محمد' بخط الديواني",
-                    owner: "ديواني_ماستر",
-                    price: 32.00,
+                    name: "[CALLIGRAPHY] 'MUHAMMAD' DIWANI",
+                    owner: "DIWANI_HACKER",
+                    price: 52.00,
                     type: "calligraphy",
-                    quality: "master",
-                    description: "اسم النبي محمد صلى الله عليه وسلم بخط الديواني المتداخل",
+                    quality: "advanced",
+                    description: "Prophet's name in complex Diwani script",
                     createdAt: "2024-01-12"
                 }
             ],
             
             transactions: [
-                { type: "system", message: "مرحباً بك في حرفي هاكرز! رصيدك الابتدائي: $100", time: "10:00" },
-                { type: "info", message: "المنصة تأخذ 5% فقط كأجر خدمة على كل عملية بيع", time: "10:01" }
+                { type: "system", message: "SYSTEM: Welcome to HARFIYY ハッカーズ - Halal Digital Marketplace", time: getTime() },
+                { type: "info", message: "NOTICE: Platform fee is 5% fixed (Halal Ujrah model)", time: getTime() }
             ],
             
             creationQuality: "basic"
         };
 
         // DOM Elements
-        const userNameEl = document.getElementById('userName');
         const userBalanceEl = document.getElementById('userBalance');
         const userSkillEl = document.getElementById('userSkill');
         const marketplaceItemsEl = document.getElementById('marketplaceItems');
@@ -612,316 +948,261 @@
             updateUserDisplay();
             loadMarketplace();
             loadTransactions();
-            updateBadges();
             
-            // Set up initial owned assets (demo)
+            // Add demo owned asset
             gameState.user.ownedAssets.push({
                 id: 100,
-                name: "شهادة المبتدئ في الخط العربي",
+                name: "[CERTIFICATE] SYSTEM_ACCESS",
                 type: "certificate",
-                quality: "basic",
-                description: "شهادة إكمال الدورة الأساسية"
+                quality: "system",
+                description: "HARFIYY Platform Access Certificate"
             });
             
             loadOwnedAssets();
+            updateHackerTime();
+            setInterval(updateHackerTime, 1000);
+            setInterval(updateBlockNumber, 5000);
         }
 
-        // Update user info display
+        // Update user display
         function updateUserDisplay() {
-            userNameEl.textContent = gameState.user.name;
             userBalanceEl.textContent = gameState.user.balance.toFixed(2);
             userSkillEl.textContent = gameState.user.skill;
         }
 
-        // Show different sections
+        // Show sections
         function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
+            document.querySelectorAll('.terminal-section').forEach(section => {
                 section.classList.remove('active');
             });
             
-            // Remove active class from all buttons
-            document.querySelectorAll('.menu-btn').forEach(btn => {
+            document.querySelectorAll('.nav-command').forEach(btn => {
                 btn.classList.remove('active');
             });
             
-            // Show selected section
             document.getElementById(sectionId).classList.add('active');
-            
-            // Activate corresponding button
             event.target.classList.add('active');
             
-            // Load section data
-            if (sectionId === 'marketplace') {
-                loadMarketplace();
-            } else if (sectionId === 'myAssets') {
-                loadOwnedAssets();
-            } else if (sectionId === 'create') {
-                loadUserAssets();
-            }
+            if(sectionId === 'market') loadMarketplace();
+            else if(sectionId === 'assets') loadOwnedAssets();
+            else if(sectionId === 'create') loadUserAssets();
         }
 
-        // Complete learning module
+        // Complete module
         function completeModule(moduleNum) {
-            if (gameState.user.completedModules.includes(moduleNum)) {
-                addTransaction('warning', 'لقد أكملت هذه الدورة بالفعل!');
+            if(gameState.user.completedModules.includes(moduleNum)) {
+                addTransaction('warning', 'MODULE_ALREADY_COMPLETED');
                 return;
             }
             
-            // Check prerequisites
-            if (moduleNum > 1 && !gameState.user.completedModules.includes(moduleNum - 1)) {
-                addTransaction('warning', 'يجب إكمال المستوى السابق أولاً!');
+            if(moduleNum > 1 && !gameState.user.completedModules.includes(moduleNum - 1)) {
+                addTransaction('warning', 'REQUIRE_PREVIOUS_MODULE');
                 return;
             }
             
-            // Complete module
             gameState.user.completedModules.push(moduleNum);
             
-            // Update skill level
-            if (moduleNum === 1) {
-                gameState.user.skill = "مبتدئ في الثلث";
-                document.getElementById('level2Badge').textContent = "مستحق";
-                document.getElementById('level2Badge').style.background = "linear-gradient(45deg, var(--cyber-blue), var(--terminal-green))";
+            if(moduleNum === 1) {
+                gameState.user.skill = "THULUTH_BASICS";
+                document.getElementById('level1Badge').textContent = "[COMPLETED]";
+                document.getElementById('level1Badge').style.background = "linear-gradient(45deg, var(--terminal-yellow), var(--warning-red))";
+                document.getElementById('level2Badge').textContent = "[UNLOCKED]";
+                document.getElementById('level2Badge').style.background = "linear-gradient(45deg, var(--matrix-green), var(--cyber-blue))";
                 
-                // Add certificate to owned assets
                 gameState.user.ownedAssets.push({
-                    id: 100 + moduleNum,
-                    name: "شهادة المبتدئ في خط الثلث",
+                    id: 101,
+                    name: "[CERTIFICATE] THULUTH_BASICS",
                     type: "certificate",
                     quality: "basic",
-                    description: "شهادة إكمال دورة أساسيات خط الثلث"
+                    description: "Completed Thuluth Script Basics"
                 });
-            } else if (moduleNum === 2) {
-                gameState.user.skill = "متوسط في الزخرفة";
-                document.getElementById('level3Badge').textContent = "مستحق";
-                document.getElementById('level3Badge').style.background = "linear-gradient(45deg, var(--cyber-blue), var(--terminal-green))";
-            } else if (moduleNum === 3) {
-                gameState.user.skill = "محترف الخط العربي";
+            } else if(moduleNum === 2) {
+                gameState.user.skill = "GEOMETRIC_PRO";
+                document.getElementById('level2Badge').textContent = "[COMPLETED]";
+                document.getElementById('level3Badge').textContent = "[UNLOCKED]";
+                document.getElementById('level3Badge').style.background = "linear-gradient(45deg, var(--matrix-green), var(--cyber-blue))";
+            } else if(moduleNum === 3) {
+                gameState.user.skill = "MASTER_CALLIGRAPHER";
+                document.getElementById('level3Badge').textContent = "[COMPLETED]";
             }
             
-            updateBadges();
             updateUserDisplay();
-            addTransaction('success', `أكملت المستوى ${moduleNum}! تمت ترقية مهارتك إلى: ${gameState.user.skill}`);
+            addTransaction('success', `MODULE_${moduleNum}_COMPLETED - SKILL: ${gameState.user.skill}`);
             
-            // Enable next module button
-            if (moduleNum < 3) {
-                const nextModuleBtn = document.querySelector(`[onclick="completeModule(${moduleNum + 1})"]`);
-                nextModuleBtn.disabled = false;
-                nextModuleBtn.textContent = `إكمال المستوى ${moduleNum + 1}`;
-                nextModuleBtn.style.background = "linear-gradient(45deg, var(--terminal-green), var(--cyber-blue))";
+            if(moduleNum < 3) {
+                const nextBtn = document.querySelector(`[onclick="completeModule(${moduleNum + 1})"]`);
+                nextBtn.disabled = false;
+                nextBtn.textContent = `[EXECUTE] COMPLETE_MODULE_${moduleNum + 1}`;
+                nextBtn.style.background = "var(--matrix-green)";
+                nextBtn.style.color = "black";
             }
         }
 
-        // Update skill badges
-        function updateBadges() {
-            const badges = ['level1Badge', 'level2Badge', 'level3Badge'];
-            badges.forEach((badgeId, index) => {
-                const badge = document.getElementById(badgeId);
-                const moduleNum = index + 1;
-                
-                if (gameState.user.completedModules.includes(moduleNum)) {
-                    badge.textContent = "مكتمل";
-                    badge.style.background = "linear-gradient(45deg, var(--gold), #ffed4e)";
-                } else if (moduleNum === 1 || (moduleNum > 1 && gameState.user.completedModules.includes(moduleNum - 1))) {
-                    badge.textContent = "مستحق";
-                    badge.style.background = "linear-gradient(45deg, var(--cyber-blue), var(--terminal-green))";
-                }
-            });
-        }
-
-        // Set creation quality
+        // Set quality
         function setQuality(quality) {
             gameState.creationQuality = quality;
-            
-            // Update button styles
             ['basicBtn', 'advancedBtn', 'masterBtn'].forEach(btnId => {
-                document.getElementById(btnId).style.background = "transparent";
-                document.getElementById(btnId).style.color = "var(--cyber-blue)";
-                document.getElementById(btnId).style.border = "1px solid var(--cyber-blue)";
+                const btn = document.getElementById(btnId);
+                btn.style.background = "transparent";
+                btn.style.color = "var(--terminal-text)";
             });
             
-            // Highlight selected button
-            document.getElementById(quality + 'Btn').style.background = "linear-gradient(45deg, var(--terminal-green), var(--cyber-blue))";
-            document.getElementById(quality + 'Btn').style.color = "var(--primary-bg)";
-            document.getElementById(quality + 'Btn').style.border = "1px solid var(--terminal-green)";
-            
-            // Update preview
+            const selectedBtn = document.getElementById(quality + 'Btn');
+            selectedBtn.style.background = "linear-gradient(45deg, var(--matrix-green), var(--cyber-blue))";
+            selectedBtn.style.color = "black";
             updatePreview();
         }
 
-        // Update creation preview
+        // Update preview
         function updatePreview() {
             const preview = document.getElementById('previewCanvas');
             const textInput = document.getElementById('arabicText').value;
             const type = document.getElementById('assetType').value;
             
-            let displayText = textInput || "نص تجريبي";
-            let fontSize = "3em";
-            let color = "var(--gold)";
+            let displayText = textInput || "نص";
+            let color = "#ff00ff";
             
-            if (type === 'geometric') {
-                displayText = ""; // Geometric symbols
-                fontSize = "4em";
-                color = "var(--cyber-blue)";
-            } else if (type === 'illuminated') {
-                color = "var(--gold)";
+            if(type === 'geometric') {
+                displayText = "";
+                color = "#00b3ff";
+            } else if(type === 'illuminated') {
                 displayText = "﷽";
-                fontSize = "5em";
+                color = "#ffff00";
             }
             
-            preview.innerHTML = displayText;
-            preview.style.fontSize = fontSize;
+            preview.textContent = displayText;
             preview.style.color = color;
+            preview.style.textShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
             
-            if (gameState.creationQuality === 'advanced') {
-                preview.style.textShadow = "0 0 15px " + color;
-            } else if (gameState.creationQuality === 'master') {
-                preview.style.textShadow = "0 0 25px " + color;
-                preview.style.animation = "pulse 1.5s infinite";
-            } else {
-                preview.style.textShadow = "none";
-                preview.style.animation = "none";
+            if(gameState.creationQuality === 'advanced') {
+                preview.style.textShadow += `, 0 0 30px ${color}`;
+            } else if(gameState.creationQuality === 'master') {
+                preview.style.textShadow += `, 0 0 50px ${color}`;
+                preview.style.animation = "textPulse 1s infinite";
             }
         }
 
-        // Create a new digital asset
+        // Create asset
         function createAsset() {
-            if (!gameState.user.completedModules.includes(1)) {
-                addTransaction('warning', 'يجب إكمال المستوى 1 من مركز التعلم أولاً!');
+            if(!gameState.user.completedModules.includes(1)) {
+                addTransaction('warning', 'REQUIRE_MODULE_01_FIRST');
                 return;
             }
             
             const type = document.getElementById('assetType').value;
             const textInput = document.getElementById('arabicText').value;
             
-            // Determine base price based on quality
             let basePrice = 0;
-            if (gameState.creationQuality === 'basic') basePrice = 10;
-            else if (gameState.creationQuality === 'advanced') basePrice = 25;
-            else if (gameState.creationQuality === 'master') basePrice = 50;
+            if(gameState.creationQuality === 'basic') basePrice = 15;
+            else if(gameState.creationQuality === 'advanced') basePrice = 35;
+            else if(gameState.creationQuality === 'master') basePrice = 65;
             
-            // Adjust price based on type
-            if (type === 'illuminated') basePrice *= 1.5;
-            if (textInput && textInput.length > 0) basePrice *= 1.2;
+            if(type === 'illuminated') basePrice *= 1.5;
+            if(textInput && textInput.length > 0) basePrice *= 1.3;
             
-            const assetId = Date.now(); // Unique ID
-            const assetName = type === 'calligraphy' ? 'لوحة خطية' : 
-                             type === 'geometric' ? 'زخرفة هندسية' : 'مخطوطة مذهبة';
+            const assetId = Date.now();
+            const assetTypeName = type === 'calligraphy' ? 'CALLIGRAPHY' : 
+                                 type === 'geometric' ? 'GEOMETRIC' : 'ILLUMINATED';
             
             const newAsset = {
                 id: assetId,
-                name: assetName + " (" + gameState.creationQuality + ")",
+                name: `[${assetTypeName}] ${gameState.creationQuality.toUpperCase()}_ASSET`,
                 owner: gameState.user.name,
                 price: basePrice,
                 type: type,
                 quality: gameState.creationQuality,
-                description: `من إنشاء ${gameState.user.name}. الجودة: ${gameState.creationQuality}`,
-                createdAt: new Date().toLocaleDateString('ar-EG')
+                description: `Created by ${gameState.user.name} | Quality: ${gameState.creationQuality.toUpperCase()}`,
+                createdAt: getTime()
             };
             
-            // Add to user's created assets
             gameState.user.createdAssets.push(newAsset);
             
-            // Show creation status
             const statusEl = document.getElementById('creationStatus');
             statusEl.style.display = 'block';
-            statusEl.style.background = 'rgba(0, 255, 157, 0.1)';
-            statusEl.style.border = '1px solid var(--terminal-green)';
-            statusEl.style.color = 'var(--terminal-green)';
             statusEl.innerHTML = `
-                <strong>تم إنشاء القطعة بنجاح!</strong><br>
-                <small>معرف القطعة: ${assetId}</small><br>
-                <small>القيمة المقدرة للسوق: $${basePrice.toFixed(2)}</small><br>
-                <button class="action-btn" onclick="listAssetForSale(${assetId})" style="margin-top: 10px; padding: 8px 15px; font-size: 0.9em;">
-                    عرض للبيع في السوق
+                <div style="color: var(--matrix-green); margin-bottom: 10px;">
+                    > ASSET_CREATED_SUCCESSFULLY
+                </div>
+                <div style="color: #aaa; font-size: 0.9em;">
+                    ID: ${assetId}<br>
+                    VALUE: $${basePrice.toFixed(2)}<br>
+                    TYPE: ${assetTypeName}<br>
+                    QUALITY: ${gameState.creationQuality.toUpperCase()}
+                </div>
+                <button class="hack-button" onclick="listAssetForSale(${assetId})" style="margin-top: 15px; padding: 8px 15px; font-size: 0.9em;">
+                    [LIST] MARKETPLACE_SALE
                 </button>
             `;
             
-            addTransaction('success', `أنشأت قطعة رقمية جديدة: "${newAsset.name}"`);
+            addTransaction('success', `CREATED_ASSET: ${newAsset.name} | VALUE: $${basePrice.toFixed(2)}`);
             loadUserAssets();
-            
-            // Clear form
             document.getElementById('arabicText').value = '';
         }
 
-        // List asset for sale in marketplace
+        // List asset for sale
         function listAssetForSale(assetId) {
             const asset = gameState.user.createdAssets.find(a => a.id === assetId);
-            if (!asset) return;
+            if(!asset) return;
             
-            // Check if already listed
-            if (gameState.marketplaceItems.some(item => item.id === assetId)) {
-                addTransaction('warning', 'هذه القطعة معروضة للبيع بالفعل!');
+            if(gameState.marketplaceItems.some(item => item.id === assetId)) {
+                addTransaction('warning', 'ASSET_ALREADY_LISTED');
                 return;
             }
             
-            // Add to marketplace
             gameState.marketplaceItems.push(asset);
-            
-            // Remove from created assets (it's now in marketplace)
             gameState.user.createdAssets = gameState.user.createdAssets.filter(a => a.id !== assetId);
             
-            addTransaction('sale', `عرضت قطعتك "${asset.name}" للبيع بسعر $${asset.price.toFixed(2)}`);
+            addTransaction('sale', `LISTED_ASSET: ${asset.name} | PRICE: $${asset.price.toFixed(2)}`);
             loadMarketplace();
             loadUserAssets();
-            
-            // Hide status
             document.getElementById('creationStatus').style.display = 'none';
         }
 
-        // Buy an asset from marketplace
+        // Buy asset
         function buyAsset(assetId) {
             const assetIndex = gameState.marketplaceItems.findIndex(item => item.id === assetId);
-            if (assetIndex === -1) {
-                addTransaction('error', 'القطعة غير متوفرة!');
+            if(assetIndex === -1) {
+                addTransaction('error', 'ASSET_NOT_FOUND');
                 return;
             }
             
             const asset = gameState.marketplaceItems[assetIndex];
             
-            // Check if user has enough balance
-            if (gameState.user.balance < asset.price) {
-                addTransaction('error', 'رصيدك غير كافٍ للشراء!');
+            if(gameState.user.balance < asset.price) {
+                addTransaction('error', 'INSUFFICIENT_FUNDS');
                 return;
             }
             
-            // Calculate platform fee (5%)
             const platformFee = asset.price * 0.05;
             const sellerEarnings = asset.price - platformFee;
             
-            // Transfer ownership
             gameState.user.balance -= asset.price;
             gameState.user.ownedAssets.push({
                 ...asset,
                 owner: gameState.user.name,
-                purchasedAt: new Date().toLocaleDateString('ar-EG')
+                purchasedAt: getTime()
             });
             
-            // Remove from marketplace
             gameState.marketplaceItems.splice(assetIndex, 1);
-            
-            // Update user display
             updateUserDisplay();
             
-            // Add transaction record
-            addTransaction('sale', `اشتريت "${asset.name}" بمبلغ $${asset.price.toFixed(2)}`);
-            addTransaction('info', `تم تحويل $${sellerEarnings.toFixed(2)} للبائع (${asset.owner})`);
-            addTransaction('info', `أجر المنصة (5%): $${platformFee.toFixed(2)}`);
+            addTransaction('sale', `BOUGHT: ${asset.name} | COST: $${asset.price.toFixed(2)}`);
+            addTransaction('info', `SENT_TO_SELLER: $${sellerEarnings.toFixed(2)}`);
+            addTransaction('info', `PLATFORM_FEE_5%: $${platformFee.toFixed(2)}`);
             
-            // Reload marketplace and owned assets
             loadMarketplace();
             loadOwnedAssets();
         }
 
-        // Load marketplace items
+        // Load marketplace
         function loadMarketplace() {
             marketplaceItemsEl.innerHTML = '';
             
-            if (gameState.marketplaceItems.length === 0) {
+            if(gameState.marketplaceItems.length === 0) {
                 marketplaceItemsEl.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--cyber-blue);">
-                        لا توجد قطع للبيع حالياً في السوق.<br>
-                        <small>كن أول من يعرض قطعة للبيع!</small>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: var(--cyber-blue); border: 1px dashed var(--cyber-blue);">
+                        > NO_ASSETS_AVAILABLE<br>
+                        <span style="color: #666; font-size: 0.9em;">Be the first to list an asset!</span>
                     </div>
                 `;
                 return;
@@ -929,26 +1210,32 @@
             
             gameState.marketplaceItems.forEach(asset => {
                 const qualityColor = asset.quality === 'basic' ? 'var(--cyber-blue)' : 
-                                   asset.quality === 'advanced' ? 'var(--terminal-green)' : 'var(--gold)';
+                                   asset.quality === 'advanced' ? 'var(--matrix-green)' : 'var(--terminal-yellow)';
                 
                 const assetEl = document.createElement('div');
-                assetEl.className = 'asset-card';
+                assetEl.className = 'asset-hack';
                 assetEl.innerHTML = `
-                    <div class="asset-image">
-                        <div class="arabic-text" style="font-size: 2.5em; color: ${qualityColor};">
+                    <div class="asset-display">
+                        <div class="arabic-neon" style="font-size: 2.5em; color: ${qualityColor};">
                             ${asset.type === 'calligraphy' ? 'خط' : asset.type === 'geometric' ? '' : '﷽'}
                         </div>
                     </div>
-                    <div class="asset-owner">من: ${asset.owner}</div>
-                    <h4 style="color: white; margin-bottom: 10px;">${asset.name}</h4>
-                    <p style="font-size: 0.9em; color: #aaa; margin-bottom: 15px;">${asset.description}</p>
+                    <div style="color: var(--cyber-blue); font-size: 0.9em; margin-bottom: 10px;">
+                        OWNER: ${asset.owner}
+                    </div>
+                    <div style="color: white; margin-bottom: 10px; font-weight: bold;">
+                        ${asset.name}
+                    </div>
+                    <div style="color: #aaa; font-size: 0.9em; margin-bottom: 15px;">
+                        ${asset.description}
+                    </div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <div style="font-size: 0.8em; color: var(--terminal-green);">الجودة: ${asset.quality}</div>
-                            <div class="asset-price">$${asset.price.toFixed(2)}</div>
+                            <div style="color: var(--terminal-green); font-size: 0.8em;">QUALITY: ${asset.quality}</div>
+                            <div class="crypto-price">$${asset.price.toFixed(2)}</div>
                         </div>
-                        <button class="buy-btn" onclick="buyAsset(${asset.id})" ${gameState.user.balance < asset.price ? 'disabled' : ''}>
-                            ${gameState.user.balance < asset.price ? 'رصيد غير كاف' : 'شراء الآن'}
+                        <button class="buy-hack" onclick="buyAsset(${asset.id})" ${gameState.user.balance < asset.price ? 'disabled' : ''}>
+                            ${gameState.user.balance < asset.price ? 'INSUFFICIENT' : 'BUY_NOW'}
                         </button>
                     </div>
                 `;
@@ -956,34 +1243,36 @@
             });
         }
 
-        // Load user's created assets
+        // Load user assets
         function loadUserAssets() {
             userAssetsListEl.innerHTML = '';
             
-            if (gameState.user.createdAssets.length === 0) {
+            if(gameState.user.createdAssets.length === 0) {
                 userAssetsListEl.innerHTML = `
-                    <div style="text-align: center; padding: 30px; color: var(--cyber-blue); border: 1px dashed var(--cyber-blue); border-radius: 8px;">
-                        لم تنشئ أي قطع بعد.<br>
-                        <small>استخدم ورشة الإبداع لإنشاء أول قطعة لك!</small>
+                    <div class="output-line" style="text-align: center; padding: 40px; color: var(--cyber-blue);">
+                        > NO_ASSETS_CREATED<br>
+                        <span style="color: #666; font-size: 0.9em;">Use the creation terminal above</span>
                     </div>
                 `;
                 return;
             }
             
-            userAssetsListEl.innerHTML = '<h3 style="color: var(--cyber-blue); margin-bottom: 15px;">القطع التي أنشأتها:</h3>';
+            userAssetsListEl.innerHTML = '<div class="output-line">> YOUR_CREATED_ASSETS:</div>';
             
             gameState.user.createdAssets.forEach(asset => {
                 const assetEl = document.createElement('div');
-                assetEl.className = 'learning-module';
+                assetEl.className = 'module';
                 assetEl.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <h4 style="color: white; margin-bottom: 5px;">${asset.name}</h4>
-                            <p style="font-size: 0.9em; color: #aaa;">${asset.description}</p>
-                            <div style="margin-top: 10px; color: var(--gold); font-weight: bold;">القيمة: $${asset.price.toFixed(2)}</div>
+                            <div style="color: white; margin-bottom: 5px;">${asset.name}</div>
+                            <div style="color: #aaa; font-size: 0.9em;">${asset.description}</div>
+                            <div style="margin-top: 10px; color: var(--terminal-yellow); font-weight: bold;">
+                                VALUE: $${asset.price.toFixed(2)}
+                            </div>
                         </div>
-                        <button class="action-btn" onclick="listAssetForSale(${asset.id})" style="padding: 8px 15px; font-size: 0.9em;">
-                            عرض للبيع
+                        <button class="hack-button" onclick="listAssetForSale(${asset.id})" style="padding: 8px 15px; font-size: 0.9em;">
+                            [LIST] SELL
                         </button>
                     </div>
                 `;
@@ -995,41 +1284,40 @@
         function loadOwnedAssets() {
             ownedAssetsListEl.innerHTML = '';
             
-            if (gameState.user.ownedAssets.length === 0) {
+            if(gameState.user.ownedAssets.length === 0) {
                 ownedAssetsListEl.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: var(--cyber-blue); border: 1px dashed var(--cyber-blue); border-radius: 8px;">
-                        ليس لديك أي قطع رقمية مملوكة.<br>
-                        <small>اشتري قطعة من السوق أو أنشئ واحدة!</small>
+                    <div class="output-line" style="text-align: center; padding: 50px; color: var(--cyber-blue);">
+                        > NO_OWNED_ASSETS<br>
+                        <span style="color: #666; font-size: 0.9em;">Buy from marketplace or create assets</span>
                     </div>
                 `;
                 return;
             }
             
-            ownedAssetsListEl.innerHTML = '<h3 style="color: var(--cyber-blue); margin-bottom: 15px;">مقتنياتك الرقمية:</h3>';
+            ownedAssetsListEl.innerHTML = '<div class="output-line">> YOUR_DIGITAL_PORTFOLIO:</div>';
             
-            // Group assets by type
             const certificates = gameState.user.ownedAssets.filter(a => a.type === 'certificate');
             const calligraphy = gameState.user.ownedAssets.filter(a => a.type === 'calligraphy');
             const geometric = gameState.user.ownedAssets.filter(a => a.type === 'geometric');
             const illuminated = gameState.user.ownedAssets.filter(a => a.type === 'illuminated');
             
-            const renderAssetGroup = (assets, groupName) => {
-                if (assets.length === 0) return;
+            const renderGroup = (assets, groupName, color) => {
+                if(assets.length === 0) return;
                 
                 const groupEl = document.createElement('div');
-                groupEl.className = 'learning-module';
-                groupEl.innerHTML = `<h4 style="color: var(--terminal-green); margin-bottom: 15px;">${groupName} (${assets.length})</h4>`;
+                groupEl.className = 'module';
+                groupEl.innerHTML = `<div class="module-title" style="color: ${color};">${groupName} [${assets.length}]</div>`;
                 
                 assets.forEach(asset => {
                     const assetItem = document.createElement('div');
-                    assetItem.style.cssText = 'padding: 10px; margin: 10px 0; background: rgba(0,0,0,0.2); border-radius: 5px; border-right: 3px solid var(--cyber-blue);';
+                    assetItem.style.cssText = 'padding: 10px; margin: 10px 0; background: rgba(0,0,0,0.3); border-radius: 2px; border-left: 3px solid ' + color + ';';
                     assetItem.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
                                 <strong style="color: white;">${asset.name}</strong>
-                                ${asset.purchasedAt ? `<div style="font-size: 0.8em; color: var(--terminal-green);">تم الشراء: ${asset.purchasedAt}</div>` : ''}
+                                ${asset.purchasedAt ? `<div style="color: var(--matrix-green); font-size: 0.8em;">PURCHASED: ${asset.purchasedAt}</div>` : ''}
                             </div>
-                            ${asset.price ? `<div style="color: var(--gold); font-weight: bold;">$${asset.price.toFixed(2)}</div>` : ''}
+                            ${asset.price ? `<div style="color: var(--terminal-yellow); font-weight: bold;">$${asset.price.toFixed(2)}</div>` : ''}
                         </div>
                     `;
                     groupEl.appendChild(assetItem);
@@ -1038,10 +1326,10 @@
                 ownedAssetsListEl.appendChild(groupEl);
             };
             
-            renderAssetGroup(certificates, 'الشهادات');
-            renderAssetGroup(calligraphy, 'اللوحات الخطية');
-            renderAssetGroup(geometric, 'الزخارف الهندسية');
-            renderAssetGroup(illuminated, 'المخطوطات المذهبة');
+            renderGroup(certificates, 'CERTIFICATES', 'var(--cyber-blue)');
+            renderGroup(calligraphy, 'CALLIGRAPHY', 'var(--neon-pink)');
+            renderGroup(geometric, 'GEOMETRIC', 'var(--matrix-green)');
+            renderGroup(illuminated, 'ILLUMINATED', 'var(--terminal-yellow)');
         }
 
         // Load transactions
@@ -1050,65 +1338,76 @@
             
             gameState.transactions.forEach(transaction => {
                 const logEl = document.createElement('div');
-                logEl.className = `log-entry ${transaction.type}`;
+                logEl.className = 'log-entry';
                 logEl.innerHTML = `
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>${transaction.message}</span>
-                        <span style="color: #666; font-size: 0.8em;">${transaction.time}</span>
-                    </div>
+                    <span style="color: ${getLogColor(transaction.type)};">${transaction.message}</span>
+                    <span style="color: #666; float: right;">${transaction.time}</span>
                 `;
                 transactionListEl.appendChild(logEl);
             });
         }
 
-        // Add new transaction
+        // Add transaction
         function addTransaction(type, message) {
             const transaction = {
                 type: type,
                 message: message,
-                time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+                time: getTime()
             };
             
             gameState.transactions.unshift(transaction);
-            
-            // Keep only last 20 transactions
-            if (gameState.transactions.length > 20) {
-                gameState.transactions.pop();
-            }
-            
+            if(gameState.transactions.length > 20) gameState.transactions.pop();
             loadTransactions();
-            
-            // Auto-scroll to transactions if on that tab
-            if (document.getElementById('transactions').classList.contains('active')) {
-                transactionListEl.scrollTop = 0;
+        }
+
+        // Helper functions
+        function getTime() {
+            const now = new Date();
+            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        }
+
+        function getLogColor(type) {
+            switch(type) {
+                case 'success': return 'var(--matrix-green)';
+                case 'error': return 'var(--warning-red)';
+                case 'warning': return 'var(--terminal-yellow)';
+                case 'sale': return 'var(--neon-pink)';
+                case 'info': return 'var(--cyber-blue)';
+                default: return 'var(--terminal-text)';
             }
         }
 
-        // Event listeners for form updates
+        function updateHackerTime() {
+            document.getElementById('hackerTime').textContent = getTime();
+        }
+
+        function updateBlockNumber() {
+            const block = document.getElementById('blockNumber');
+            let current = parseInt(block.textContent);
+            block.textContent = (current + Math.floor(Math.random() * 100)).toString();
+        }
+
+        // Event listeners
         document.getElementById('assetType').addEventListener('change', updatePreview);
         document.getElementById('arabicText').addEventListener('input', updatePreview);
 
-        // Initialize the game
+        // Initialize
         window.onload = function() {
             init();
             updatePreview();
-            
-            // Set initial quality button
             setQuality('basic');
             
-            // Demo: Add some initial transactions
             setTimeout(() => {
-                addTransaction('info', 'مرحباً! هذا عرض تجريبي للنظام. يمكنك التعلم والبيع والشراء بأمان.');
-                addTransaction('info', 'هذا النظام مصمم لتوافق مع الشريعة الإسلامية: بيع جهد، لا قمار.');
+                addTransaction('info', 'SYSTEM: This is a beta demo for 10 users only');
+                addTransaction('info', 'NOTE: All transactions are Halal compliant (No gambling)');
             }, 1000);
+            
+            // Window resize handler
+            window.addEventListener('resize', function() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
         };
-
-        // Telegram Mini App integration simulation
-        function simulateTelegramIntegration() {
-            console.log("Telegram Mini App SDK would be integrated here");
-            console.log("User data would be fetched from Telegram WebApp.initData");
-        }
     </script>
 </body>
 </html>
-
