@@ -3,3226 +3,1115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual App Builder - Create Any App/Website</title>
+    <title>FaithTask - Islamic Task Manager</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --dark-color: #1f2937;
-            --light-color: #f9fafb;
-            --border-color: #e5e7eb;
-            --sidebar-width: 300px;
-            --header-height: 70px;
+            --primary: #2E7D32;
+            --primary-dark: #1B5E20;
+            --primary-light: #4CAF50;
+            --secondary: #8E24AA;
+            --accent: #FF9800;
+            --light: #F5F5F5;
+            --dark: #333;
+            --gray: #757575;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
         }
 
         body {
-            background-color: #111827;
-            color: #f9fafb;
-            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* Header */
-        .header {
-            height: var(--header-height);
-            background: #1f2937;
-            border-bottom: 1px solid #374151;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 25px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
         }
 
         .logo i {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
+            color: var(--primary);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 15px;
+        .logo h1 {
+            font-family: 'Amiri', serif;
+            color: var(--primary-dark);
+            font-size: 2.2rem;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
+        .tagline {
+            color: var(--gray);
+            font-size: 1rem;
         }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #4f46e5;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-success {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #0da271;
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        .btn-warning {
-            background-color: var(--warning-color);
-            color: white;
-        }
-
-        /* Main Container */
-        .container {
-            display: flex;
-            height: calc(100vh - var(--header-height));
-            margin-top: var(--header-height);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: #1f2937;
-            border-right: 1px solid #374151;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: var(--header-height);
-            left: 0;
-            bottom: 0;
-            z-index: 90;
-        }
-
-        .sidebar-tabs {
-            display: flex;
-            border-bottom: 1px solid #374151;
-        }
-
-        .sidebar-tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            background: transparent;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .sidebar-tab.active {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .sidebar-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .sidebar-section {
-            margin-bottom: 25px;
-        }
-
-        .sidebar-title {
+        .date-display {
+            margin-top: 10px;
             font-size: 0.9rem;
-            text-transform: uppercase;
-            color: #9ca3af;
-            font-weight: 600;
-            margin-bottom: 15px;
-            letter-spacing: 0.5px;
-        }
-
-        .components-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .component {
-            background: #374151;
-            border: 1px solid #4b5563;
-            border-radius: 8px;
-            padding: 15px;
-            cursor: grab;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .component:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            background: #4b5563;
-        }
-
-        .component i {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-        }
-
-        .component span {
-            font-size: 0.85rem;
-            display: block;
-        }
-
-        /* Properties Panel */
-        .properties-panel {
-            width: 350px;
-            background: #1f2937;
-            border-left: 1px solid #374151;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: var(--header-height);
-            right: 0;
-            bottom: 0;
-            z-index: 90;
-        }
-
-        .properties-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .property-group {
-            background: #374151;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .property-group h4 {
-            margin-bottom: 15px;
-            color: #f9fafb;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .property-item {
-            margin-bottom: 15px;
-        }
-
-        .property-item label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: #d1d5db;
-        }
-
-        .property-item input,
-        .property-item select,
-        .property-item textarea {
-            width: 100%;
-            padding: 10px;
-            background: #4b5563;
-            border: 1px solid #6b7280;
-            border-radius: 6px;
-            color: white;
-        }
-
-        .property-item textarea {
-            min-height: 100px;
-            resize: vertical;
-            font-family: monospace;
-        }
-
-        /* Main Editor Area */
-        .editor-area {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            margin-right: 350px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .editor-tabs {
-            display: flex;
-            background: #1f2937;
-            border-bottom: 1px solid #374151;
-        }
-
-        .editor-tab {
-            padding: 15px 25px;
-            background: transparent;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            font-weight: 600;
-            border-right: 1px solid #374151;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .editor-tab.active {
-            background: #111827;
-            color: white;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .editor-content {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-
-        .code-editor {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .editor-header {
-            padding: 15px;
-            background: #1f2937;
-            border-bottom: 1px solid #374151;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .code-mirror-wrapper {
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .CodeMirror {
-            height: 100% !important;
-            font-family: 'Fira Code', 'Monaco', monospace;
-            font-size: 14px;
-        }
-
-        /* Preview Panel */
-        .preview-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: white;
-        }
-
-        .preview-header {
-            padding: 15px;
-            background: #1f2937;
-            border-bottom: 1px solid #374151;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .preview-devices {
-            display: flex;
-            gap: 10px;
-        }
-
-        .device-btn {
+            color: var(--primary);
+            background: #E8F5E9;
             padding: 8px 15px;
-            background: #374151;
-            border: 1px solid #4b5563;
-            color: #d1d5db;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
+            border-radius: 20px;
+            display: inline-block;
         }
 
-        .device-btn.active {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
-        .preview-frame {
-            flex: 1;
-            border: none;
+        .stat-card {
             background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
         }
 
-        /* Component Inspector */
-        .component-inspector {
-            position: absolute;
-            background: #1f2937;
-            border: 2px solid var(--primary-color);
-            border-radius: 8px;
-            padding: 15px;
-            z-index: 1000;
-            min-width: 200px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
         }
 
-        .inspector-header {
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .streak {
+            color: var(--accent) !important;
+        }
+
+        .tabs {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
         }
 
-        .inspector-header h4 {
-            color: var(--primary-color);
-        }
-
-        .inspector-close {
-            background: none;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .properties-panel {
-                width: 300px;
-            }
-            
-            .editor-area {
-                margin-right: 300px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 100%;
-                max-width: 400px;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .properties-panel {
-                transform: translateX(100%);
-                width: 100%;
-                max-width: 400px;
-            }
-            
-            .properties-panel.active {
-                transform: translateX(0);
-            }
-            
-            .editor-area {
-                margin-left: 0;
-                margin-right: 0;
-            }
-            
-            .mobile-toggle {
-                display: block !important;
-            }
-        }
-
-        .mobile-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: white;
-            cursor: pointer;
-        }
-
-        /* Test Console */
-        .test-console {
-            background: #1f2937;
-            border-top: 1px solid #374151;
-            height: 200px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .console-header {
-            padding: 10px 15px;
-            background: #111827;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .console-content {
+        .tab {
             flex: 1;
+            text-align: center;
             padding: 15px;
-            overflow-y: auto;
-            font-family: monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'Amiri', serif;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #E0E0E0;
+        }
+
+        .task-category {
+            margin-bottom: 30px;
+        }
+
+        .task-list {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .task-item {
+            padding: 18px 20px;
+            border-bottom: 1px solid #EEEEEE;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .task-item:hover {
+            background: #F9F9F9;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .task-desc {
+            font-size: 0.85rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .task-desc i {
+            font-size: 0.8rem;
+        }
+
+        .task-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #DDD;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .task-checkbox.completed {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .task-checkbox.completed i {
             font-size: 0.9rem;
         }
 
-        .console-message {
-            padding: 5px 0;
-            border-bottom: 1px solid #374151;
+        .task-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+            background: #F5F5F5;
+            padding: 3px 8px;
+            border-radius: 10px;
         }
 
-        .console-message.success {
-            color: var(--success-color);
-        }
-
-        .console-message.error {
-            color: var(--danger-color);
-        }
-
-        .console-message.info {
-            color: #60a5fa;
-        }
-
-        /* Modal */
-        .modal {
+        .notification-modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 2000;
-            display: none;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
         }
 
-        .modal.active {
-            display: flex;
+        .notification-modal.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .modal-content {
-            background: #1f2937;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-header {
-            padding: 25px;
-            border-bottom: 1px solid #374151;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-body {
-            padding: 25px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .modal-footer {
-            padding: 20px 25px;
-            border-top: 1px solid #374151;
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-        }
-
-        /* Database Explorer */
-        .database-explorer {
-            background: #111827;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .db-table {
-            background: #1f2937;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .db-table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        .db-fields {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .db-field {
-            background: #374151;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-        }
-
-        /* API Tester */
-        .api-tester {
-            background: #111827;
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        .api-method {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .api-method-select {
-            background: #374151;
-            color: white;
-            border: 1px solid #4b5563;
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-
-        .api-url {
-            flex: 1;
-            padding: 8px 12px;
-            background: #1f2937;
-            border: 1px solid #4b5563;
-            color: white;
-            border-radius: 6px;
-        }
-
-        .api-response {
-            background: #1f2937;
-            border-radius: 6px;
-            padding: 15px;
-            margin-top: 15px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-cubes"></i>
-            <span>Visual App Builder</span>
-        </div>
-        <div class="header-actions">
-            <button class="mobile-toggle" id="toggleSidebar">
-                <i class="fas fa-bars"></i>
-            </button>
-            <button class="mobile-toggle" id="toggleProperties">
-                <i class="fas fa-sliders-h"></i>
-            </button>
-            <button class="btn btn-warning" id="testApp">
-                <i class="fas fa-vial"></i>
-                Test App
-            </button>
-            <button class="btn btn-success" id="runApp">
-                <i class="fas fa-play"></i>
-                Run
-            </button>
-            <button class="btn btn-primary" id="exportApp">
-                <i class="fas fa-download"></i>
-                Export
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-tabs">
-                <button class="sidebar-tab active" data-tab="components">
-                    <i class="fas fa-cube"></i> Components
-                </button>
-                <button class="sidebar-tab" data-tab="pages">
-                    <i class="fas fa-file"></i> Pages
-                </button>
-                <button class="sidebar-tab" data-tab="database">
-                    <i class="fas fa-database"></i> Database
-                </button>
-                <button class="sidebar-tab" data-tab="apis">
-                    <i class="fas fa-plug"></i> APIs
-                </button>
-            </div>
-            
-            <div class="sidebar-content">
-                <!-- Components Tab -->
-                <div class="sidebar-section" id="componentsSection">
-                    <h3 class="sidebar-title">UI Components</h3>
-                    <div class="components-grid">
-                        <div class="component" data-type="button">
-                            <i class="fas fa-square"></i>
-                            <span>Button</span>
-                        </div>
-                        <div class="component" data-type="input">
-                            <i class="fas fa-i-cursor"></i>
-                            <span>Input</span>
-                        </div>
-                        <div class="component" data-type="text">
-                            <i class="fas fa-font"></i>
-                            <span>Text</span>
-                        </div>
-                        <div class="component" data-type="image">
-                            <i class="fas fa-image"></i>
-                            <span>Image</span>
-                        </div>
-                        <div class="component" data-type="container">
-                            <i class="fas fa-square-full"></i>
-                            <span>Container</span>
-                        </div>
-                        <div class="component" data-type="form">
-                            <i class="fas fa-list-alt"></i>
-                            <span>Form</span>
-                        </div>
-                        <div class="component" data-type="table">
-                            <i class="fas fa-table"></i>
-                            <span>Table</span>
-                        </div>
-                        <div class="component" data-type="card">
-                            <i class="fas fa-id-card"></i>
-                            <span>Card</span>
-                        </div>
-                        <div class="component" data-type="navbar">
-                            <i class="fas fa-bars"></i>
-                            <span>Navbar</span>
-                        </div>
-                        <div class="component" data-type="sidebar">
-                            <i class="fas fa-columns"></i>
-                            <span>Sidebar</span>
-                        </div>
-                        <div class="component" data-type="modal">
-                            <i class="fas fa-window-maximize"></i>
-                            <span>Modal</span>
-                        </div>
-                        <div class="component" data-type="chart">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>Chart</span>
-                        </div>
-                    </div>
-                    
-                    <h3 class="sidebar-title" style="margin-top: 30px;">Layout Components</h3>
-                    <div class="components-grid">
-                        <div class="component" data-type="row">
-                            <i class="fas fa-grip-lines"></i>
-                            <span>Row</span>
-                        </div>
-                        <div class="component" data-type="column">
-                            <i class="fas fa-grip-lines-vertical"></i>
-                            <span>Column</span>
-                        </div>
-                        <div class="component" data-type="grid">
-                            <i class="fas fa-th"></i>
-                            <span>Grid</span>
-                        </div>
-                        <div class="component" data-type="flexbox">
-                            <i class="fas fa-boxes"></i>
-                            <span>Flexbox</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Pages Tab -->
-                <div class="sidebar-section" id="pagesSection" style="display: none;">
-                    <h3 class="sidebar-title">App Pages</h3>
-                    <div style="margin-bottom: 20px;">
-                        <button class="btn btn-primary" style="width: 100%;" id="addPage">
-                            <i class="fas fa-plus"></i> Add New Page
-                        </button>
-                    </div>
-                    <div id="pagesList">
-                        <div class="component" data-page="home">
-                            <i class="fas fa-home"></i>
-                            <span>Home</span>
-                        </div>
-                        <div class="component" data-page="dashboard">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>Dashboard</span>
-                        </div>
-                        <div class="component" data-page="login">
-                            <i class="fas fa-sign-in-alt"></i>
-                            <span>Login</span>
-                        </div>
-                        <div class="component" data-page="admin">
-                            <i class="fas fa-user-shield"></i>
-                            <span>Admin</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Database Tab -->
-                <div class="sidebar-section" id="databaseSection" style="display: none;">
-                    <h3 class="sidebar-title">Database Tables</h3>
-                    <div style="margin-bottom: 20px;">
-                        <button class="btn btn-primary" style="width: 100%;" id="addTable">
-                            <i class="fas fa-plus"></i> Add Table
-                        </button>
-                    </div>
-                    <div class="database-explorer">
-                        <div class="db-table">
-                            <div class="db-table-header">
-                                <span>Users</span>
-                                <i class="fas fa-edit" style="cursor: pointer;"></i>
-                            </div>
-                            <div class="db-fields">
-                                <div class="db-field">id: integer</div>
-                                <div class="db-field">name: string</div>
-                                <div class="db-field">email: string</div>
-                                <div class="db-field">created_at: datetime</div>
-                            </div>
-                        </div>
-                        <div class="db-table">
-                            <div class="db-table-header">
-                                <span>Products</span>
-                                <i class="fas fa-edit" style="cursor: pointer;"></i>
-                            </div>
-                            <div class="db-fields">
-                                <div class="db-field">id: integer</div>
-                                <div class="db-field">name: string</div>
-                                <div class="db-field">price: decimal</div>
-                                <div class="db-field">stock: integer</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- APIs Tab -->
-                <div class="sidebar-section" id="apisSection" style="display: none;">
-                    <h3 class="sidebar-title">API Endpoints</h3>
-                    <div style="margin-bottom: 20px;">
-                        <button class="btn btn-primary" style="width: 100%;" id="addAPI">
-                            <i class="fas fa-plus"></i> Add API
-                        </button>
-                    </div>
-                    <div class="api-tester">
-                        <div class="api-method">
-                            <select class="api-method-select">
-                                <option>GET</option>
-                                <option>POST</option>
-                                <option>PUT</option>
-                                <option>DELETE</option>
-                            </select>
-                            <input type="text" class="api-url" placeholder="/api/users" value="/api/users">
-                            <button class="btn btn-success" style="padding: 8px 15px;">
-                                <i class="fas fa-play"></i>
-                            </button>
-                        </div>
-                        <div class="api-response">
-                            [
-  {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com"
-  }
-]
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Editor Area -->
-        <main class="editor-area">
-            <div class="editor-tabs">
-                <button class="editor-tab active" data-editor="design">
-                    <i class="fas fa-paint-brush"></i> Design
-                </button>
-                <button class="editor-tab" data-editor="html">
-                    <i class="fab fa-html5"></i> HTML
-                </button>
-                <button class="editor-tab" data-editor="css">
-                    <i class="fab fa-css3-alt"></i> CSS
-                </button>
-                <button class="editor-tab" data-editor="js">
-                    <i class="fab fa-js"></i> JavaScript
-                </button>
-                <button class="editor-tab" data-editor="logic">
-                    <i class="fas fa-code"></i> Logic
-                </button>
-                <button class="editor-tab" data-editor="console">
-                    <i class="fas fa-terminal"></i> Console
-                </button>
-            </div>
-            
-            <div class="editor-content">
-                <!-- Design View -->
-                <div class="preview-panel" id="designView">
-                    <div class="preview-header">
-                        <div>
-                            <span>Live Preview</span>
-                        </div>
-                        <div class="preview-devices">
-                            <button class="device-btn active" data-device="desktop">
-                                <i class="fas fa-desktop"></i>
-                            </button>
-                            <button class="device-btn" data-device="tablet">
-                                <i class="fas fa-tablet-alt"></i>
-                            </button>
-                            <button class="device-btn" data-device="mobile">
-                                <i class="fas fa-mobile-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <iframe class="preview-frame" id="previewFrame"></iframe>
-                </div>
-                
-                <!-- Code Editors -->
-                <div class="code-editor" id="htmlEditor" style="display: none;">
-                    <div class="editor-header">
-                        <span>HTML Editor</span>
-                        <button class="btn btn-primary btn-sm" id="formatHTML">
-                            <i class="fas fa-align-left"></i> Format
-                        </button>
-                    </div>
-                    <div class="code-mirror-wrapper">
-                        <textarea id="htmlCode"></textarea>
-                    </div>
-                </div>
-                
-                <div class="code-editor" id="cssEditor" style="display: none;">
-                    <div class="editor-header">
-                        <span>CSS Editor</span>
-                        <button class="btn btn-primary btn-sm" id="formatCSS">
-                            <i class="fas fa-align-left"></i> Format
-                        </button>
-                    </div>
-                    <div class="code-mirror-wrapper">
-                        <textarea id="cssCode"></textarea>
-                    </div>
-                </div>
-                
-                <div class="code-editor" id="jsEditor" style="display: none;">
-                    <div class="editor-header">
-                        <span>JavaScript Editor</span>
-                        <button class="btn btn-primary btn-sm" id="formatJS">
-                            <i class="fas fa-align-left"></i> Format
-                        </button>
-                    </div>
-                    <div class="code-mirror-wrapper">
-                        <textarea id="jsCode"></textarea>
-                    </div>
-                </div>
-                
-                <!-- Logic Editor -->
-                <div class="code-editor" id="logicEditor" style="display: none;">
-                    <div class="editor-header">
-                        <span>App Logic & Functions</span>
-                        <button class="btn btn-success btn-sm" id="saveLogic">
-                            <i class="fas fa-save"></i> Save
-                        </button>
-                    </div>
-                    <div class="code-mirror-wrapper">
-                        <textarea id="logicCode"></textarea>
-                    </div>
-                </div>
-                
-                <!-- Test Console -->
-                <div class="test-console" id="testConsole" style="display: none;">
-                    <div class="console-header">
-                        <span>Test Console</span>
-                        <button class="btn btn-danger btn-sm" id="clearConsole">
-                            <i class="fas fa-trash"></i> Clear
-                        </button>
-                    </div>
-                    <div class="console-content" id="consoleOutput">
-                        <div class="console-message info">
-                            [INFO] App Builder initialized
-                        </div>
-                        <div class="console-message success">
-                            [SUCCESS] All systems ready
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Properties Panel -->
-        <aside class="properties-panel" id="propertiesPanel">
-            <div class="sidebar-tabs">
-                <button class="sidebar-tab active" data-properties="style">
-                    <i class="fas fa-palette"></i> Style
-                </button>
-                <button class="sidebar-tab" data-properties="events">
-                    <i class="fas fa-bolt"></i> Events
-                </button>
-                <button class="sidebar-tab" data-properties="data">
-                    <i class="fas fa-database"></i> Data
-                </button>
-                <button class="sidebar-tab" data-properties="advanced">
-                    <i class="fas fa-cogs"></i> Advanced
-                </button>
-            </div>
-            
-            <div class="properties-content">
-                <!-- Style Properties -->
-                <div id="styleProperties">
-                    <div class="property-group">
-                        <h4><i class="fas fa-text-height"></i> Typography</h4>
-                        <div class="property-item">
-                            <label>Font Family</label>
-                            <select id="fontFamily">
-                                <option>Arial, sans-serif</option>
-                                <option>'Segoe UI', Tahoma</option>
-                                <option>'Roboto', sans-serif</option>
-                                <option>'Montserrat', sans-serif</option>
-                                <option>'Courier New', monospace</option>
-                            </select>
-                        </div>
-                        <div class="property-item">
-                            <label>Font Size</label>
-                            <input type="text" id="fontSize" value="16px">
-                        </div>
-                        <div class="property-item">
-                            <label>Font Weight</label>
-                            <select id="fontWeight">
-                                <option>normal</option>
-                                <option>bold</option>
-                                <option>300</option>
-                                <option>400</option>
-                                <option>500</option>
-                                <option>600</option>
-                                <option>700</option>
-                                <option>800</option>
-                                <option>900</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="property-group">
-                        <h4><i class="fas fa-border-style"></i> Layout & Spacing</h4>
-                        <div class="property-item">
-                            <label>Width</label>
-                            <input type="text" id="width" value="100%">
-                        </div>
-                        <div class="property-item">
-                            <label>Height</label>
-                            <input type="text" id="height" value="auto">
-                        </div>
-                        <div class="property-item">
-                            <label>Padding</label>
-                            <input type="text" id="padding" value="10px">
-                        </div>
-                        <div class="property-item">
-                            <label>Margin</label>
-                            <input type="text" id="margin" value="0">
-                        </div>
-                    </div>
-                    
-                    <div class="property-group">
-                        <h4><i class="fas fa-fill-drip"></i> Colors & Background</h4>
-                        <div class="property-item">
-                            <label>Color</label>
-                            <input type="color" id="color" value="#000000">
-                        </div>
-                        <div class="property-item">
-                            <label>Background Color</label>
-                            <input type="color" id="backgroundColor" value="#ffffff">
-                        </div>
-                        <div class="property-item">
-                            <label>Border Color</label>
-                            <input type="color" id="borderColor" value="#cccccc">
-                        </div>
-                    </div>
-                    
-                    <div class="property-group">
-                        <h4><i class="fas fa-expand-arrows-alt"></i> Flexbox</h4>
-                        <div class="property-item">
-                            <label>Display</label>
-                            <select id="display">
-                                <option>block</option>
-                                <option>flex</option>
-                                <option>grid</option>
-                                <option>inline-block</option>
-                                <option>none</option>
-                            </select>
-                        </div>
-                        <div class="property-item">
-                            <label>Flex Direction</label>
-                            <select id="flexDirection">
-                                <option>row</option>
-                                <option>row-reverse</option>
-                                <option>column</option>
-                                <option>column-reverse</option>
-                            </select>
-                        </div>
-                        <div class="property-item">
-                            <label>Justify Content</label>
-                            <select id="justifyContent">
-                                <option>flex-start</option>
-                                <option>flex-end</option>
-                                <option>center</option>
-                                <option>space-between</option>
-                                <option>space-around</option>
-                                <option>space-evenly</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Event Properties -->
-                <div id="eventProperties" style="display: none;">
-                    <div class="property-group">
-                        <h4><i class="fas fa-mouse-pointer"></i> Mouse Events</h4>
-                        <div class="property-item">
-                            <label>On Click</label>
-                            <select id="onClick">
-                                <option>None</option>
-                                <option>showAlert</option>
-                                <option>toggleVisibility</option>
-                                <option>submitForm</option>
-                                <option>navigateTo</option>
-                                <option>customFunction</option>
-                            </select>
-                        </div>
-                        <div class="property-item">
-                            <label>On Hover</label>
-                            <select id="onHover">
-                                <option>None</option>
-                                <option>changeColor</option>
-                                <option>showTooltip</option>
-                                <option>scaleUp</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="property-group">
-                        <h4><i class="fas fa-keyboard"></i> Keyboard Events</h4>
-                        <div class="property-item">
-                            <label>On Key Press</label>
-                            <textarea id="onKeyPress" placeholder="function(event) {
-  console.log('Key pressed:', event.key);
-}"></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="property-group">
-                        <h4><i class="fas fa-code"></i> Custom Event Handler</h4>
-                        <div class="property-item">
-                            <label>Custom Function</label>
-                            <textarea id="customEventHandler" placeholder="// Write your custom event handler here
-function handleCustomEvent() {
-  // Your logic here
-}"></textarea>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Data Properties -->
-                <div id="dataProperties" style="display: none;">
-                    <div class="property-group">
-                        <h4><i class="fas fa-database"></i> Data Binding</h4>
-                        <div class="property-item">
-                            <label>Data Source</label>
-                            <select id="dataSource">
-                                <option>None</option>
-                                <option>Users</option>
-                                <option>Products</option>
-                                <option>Orders</option>
-                                <option>Custom API</option>
-                            </select>
-                        </div>
-                        <div class="property-item">
-                            <label>Data Field</label>
-                            <input type="text" id="dataField" placeholder="e.g., name, price, email">
-                        </div>
-                    </div>
-                    
-                    <div class="property-group">
-                        <h4><i class="fas fa-sync-alt"></i> Real-time Updates</h4>
-                        <div class="property-item">
-                            <label>Update Interval (ms)</label>
-                            <input type="number" id="updateInterval" value="5000">
-                        </div>
-                        <div class="property-item">
-                            <label>Auto Refresh</label>
-                            <input type="checkbox" id="autoRefresh">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Advanced Properties -->
-                <div id="advancedProperties" style="display: none;">
-                    <div class="property-group">
-                        <h4><i class="fas fa-code"></i> Custom CSS</h4>
-                        <div class="property-item">
-                            <label>Additional CSS</label>
-                            <textarea id="customCSS" placeholder="/* Add custom CSS rules here */
-.custom-class {
-  /* Your styles */
-}"></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="property-group">
-                        <h4><i class="fas fa-cog"></i> Advanced Settings</h4>
-                        <div class="property-item">
-                            <label>CSS Class</label>
-                            <input type="text" id="cssClass" placeholder="my-custom-class">
-                        </div>
-                        <div class="property-item">
-                            <label>ID</label>
-                            <input type="text" id="elementId" placeholder="my-element-id">
-                        </div>
-                        <div class="property-item">
-                            <label>Animation</label>
-                            <select id="animation">
-                                <option>None</option>
-                                <option>fadeIn</option>
-                                <option>slideIn</option>
-                                <option>bounce</option>
-                                <option>spin</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </aside>
-    </div>
-
-    <!-- Component Inspector Modal -->
-    <div class="component-inspector" id="componentInspector" style="display: none;">
-        <div class="inspector-header">
-            <h4>Edit Component</h4>
-            <button class="inspector-close" id="closeInspector">&times;</button>
-        </div>
-        <div id="inspectorContent">
-            <!-- Content loaded dynamically -->
-        </div>
-    </div>
-
-    <!-- Export Modal -->
-    <div class="modal" id="exportModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Export Your App</h2>
-                <button class="modal-close" id="closeExportModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
-                    <div class="export-option" style="padding: 25px; border: 2px solid #374151; border-radius: 10px; cursor: pointer;">
-                        <i class="fab fa-html5" style="font-size: 3rem; color: var(--primary-color);"></i>
-                        <h4 style="margin: 15px 0 10px;">Static Website</h4>
-                        <p>HTML, CSS, JS files</p>
-                    </div>
-                    <div class="export-option" style="padding: 25px; border: 2px solid #374151; border-radius: 10px; cursor: pointer;">
-                        <i class="fab fa-react" style="font-size: 3rem; color: #61dafb;"></i>
-                        <h4 style="margin: 15px 0 10px;">React App</h4>
-                        <p>Complete React project</p>
-                    </div>
-                    <div class="export-option" style="padding: 25px; border: 2px solid #374151; border-radius: 10px; cursor: pointer;">
-                        <i class="fab fa-vuejs" style="font-size: 3rem; color: #42b883;"></i>
-                        <h4 style="margin: 15px 0 10px;">Vue.js App</h4>
-                        <p>Vue.js project</p>
-                    </div>
-                    <div class="export-option" style="padding: 25px; border: 2px solid #374151; border-radius: 10px; cursor: pointer;">
-                        <i class="fas fa-mobile-alt" style="font-size: 3rem; color: var(--success-color);"></i>
-                        <h4 style="margin: 15px 0 10px;">Mobile App</h4>
-                        <p>React Native/Flutter</p>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 30px;">
-                    <h4>Export Options</h4>
-                    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
-                        <label style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" checked> Include database schema
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" checked> Include API endpoints
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox"> Include sample data
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" checked> Include documentation
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelExport">Cancel</button>
-                <button class="btn btn-primary" id="confirmExport">Export Now</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add External Libraries Modal -->
-    <div class="modal" id="librariesModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add External Libraries</h2>
-                <button class="modal-close" id="closeLibrariesModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-                    <div style="padding: 20px; border: 1px solid #374151; border-radius: 8px;">
-                        <h4>UI Frameworks</h4>
-                        <div style="margin-top: 10px;">
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox"> Bootstrap
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox"> Tailwind CSS
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox"> Material UI
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 20px; border: 1px solid #374151; border-radius: 8px;">
-                        <h4>JavaScript Libraries</h4>
-                        <div style="margin-top: 10px;">
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox" checked> jQuery
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox"> Chart.js
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox"> Moment.js
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 20px; border: 1px solid #374151; border-radius: 8px;">
-                        <h4>API & Services</h4>
-                        <div style="margin-top: 10px;">
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox"> Firebase
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox"> Stripe
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox"> Google Maps
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelLibraries">Cancel</button>
-                <button class="btn btn-primary" id="addLibraries">Add Libraries</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchtags.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/selection/active-line.min.js"></script>
-    <script>
-        // Initialize state
-        const appState = {
-            currentPage: 'home',
-            components: [],
-            selectedComponent: null,
-            htmlCode: `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My App</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        
-        .app-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .notification-content {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            border-radius: var(--radius);
             overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s;
         }
-        
-        .header {
-            background: linear-gradient(90deg, #667eea, #764ba2);
+
+        .notification-modal.active .notification-content {
+            transform: translateY(0);
+        }
+
+        .notification-header {
+            background: var(--primary);
             color: white;
-            padding: 30px;
+            padding: 20px;
             text-align: center;
         }
-        
-        .header h1 {
-            margin: 0;
-            font-size: 2.5rem;
+
+        .notification-header i {
+            font-size: 3rem;
+            margin-bottom: 15px;
         }
-        
-        .content {
-            padding: 40px;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
+
+        .notification-header h3 {
+            font-family: 'Amiri', serif;
+            font-size: 1.8rem;
         }
-        
-        .main-content {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
+
+        .notification-body {
+            padding: 25px;
+            text-align: center;
         }
-        
-        .sidebar {
-            background: #e9ecef;
-            padding: 30px;
-            border-radius: 15px;
+
+        .notification-verse {
+            font-family: 'Amiri', serif;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            line-height: 1.5;
         }
-        
-        .btn {
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
+
+        .notification-message {
             font-size: 1rem;
+            color: var(--dark);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .notification-source {
+            font-size: 0.9rem;
+            color: var(--gray);
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
         }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
         }
-        
-        @media (max-width: 768px) {
-            .content {
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #F5F5F5;
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: #E0E0E0;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #E0E0E0;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .daily-progress {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .prayer-times {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .prayer-card {
+            background: white;
+            padding: 15px;
+            border-radius: var(--radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .prayer-name {
+            font-weight: 500;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
+
+        .prayer-time {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .prayer-status {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .prayer-completed {
+            background: #E8F5E9;
+            color: var(--primary);
+        }
+
+        .prayer-pending {
+            background: #FFF3E0;
+            color: #EF6C00;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #E0E0E0;
+        }
+
+        @media (max-width: 600px) {
+            .stats-bar {
                 grid-template-columns: 1fr;
+            }
+            
+            .prayer-times {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tabs {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
-            <h1>Welcome to My App</h1>
-            <p>Built with Visual App Builder</p>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-mosque"></i>
+                <h1>FaithTask</h1>
+            </div>
+            <p class="tagline">Islamic Task Manager - Combining Faith & Productivity</p>
+            <div class="date-display" id="currentDate">
+                <!-- Date will be inserted by JS -->
+            </div>
         </header>
-        
-        <main class="content">
-            <div class="main-content">
-                <h2>Main Content Area</h2>
-                <p>This is where your main content goes. You can add any components here.</p>
-                
-                <div style="margin-top: 30px;">
-                    <button class="btn" onclick="showAlert()">
-                        Click Me!
-                    </button>
-                    <button class="btn" onclick="fetchData()" style="margin-left: 15px;">
-                        Load Data
-                    </button>
-                </div>
-                
-                <div id="dataDisplay" style="margin-top: 30px; padding: 20px; background: white; border-radius: 10px;">
-                    <!-- Data will appear here -->
-                </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value streak" id="streakCount">0</div>
+                <div class="stat-label">Day Streak</div>
             </div>
-            
-            <aside class="sidebar">
-                <h3>Sidebar</h3>
-                <p>Additional content or navigation</p>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 10px; background: white; margin-bottom: 10px; border-radius: 5px;">Item 1</li>
-                    <li style="padding: 10px; background: white; margin-bottom: 10px; border-radius: 5px;">Item 2</li>
-                    <li style="padding: 10px; background: white; margin-bottom: 10px; border-radius: 5px;">Item 3</li>
-                </ul>
-            </aside>
-        </main>
-        
-        <footer style="padding: 20px; text-align: center; background: #f8f9fa; border-top: 1px solid #dee2e6;">
-            <p>&copy; 2024 My App. All rights reserved.</p>
-        </footer>
-    </div>
-    
-    <script src="app.js"><\/script>
-</body>
-</html>`,
-            cssCode: `/* Custom CSS Styles */
-
-/* Component Styles */
-.custom-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.custom-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-}
-
-/* Form Styles */
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #333;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: #667eea;
-    outline: none;
-}
-
-/* Table Styles */
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-.data-table th {
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    color: white;
-    padding: 15px;
-    text-align: left;
-}
-
-.data-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.data-table tr:hover {
-    background: #f8f9fa;
-}
-
-/* Animation Classes */
-.fade-in {
-    animation: fadeIn 0.5s ease-in;
-}
-
-.slide-in {
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideIn {
-    from { transform: translateX(-20px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-    
-    .btn {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-    
-    .data-table {
-        display: block;
-        overflow-x: auto;
-    }
-}`,
-            jsCode: `// Application JavaScript
-
-// Initialize app
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('App initialized');
-    loadUserData();
-    setupEventListeners();
-});
-
-// User data management
-let users = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User' }
-];
-
-let products = [
-    { id: 1, name: 'Product A', price: 29.99, stock: 50 },
-    { id: 2, name: 'Product B', price: 49.99, stock: 25 },
-    { id: 3, name: 'Product C', price: 19.99, stock: 100 }
-];
-
-// API simulation
-async function fetchData() {
-    try {
-        console.log('Fetching data...');
-        
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const data = {
-            users: users,
-            products: products,
-            timestamp: new Date().toISOString()
-        };
-        
-        displayData(data);
-        logToConsole('Data fetched successfully', 'success');
-        
-        return data;
-    } catch (error) {
-        logToConsole('Error fetching data: ' + error.message, 'error');
-        return null;
-    }
-}
-
-// Display data in UI
-function displayData(data) {
-    const container = document.getElementById('dataDisplay');
-    if (!container) return;
-    
-    container.innerHTML = \`
-        <h3>Data Loaded</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-            <div class="custom-card">
-                <h4>Users (\${data.users.length})</h4>
-                <ul>
-                    \${data.users.map(user => \`
-                        <li>\${user.name} - \${user.email}</li>
-                    \`).join('')}
-                </ul>
+            <div class="stat-card">
+                <div class="stat-value" id="completedToday">0</div>
+                <div class="stat-label">Completed Today</div>
             </div>
-            <div class="custom-card">
-                <h4>Products (\${data.products.length})</h4>
-                <ul>
-                    \${data.products.map(product => \`
-                        <li>\${product.name} - $\${product.price}</li>
-                    \`).join('')}
-                </ul>
+            <div class="stat-card">
+                <div class="stat-value" id="totalTasks">14</div>
+                <div class="stat-label">Total Tasks</div>
             </div>
         </div>
-        <p><small>Last updated: \${new Date(data.timestamp).toLocaleString()}</small></p>
-    \`;
-}
 
-// User management functions
-function addUser(name, email, role = 'User') {
-    const newUser = {
-        id: users.length + 1,
-        name: name,
-        email: email,
-        role: role,
-        createdAt: new Date().toISOString()
-    };
-    
-    users.push(newUser);
-    logToConsole(\`User \${name} added successfully\`, 'success');
-    return newUser;
-}
+        <div class="daily-progress">
+            <div class="progress-text">
+                <span>Today's Progress</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
 
-function updateUser(id, updates) {
-    const index = users.findIndex(user => user.id === id);
-    if (index !== -1) {
-        users[index] = { ...users[index], ...updates };
-        logToConsole(\`User \${id} updated\`, 'info');
-        return users[index];
-    }
-    return null;
-}
+        <div class="tabs">
+            <div class="tab active" data-tab="daily">Daily</div>
+            <div class="tab" data-tab="weekly">Weekly</div>
+            <div class="tab" data-tab="monthly">Monthly</div>
+        </div>
 
-function deleteUser(id) {
-    const index = users.findIndex(user => user.id === id);
-    if (index !== -1) {
-        const deletedUser = users.splice(index, 1)[0];
-        logToConsole(\`User \${deletedUser.name} deleted\`, 'warning');
-        return deletedUser;
-    }
-    return null;
-}
+        <!-- DAILY TAB CONTENT -->
+        <div class="tab-content active" id="daily-tab">
+            <h2 class="section-title">Today's Prayers</h2>
+            <div class="prayer-times" id="prayerContainer">
+                <!-- Prayer cards will be generated by JS -->
+            </div>
 
-// Form handling
-function validateForm(formData) {
-    const errors = [];
-    
-    if (!formData.name || formData.name.trim().length < 2) {
-        errors.push('Name must be at least 2 characters');
-    }
-    
-    if (!formData.email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
-        errors.push('Valid email is required');
-    }
-    
-    return {
-        isValid: errors.length === 0,
-        errors: errors
-    };
-}
+            <h2 class="section-title">Daily Tasks & Ibadah</h2>
+            <div class="task-list" id="dailyTasks">
+                <!-- Daily tasks will be generated by JS -->
+            </div>
+        </div>
 
-function submitForm(formId) {
-    const form = document.getElementById(formId);
-    if (!form) return;
-    
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    
-    const validation = validateForm(data);
-    
-    if (validation.isValid) {
-        // Process form data
-        console.log('Form submitted:', data);
-        alert('Form submitted successfully!');
-        form.reset();
-    } else {
-        alert('Form errors:\\n' + validation.errors.join('\\n'));
-    }
-}
+        <!-- WEEKLY TAB CONTENT -->
+        <div class="tab-content" id="weekly-tab">
+            <h2 class="section-title">Weekly Goals</h2>
+            <div class="task-list" id="weeklyTasks">
+                <!-- Weekly tasks will be generated by JS -->
+            </div>
+        </div>
 
-// UI Functions
-function showAlert(message = 'Button clicked!') {
-    alert(message);
-    logToConsole('Alert shown: ' + message, 'info');
-}
+        <!-- MONTHLY TAB CONTENT -->
+        <div class="tab-content" id="monthly-tab">
+            <h2 class="section-title">Monthly Goals</h2>
+            <div class="empty-state">
+                <i class="fas fa-calendar-alt"></i>
+                <p>Monthly goals will appear here</p>
+                <p>Set your goals at the beginning of each month</p>
+            </div>
+        </div>
+    </div>
 
-function toggleVisibility(elementId) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        element.style.display = element.style.display === 'none' ? 'block' : 'none';
-    }
-}
+    <!-- NOTIFICATION MODAL -->
+    <div class="notification-modal" id="notificationModal">
+        <div class="notification-content">
+            <div class="notification-header">
+                <i class="fas fa-star"></i>
+                <h3>MashaAllah!</h3>
+            </div>
+            <div class="notification-body">
+                <div class="notification-verse" id="notificationVerse">
+                    <!-- Verse will be inserted by JS -->
+                </div>
+                <div class="notification-message" id="notificationMessage">
+                    <!-- Message will be inserted by JS -->
+                </div>
+                <div class="notification-source" id="notificationSource">
+                    <!-- Source will be inserted by JS -->
+                </div>
+                <div class="notification-actions">
+                    <button class="btn btn-secondary" id="closeNotification">Close</button>
+                    <button class="btn btn-primary" id="shareNotification">
+                        <i class="fas fa-share"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-function loadUserData() {
-    console.log('Loading user data...');
-    // Load initial user data
-}
-
-function setupEventListeners() {
-    // Setup any initial event listeners
-    console.log('Event listeners setup complete');
-}
-
-// Utility functions
-function logToConsole(message, type = 'info') {
-    console[\`\${type === 'error' ? 'error' : type === 'warning' ? 'warn' : 'log'}\`](message);
-}
-
-// Export functions for external use
-window.appFunctions = {
-    fetchData,
-    addUser,
-    updateUser,
-    deleteUser,
-    showAlert,
-    submitForm,
-    toggleVisibility
-};`,
-            logicCode: `// App Logic & Business Rules
-
-// ====================
-// BUSINESS LOGIC
-// ====================
-
-class ShoppingCart {
-    constructor() {
-        this.items = [];
-        this.taxRate = 0.08; // 8% tax
-        this.discount = 0;
-    }
-    
-    addItem(product, quantity = 1) {
-        const existingItem = this.items.find(item => item.product.id === product.id);
-        
-        if (existingItem) {
-            existingItem.quantity += quantity;
-        } else {
-            this.items.push({
-                product: product,
-                quantity: quantity,
-                addedAt: new Date()
-            });
-        }
-        
-        this.saveToStorage();
-        return this.items;
-    }
-    
-    removeItem(productId) {
-        this.items = this.items.filter(item => item.product.id !== productId);
-        this.saveToStorage();
-        return this.items;
-    }
-    
-    updateQuantity(productId, quantity) {
-        const item = this.items.find(item => item.product.id === productId);
-        if (item) {
-            item.quantity = quantity;
-            this.saveToStorage();
-        }
-        return this.items;
-    }
-    
-    calculateSubtotal() {
-        return this.items.reduce((total, item) => {
-            return total + (item.product.price * item.quantity);
-        }, 0);
-    }
-    
-    calculateTax() {
-        return this.calculateSubtotal() * this.taxRate;
-    }
-    
-    calculateTotal() {
-        const subtotal = this.calculateSubtotal();
-        const tax = this.calculateTax();
-        return (subtotal + tax) - this.discount;
-    }
-    
-    applyDiscount(amount) {
-        this.discount = amount;
-        return this.calculateTotal();
-    }
-    
-    clearCart() {
-        this.items = [];
-        this.discount = 0;
-        this.saveToStorage();
-    }
-    
-    saveToStorage() {
-        localStorage.setItem('shoppingCart', JSON.stringify(this.items));
-    }
-    
-    loadFromStorage() {
-        const saved = localStorage.getItem('shoppingCart');
-        if (saved) {
-            this.items = JSON.parse(saved);
-        }
-    }
-}
-
-// ====================
-// USER AUTHENTICATION
-// ====================
-
-class AuthManager {
-    constructor() {
-        this.currentUser = null;
-        this.users = JSON.parse(localStorage.getItem('appUsers') || '[]');
-    }
-    
-    register(userData) {
-        // Validate user data
-        if (!userData.email || !userData.password) {
-            throw new Error('Email and password are required');
-        }
-        
-        // Check if user exists
-        if (this.users.find(u => u.email === userData.email)) {
-            throw new Error('User already exists');
-        }
-        
-        // Create new user
-        const newUser = {
-            id: Date.now(),
-            ...userData,
-            createdAt: new Date().toISOString(),
-            role: 'user',
-            isActive: true
+    <script>
+        // Database of Islamic tasks with notifications
+        const islamicTasks = {
+            daily: [
+                {
+                    id: "fajr",
+                    name: "Fajr Prayer",
+                    description: "Morning prayer",
+                    time: "Before sunrise",
+                    category: "prayer",
+                    completed: false,
+                    islamicContext: {
+                        verse: "Establish prayer at the decline of the sun until the darkness of the night and the Quran at dawn. Indeed, the Quran at dawn is ever witnessed.",
+                        source: "Quran 17:78",
+                        reward: "Allah's protection for the day",
+                        encouragement: "The Prophet ﷺ said: 'Whoever prays Fajr is under Allah's protection.'"
+                    }
+                },
+                {
+                    id: "dhuhr",
+                    name: "Dhuhr Prayer",
+                    description: "Midday prayer",
+                    time: "After noon",
+                    category: "prayer",
+                    completed: false,
+                    islamicContext: {
+                        verse: "Guard strictly your prayers, especially the middle prayer. And stand before Allah with devotion.",
+                        source: "Quran 2:238",
+                        reward: "Forgiveness of sins",
+                        encouragement: "Consistency in prayer leads to Allah's love"
+                    }
+                },
+                {
+                    id: "asr",
+                    name: "Asr Prayer",
+                    description: "Afternoon prayer",
+                    time: "Late afternoon",
+                    category: "prayer",
+                    completed: false,
+                    islamicContext: {
+                        verse: "So glorify Allah when you reach evening and when you rise in the morning.",
+                        source: "Quran 30:17",
+                        reward: "Light on Day of Judgment",
+                        encouragement: "Asr prayer is the middle prayer - guard it well"
+                    }
+                },
+                {
+                    id: "maghrib",
+                    name: "Maghrib Prayer",
+                    description: "Sunset prayer",
+                    time: "After sunset",
+                    category: "prayer",
+                    completed: false,
+                    islamicContext: {
+                        verse: "And establish prayer at the two ends of the day and at the approach of the night.",
+                        source: "Quran 11:114",
+                        reward: "Acceptance of supplications",
+                        encouragement: "Maghrib is answered prayer time"
+                    }
+                },
+                {
+                    id: "isha",
+                    name: "Isha Prayer",
+                    description: "Night prayer",
+                    time: "After twilight",
+                    category: "prayer",
+                    completed: false,
+                    islamicContext: {
+                        verse: "And during night, prostrate to Him and glorify Him a long night through.",
+                        source: "Quran 76:26",
+                        reward: "Peaceful sleep under Allah's care",
+                        encouragement: "Isha prayer equals half the night in reward"
+                    }
+                },
+                {
+                    id: "quran",
+                    name: "Quran Reading",
+                    description: "Daily recitation",
+                    time: "Anytime",
+                    category: "quran",
+                    completed: false,
+                    islamicContext: {
+                        verse: "Recite what has been revealed to you of the Book and establish prayer. Indeed, prayer prohibits immorality and wrongdoing.",
+                        source: "Quran 29:45",
+                        reward: "10 rewards per letter",
+                        encouragement: "The Quran will intercede for you on Judgment Day"
+                    }
+                },
+                {
+                    id: "dhikr",
+                    name: "Morning & Evening Dhikr",
+                    description: "Remembrance of Allah",
+                    time: "Morning/Evening",
+                    category: "dhikr",
+                    completed: false,
+                    islamicContext: {
+                        verse: "And remember your Lord within yourself in humility and in fear without being apparent in speech - in the mornings and the evenings.",
+                        source: "Quran 7:205",
+                        reward: "Protection and peace",
+                        encouragement: "Dhikr is fortress against Shaytan"
+                    }
+                },
+                {
+                    id: "charity",
+                    name: "Daily Charity",
+                    description: "Even a smile is charity",
+                    time: "Anytime",
+                    category: "charity",
+                    completed: false,
+                    islamicContext: {
+                        verse: "The example of those who spend their wealth in the way of Allah is like a seed which grows seven spikes; in each spike is a hundred grains.",
+                        source: "Quran 2:261",
+                        reward: "Wealth multiplied 700 times",
+                        encouragement: "Charity extinguishes sins like water extinguishes fire"
+                    }
+                }
+            ],
+            weekly: [
+                {
+                    id: "friday",
+                    name: "Jumu'ah Prayer",
+                    description: "Friday congregational prayer",
+                    time: "Friday afternoon",
+                    category: "prayer",
+                    completed: false,
+                    islamicContext: {
+                        verse: "O you who have believed, when the call to prayer is made on Friday, then proceed to the remembrance of Allah and leave trade.",
+                        source: "Quran 62:9",
+                        reward: "Forgiveness of week's sins",
+                        encouragement: "Jumu'ah is the best day the sun rises upon"
+                    }
+                },
+                {
+                    id: "fasting",
+                    name: "Optional Fasting",
+                    description: "Monday/Thursday fasting",
+                    time: "Weekly",
+                    category: "fasting",
+                    completed: false,
+                    islamicContext: {
+                        verse: "And fast, it is better for you, if only you knew.",
+                        source: "Quran 2:184",
+                        reward: "Sins forgiven, dua accepted",
+                        encouragement: "Deeds presented to Allah on Monday and Thursday"
+                    }
+                },
+                {
+                    id: "family",
+                    name: "Family Time & Rights",
+                    description: "Spend quality time with family",
+                    time: "Weekly",
+                    category: "family",
+                    completed: false,
+                    islamicContext: {
+                        verse: "And worship Allah and associate nothing with Him, and to parents do good, and to relatives, orphans, the needy, the near neighbor, the neighbor farther away...",
+                        source: "Quran 4:36",
+                        reward: "Barakah in home and relationships",
+                        encouragement: "The best of you are those best to their families"
+                    }
+                }
+            ]
         };
-        
-        this.users.push(newUser);
-        this.saveUsers();
-        
-        // Auto login after registration
-        this.login(userData.email, userData.password);
-        
-        return newUser;
-    }
-    
-    login(email, password) {
-        const user = this.users.find(u => 
-            u.email === email && 
-            u.password === password && 
-            u.isActive
-        );
-        
-        if (user) {
-            this.currentUser = user;
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            this.onLoginSuccess(user);
-            return user;
-        } else {
-            throw new Error('Invalid credentials');
-        }
-    }
-    
-    logout() {
-        this.currentUser = null;
-        localStorage.removeItem('currentUser');
-        this.onLogout();
-    }
-    
-    isAuthenticated() {
-        return !!this.currentUser;
-    }
-    
-    isAdmin() {
-        return this.currentUser?.role === 'admin';
-    }
-    
-    updateProfile(updates) {
-        if (!this.currentUser) return null;
-        
-        const index = this.users.findIndex(u => u.id === this.currentUser.id);
-        if (index !== -1) {
-            this.users[index] = { ...this.users[index], ...updates };
-            this.currentUser = this.users[index];
-            this.saveUsers();
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
-        
-        return this.currentUser;
-    }
-    
-    saveUsers() {
-        localStorage.setItem('appUsers', JSON.stringify(this.users));
-    }
-    
-    onLoginSuccess(user) {
-        console.log('User logged in:', user.email);
-        // Dispatch custom event
-        document.dispatchEvent(new CustomEvent('userLogin', { detail: user }));
-    }
-    
-    onLogout() {
-        console.log('User logged out');
-        document.dispatchEvent(new CustomEvent('userLogout'));
-    }
-}
 
-// ====================
-// PRODUCT MANAGEMENT
-// ====================
-
-class ProductManager {
-    constructor() {
-        this.products = JSON.parse(localStorage.getItem('appProducts') || '[]');
-        this.categories = ['Electronics', 'Clothing', 'Books', 'Home', 'Sports'];
-    }
-    
-    addProduct(productData) {
-        const newProduct = {
-            id: Date.now(),
-            sku: this.generateSKU(),
-            ...productData,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            isActive: true,
-            rating: 0,
-            reviews: []
+        // Database of Islamic notifications
+        const islamicNotifications = {
+            prayer: [
+                "Allah says: 'Indeed, I am Allah. There is no deity except Me, so worship Me and establish prayer for My remembrance.' (Quran 20:14)",
+                "The Prophet ﷺ said: 'The first matter the slave will be accountable for is prayer.'",
+                "Prayer is the pillar of religion. Whoever establishes it has established religion."
+            ],
+            quran: [
+                "Allah says: 'This is the Book about which there is no doubt, a guidance for those conscious of Allah.' (Quran 2:2)",
+                "The best of you are those who learn the Quran and teach it.",
+                "Recite the Quran, for it will come as an intercessor for its reciter on the Day of Resurrection."
+            ],
+            charity: [
+                "Allah says: 'Take from their wealth a charity by which you purify them and cause them increase.' (Quran 9:103)",
+                "Charity does not decrease wealth.",
+                "Protect yourself from Hellfire even with half a date in charity."
+            ],
+            general: [
+                "Allah loves those who are consistent in good deeds, even if small.",
+                "The most beloved deeds to Allah are those done consistently, even if little.",
+                "Do not belittle any good deed, even meeting your brother with a cheerful face."
+            ]
         };
-        
-        this.products.push(newProduct);
-        this.saveProducts();
-        return newProduct;
-    }
-    
-    updateProduct(id, updates) {
-        const index = this.products.findIndex(p => p.id === id);
-        if (index !== -1) {
-            this.products[index] = {
-                ...this.products[index],
-                ...updates,
-                updatedAt: new Date().toISOString()
-            };
-            this.saveProducts();
-            return this.products[index];
+
+        // App State
+        const appState = {
+            streak: parseInt(localStorage.getItem('faithStreak')) || 0,
+            completedToday: parseInt(localStorage.getItem('completedToday')) || 0,
+            lastLogin: localStorage.getItem('lastLogin') || null,
+            tasks: JSON.parse(localStorage.getItem('faithTasks')) || islamicTasks
+        };
+
+        // DOM Elements
+        const currentDateEl = document.getElementById('currentDate');
+        const streakCountEl = document.getElementById('streakCount');
+        const completedTodayEl = document.getElementById('completedToday');
+        const totalTasksEl = document.getElementById('totalTasks');
+        const progressPercentEl = document.getElementById('progressPercent');
+        const progressFillEl = document.getElementById('progressFill');
+        const prayerContainerEl = document.getElementById('prayerContainer');
+        const dailyTasksEl = document.getElementById('dailyTasks');
+        const weeklyTasksEl = document.getElementById('weeklyTasks');
+        const notificationModal = document.getElementById('notificationModal');
+        const notificationVerseEl = document.getElementById('notificationVerse');
+        const notificationMessageEl = document.getElementById('notificationMessage');
+        const notificationSourceEl = document.getElementById('notificationSource');
+        const closeNotificationBtn = document.getElementById('closeNotification');
+        const shareNotificationBtn = document.getElementById('shareNotification');
+        const tabs = document.querySelectorAll('.tab');
+
+        // Initialize
+        function init() {
+            updateDate();
+            checkStreak();
+            renderStats();
+            renderPrayerTimes();
+            renderDailyTasks();
+            renderWeeklyTasks();
+            setupEventListeners();
         }
-        return null;
-    }
-    
-    deleteProduct(id) {
-        this.products = this.products.filter(p => p.id !== id);
-        this.saveProducts();
-    }
-    
-    getProduct(id) {
-        return this.products.find(p => p.id === id);
-    }
-    
-    getProductsByCategory(category) {
-        return this.products.filter(p => p.category === category && p.isActive);
-    }
-    
-    searchProducts(query) {
-        return this.products.filter(p => 
-            p.isActive && (
-                p.name.toLowerCase().includes(query.toLowerCase()) ||
-                p.description.toLowerCase().includes(query.toLowerCase()) ||
-                p.category.toLowerCase().includes(query.toLowerCase())
-            )
-        );
-    }
-    
-    addReview(productId, review) {
-        const product = this.getProduct(productId);
-        if (product) {
-            const newReview = {
-                id: Date.now(),
-                ...review,
-                createdAt: new Date().toISOString(),
-                helpful: 0
-            };
+
+        // Update current date
+        function updateDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const hijriDate = getHijriDate();
+            currentDateEl.innerHTML = `
+                ${now.toLocaleDateString('en-US', options)}<br>
+                <span style="color: var(--secondary);">${hijriDate}</span>
+            `;
+        }
+
+        // Get Hijri date (simplified)
+        function getHijriDate() {
+            const hijriMonths = ['Muharram', 'Safar', 'Rabi\' al-Awwal', 'Rabi\' al-Thani', 
+                                'Jumada al-Awwal', 'Jumada al-Thani', 'Rajab', 'Sha\'ban', 
+                                'Ramadan', 'Shawwal', 'Dhu al-Qi\'dah', 'Dhu al-Hijjah'];
+            const now = new Date();
+            const randomOffset = Math.floor(Math.random() * 30); // Simplified
+            const day = (randomOffset % 30) + 1;
+            const monthIndex = Math.floor(randomOffset / 30);
+            return `${day} ${hijriMonths[monthIndex]} 1445 AH`;
+        }
+
+        // Check and update streak
+        function checkStreak() {
+            const today = new Date().toDateString();
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
             
-            product.reviews.push(newReview);
-            
-            // Update average rating
-            if (product.reviews.length > 0) {
-                const total = product.reviews.reduce((sum, r) => sum + r.rating, 0);
-                product.rating = total / product.reviews.length;
+            if (!appState.lastLogin) {
+                appState.lastLogin = today;
+                appState.streak = 1;
+            } else if (appState.lastLogin === yesterday.toDateString()) {
+                appState.streak++;
+                appState.lastLogin = today;
+            } else if (appState.lastLogin !== today) {
+                appState.streak = 1;
+                appState.lastLogin = today;
             }
             
-            this.saveProducts();
-            return newReview;
+            localStorage.setItem('lastLogin', appState.lastLogin);
+            localStorage.setItem('faithStreak', appState.streak.toString());
         }
-        return null;
-    }
-    
-    generateSKU() {
-        return 'SKU-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-    }
-    
-    saveProducts() {
-        localStorage.setItem('appProducts', JSON.stringify(this.products));
-    }
-}
 
-// ====================
-// ORDER MANAGEMENT
-// ====================
-
-class OrderManager {
-    constructor() {
-        this.orders = JSON.parse(localStorage.getItem('appOrders') || '[]');
-        this.statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-    }
-    
-    createOrder(orderData) {
-        const newOrder = {
-            id: this.generateOrderId(),
-            orderNumber: 'ORD-' + Date.now(),
-            ...orderData,
-            createdAt: new Date().toISOString(),
-            status: 'pending',
-            paymentStatus: 'pending',
-            trackingNumber: null
-        };
-        
-        this.orders.push(newOrder);
-        this.saveOrders();
-        
-        // Dispatch order created event
-        document.dispatchEvent(new CustomEvent('orderCreated', { detail: newOrder }));
-        
-        return newOrder;
-    }
-    
-    updateOrderStatus(orderId, status, notes = '') {
-        const order = this.getOrder(orderId);
-        if (order) {
-            const oldStatus = order.status;
-            order.status = status;
-            order.updatedAt = new Date().toISOString();
+        // Render stats
+        function renderStats() {
+            streakCountEl.textContent = appState.streak;
             
-            // Add status history
-            if (!order.statusHistory) order.statusHistory = [];
-            order.statusHistory.push({
-                status: status,
-                changedAt: new Date().toISOString(),
-                notes: notes
+            // Count completed tasks for today
+            const completedCount = appState.tasks.daily.filter(task => task.completed).length;
+            appState.completedToday = completedCount;
+            completedTodayEl.textContent = completedCount;
+            
+            // Calculate progress
+            const totalDailyTasks = appState.tasks.daily.length;
+            const progress = totalDailyTasks > 0 ? Math.round((completedCount / totalDailyTasks) * 100) : 0;
+            progressPercentEl.textContent = `${progress}%`;
+            progressFillEl.style.width = `${progress}%`;
+            
+            totalTasksEl.textContent = appState.tasks.daily.length + appState.tasks.weekly.length;
+            
+            localStorage.setItem('completedToday', appState.completedToday.toString());
+        }
+
+        // Render prayer times
+        function renderPrayerTimes() {
+            const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            const times = ['5:30 AM', '12:30 PM', '4:00 PM', '6:15 PM', '7:45 PM']; // Example times
+            
+            prayerContainerEl.innerHTML = '';
+            
+            prayers.forEach((prayer, index) => {
+                const prayerData = appState.tasks.daily.find(t => t.id === prayer.toLowerCase());
+                const isCompleted = prayerData ? prayerData.completed : false;
+                
+                const prayerCard = document.createElement('div');
+                prayerCard.className = 'prayer-card';
+                prayerCard.innerHTML = `
+                    <div class="prayer-name">${prayer}</div>
+                    <div class="prayer-time">${times[index]}</div>
+                    <div class="prayer-status ${isCompleted ? 'prayer-completed' : 'prayer-pending'}">
+                        ${isCompleted ? '✅ Completed' : '⏳ Pending'}
+                    </div>
+                `;
+                
+                prayerCard.addEventListener('click', () => {
+                    if (prayerData) {
+                        toggleTaskCompletion(prayerData, 'daily');
+                    }
+                });
+                
+                prayerContainerEl.appendChild(prayerCard);
+            });
+        }
+
+        // Render daily tasks
+        function renderDailyTasks() {
+            dailyTasksEl.innerHTML = '';
+            
+            const categories = {};
+            appState.tasks.daily.forEach(task => {
+                if (!categories[task.category]) {
+                    categories[task.category] = [];
+                }
+                categories[task.category].push(task);
             });
             
-            this.saveOrders();
-            
-            // Dispatch status change event
-            document.dispatchEvent(new CustomEvent('orderStatusChanged', { 
-                detail: { order, oldStatus, newStatus: status }
-            }));
-            
-            return order;
+            for (const [category, tasks] of Object.entries(categories)) {
+                const categoryTitle = document.createElement('div');
+                categoryTitle.className = 'task-category';
+                categoryTitle.innerHTML = `<h3 style="color: var(--primary); margin-bottom: 10px; text-transform: capitalize;">${category}</h3>`;
+                dailyTasksEl.appendChild(categoryTitle);
+                
+                tasks.forEach(task => {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'task-item';
+                    taskItem.innerHTML = `
+                        <div class="task-info">
+                            <div class="task-name">${task.name}</div>
+                            <div class="task-desc">
+                                <i class="fas fa-${getCategoryIcon(task.category)}"></i>
+                                ${task.description}
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <div class="task-time">${task.time}</div>
+                            <div class="task-checkbox ${task.completed ? 'completed' : ''}">
+                                ${task.completed ? '<i class="fas fa-check"></i>' : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    taskItem.addEventListener('click', () => {
+                        toggleTaskCompletion(task, 'daily');
+                    });
+                    
+                    dailyTasksEl.appendChild(taskItem);
+                });
+            }
         }
-        return null;
-    }
-    
-    getOrder(orderId) {
-        return this.orders.find(o => o.id === orderId);
-    }
-    
-    getUserOrders(userId) {
-        return this.orders.filter(o => o.userId === userId).sort((a, b) => 
-            new Date(b.createdAt) - new Date(a.createdAt)
-        );
-    }
-    
-    calculateOrderStats() {
-        const total = this.orders.length;
-        const pending = this.orders.filter(o => o.status === 'pending').length;
-        const completed = this.orders.filter(o => o.status === 'delivered').length;
-        const revenue = this.orders
-            .filter(o => o.status === 'delivered')
-            .reduce((sum, o) => sum + o.total, 0);
-        
-        return { total, pending, completed, revenue };
-    }
-    
-    generateOrderId() {
-        return Date.now();
-    }
-    
-    saveOrders() {
-        localStorage.setItem('appOrders', JSON.stringify(this.orders));
-    }
-}
 
-// ====================
-// PAYMENT PROCESSING
-// ====================
+        // Render weekly tasks
+        function renderWeeklyTasks() {
+            weeklyTasksEl.innerHTML = '';
+            
+            appState.tasks.weekly.forEach(task => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.innerHTML = `
+                    <div class="task-info">
+                        <div class="task-name">${task.name}</div>
+                        <div class="task-desc">
+                            <i class="fas fa-${getCategoryIcon(task.category)}"></i>
+                            ${task.description}
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <div class="task-time">${task.time}</div>
+                        <div class="task-checkbox ${task.completed ? 'completed' : ''}">
+                            ${task.completed ? '<i class="fas fa-check"></i>' : ''}
+                        </div>
+                    </div>
+                `;
+                
+                taskItem.addEventListener('click', () => {
+                    toggleTaskCompletion(task, 'weekly');
+                });
+                
+                weeklyTasksEl.appendChild(taskItem);
+            });
+        }
 
-class PaymentProcessor {
-    constructor() {
-        this.paymentMethods = ['credit_card', 'paypal', 'stripe', 'bank_transfer'];
-    }
-    
-    async processPayment(paymentData) {
-        // Simulate payment processing
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                if (Math.random() > 0.1) { // 90% success rate
-                    const transactionId = 'TXN-' + Math.random().toString(36).substr(2, 12).toUpperCase();
-                    resolve({
-                        success: true,
-                        transactionId: transactionId,
-                        message: 'Payment processed successfully',
-                        timestamp: new Date().toISOString()
+        // Get icon for category
+        function getCategoryIcon(category) {
+            const icons = {
+                prayer: 'pray',
+                quran: 'book-quran',
+                dhikr: 'dharmachakra',
+                charity: 'hand-holding-heart',
+                fasting: 'cloud-sun',
+                family: 'users'
+            };
+            return icons[category] || 'tasks';
+        }
+
+        // Toggle task completion
+        function toggleTaskCompletion(task, type) {
+            task.completed = !task.completed;
+            
+            // Save to localStorage
+            localStorage.setItem('faithTasks', JSON.stringify(appState.tasks));
+            
+            // Update stats
+            renderStats();
+            
+            // Re-render affected section
+            if (type === 'daily') {
+                renderPrayerTimes();
+                renderDailyTasks();
+                
+                // Show notification if task was completed (not uncompleted)
+                if (task.completed) {
+                    showIslamicNotification(task);
+                }
+            } else {
+                renderWeeklyTasks();
+            }
+        }
+
+        // Show Islamic notification
+        function showIslamicNotification(task) {
+            // Prepare notification content
+            const context = task.islamicContext;
+            const categoryNotifications = islamicNotifications[task.category] || islamicNotifications.general;
+            const randomNotification = categoryNotifications[Math.floor(Math.random() * categoryNotifications.length)];
+            
+            notificationVerseEl.textContent = `"${context.verse}"`;
+            notificationMessageEl.innerHTML = `
+                <strong>${task.name} Completed!</strong><br><br>
+                ${context.encouragement}<br><br>
+                ${randomNotification}
+            `;
+            notificationSourceEl.textContent = context.source;
+            
+            // Show modal
+            notificationModal.classList.add('active');
+            
+            // Play success sound (if needed)
+            playSuccessSound();
+        }
+
+        // Play success sound
+        function playSuccessSound() {
+            // You can add actual sound files here
+            console.log("Playing success sound");
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Notification modal
+            closeNotificationBtn.addEventListener('click', () => {
+                notificationModal.classList.remove('active');
+            });
+            
+            shareNotificationBtn.addEventListener('click', () => {
+                const verse = notificationVerseEl.textContent;
+                const message = notificationMessageEl.textContent;
+                const shareText = `${verse}\n\n${message}\n\nShared via FaithTask App`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'MashaAllah!',
+                        text: shareText
                     });
                 } else {
-                    reject({
-                        success: false,
-                        error: 'Payment declined',
-                        code: 'PAYMENT_DECLINED'
+                    navigator.clipboard.writeText(shareText).then(() => {
+                        alert('Copied to clipboard! Share with others.');
                     });
                 }
-            }, 2000);
-        });
-    }
-    
-    validateCard(cardData) {
-        const errors = [];
-        
-        // Validate card number (simple Luhn check)
-        if (!this.isValidCardNumber(cardData.number)) {
-            errors.push('Invalid card number');
-        }
-        
-        // Validate expiry date
-        if (!this.isValidExpiry(cardData.expiry)) {
-            errors.push('Invalid expiry date');
-        }
-        
-        // Validate CVV
-        if (!cardData.cvv || cardData.cvv.length < 3 || cardData.cvv.length > 4) {
-            errors.push('Invalid CVV');
-        }
-        
-        return {
-            isValid: errors.length === 0,
-            errors: errors
-        };
-    }
-    
-    isValidCardNumber(number) {
-        // Simple Luhn algorithm implementation
-        let sum = 0;
-        let shouldDouble = false;
-        
-        for (let i = number.length - 1; i >= 0; i--) {
-            let digit = parseInt(number.charAt(i));
+            });
             
-            if (shouldDouble) {
-                digit *= 2;
-                if (digit > 9) digit -= 9;
-            }
+            // Close modal when clicking outside
+            notificationModal.addEventListener('click', (e) => {
+                if (e.target === notificationModal) {
+                    notificationModal.classList.remove('active');
+                }
+            });
             
-            sum += digit;
-            shouldDouble = !shouldDouble;
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && notificationModal.classList.contains('active')) {
+                    notificationModal.classList.remove('active');
+                }
+            });
         }
-        
-        return sum % 10 === 0;
-    }
-    
-    isValidExpiry(expiry) {
-        const [month, year] = expiry.split('/');
-        if (!month || !year) return false;
-        
-        const expiryDate = new Date(2000 + parseInt(year), parseInt(month) - 1);
-        const currentDate = new Date();
-        
-        return expiryDate > currentDate;
-    }
-}
 
-// ====================
-// NOTIFICATION SYSTEM
-// ====================
-
-class NotificationSystem {
-    constructor() {
-        this.notifications = JSON.parse(localStorage.getItem('appNotifications') || '[]');
-    }
-    
-    sendNotification(userId, title, message, type = 'info') {
-        const notification = {
-            id: Date.now(),
-            userId: userId,
-            title: title,
-            message: message,
-            type: type,
-            read: false,
-            createdAt: new Date().toISOString()
-        };
-        
-        this.notifications.push(notification);
-        this.saveNotifications();
-        
-        // Show browser notification if permitted
-        if (Notification.permission === 'granted') {
-            new Notification(title, { body: message });
+        // Export/Import functionality (for future use)
+        function exportData() {
+            const data = {
+                tasks: appState.tasks,
+                streak: appState.streak,
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'faithtask-data.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
         }
-        
-        return notification;
-    }
-    
-    markAsRead(notificationId) {
-        const notification = this.notifications.find(n => n.id === notificationId);
-        if (notification) {
-            notification.read = true;
-            this.saveNotifications();
+
+        function importData(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.tasks && data.streak !== undefined) {
+                        appState.tasks = data.tasks;
+                        appState.streak = data.streak;
+                        localStorage.setItem('faithTasks', JSON.stringify(appState.tasks));
+                        localStorage.setItem('faithStreak', appState.streak.toString());
+                        init();
+                        alert('Data imported successfully!');
+                    }
+                } catch (error) {
+                    alert('Error importing data. Invalid file format.');
+                }
+            };
+            reader.readAsText(file);
         }
-    }
-    
-    getUserNotifications(userId) {
-        return this.notifications
-            .filter(n => n.userId === userId)
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    }
-    
-    getUnreadCount(userId) {
-        return this.getUserNotifications(userId).filter(n => !n.read).length;
-    }
-    
-    requestPermission() {
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
-    }
-    
-    saveNotifications() {
-        localStorage.setItem('appNotifications', JSON.stringify(this.notifications));
-    }
-}
-
-// ====================
-// DATA VALIDATION
-// ====================
-
-class Validator {
-    static validateEmail(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    }
-    
-    static validatePassword(password) {
-        // At least 8 chars, 1 uppercase, 1 lowercase, 1 number
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/;
-        return regex.test(password);
-    }
-    
-    static validatePhone(phone) {
-        // Basic phone validation
-        const cleaned = phone.replace(/\D/g, '');
-        return cleaned.length >= 10;
-    }
-    
-    static validateURL(url) {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
-    }
-    
-    static validateRequired(value) {
-        return value !== undefined && value !== null && value.toString().trim() !== '';
-    }
-    
-    static validateNumber(value, min = null, max = null) {
-        const num = parseFloat(value);
-        if (isNaN(num)) return false;
-        if (min !== null && num < min) return false;
-        if (max !== null && num > max) return false;
-        return true;
-    }
-}
-
-// ====================
-// EXPORT MANAGERS
-// ====================
-
-// Initialize all managers
-const shoppingCart = new ShoppingCart();
-const authManager = new AuthManager();
-const productManager = new ProductManager();
-const orderManager = new OrderManager();
-const paymentProcessor = new PaymentProcessor();
-const notificationSystem = new NotificationSystem();
-
-// Export to global scope
-window.AppManagers = {
-    shoppingCart,
-    authManager,
-    productManager,
-    orderManager,
-    paymentProcessor,
-    notificationSystem,
-    Validator
-};
-
-// Initialize app managers
-shoppingCart.loadFromStorage();
-
-// Request notification permission on load
-if (typeof window !== 'undefined') {
-    notificationSystem.requestPermission();
-}
-
-console.log('App logic initialized successfully');`,
-            currentTab: 'design',
-            currentDevice: 'desktop',
-            selectedProperties: 'style'
-        };
-
-        // Initialize CodeMirror editors
-        let htmlEditor, cssEditor, jsEditor, logicEditor;
 
         // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeEditors();
-            setupEventListeners();
-            updatePreview();
-            loadSampleComponents();
-            console.log('Visual App Builder initialized');
-        });
-
-        function initializeEditors() {
-            // HTML Editor
-            htmlEditor = CodeMirror.fromTextArea(document.getElementById('htmlCode'), {
-                mode: 'xml',
-                theme: 'dracula',
-                lineNumbers: true,
-                autoCloseTags: true,
-                matchTags: true,
-                styleActiveLine: true,
-                lineWrapping: true,
-                value: appState.htmlCode
-            });
-
-            // CSS Editor
-            cssEditor = CodeMirror.fromTextArea(document.getElementById('cssCode'), {
-                mode: 'css',
-                theme: 'dracula',
-                lineNumbers: true,
-                styleActiveLine: true,
-                lineWrapping: true,
-                value: appState.cssCode
-            });
-
-            // JavaScript Editor
-            jsEditor = CodeMirror.fromTextArea(document.getElementById('jsCode'), {
-                mode: 'javascript',
-                theme: 'dracula',
-                lineNumbers: true,
-                styleActiveLine: true,
-                lineWrapping: true,
-                value: appState.jsCode
-            });
-
-            // Logic Editor
-            logicEditor = CodeMirror.fromTextArea(document.getElementById('logicCode'), {
-                mode: 'javascript',
-                theme: 'dracula',
-                lineNumbers: true,
-                styleActiveLine: true,
-                lineWrapping: true,
-                value: appState.logicCode
-            });
-
-            // Update state on editor changes
-            htmlEditor.on('change', function(cm) {
-                appState.htmlCode = cm.getValue();
-                updatePreview();
-            });
-
-            cssEditor.on('change', function(cm) {
-                appState.cssCode = cm.getValue();
-                updatePreview();
-            });
-
-            jsEditor.on('change', function(cm) {
-                appState.jsCode = cm.getValue();
-                updatePreview();
-            });
-
-            logicEditor.on('change', function(cm) {
-                appState.logicCode = cm.getValue();
-            });
-        }
-
-        function setupEventListeners() {
-            // Sidebar tabs
-            document.querySelectorAll('.sidebar-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabType = this.dataset.tab;
-                    
-                    // Update active tab
-                    document.querySelectorAll('.sidebar-tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Show corresponding section
-                    document.querySelectorAll('.sidebar-section').forEach(section => {
-                        section.style.display = 'none';
-                    });
-                    
-                    document.getElementById(`${tabType}Section`).style.display = 'block';
-                });
-            });
-
-            // Editor tabs
-            document.querySelectorAll('.editor-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const editorType = this.dataset.editor;
-                    
-                    // Update active tab
-                    document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Show corresponding editor
-                    document.querySelectorAll('.code-editor, .preview-panel, .test-console').forEach(editor => {
-                        editor.style.display = 'none';
-                    });
-                    
-                    appState.currentTab = editorType;
-                    
-                    if (editorType === 'design') {
-                        document.getElementById('designView').style.display = 'flex';
-                    } else if (editorType === 'console') {
-                        document.getElementById('testConsole').style.display = 'flex';
-                    } else {
-                        document.getElementById(`${editorType}Editor`).style.display = 'flex';
-                    }
-                });
-            });
-
-            // Properties tabs
-            document.querySelectorAll('.sidebar-tab[data-properties]').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const propertiesType = this.dataset.properties;
-                    
-                    // Update active tab
-                    document.querySelectorAll('.sidebar-tab[data-properties]').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Show corresponding properties
-                    document.querySelectorAll('#styleProperties, #eventProperties, #dataProperties, #advancedProperties').forEach(prop => {
-                        prop.style.display = 'none';
-                    });
-                    
-                    document.getElementById(`${propertiesType}Properties`).style.display = 'block';
-                    appState.selectedProperties = propertiesType;
-                });
-            });
-
-            // Device buttons
-            document.querySelectorAll('.device-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const device = this.dataset.device;
-                    
-                    // Update active button
-                    document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    appState.currentDevice = device;
-                    updatePreview();
-                });
-            });
-
-            // Component drag and drop
-            document.querySelectorAll('.component').forEach(component => {
-                component.addEventListener('dragstart', function(e) {
-                    e.dataTransfer.setData('text/plain', this.dataset.type);
-                    e.dataTransfer.effectAllowed = 'copy';
-                });
-            });
-
-            // Preview frame for drop
-            const previewFrame = document.getElementById('previewFrame');
-            previewFrame.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'copy';
-            });
-
-            previewFrame.addEventListener('drop', function(e) {
-                e.preventDefault();
-                const componentType = e.dataTransfer.getData('text/plain');
-                if (componentType) {
-                    addComponent(componentType);
-                }
-            });
-
-            // Mobile toggle buttons
-            document.getElementById('toggleSidebar').addEventListener('click', function() {
-                document.getElementById('sidebar').classList.toggle('active');
-            });
-
-            document.getElementById('toggleProperties').addEventListener('click', function() {
-                document.getElementById('propertiesPanel').classList.toggle('active');
-            });
-
-            // Run app button
-            document.getElementById('runApp').addEventListener('click', function() {
-                runApp();
-            });
-
-            // Test app button
-            document.getElementById('testApp').addEventListener('click', function() {
-                testApp();
-            });
-
-            // Export app button
-            document.getElementById('exportApp').addEventListener('click', function() {
-                document.getElementById('exportModal').classList.add('active');
-            });
-
-            // Close modals
-            document.getElementById('closeExportModal').addEventListener('click', function() {
-                document.getElementById('exportModal').classList.remove('active');
-            });
-
-            document.getElementById('cancelExport').addEventListener('click', function() {
-                document.getElementById('exportModal').classList.remove('active');
-            });
-
-            // Confirm export
-            document.getElementById('confirmExport').addEventListener('click', function() {
-                exportApp();
-                document.getElementById('exportModal').classList.remove('active');
-            });
-
-            // Format buttons
-            document.getElementById('formatHTML').addEventListener('click', function() {
-                formatCode(htmlEditor);
-            });
-
-            document.getElementById('formatCSS').addEventListener('click', function() {
-                formatCode(cssEditor);
-            });
-
-            document.getElementById('formatJS').addEventListener('click', function() {
-                formatCode(jsEditor);
-            });
-
-            // Save logic
-            document.getElementById('saveLogic').addEventListener('click', function() {
-                saveLogic();
-            });
-
-            // Clear console
-            document.getElementById('clearConsole').addEventListener('click', function() {
-                clearConsole();
-            });
-
-            // Property changes
-            document.querySelectorAll('#styleProperties select, #styleProperties input').forEach(element => {
-                element.addEventListener('change', function() {
-                    updateSelectedComponentStyles();
-                });
-            });
-
-            // Add page button
-            document.getElementById('addPage').addEventListener('click', function() {
-                addNewPage();
-            });
-
-            // Add table button
-            document.getElementById('addTable').addEventListener('click', function() {
-                addNewTable();
-            });
-
-            // Add API button
-            document.getElementById('addAPI').addEventListener('click', function() {
-                addNewAPI();
-            });
-        }
-
-        function addComponent(type) {
-            logToConsole(`Adding component: ${type}`, 'info');
-            
-            const component = {
-                id: Date.now(),
-                type: type,
-                properties: getDefaultProperties(type),
-                position: { x: 50, y: 50 },
-                content: getDefaultContent(type)
-            };
-            
-            appState.components.push(component);
-            appState.selectedComponent = component;
-            
-            updatePreview();
-            updatePropertiesPanel(component);
-            
-            logToConsole(`Component ${type} added successfully`, 'success');
-        }
-
-        function getDefaultProperties(type) {
-            const defaults = {
-                button: {
-                    text: 'Click Me',
-                    color: '#4f46e5',
-                    backgroundColor: '#ffffff',
-                    fontSize: '16px',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    border: '2px solid #4f46e5'
-                },
-                input: {
-                    placeholder: 'Enter text...',
-                    type: 'text',
-                    width: '200px',
-                    padding: '10px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px'
-                },
-                text: {
-                    content: 'Sample Text',
-                    fontSize: '16px',
-                    color: '#374151',
-                    fontWeight: 'normal',
-                    textAlign: 'left'
-                },
-                container: {
-                    width: '300px',
-                    height: '200px',
-                    backgroundColor: '#f9fafb',
-                    padding: '20px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '12px',
-                    display: 'block'
-                }
-            };
-            
-            return defaults[type] || {};
-        }
-
-        function getDefaultContent(type) {
-            const contents = {
-                button: '<button class="custom-btn">Click Me</button>',
-                input: '<input type="text" placeholder="Enter text...">',
-                text: '<p>Sample Text</p>',
-                container: '<div class="custom-container"></div>',
-                image: '<img src="https://via.placeholder.com/300x200" alt="Placeholder">',
-                form: '<form><input type="text" placeholder="Name"><button>Submit</button></form>',
-                table: '<table><tr><th>Header</th></tr><tr><td>Data</td></tr></table>',
-                card: '<div class="card"><h3>Card Title</h3><p>Card content</p></div>'
-            };
-            
-            return contents[type] || `<div>${type} component</div>`;
-        }
-
-        function updatePreview() {
-            const frame = document.getElementById('previewFrame');
-            const device = appState.currentDevice;
-            
-            let deviceStyle = '';
-            if (device === 'mobile') {
-                deviceStyle = 'max-width: 375px; margin: 0 auto;';
-            } else if (device === 'tablet') {
-                deviceStyle = 'max-width: 768px; margin: 0 auto;';
-            }
-            
-            const previewHTML = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body {
-                            margin: 0;
-                            padding: 20px;
-                            font-family: Arial, sans-serif;
-                            background: #f5f5f5;
-                            ${deviceStyle}
-                        }
-                        ${appState.cssCode}
-                        
-                        /* Component styles */
-                        .draggable-component {
-                            position: relative;
-                            border: 2px dashed transparent;
-                            padding: 10px;
-                            margin: 10px;
-                            transition: all 0.3s;
-                            cursor: move;
-                        }
-                        
-                        .draggable-component:hover {
-                            border-color: #4f46e5;
-                            background: rgba(79, 70, 229, 0.05);
-                        }
-                        
-                        .component-actions {
-                            position: absolute;
-                            top: -30px;
-                            right: 0;
-                            background: white;
-                            border: 1px solid #e5e7eb;
-                            border-radius: 6px;
-                            padding: 5px;
-                            display: none;
-                            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                        }
-                        
-                        .draggable-component:hover .component-actions {
-                            display: flex;
-                            gap: 5px;
-                        }
-                        
-                        .component-btn {
-                            width: 24px;
-                            height: 24px;
-                            border: none;
-                            background: #f3f4f6;
-                            border-radius: 4px;
-                            cursor: pointer;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        }
-                        
-                        .component-btn:hover {
-                            background: #e5e7eb;
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${appState.htmlCode}
-                    
-                    <script>
-                        ${appState.jsCode}
-                        
-                        // Component interaction
-                        document.addEventListener('DOMContentLoaded', function() {
-                            // Add draggable functionality to components
-                            document.querySelectorAll('.draggable-component').forEach(component => {
-                                component.addEventListener('click', function(e) {
-                                    e.stopPropagation();
-                                    window.parent.postMessage({
-                                        type: 'componentSelected',
-                                        componentId: this.dataset.componentId
-                                    }, '*');
-                                });
-                            });
-                            
-                            // Initialize app functions
-                            if (typeof window.appFunctions === 'object') {
-                                Object.entries(window.appFunctions).forEach(([name, func]) => {
-                                    window[name] = func;
-                                });
-                            }
-                            
-                            // Initialize AppManagers
-                            if (typeof window.AppManagers === 'object') {
-                                console.log('App managers loaded:', Object.keys(window.AppManagers));
-                            }
-                        });
-                        
-                        // Message listener for updates
-                        window.addEventListener('message', function(event) {
-                            if (event.data.type === 'updateComponent') {
-                                const component = document.querySelector(\`[data-component-id="\${event.data.componentId}"]\`);
-                                if (component) {
-                                    Object.entries(event.data.properties).forEach(([key, value]) => {
-                                        component.style[key] = value;
-                                    });
-                                }
-                            }
-                        });
-                    <\/script>
-                </body>
-                </html>
-            `;
-            
-            frame.srcdoc = previewHTML;
-        }
-
-        function updatePropertiesPanel(component) {
-            // Update style properties based on selected component
-            if (component && component.properties) {
-                const props = component.properties;
-                
-                // Update form values
-                if (props.color) document.getElementById('color').value = props.color;
-                if (props.backgroundColor) document.getElementById('backgroundColor').value = props.backgroundColor;
-                if (props.fontSize) document.getElementById('fontSize').value = props.fontSize;
-                if (props.width) document.getElementById('width').value = props.width;
-                if (props.height) document.getElementById('height').value = props.height;
-                if (props.padding) document.getElementById('padding').value = props.padding;
-                if (props.margin) document.getElementById('margin').value = props.margin;
-            }
-        }
-
-        function updateSelectedComponentStyles() {
-            if (!appState.selectedComponent) return;
-            
-            const component = appState.selectedComponent;
-            
-            // Collect updated styles
-            const updatedStyles = {
-                color: document.getElementById('color').value,
-                backgroundColor: document.getElementById('backgroundColor').value,
-                fontSize: document.getElementById('fontSize').value,
-                width: document.getElementById('width').value,
-                height: document.getElementById('height').value,
-                padding: document.getElementById('padding').value,
-                margin: document.getElementById('margin').value,
-                fontFamily: document.getElementById('fontFamily').value,
-                fontWeight: document.getElementById('fontWeight').value,
-                display: document.getElementById('display').value,
-                flexDirection: document.getElementById('flexDirection').value,
-                justifyContent: document.getElementById('justifyContent').value
-            };
-            
-            // Update component properties
-            component.properties = { ...component.properties, ...updatedStyles };
-            
-            // Send update to preview
-            const frame = document.getElementById('previewFrame');
-            if (frame.contentWindow) {
-                frame.contentWindow.postMessage({
-                    type: 'updateComponent',
-                    componentId: component.id,
-                    properties: updatedStyles
-                }, '*');
-            }
-            
-            logToConsole(`Updated styles for component ${component.type}`, 'info');
-        }
-
-        function runApp() {
-            logToConsole('Running application...', 'info');
-            
-            // Update preview with latest code
-            updatePreview();
-            
-            // Execute JavaScript in preview
-            setTimeout(() => {
-                const frame = document.getElementById('previewFrame');
-                if (frame.contentWindow) {
-                    try {
-                        // Execute JS code
-                        frame.contentWindow.eval(appState.jsCode);
-                        logToConsole('Application executed successfully', 'success');
-                    } catch (error) {
-                        logToConsole(`Execution error: ${error.message}`, 'error');
-                    }
-                }
-            }, 500);
-        }
-
-        function testApp() {
-            logToConsole('Starting application tests...', 'info');
-            
-            // Run various tests
-            testHTMLStructure();
-            testJavaScriptFunctions();
-            testCSSValidity();
-            testResponsiveDesign();
-            testPerformance();
-            
-            logToConsole('Tests completed. Check console for details.', 'info');
-        }
-
-        function testHTMLStructure() {
-            logToConsole('Testing HTML structure...', 'info');
-            
-            // Check for required tags
-            const requiredTags = ['html', 'head', 'body', 'title'];
-            let html = appState.htmlCode.toLowerCase();
-            
-            requiredTags.forEach(tag => {
-                if (html.includes(`<${tag}`)) {
-                    logToConsole(`✓ Found <${tag}> tag`, 'success');
-                } else {
-                    logToConsole(`✗ Missing <${tag}> tag`, 'error');
-                }
-            });
-            
-            // Check for viewport meta tag
-            if (html.includes('viewport')) {
-                logToConsole('✓ Viewport meta tag present', 'success');
-            } else {
-                logToConsole('✗ Missing viewport meta tag', 'warning');
-            }
-        }
-
-        function testJavaScriptFunctions() {
-            logToConsole('Testing JavaScript functions...', 'info');
-            
-            try {
-                // Test if JS code is valid
-                new Function(appState.jsCode);
-                logToConsole('✓ JavaScript syntax is valid', 'success');
-                
-                // Check for common functions
-                const js = appState.jsCode.toLowerCase();
-                if (js.includes('addeventlistener')) {
-                    logToConsole('✓ Event listeners detected', 'success');
-                }
-                
-                if (js.includes('function') || js.includes('=>')) {
-                    logToConsole('✓ Functions defined', 'success');
-                }
-                
-            } catch (error) {
-                logToConsole(`✗ JavaScript error: ${error.message}`, 'error');
-            }
-        }
-
-        function testCSSValidity() {
-            logToConsole('Testing CSS validity...', 'info');
-            
-            // Basic CSS validation
-            const css = appState.cssCode;
-            
-            // Check for common selectors
-            if (css.includes('{') && css.includes('}')) {
-                logToConsole('✓ CSS rules detected', 'success');
-            }
-            
-            // Check for responsive design
-            if (css.includes('@media')) {
-                logToConsole('✓ Responsive media queries found', 'success');
-            } else {
-                logToConsole('✗ No responsive media queries', 'warning');
-            }
-            
-            // Check for vendor prefixes
-            const prefixes = ['-webkit-', '-moz-', '-ms-', '-o-'];
-            prefixes.forEach(prefix => {
-                if (css.includes(prefix)) {
-                    logToConsole(`✓ ${prefix} prefixes found`, 'info');
-                }
-            });
-        }
-
-        function testResponsiveDesign() {
-            logToConsole('Testing responsive design...', 'info');
-            
-            // Check viewport
-            if (appState.htmlCode.includes('viewport')) {
-                logToConsole('✓ Viewport meta tag configured', 'success');
-            }
-            
-            // Check for responsive units
-            const responsiveUnits = ['%', 'vw', 'vh', 'rem', 'em'];
-            responsiveUnits.forEach(unit => {
-                if (appState.cssCode.includes(unit)) {
-                    logToConsole(`✓ Using responsive unit: ${unit}`, 'info');
-                }
-            });
-            
-            // Check for flexbox/grid
-            if (appState.cssCode.includes('display: flex') || appState.cssCode.includes('display: grid')) {
-                logToConsole('✓ Modern layout methods used', 'success');
-            }
-        }
-
-        function testPerformance() {
-            logToConsole('Testing performance metrics...', 'info');
-            
-            // Estimate page size
-            const totalSize = appState.htmlCode.length + appState.cssCode.length + appState.jsCode.length;
-            const sizeKB = (totalSize / 1024).toFixed(2);
-            
-            logToConsole(`Page size: ${sizeKB} KB`, 'info');
-            
-            if (totalSize > 100000) { // 100KB
-                logToConsole('⚠ Page size is large (>100KB). Consider optimization.', 'warning');
-            } else {
-                logToConsole('✓ Page size is reasonable', 'success');
-            }
-            
-            // Check for render-blocking resources
-            if (appState.htmlCode.includes('<script src=')) {
-                logToConsole('⚠ External scripts may block rendering', 'warning');
-            }
-            
-            if (appState.htmlCode.includes('<link rel="stylesheet"')) {
-                logToConsole('⚠ External stylesheets may block rendering', 'warning');
-            }
-        }
-
-        function exportApp() {
-            logToConsole('Exporting application...', 'info');
-            
-            // Create export data
-            const exportData = {
-                app: {
-                    name: 'My Visual App',
-                    version: '1.0.0',
-                    created: new Date().toISOString(),
-                    pages: ['home'],
-                    components: appState.components
-                },
-                code: {
-                    html: appState.htmlCode,
-                    css: appState.cssCode,
-                    js: appState.jsCode,
-                    logic: appState.logicCode
-                },
-                config: {
-                    settings: {},
-                    dependencies: []
-                }
-            };
-            
-            // Create downloadable files
-            const htmlFile = new Blob([appState.htmlCode], { type: 'text/html' });
-            const cssFile = new Blob([appState.cssCode], { type: 'text/css' });
-            const jsFile = new Blob([appState.jsCode], { type: 'text/javascript' });
-            const logicFile = new Blob([appState.logicCode], { type: 'text/javascript' });
-            const configFile = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-            
-            // Create download links
-            downloadFile(htmlFile, 'index.html');
-            downloadFile(cssFile, 'styles.css');
-            downloadFile(jsFile, 'app.js');
-            downloadFile(logicFile, 'logic.js');
-            downloadFile(configFile, 'app-config.json');
-            
-            logToConsole('Application exported successfully!', 'success');
-            
-            // Show success message
-            alert('Application exported successfully! Check your downloads folder.');
-        }
-
-        function downloadFile(blob, filename) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function formatCode(editor) {
-            // Basic formatting (in a real app, use a proper formatter)
-            const code = editor.getValue();
-            let formatted = code;
-            
-            // Simple indentation for HTML
-            if (editor === htmlEditor) {
-                formatted = formatHTML(code);
-            }
-            
-            // Simple indentation for CSS/JS
-            if (editor === cssEditor || editor === jsEditor) {
-                formatted = formatCSSJS(code);
-            }
-            
-            editor.setValue(formatted);
-            logToConsole('Code formatted', 'info');
-        }
-
-        function formatHTML(html) {
-            // Simple HTML formatting
-            let formatted = '';
-            let indent = 0;
-            const lines = html.split('\n');
-            
-            lines.forEach(line => {
-                const trimmed = line.trim();
-                if (trimmed.startsWith('</')) {
-                    indent--;
-                }
-                
-                formatted += '  '.repeat(Math.max(0, indent)) + trimmed + '\n';
-                
-                if (trimmed.startsWith('<') && !trimmed.startsWith('</') && !trimmed.endsWith('/>')) {
-                    indent++;
-                }
-            });
-            
-            return formatted;
-        }
-
-        function formatCSSJS(code) {
-            // Simple CSS/JS formatting
-            let formatted = '';
-            let indent = 0;
-            const lines = code.split('\n');
-            
-            lines.forEach(line => {
-                const trimmed = line.trim();
-                
-                if (trimmed.endsWith('}') || trimmed.endsWith(']') || trimmed.endsWith(')')) {
-                    indent--;
-                }
-                
-                formatted += '  '.repeat(Math.max(0, indent)) + trimmed + '\n';
-                
-                if (trimmed.endsWith('{') || trimmed.endsWith('[') || trimmed.endsWith('(')) {
-                    indent++;
-                }
-            });
-            
-            return formatted;
-        }
-
-        function saveLogic() {
-            appState.logicCode = logicEditor.getValue();
-            localStorage.setItem('appLogic', appState.logicCode);
-            logToConsole('Logic saved successfully', 'success');
-        }
-
-        function clearConsole() {
-            document.getElementById('consoleOutput').innerHTML = '';
-        }
-
-        function logToConsole(message, type = 'info') {
-            const consoleOutput = document.getElementById('consoleOutput');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `console-message ${type}`;
-            messageDiv.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-            consoleOutput.appendChild(messageDiv);
-            consoleOutput.scrollTop = consoleOutput.scrollHeight;
-        }
-
-        function addNewPage() {
-            const pageName = prompt('Enter page name:');
-            if (pageName) {
-                const pagesList = document.getElementById('pagesList');
-                const newPage = document.createElement('div');
-                newPage.className = 'component';
-                newPage.dataset.page = pageName.toLowerCase();
-                newPage.innerHTML = `
-                    <i class="fas fa-file"></i>
-                    <span>${pageName}</span>
-                `;
-                pagesList.appendChild(newPage);
-                logToConsole(`Page "${pageName}" added`, 'success');
-            }
-        }
-
-        function addNewTable() {
-            const tableName = prompt('Enter table name:');
-            if (tableName) {
-                logToConsole(`Table "${tableName}" added to database`, 'success');
-                // In a real app, update the database schema
-            }
-        }
-
-        function addNewAPI() {
-            const apiName = prompt('Enter API endpoint (e.g., /api/users):');
-            if (apiName) {
-                logToConsole(`API endpoint "${apiName}" added`, 'success');
-                // In a real app, add API configuration
-            }
-        }
-
-        function loadSampleComponents() {
-            // Load some sample components
-            setTimeout(() => {
-                addComponent('button');
-                addComponent('input');
-                addComponent('text');
-                logToConsole('Sample components loaded', 'info');
-            }, 1000);
-        }
-
-        // Make functions available globally for inline handlers
-        window.formatCode = formatCode;
-        window.runApp = runApp;
-        window.testApp = testApp;
-        window.exportApp = exportApp;
-        window.logToConsole = logToConsole;
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
