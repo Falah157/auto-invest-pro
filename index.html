@@ -111,6 +111,34 @@
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid rgba(var(--primary), 0.1);
+            position: relative;
+        }
+
+        .header-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .header-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
         }
 
         .logo {
@@ -152,65 +180,49 @@
         }
 
         /* =============================== */
-        /* ADMIN TV SYSTEM */
+        /* PUBLIC TV SYSTEM - VISIBLE TO ALL */
         /* =============================== */
-        .admin-tv-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 9998;
-            display: none;
-            overflow-y: auto;
-        }
-
-        .admin-tv-container.active {
-            display: block;
-            animation: tvFadeIn 0.5s;
-        }
-
-        @keyframes tvFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .admin-tv {
-            max-width: 800px;
-            margin: 40px auto;
-            background: #111;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 3px solid var(--primary);
-            box-shadow: 0 0 50px rgba(0, 255, 0, 0.3);
-        }
-
-        .tv-header {
-            background: linear-gradient(to right, #111, #222, #111);
+        .public-tv-container {
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
             padding: 20px;
-            text-align: center;
-            border-bottom: 2px solid var(--primary);
-            position: relative;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--primary);
+            animation: pulse 2s infinite;
         }
 
-        .tv-header h2 {
+        @keyframes pulse {
+            0% { border-color: var(--primary); }
+            50% { border-color: var(--accent); }
+            100% { border-color: var(--primary); }
+        }
+
+        .tv-header-public {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(var(--primary), 0.2);
+        }
+
+        .tv-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: var(--primary);
-            font-family: 'Courier New', monospace;
-            font-size: 1.8rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+            font-family: 'Amiri', serif;
+            font-size: 1.5rem;
         }
 
-        .tv-header .live-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+        .live-indicator {
             background: #FF0000;
             color: white;
             padding: 5px 10px;
             border-radius: 4px;
             font-size: 0.8rem;
+            font-weight: bold;
             animation: blink 1s infinite;
         }
 
@@ -219,137 +231,304 @@
             50% { opacity: 0.5; }
         }
 
-        .tv-controls {
+        .tv-controls-public {
             display: flex;
             gap: 10px;
-            padding: 15px;
-            background: #222;
-            border-bottom: 1px solid #333;
         }
 
-        .tv-control-btn {
-            background: #333;
-            color: #00FF00;
-            border: 1px solid #00FF00;
+        .tv-btn {
+            background: rgba(var(--primary), 0.1);
+            color: var(--primary);
+            border: 2px solid var(--primary);
             padding: 8px 15px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            font-family: 'Courier New', monospace;
+            font-weight: 500;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .tv-control-btn:hover {
-            background: #00FF00;
-            color: #000;
+        .tv-btn:hover {
+            background: var(--primary);
+            color: white;
         }
 
-        .tv-content {
-            padding: 30px;
-            min-height: 400px;
-            background: #000;
+        .tv-content-public {
+            min-height: 200px;
+            padding: 20px;
+            background: rgba(var(--primary), 0.05);
+            border-radius: 10px;
+            margin-bottom: 15px;
         }
 
-        .tv-message {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid #00FF00;
+        .tv-message-public {
+            background: var(--card-bg);
             border-radius: 10px;
             padding: 20px;
-            margin-bottom: 20px;
-            animation: messageSlide 0.5s;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--primary);
+            box-shadow: var(--shadow);
+            animation: slideIn 0.5s;
         }
 
-        @keyframes messageSlide {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        .message-header {
+        .message-meta {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            color: #00FF00;
-            font-family: 'Courier New', monospace;
+            margin-bottom: 10px;
+            color: var(--gray);
+            font-size: 0.9rem;
         }
 
-        .message-type {
-            background: #00FF00;
-            color: #000;
+        .message-type-badge {
+            background: var(--primary);
+            color: white;
             padding: 3px 8px;
             border-radius: 4px;
             font-size: 0.8rem;
             font-weight: bold;
         }
 
-        .message-date {
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        .message-body {
-            color: #FFF;
-            line-height: 1.6;
+        .message-content {
             font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
         }
 
-        .message-body.quran {
+        .message-content.quran-arabic {
             font-family: 'Amiri', serif;
+            font-size: 1.3rem;
             text-align: right;
             direction: rtl;
-            font-size: 1.3rem;
-            color: #FFD700;
+            color: #1B5E20;
         }
 
-        .message-body.hadith {
+        .message-content.hadith {
             font-style: italic;
-            color: #87CEEB;
-            border-left: 3px solid #87CEEB;
+            color: var(--secondary);
+            border-left: 3px solid var(--secondary);
             padding-left: 15px;
-        }
-
-        .message-body.conversation {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 8px;
         }
 
         .conversation-line {
             margin-bottom: 10px;
-            padding: 8px 12px;
+            padding: 10px;
             border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(var(--primary), 0.05);
         }
 
-        .conversation-line.admin {
-            border-left: 3px solid #00FF00;
-            background: rgba(0, 255, 0, 0.05);
+        .conversation-line:nth-child(odd) {
+            background: rgba(var(--accent), 0.05);
         }
 
-        .conversation-line.user {
-            border-left: 3px solid #FF9800;
-            background: rgba(255, 152, 0, 0.05);
-        }
-
-        .conversation-speaker {
+        .speaker {
             font-weight: bold;
             color: var(--primary);
             margin-right: 10px;
         }
 
-        .tv-close {
+        .message-source {
+            font-size: 0.9rem;
+            color: var(--gray);
+            font-style: italic;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(var(--primary), 0.2);
+        }
+
+        .tv-footer {
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding-top: 15px;
+            border-top: 1px solid rgba(var(--primary), 0.1);
+        }
+
+        /* =============================== */
+        /* ADMIN TV EDITOR MODAL */
+        /* =============================== */
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .admin-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        .admin-modal-content {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 700px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--primary);
+        }
+
+        .admin-modal-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .admin-modal-header h2 {
+            font-family: 'Amiri', serif;
+            font-size: 1.8rem;
+        }
+
+        .close-admin-modal {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: #FF0000;
+            background: rgba(255, 255, 255, 0.2);
             color: white;
+            border: none;
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .admin-modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-section label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-section select,
+        .form-section input,
+        .form-section textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(var(--primary), 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-section textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-section select:focus,
+        .form-section input:focus,
+        .form-section textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(var(--primary), 0.1);
+        }
+
+        .conversation-inputs {
+            display: none;
+        }
+
+        .conversation-inputs.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .conversation-line-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .conversation-line-input input {
+            flex: 1;
+        }
+
+        .add-conversation-line {
+            background: rgba(var(--primary), 0.1);
+            color: var(--primary);
+            border: 2px dashed var(--primary);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .add-conversation-line:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .admin-modal-footer {
+            display: flex;
+            gap: 15px;
+            padding: 20px 30px;
+            background: rgba(var(--primary), 0.05);
+            border-top: 1px solid rgba(var(--primary), 0.1);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            font-size: 1.2rem;
-            z-index: 10000;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            flex: 2;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 0, 0, 0.1);
+            color: #FF0000;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 0, 0, 0.2);
         }
 
         /* =============================== */
@@ -362,14 +541,10 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.95);
-            z-index: 9997;
-            display: none;
+            z-index: 9999;
+            display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .user-management.active {
-            display: flex;
         }
 
         .user-login {
@@ -469,36 +644,64 @@
             transform: translateY(-2px);
         }
 
-        .admin-panel {
+        .user-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .admin-badge {
+            background: #FF0000 !important;
+        }
+
+        /* =============================== */
+        /* ADMIN CONTROL PANEL */
+        /* =============================== */
+        .admin-control-panel {
             background: var(--card-bg);
             padding: 20px;
             border-radius: var(--radius);
             margin-bottom: 20px;
             box-shadow: var(--shadow);
+            border: 2px solid #FF0000;
             display: none;
-            border: 2px solid var(--primary);
         }
 
-        .admin-panel.active {
+        .admin-control-panel.active {
             display: block;
+            animation: slideDown 0.5s;
         }
 
-        .admin-panel h3 {
-            color: var(--primary);
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .admin-panel-title {
+            color: #FF0000;
             margin-bottom: 15px;
             font-family: 'Courier New', monospace;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .admin-controls {
+        .admin-controls-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
 
-        .admin-btn {
-            background: rgba(var(--primary), 0.1);
-            color: var(--primary);
-            border: 2px solid var(--primary);
+        .admin-control-btn {
+            background: rgba(255, 0, 0, 0.1);
+            color: #FF0000;
+            border: 2px solid #FF0000;
             padding: 15px;
             border-radius: 8px;
             cursor: pointer;
@@ -510,100 +713,14 @@
             font-weight: 500;
         }
 
-        .admin-btn:hover {
-            background: var(--primary);
+        .admin-control-btn:hover {
+            background: #FF0000;
             color: white;
             transform: translateY(-2px);
         }
 
         /* =============================== */
-        /* THEME SELECTOR */
-        /* =============================== */
-        .theme-selector {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .theme-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
-        }
-
-        .theme-btn:hover {
-            transform: scale(1.1) rotate(90deg);
-        }
-
-        .theme-options {
-            position: absolute;
-            bottom: 60px;
-            right: 0;
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 10px;
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            min-width: 150px;
-        }
-
-        .theme-options.active {
-            display: flex;
-            animation: slideUp 0.3s;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .theme-option {
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s;
-        }
-
-        .theme-option:hover {
-            background: rgba(var(--primary), 0.1);
-        }
-
-        .theme-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-        }
-
-        .theme-default .theme-color {
-            background: #2E7D32;
-        }
-
-        .theme-dark .theme-color {
-            background: #BB86FC;
-        }
-
-        .theme-hacker .theme-color {
-            background: #00FF00;
-        }
-
-        /* =============================== */
-        /* MAIN APP STYLES (from previous code) */
+        /* MAIN APP CONTENT */
         /* =============================== */
         .stats-bar {
             display: grid;
@@ -736,6 +853,95 @@
             color: white;
         }
 
+        /* =============================== */
+        /* THEME SELECTOR */
+        /* =============================== */
+        .theme-selector {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .theme-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .theme-options {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            min-width: 150px;
+        }
+
+        .theme-options.active {
+            display: flex;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .theme-option {
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .theme-option:hover {
+            background: rgba(var(--primary), 0.1);
+        }
+
+        .theme-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .theme-default .theme-color {
+            background: #2E7D32;
+        }
+
+        .theme-dark .theme-color {
+            background: #BB86FC;
+        }
+
+        .theme-hacker .theme-color {
+            background: #00FF00;
+        }
+
+        /* =============================== */
+        /* NOTIFICATION MODAL */
+        /* =============================== */
         .notification-modal {
             position: fixed;
             top: 0;
@@ -746,7 +952,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
+            z-index: 10001;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
@@ -785,49 +991,8 @@
             line-height: 1.5;
         }
 
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
         /* =============================== */
-        /* LOCK SYSTEM (from previous code) */
-        /* =============================== */
-        .lock-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: all 0.5s ease;
-        }
-
-        .lock-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        /* =============================== */
-        /* RESPONSIVE */
+        /* RESPONSIVE DESIGN */
         /* =============================== */
         @media (max-width: 768px) {
             .stats-bar {
@@ -838,16 +1003,20 @@
                 flex-direction: column;
             }
             
-            .admin-controls {
+            .admin-controls-grid {
                 grid-template-columns: 1fr;
             }
             
-            .admin-tv {
-                margin: 20px;
+            .header-controls {
+                position: static;
+                justify-content: center;
+                margin-top: 15px;
             }
             
-            .tv-content {
-                padding: 15px;
+            .user-badge {
+                position: static;
+                display: inline-block;
+                margin-bottom: 10px;
             }
         }
     </style>
@@ -870,11 +1039,11 @@
             <div class="login-form active" id="userLoginForm">
                 <div class="form-group">
                     <label><i class="fas fa-user"></i> Username</label>
-                    <input type="text" id="username" placeholder="Enter username">
+                    <input type="text" id="username" placeholder="Enter username" value="user">
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="password" placeholder="Enter password">
+                    <input type="password" id="password" placeholder="Enter password" value="1234">
                 </div>
                 <button class="login-btn" id="userLoginBtn">
                     <i class="fas fa-sign-in-alt"></i> Login as User
@@ -888,15 +1057,15 @@
             <div class="login-form" id="adminLoginForm">
                 <div class="form-group">
                     <label><i class="fas fa-user-secret"></i> Admin ID</label>
-                    <input type="text" id="adminId" placeholder="Enter admin ID">
+                    <input type="text" id="adminId" placeholder="Enter admin ID" value="admin">
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-key"></i> Admin Password</label>
-                    <input type="password" id="adminPassword" placeholder="Enter admin password">
+                    <input type="password" id="adminPassword" placeholder="Enter admin password" value="admin123">
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-fingerprint"></i> Secret Key</label>
-                    <input type="password" id="adminSecret" placeholder="Enter secret key">
+                    <input type="password" id="adminSecret" placeholder="Enter secret key" value="secret">
                 </div>
                 <button class="login-btn" id="adminLoginBtn">
                     <i class="fas fa-user-shield"></i> Login as Admin
@@ -908,91 +1077,147 @@
         </div>
     </div>
 
-    <!-- Lock Screen (from previous) -->
-    <div class="lock-screen hidden" id="lockScreen">
-        <!-- Lock screen content from previous code -->
-        <div class="lock-container">
-            <div class="lock-header">
-                <i class="fas fa-lock"></i>
-                <h2>Enter PIN</h2>
-                <p class="lock-message">Enter your 4-digit PIN to continue</p>
+    <!-- Admin TV Editor Modal -->
+    <div class="admin-modal" id="adminTVModal">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h2><i class="fas fa-tv"></i> Admin TV - Post New Message</h2>
+                <button class="close-admin-modal" id="closeTVModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="pin-display" id="pinDisplay">
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-            </div>
-            <div class="keypad">
-                <div class="key" data-key="1">1</div>
-                <div class="key" data-key="2">2</div>
-                <div class="key" data-key="3">3</div>
-                <div class="key" data-key="4">4</div>
-                <div class="key" data-key="5">5</div>
-                <div class="key" data-key="6">6</div>
-                <div class="key" data-key="7">7</div>
-                <div class="key" data-key="8">8</div>
-                <div class="key" data-key="9">9</div>
-                <div class="key" data-key="0">0</div>
-                <div class="key key-clear" id="clearBtn">
-                    <i class="fas fa-backspace"></i> Clear
+            <div class="admin-modal-body">
+                <div class="form-section">
+                    <label>Message Type</label>
+                    <select id="messageType">
+                        <option value="announcement">Announcement</option>
+                        <option value="quran">Quran Verse</option>
+                        <option value="hadith">Hadith</option>
+                        <option value="conversation">Conversation</option>
+                        <option value="reminder">Reminder</option>
+                    </select>
+                </div>
+                
+                <div class="form-section">
+                    <label>Title/Description</label>
+                    <input type="text" id="messageTitle" placeholder="Enter message title">
+                </div>
+                
+                <div class="form-section" id="regularMessageSection">
+                    <label>Message Content</label>
+                    <textarea id="messageContent" placeholder="Enter your message here..."></textarea>
+                </div>
+                
+                <div class="form-section" id="quranSection">
+                    <label>Arabic Text (Quran)</label>
+                    <textarea id="quranArabic" placeholder="Enter Quran verse in Arabic..." style="font-family: 'Amiri', serif; font-size: 1.2rem;"></textarea>
+                    <label style="margin-top: 15px;">Translation</label>
+                    <textarea id="quranTranslation" placeholder="Enter translation..."></textarea>
+                </div>
+                
+                <div class="conversation-inputs" id="conversationSection">
+                    <label>Conversation Lines</label>
+                    <div id="conversationLines">
+                        <div class="conversation-line-input">
+                            <input type="text" placeholder="Speaker name (e.g., Ahmed)" class="conversation-speaker">
+                            <input type="text" placeholder="Message" class="conversation-message">
+                        </div>
+                    </div>
+                    <div class="add-conversation-line" id="addConversationLine">
+                        <i class="fas fa-plus"></i> Add Conversation Line
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <label>Source/Reference</label>
+                    <input type="text" id="messageSource" placeholder="e.g., Quran 2:183, Sahih Bukhari, etc.">
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Admin TV System -->
-    <div class="admin-tv-container" id="adminTV">
-        <div class="tv-close" id="closeTV">
-            <i class="fas fa-times"></i>
-        </div>
-        <div class="admin-tv">
-            <div class="tv-header">
-                <h2><i class="fas fa-tv"></i> Admin TV Channel</h2>
-                <div class="live-badge">LIVE</div>
-            </div>
-            <div class="tv-controls">
-                <button class="tv-control-btn" id="prevMessage"><i class="fas fa-chevron-left"></i> Previous</button>
-                <button class="tv-control-btn" id="nextMessage">Next <i class="fas fa-chevron-right"></i></button>
-                <button class="tv-control-btn" id="autoScroll">Auto Scroll: ON</button>
-            </div>
-            <div class="tv-content" id="tvContent">
-                <!-- Messages will be loaded here -->
+            <div class="admin-modal-footer">
+                <button class="btn btn-primary" id="publishMessage">
+                    <i class="fas fa-broadcast-tower"></i> Publish to TV
+                </button>
+                <button class="btn btn-secondary" id="cancelMessage">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Main Container -->
-    <div class="container" id="mainApp">
+    <div class="container" id="mainApp" style="display: none;">
         <!-- Header -->
         <header>
+            <div class="user-badge" id="userBadge">User</div>
+            
             <div class="logo">
                 <i class="fas fa-mosque"></i>
                 <h1>FaithTask Pro</h1>
-                <span class="user-badge" id="userBadge" style="background: var(--primary); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; margin-left: 10px;">User</span>
             </div>
-            <p class="tagline">Islamic Task Manager with Admin TV & Security</p>
+            <p class="tagline">Islamic Task Manager with Live TV Broadcast</p>
             <div class="date-display" id="currentDate">
                 <!-- Date will be inserted by JS -->
             </div>
+            
+            <div class="header-controls">
+                <button class="header-btn" id="refreshTV">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="header-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
         </header>
 
-        <!-- Admin Panel (Visible only to admin) -->
-        <div class="admin-panel" id="adminPanel">
-            <h3><i class="fas fa-user-shield"></i> Admin Control Panel</h3>
-            <div class="admin-controls">
-                <button class="admin-btn" id="openTV">
-                    <i class="fas fa-tv"></i> Open TV Channel
+        <!-- Admin Control Panel -->
+        <div class="admin-control-panel" id="adminPanel">
+            <div class="admin-panel-title">
+                <i class="fas fa-user-shield"></i> Admin Control Panel
+            </div>
+            <div class="admin-controls-grid">
+                <button class="admin-control-btn" id="postToTV">
+                    <i class="fas fa-tv"></i> Post to TV
                 </button>
-                <button class="admin-btn" id="addMessage">
-                    <i class="fas fa-plus-circle"></i> Add New Message
+                <button class="admin-control-btn" id="clearTV">
+                    <i class="fas fa-trash"></i> Clear TV
                 </button>
-                <button class="admin-btn" id="manageUsers">
-                    <i class="fas fa-users-cog"></i> Manage Users
+                <button class="admin-control-btn" id="viewUsers">
+                    <i class="fas fa-users"></i> View Users
                 </button>
-                <button class="admin-btn" id="viewStats">
-                    <i class="fas fa-chart-bar"></i> View Statistics
+                <button class="admin-control-btn" id="appStats">
+                    <i class="fas fa-chart-bar"></i> App Statistics
                 </button>
+            </div>
+        </div>
+
+        <!-- PUBLIC TV CHANNEL - VISIBLE TO ALL USERS -->
+        <div class="public-tv-container" id="publicTV">
+            <div class="tv-header-public">
+                <div class="tv-title">
+                    <i class="fas fa-tv"></i>
+                    <span>Admin TV Channel</span>
+                    <div class="live-indicator">LIVE</div>
+                </div>
+                <div class="tv-controls-public">
+                    <button class="tv-btn" id="prevTVMessage">
+                        <i class="fas fa-chevron-left"></i> Prev
+                    </button>
+                    <button class="tv-btn" id="nextTVMessage">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tv-content-public" id="tvMessagesContainer">
+                <!-- TV Messages will be loaded here -->
+                <div style="text-align: center; padding: 40px; color: var(--gray);">
+                    <i class="fas fa-tv" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <p>Loading TV messages...</p>
+                </div>
+            </div>
+            
+            <div class="tv-footer">
+                <i class="fas fa-info-circle"></i> This TV channel displays messages from the admin
             </div>
         </div>
 
@@ -1014,17 +1239,14 @@
 
         <!-- Tabs -->
         <div class="tabs">
-            <div class="tab active" data-tab="daily">Daily</div>
-            <div class="tab" data-tab="weekly">Weekly</div>
-            <div class="tab" data-tab="monthly">Monthly</div>
-            <div class="tab" data-tab="tv">
-                <i class="fas fa-tv"></i> Admin TV
-            </div>
+            <div class="tab active" data-tab="daily">Daily Tasks</div>
+            <div class="tab" data-tab="weekly">Weekly Goals</div>
+            <div class="tab" data-tab="monthly">Monthly Plans</div>
         </div>
 
         <!-- Tab Contents -->
         <div class="tab-content active" id="daily-tab">
-            <h2 class="section-title">Today's Tasks & Ibadah</h2>
+            <h2 class="section-title">Today's Ibadah & Tasks</h2>
             <div class="task-list" id="dailyTasks">
                 <!-- Tasks will be loaded here -->
             </div>
@@ -1038,36 +1260,16 @@
         </div>
 
         <div class="tab-content" id="monthly-tab">
-            <h2 class="section-title">Monthly Goals</h2>
+            <h2 class="section-title">Monthly Plans</h2>
             <div style="text-align: center; padding: 40px; color: var(--gray);">
                 <i class="fas fa-calendar-alt" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                <p>Monthly goals will appear here</p>
-            </div>
-        </div>
-
-        <div class="tab-content" id="tv-tab">
-            <h2 class="section-title">Admin TV Channel</h2>
-            <div style="text-align: center; padding: 40px;">
-                <i class="fas fa-tv" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
-                <h3 style="margin-bottom: 15px;">Watch Admin Messages</h3>
-                <p style="margin-bottom: 25px; color: var(--gray);">
-                    View Quran verses, Hadith, conversations, and announcements from the admin.
-                </p>
-                <button class="btn btn-primary" id="openTVFromTab" style="padding: 15px 30px; font-size: 1.1rem;">
-                    <i class="fas fa-play-circle"></i> Open TV Channel
-                </button>
-                <div style="margin-top: 30px; background: rgba(var(--primary), 0.1); padding: 20px; border-radius: var(--radius);">
-                    <h4><i class="fas fa-info-circle"></i> Latest Message</h4>
-                    <p id="latestMessagePreview" style="margin-top: 10px; font-style: italic;">
-                        Loading latest message...
-                    </p>
-                </div>
+                <p>Set your monthly Islamic goals here</p>
             </div>
         </div>
     </div>
 
     <!-- Theme Selector -->
-    <div class="theme-selector">
+    <div class="theme-selector" style="display: none;" id="themeSelector">
         <button class="theme-btn" id="themeToggle">
             <i class="fas fa-palette"></i>
         </button>
@@ -1104,61 +1306,12 @@
         </div>
     </div>
 
-    <!-- Message Editor Modal (Admin Only) -->
-    <div class="notification-modal" id="messageEditor">
-        <div class="notification-content" style="max-width: 600px;">
-            <div class="notification-body">
-                <h3 style="margin-bottom: 20px; color: var(--primary);">
-                    <i class="fas fa-edit"></i> Create New Message
-                </h3>
-                
-                <div class="form-group">
-                    <label>Message Type</label>
-                    <select id="messageType" style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid rgba(var(--primary), 0.3); background: rgba(255, 255, 255, 0.05); color: var(--text);">
-                        <option value="announcement">Announcement</option>
-                        <option value="quran">Quran Verse</option>
-                        <option value="hadith">Hadith</option>
-                        <option value="conversation">Conversation</option>
-                        <option value="reminder">Reminder</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Message Content</label>
-                    <textarea id="messageContent" rows="6" placeholder="Enter your message here..." style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid rgba(var(--primary), 0.3); background: rgba(255, 255, 255, 0.05); color: var(--text);"></textarea>
-                </div>
-                
-                <div class="form-group" id="conversationFields" style="display: none;">
-                    <label>Conversation Format (One per line, format: Speaker: Message)</label>
-                    <textarea id="conversationLines" rows="4" placeholder="Ahmed: Is prayer mentioned in Quran?
-Mohamed: Yes, Allah says...
-Ahmed: Show me the verse
-Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid rgba(var(--primary), 0.3); background: rgba(255, 255, 255, 0.05); color: var(--text);"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Reference/Source (Optional)</label>
-                    <input type="text" id="messageSource" placeholder="e.g., Quran 2:183, Sahih Bukhari, etc." style="width: 100%; padding: 12px; border-radius: 8px; border: 2px solid rgba(var(--primary), 0.3); background: rgba(255, 255, 255, 0.05); color: var(--text);">
-                </div>
-                
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button class="btn btn-primary" id="saveMessage" style="flex: 1;">
-                        <i class="fas fa-save"></i> Publish Message
-                    </button>
-                    <button class="btn" id="cancelMessage" style="flex: 1; background: rgba(255, 0, 0, 0.1); color: #FF0000;">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         // ================================
-        // COMPLETE APP - MAIN JAVASCRIPT
+        // COMPLETE FIXED APP
         // ================================
 
-        // Database for the entire app
+        // App Database with PROPER TV SYSTEM
         const appDatabase = {
             // User Management
             users: {
@@ -1172,41 +1325,45 @@ Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px;
                     password: '1234',
                     role: 'user',
                     name: 'Regular User'
+                },
+                ahmed: {
+                    password: '1234',
+                    role: 'user',
+                    name: 'Ahmed'
+                },
+                mohamed: {
+                    password: '1234',
+                    role: 'user',
+                    name: 'Mohamed'
                 }
             },
             
             // Current User
             currentUser: null,
             
-            // Admin TV Messages
-            tvMessages: [
+            // PUBLIC TV MESSAGES - VISIBLE TO ALL
+            tvMessages: JSON.parse(localStorage.getItem('faithtask_tv_messages')) || [
                 {
                     id: 1,
                     type: 'announcement',
-                    title: 'Welcome to FaithTask Pro',
-                    content: 'Assalamu Alaikum! Welcome to the enhanced FaithTask Pro. New features: Admin TV, User Management, and Themes!',
-                    date: '2024-01-15',
-                    source: 'System'
+                    title: 'Welcome to FaithTask Pro TV',
+                    content: 'Assalamu Alaikum! Welcome to our Islamic TV channel. Here you will find daily Quran verses, Hadith, and educational conversations.',
+                    date: new Date().toISOString().split('T')[0],
+                    source: 'System Admin',
+                    publishedBy: 'admin'
                 },
                 {
                     id: 2,
                     type: 'quran',
                     title: 'Daily Quran Verse',
-                    content: 'وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ وَارْكَعُوا مَعَ الرَّاكِعِينَ',
+                    arabic: 'وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ وَارْكَعُوا مَعَ الرَّاكِعِينَ',
                     translation: 'And establish prayer and give zakah and bow with those who bow [in worship and obedience].',
-                    date: '2024-01-15',
-                    source: 'Quran 2:43'
+                    date: new Date().toISOString().split('T')[0],
+                    source: 'Quran 2:43',
+                    publishedBy: 'admin'
                 },
                 {
                     id: 3,
-                    type: 'hadith',
-                    title: 'Hadith of the Day',
-                    content: 'The most beloved deeds to Allah are those done consistently, even if they are small.',
-                    date: '2024-01-15',
-                    source: 'Sahih Bukhari'
-                },
-                {
-                    id: 4,
                     type: 'conversation',
                     title: 'Discussion: Prayer in Quran',
                     content: [
@@ -1214,14 +1371,24 @@ Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px;
                         { speaker: 'Mohamed', message: 'Yes brother, Allah mentions prayer over 100 times in the Quran.' },
                         { speaker: 'Ahmed', message: 'Can you show me one clear verse about the 5 prayers?' },
                         { speaker: 'Mohamed', message: 'Quran 2:238: "Guard strictly (five obligatory) prayers, especially the middle prayer..." This refers to the 5 daily prayers.' },
-                        { speaker: 'Ahmed', message: 'JazakAllah khair! This is very clear proof.' }
+                        { speaker: 'Ahmed', message: 'JazakAllah khair! Now I understand the importance.' }
                     ],
-                    date: '2024-01-15',
-                    source: 'Educational Conversation'
+                    date: new Date().toISOString().split('T')[0],
+                    source: 'Educational Discussion',
+                    publishedBy: 'admin'
+                },
+                {
+                    id: 4,
+                    type: 'hadith',
+                    title: 'Hadith of the Day',
+                    content: 'The Prophet ﷺ said: "The most beloved deeds to Allah are those done consistently, even if they are small."',
+                    date: new Date().toISOString().split('T')[0],
+                    source: 'Sahih Bukhari',
+                    publishedBy: 'admin'
                 }
             ],
             
-            // Tasks (from previous)
+            // Tasks
             tasks: {
                 daily: [
                     { id: 'fajr', name: 'Fajr Prayer', description: 'Morning prayer', completed: false },
@@ -1230,22 +1397,23 @@ Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px;
                     { id: 'maghrib', name: 'Maghrib Prayer', description: 'Sunset prayer', completed: false },
                     { id: 'isha', name: 'Isha Prayer', description: 'Night prayer', completed: false },
                     { id: 'quran', name: 'Quran Reading', description: 'Daily recitation', completed: false },
-                    { id: 'dhikr', name: 'Morning Dhikr', description: 'Remembrance of Allah', completed: false }
+                    { id: 'dhikr', name: 'Morning Dhikr', description: 'Remembrance of Allah', completed: false },
+                    { id: 'charity', name: 'Daily Charity', description: 'Even a smile', completed: false }
                 ],
                 weekly: [
                     { id: 'friday', name: 'Jumuah Prayer', description: 'Friday prayer', completed: false },
-                    { id: 'fasting', name: 'Optional Fast', description: 'Monday/Thursday', completed: false }
+                    { id: 'fasting', name: 'Optional Fast', description: 'Monday/Thursday', completed: false },
+                    { id: 'family', name: 'Family Time', description: 'Spend time with family', completed: false }
                 ]
             },
             
-            // App Settings
+            // Settings
             settings: {
                 theme: localStorage.getItem('appTheme') || 'default',
-                autoLock: localStorage.getItem('autoLock') || '5',
                 notifications: true
             },
             
-            // User Stats
+            // Stats
             stats: {
                 streak: parseInt(localStorage.getItem('streak')) || 0,
                 completedToday: 0,
@@ -1253,52 +1421,69 @@ Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px;
             }
         };
 
+        // Current TV Message Index
+        let currentTVMessageIndex = 0;
+
         // ================================
-        // 1. USER MANAGEMENT SYSTEM
+        // 1. INITIALIZE APP
         // ================================
-        function initUserManagement() {
-            // Check if user is already logged in
-            const savedUser = localStorage.getItem('currentUser');
+        function initializeApp() {
+            checkExistingLogin();
+            setupLoginListeners();
+            setupThemeSelector();
+            initMatrixRain();
+            updateDate();
+        }
+
+        function checkExistingLogin() {
+            const savedUser = localStorage.getItem('faithtask_current_user');
             if (savedUser) {
                 appDatabase.currentUser = JSON.parse(savedUser);
                 showMainApp();
             } else {
                 showLoginScreen();
             }
-            
-            setupLoginListeners();
         }
 
+        // ================================
+        // 2. USER MANAGEMENT
+        // ================================
         function showLoginScreen() {
-            document.getElementById('userManagement').classList.add('active');
+            document.getElementById('userManagement').style.display = 'flex';
             document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('themeSelector').style.display = 'none';
         }
 
         function showMainApp() {
-            document.getElementById('userManagement').classList.remove('active');
+            document.getElementById('userManagement').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('themeSelector').style.display = 'block';
             
-            // Update user badge
+            // Update UI based on user role
+            updateUserInterface();
+            
+            // Load data
+            loadTVMessages();
+            renderTasks();
+            updateStats();
+        }
+
+        function updateUserInterface() {
             const userBadge = document.getElementById('userBadge');
+            const adminPanel = document.getElementById('adminPanel');
+            
             if (appDatabase.currentUser.role === 'admin') {
                 userBadge.textContent = 'Admin';
-                userBadge.style.background = '#FF0000';
-                document.getElementById('adminPanel').classList.add('active');
+                userBadge.className = 'user-badge admin-badge';
+                adminPanel.classList.add('active');
             } else {
-                userBadge.textContent = 'User';
-                userBadge.style.background = 'var(--primary)';
-                document.getElementById('adminPanel').classList.remove('active');
+                userBadge.textContent = appDatabase.currentUser.name || 'User';
+                userBadge.className = 'user-badge';
+                adminPanel.classList.remove('active');
             }
             
-            // Initialize other systems
-            initTheme();
-            initTVSystem();
-            initTaskManager();
-            initLockSystem();
-            updateDate();
-            renderStats();
-            renderTasks();
-            renderLatestMessage();
+            // Apply saved theme
+            applyTheme(appDatabase.settings.theme);
         }
 
         function setupLoginListeners() {
@@ -1319,70 +1504,591 @@ Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px;
             });
             
             // User login
-            document.getElementById('userLoginBtn').addEventListener('click', () => {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                if (!username || !password) {
-                    alert('Please enter username and password');
-                    return;
-                }
-                
-                const user = appDatabase.users[username];
-                if (user && user.password === password) {
-                    appDatabase.currentUser = {
-                        username: username,
-                        role: user.role,
-                        name: user.name
-                    };
-                    localStorage.setItem('currentUser', JSON.stringify(appDatabase.currentUser));
-                    showMainApp();
-                } else {
-                    alert('Invalid username or password');
-                }
-            });
+            document.getElementById('userLoginBtn').addEventListener('click', handleUserLogin);
             
             // Admin login
-            document.getElementById('adminLoginBtn').addEventListener('click', () => {
-                const adminId = document.getElementById('adminId').value;
-                const password = document.getElementById('adminPassword').value;
-                const secret = document.getElementById('adminSecret').value;
-                
-                if (!adminId || !password || !secret) {
-                    alert('Please fill all admin fields');
-                    return;
-                }
-                
-                const admin = appDatabase.users[adminId];
-                if (admin && admin.password === password && admin.secret === secret) {
-                    appDatabase.currentUser = {
-                        username: adminId,
-                        role: 'admin',
-                        name: admin.name
-                    };
-                    localStorage.setItem('currentUser', JSON.stringify(appDatabase.currentUser));
-                    showMainApp();
-                } else {
-                    alert('Invalid admin credentials');
-                }
+            document.getElementById('adminLoginBtn').addEventListener('click', handleAdminLogin);
+            
+            // Enter key support
+            document.querySelectorAll('.login-form input').forEach(input => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        if (document.getElementById('userLoginForm').classList.contains('active')) {
+                            handleUserLogin();
+                        } else {
+                            handleAdminLogin();
+                        }
+                    }
+                });
             });
             
-            // Logout functionality (can be added to settings later)
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            
+            // Refresh TV button
+            document.getElementById('refreshTV').addEventListener('click', loadTVMessages);
+        }
+
+        function handleUserLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                alert('Please enter username and password');
+                return;
+            }
+            
+            const user = appDatabase.users[username.toLowerCase()];
+            if (user && user.password === password) {
+                appDatabase.currentUser = {
+                    username: username.toLowerCase(),
+                    role: user.role,
+                    name: user.name
+                };
+                
+                localStorage.setItem('faithtask_current_user', JSON.stringify(appDatabase.currentUser));
+                showMainApp();
+            } else {
+                alert('Invalid username or password');
+            }
+        }
+
+        function handleAdminLogin() {
+            const adminId = document.getElementById('adminId').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const secret = document.getElementById('adminSecret').value;
+            
+            if (!adminId || !password || !secret) {
+                alert('Please fill all admin fields');
+                return;
+            }
+            
+            const admin = appDatabase.users[adminId.toLowerCase()];
+            if (admin && admin.password === password && admin.secret === secret) {
+                appDatabase.currentUser = {
+                    username: adminId.toLowerCase(),
+                    role: 'admin',
+                    name: admin.name
+                };
+                
+                localStorage.setItem('faithtask_current_user', JSON.stringify(appDatabase.currentUser));
+                showMainApp();
+            } else {
+                alert('Invalid admin credentials');
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('faithtask_current_user');
+                appDatabase.currentUser = null;
+                showLoginScreen();
+                
+                // Clear login forms
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('adminId').value = '';
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminSecret').value = '';
+            }
         }
 
         // ================================
-        // 2. THEME SYSTEM
+        // 3. PUBLIC TV SYSTEM - VISIBLE TO ALL
         // ================================
-        function initTheme() {
-            // Apply saved theme
-            applyTheme(appDatabase.settings.theme);
+        function loadTVMessages() {
+            // Load from localStorage
+            const savedMessages = localStorage.getItem('faithtask_tv_messages');
+            if (savedMessages) {
+                appDatabase.tvMessages = JSON.parse(savedMessages);
+            }
             
-            // Setup theme selector
+            // Display messages
+            renderTVMessages();
+            
+            // Show success message
+            showNotification('TV messages refreshed!', 'New messages loaded successfully.');
+        }
+
+        function renderTVMessages() {
+            const container = document.getElementById('tvMessagesContainer');
+            
+            if (appDatabase.tvMessages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--gray);">
+                        <i class="fas fa-tv" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <p>No messages yet. Admin will post soon!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Get current message
+            const message = appDatabase.tvMessages[currentTVMessageIndex];
+            
+            let messageHTML = '';
+            
+            if (message.type === 'quran') {
+                messageHTML = `
+                    <div class="tv-message-public">
+                        <div class="message-meta">
+                            <span class="message-type-badge">QURAN VERSE</span>
+                            <span>${message.date}</span>
+                        </div>
+                        <div class="message-content quran-arabic">
+                            ${message.arabic || message.content}
+                        </div>
+                        ${message.translation ? `
+                            <div class="message-content" style="margin-top: 15px; color: var(--primary);">
+                                <strong>Translation:</strong> ${message.translation}
+                            </div>
+                        ` : ''}
+                        ${message.source ? `
+                            <div class="message-source">
+                                <i class="fas fa-book"></i> ${message.source}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } else if (message.type === 'hadith') {
+                messageHTML = `
+                    <div class="tv-message-public">
+                        <div class="message-meta">
+                            <span class="message-type-badge">HADITH</span>
+                            <span>${message.date}</span>
+                        </div>
+                        <div class="message-content hadith">
+                            ${message.content}
+                        </div>
+                        ${message.source ? `
+                            <div class="message-source">
+                                <i class="fas fa-quote-right"></i> ${message.source}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } else if (message.type === 'conversation') {
+                messageHTML = `
+                    <div class="tv-message-public">
+                        <div class="message-meta">
+                            <span class="message-type-badge">CONVERSATION</span>
+                            <span>${message.date}</span>
+                        </div>
+                        <div class="message-content">
+                            ${Array.isArray(message.content) ? message.content.map(line => `
+                                <div class="conversation-line">
+                                    <span class="speaker">${line.speaker}:</span>
+                                    ${line.message}
+                                </div>
+                            `).join('') : message.content}
+                        </div>
+                        ${message.source ? `
+                            <div class="message-source">
+                                <i class="fas fa-comments"></i> ${message.source}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } else {
+                messageHTML = `
+                    <div class="tv-message-public">
+                        <div class="message-meta">
+                            <span class="message-type-badge">${message.type.toUpperCase()}</span>
+                            <span>${message.date}</span>
+                        </div>
+                        <div class="message-content">
+                            <strong>${message.title}</strong>
+                            <p style="margin-top: 10px;">${message.content}</p>
+                        </div>
+                        ${message.source ? `
+                            <div class="message-source">
+                                <i class="fas fa-info-circle"></i> ${message.source}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = messageHTML;
+            
+            // Update TV navigation
+            setupTVNavigation();
+        }
+
+        function setupTVNavigation() {
+            document.getElementById('prevTVMessage').addEventListener('click', () => {
+                currentTVMessageIndex--;
+                if (currentTVMessageIndex < 0) {
+                    currentTVMessageIndex = appDatabase.tvMessages.length - 1;
+                }
+                renderTVMessages();
+            });
+            
+            document.getElementById('nextTVMessage').addEventListener('click', () => {
+                currentTVMessageIndex++;
+                if (currentTVMessageIndex >= appDatabase.tvMessages.length) {
+                    currentTVMessageIndex = 0;
+                }
+                renderTVMessages();
+            });
+        }
+
+        // ================================
+        // 4. ADMIN TV EDITOR
+        // ================================
+        function setupAdminControls() {
+            // Post to TV button
+            document.getElementById('postToTV').addEventListener('click', openTVEditor);
+            
+            // Clear TV button
+            document.getElementById('clearTV').addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear all TV messages?')) {
+                    appDatabase.tvMessages = [];
+                    localStorage.setItem('faithtask_tv_messages', JSON.stringify([]));
+                    loadTVMessages();
+                    showNotification('TV Cleared', 'All messages have been removed from TV.');
+                }
+            });
+            
+            // View Users button
+            document.getElementById('viewUsers').addEventListener('click', () => {
+                const userCount = Object.keys(appDatabase.users).length;
+                alert(`Total Users: ${userCount}\n\nUsers:\n${Object.keys(appDatabase.users).join('\n')}`);
+            });
+            
+            // App Stats button
+            document.getElementById('appStats').addEventListener('click', () => {
+                const stats = `
+                    TV Messages: ${appDatabase.tvMessages.length}
+                    Total Tasks: ${appDatabase.tasks.daily.length + appDatabase.tasks.weekly.length}
+                    User Streak: ${appDatabase.stats.streak} days
+                    Current User: ${appDatabase.currentUser.name}
+                `;
+                alert('App Statistics:\n\n' + stats);
+            });
+            
+            // TV Editor
+            document.getElementById('closeTVModal').addEventListener('click', closeTVEditor);
+            document.getElementById('cancelMessage').addEventListener('click', closeTVEditor);
+            document.getElementById('publishMessage').addEventListener('click', publishTVMessage);
+            document.getElementById('messageType').addEventListener('change', handleMessageTypeChange);
+            document.getElementById('addConversationLine').addEventListener('click', addConversationLine);
+        }
+
+        function openTVEditor() {
+            if (appDatabase.currentUser.role !== 'admin') {
+                alert('Only admins can post to TV');
+                return;
+            }
+            
+            // Reset form
+            document.getElementById('messageTitle').value = '';
+            document.getElementById('messageContent').value = '';
+            document.getElementById('quranArabic').value = '';
+            document.getElementById('quranTranslation').value = '';
+            document.getElementById('messageSource').value = '';
+            
+            // Clear conversation lines
+            const conversationLines = document.getElementById('conversationLines');
+            conversationLines.innerHTML = `
+                <div class="conversation-line-input">
+                    <input type="text" placeholder="Speaker name (e.g., Ahmed)" class="conversation-speaker">
+                    <input type="text" placeholder="Message" class="conversation-message">
+                </div>
+            `;
+            
+            // Show modal
+            document.getElementById('adminTVModal').classList.add('active');
+        }
+
+        function closeTVEditor() {
+            document.getElementById('adminTVModal').classList.remove('active');
+        }
+
+        function handleMessageTypeChange() {
+            const type = document.getElementById('messageType').value;
+            const regularSection = document.getElementById('regularMessageSection');
+            const quranSection = document.getElementById('quranSection');
+            const conversationSection = document.getElementById('conversationSection');
+            
+            // Hide all sections
+            regularSection.style.display = 'none';
+            quranSection.style.display = 'none';
+            conversationSection.style.display = 'none';
+            
+            // Show relevant section
+            if (type === 'quran') {
+                quranSection.style.display = 'block';
+            } else if (type === 'conversation') {
+                conversationSection.style.display = 'block';
+                conversationSection.classList.add('active');
+            } else {
+                regularSection.style.display = 'block';
+            }
+        }
+
+        function addConversationLine() {
+            const container = document.getElementById('conversationLines');
+            const newLine = document.createElement('div');
+            newLine.className = 'conversation-line-input';
+            newLine.innerHTML = `
+                <input type="text" placeholder="Speaker name" class="conversation-speaker">
+                <input type="text" placeholder="Message" class="conversation-message">
+            `;
+            container.appendChild(newLine);
+        }
+
+        function publishTVMessage() {
+            const type = document.getElementById('messageType').value;
+            const title = document.getElementById('messageTitle').value.trim();
+            const source = document.getElementById('messageSource').value.trim();
+            
+            if (!title) {
+                alert('Please enter a title for the message');
+                return;
+            }
+            
+            const newMessage = {
+                id: Date.now(),
+                type: type,
+                title: title,
+                date: new Date().toISOString().split('T')[0],
+                source: source || 'Admin',
+                publishedBy: appDatabase.currentUser.username
+            };
+            
+            // Add content based on type
+            if (type === 'quran') {
+                const arabic = document.getElementById('quranArabic').value.trim();
+                const translation = document.getElementById('quranTranslation').value.trim();
+                
+                if (!arabic) {
+                    alert('Please enter Quran Arabic text');
+                    return;
+                }
+                
+                newMessage.arabic = arabic;
+                if (translation) {
+                    newMessage.translation = translation;
+                }
+                newMessage.content = arabic;
+            } else if (type === 'conversation') {
+                const speakers = document.querySelectorAll('.conversation-speaker');
+                const messages = document.querySelectorAll('.conversation-message');
+                
+                const conversationLines = [];
+                for (let i = 0; i < speakers.length; i++) {
+                    const speaker = speakers[i].value.trim();
+                    const message = messages[i].value.trim();
+                    
+                    if (speaker && message) {
+                        conversationLines.push({ speaker, message });
+                    }
+                }
+                
+                if (conversationLines.length === 0) {
+                    alert('Please add at least one conversation line');
+                    return;
+                }
+                
+                newMessage.content = conversationLines;
+            } else {
+                const content = document.getElementById('messageContent').value.trim();
+                if (!content) {
+                    alert('Please enter message content');
+                    return;
+                }
+                newMessage.content = content;
+            }
+            
+            // Add to beginning of messages array
+            appDatabase.tvMessages.unshift(newMessage);
+            
+            // Save to localStorage
+            localStorage.setItem('faithtask_tv_messages', JSON.stringify(appDatabase.tvMessages));
+            
+            // Close editor and refresh TV
+            closeTVEditor();
+            loadTVMessages();
+            
+            // Show success message
+            showNotification('Message Published!', 'Your message is now visible to all users on TV.');
+        }
+
+        // ================================
+        // 5. TASK MANAGEMENT
+        // ================================
+        function renderTasks() {
+            // Load tasks from localStorage
+            const savedTasks = localStorage.getItem('faithtask_tasks');
+            if (savedTasks) {
+                appDatabase.tasks = JSON.parse(savedTasks);
+            }
+            
+            // Render daily tasks
+            const dailyTasksEl = document.getElementById('dailyTasks');
+            dailyTasksEl.innerHTML = appDatabase.tasks.daily.map(task => `
+                <div class="task-item" data-id="${task.id}">
+                    <div class="task-info">
+                        <div class="task-name">${task.name}</div>
+                        <div class="task-desc">
+                            <i class="fas fa-${getTaskIcon(task.id)}"></i>
+                            ${task.description}
+                        </div>
+                    </div>
+                    <div class="task-checkbox ${task.completed ? 'completed' : ''}">
+                        ${task.completed ? '<i class="fas fa-check"></i>' : ''}
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add click listeners
+            document.querySelectorAll('.task-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('task-checkbox')) {
+                        const taskId = item.dataset.id;
+                        toggleTaskCompletion(taskId);
+                    }
+                });
+            });
+            
+            // Setup tab switching
+            setupTabs();
+        }
+
+        function getTaskIcon(taskId) {
+            const icons = {
+                'fajr': 'sun',
+                'dhuhr': 'sun',
+                'asr': 'sun',
+                'maghrib': 'moon',
+                'isha': 'moon',
+                'quran': 'book-quran',
+                'dhikr': 'dharmachakra',
+                'charity': 'hand-holding-heart',
+                'friday': 'mosque',
+                'fasting': 'cloud-sun',
+                'family': 'users'
+            };
+            return icons[taskId] || 'tasks';
+        }
+
+        function toggleTaskCompletion(taskId) {
+            // Find task in daily or weekly
+            let task = appDatabase.tasks.daily.find(t => t.id === taskId);
+            if (!task) {
+                task = appDatabase.tasks.weekly.find(t => t.id === taskId);
+            }
+            
+            if (task) {
+                task.completed = !task.completed;
+                
+                // Save to localStorage
+                localStorage.setItem('faithtask_tasks', JSON.stringify(appDatabase.tasks));
+                
+                // Re-render tasks and update stats
+                renderTasks();
+                updateStats();
+                
+                // Show notification if completed
+                if (task.completed) {
+                    showTaskCompletionNotification(task);
+                }
+            }
+        }
+
+        function updateStats() {
+            const completedDaily = appDatabase.tasks.daily.filter(t => t.completed).length;
+            const totalDaily = appDatabase.tasks.daily.length;
+            
+            appDatabase.stats.completedToday = completedDaily;
+            
+            // Update streak if tasks were completed today
+            const today = new Date().toDateString();
+            if (appDatabase.stats.lastLogin !== today && completedDaily > 0) {
+                appDatabase.stats.streak++;
+                appDatabase.stats.lastLogin = today;
+                localStorage.setItem('streak', appDatabase.stats.streak);
+                localStorage.setItem('lastLogin', today);
+            }
+            
+            // Update UI
+            document.getElementById('completedToday').textContent = completedDaily;
+            document.getElementById('totalTasks').textContent = totalDaily;
+            document.getElementById('streakCount').textContent = appDatabase.stats.streak;
+        }
+
+        function showTaskCompletionNotification(task) {
+            const notifications = {
+                prayer: [
+                    `MashaAllah! ${task.name} completed.`,
+                    `Allah says: "Indeed, prayer prohibits immorality and wrongdoing." (Quran 29:45)`,
+                    `The Prophet ﷺ said: "The first matter the slave will be accountable for is prayer."`
+                ],
+                quran: [
+                    `Quran reading completed!`,
+                    `Allah says: "This is the Book about which there is no doubt, a guidance for those conscious of Allah." (Quran 2:2)`,
+                    `Each letter brings 10 rewards!`
+                ],
+                charity: [
+                    `Charity recorded!`,
+                    `Allah says: "The example of those who spend their wealth in the way of Allah is like a seed which grows seven spikes; in each spike is a hundred grains." (Quran 2:261)`,
+                    `Charity extinguishes sins as water extinguishes fire.`
+                ],
+                default: [
+                    `Good deed completed!`,
+                    `Allah loves those who are consistent in good deeds.`,
+                    `The most beloved deeds to Allah are those done consistently, even if small.`
+                ]
+            };
+            
+            let type = 'default';
+            if (task.id.includes('prayer') || task.name.toLowerCase().includes('prayer')) {
+                type = 'prayer';
+            } else if (task.id.includes('quran') || task.name.toLowerCase().includes('quran')) {
+                type = 'quran';
+            } else if (task.id.includes('charity') || task.name.toLowerCase().includes('charity')) {
+                type = 'charity';
+            }
+            
+            const msgs = notifications[type];
+            const randomMsg = msgs[Math.floor(Math.random() * msgs.length)];
+            
+            document.getElementById('notificationVerse').textContent = msgs[1];
+            document.getElementById('notificationMessage').textContent = `${msgs[0]} ${randomMsg}`;
+            
+            const modal = document.getElementById('notificationModal');
+            modal.classList.add('active');
+            
+            document.getElementById('closeNotification').onclick = () => {
+                modal.classList.remove('active');
+            };
+        }
+
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update active tab
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+                });
+            });
+        }
+
+        // ================================
+        // 6. THEME SYSTEM
+        // ================================
+        function setupThemeSelector() {
             document.getElementById('themeToggle').addEventListener('click', () => {
                 document.getElementById('themeOptions').classList.toggle('active');
             });
             
-            // Theme selection
             document.querySelectorAll('.theme-option').forEach(option => {
                 option.addEventListener('click', () => {
                     const theme = option.dataset.theme;
@@ -1390,9 +2096,6 @@ Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px;
                     document.getElementById('themeOptions').classList.remove('active');
                 });
             });
-            
-            // Initialize Matrix Rain for hacker theme
-            initMatrixRain();
         }
 
         function applyTheme(theme) {
@@ -1409,7 +2112,7 @@ Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px;
         }
 
         // ================================
-        // 3. MATRIX RAIN EFFECT (Hacker Theme)
+        // 7. MATRIX RAIN EFFECT
         // ================================
         function initMatrixRain() {
             const canvas = document.getElementById('matrixRain');
@@ -1424,7 +2127,7 @@ Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px;
             
             const drops = [];
             for (let i = 0; i < columns; i++) {
-                drops[i] = 1;
+                drops[i] = Math.floor(Math.random() * canvas.height / fontSize);
             }
             
             function draw() {
@@ -1461,393 +2164,43 @@ Mohamed: Quran 2:238 - Guard your prayers..." style="width: 100%; padding: 12px;
         }
 
         // ================================
-        // 4. ADMIN TV SYSTEM
-        // ================================
-        let currentMessageIndex = 0;
-        let autoScrollInterval = null;
-
-        function initTVSystem() {
-            // Open TV buttons
-            document.getElementById('openTV').addEventListener('click', openTV);
-            document.getElementById('openTVFromTab').addEventListener('click', openTV);
-            
-            // TV tab click
-            document.querySelector('.tab[data-tab="tv"]').addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelector('.tab[data-tab="tv"]').classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                document.getElementById('tv-tab').classList.add('active');
-            });
-            
-            // TV controls
-            document.getElementById('closeTV').addEventListener('click', closeTV);
-            document.getElementById('prevMessage').addEventListener('click', showPrevMessage);
-            document.getElementById('nextMessage').addEventListener('click', showNextMessage);
-            document.getElementById('autoScroll').addEventListener('click', toggleAutoScroll);
-            
-            // Message editor
-            document.getElementById('addMessage').addEventListener('click', openMessageEditor);
-            document.getElementById('messageType').addEventListener('change', toggleConversationFields);
-            document.getElementById('saveMessage').addEventListener('click', saveNewMessage);
-            document.getElementById('cancelMessage').addEventListener('click', closeMessageEditor);
-            
-            // Load initial message
-            renderTVMessage(currentMessageIndex);
-        }
-
-        function openTV() {
-            if (appDatabase.currentUser.role !== 'admin') {
-                alert('Only admin can access TV channel');
-                return;
-            }
-            document.getElementById('adminTV').classList.add('active');
-            renderTVMessage(currentMessageIndex);
-        }
-
-        function closeTV() {
-            document.getElementById('adminTV').classList.remove('active');
-            stopAutoScroll();
-        }
-
-        function renderTVMessage(index) {
-            const message = appDatabase.tvMessages[index];
-            const tvContent = document.getElementById('tvContent');
-            
-            if (!message) {
-                tvContent.innerHTML = '<div class="tv-message"><div class="message-body">No messages available</div></div>';
-                return;
-            }
-            
-            let messageHTML = '';
-            
-            if (message.type === 'conversation') {
-                messageHTML = `
-                    <div class="tv-message">
-                        <div class="message-header">
-                            <span class="message-type">CONVERSATION</span>
-                            <span class="message-date">${message.date}</span>
-                        </div>
-                        <div class="message-body conversation">
-                            ${message.content.map(line => `
-                                <div class="conversation-line ${line.speaker === 'Mohamed' || line.speaker === 'Admin' ? 'admin' : 'user'}">
-                                    <span class="conversation-speaker">${line.speaker}:</span>
-                                    ${line.message}
-                                </div>
-                            `).join('')}
-                        </div>
-                        ${message.source ? `<div style="margin-top: 15px; color: #888; font-size: 0.9rem;">Source: ${message.source}</div>` : ''}
-                    </div>
-                `;
-            } else if (message.type === 'quran') {
-                messageHTML = `
-                    <div class="tv-message">
-                        <div class="message-header">
-                            <span class="message-type">QURAN VERSE</span>
-                            <span class="message-date">${message.date}</span>
-                        </div>
-                        <div class="message-body quran">
-                            ${message.content}
-                        </div>
-                        <div style="margin-top: 20px; color: #FFD700;">
-                            ${message.translation || ''}
-                        </div>
-                        ${message.source ? `<div style="margin-top: 15px; color: #888; font-size: 0.9rem;">${message.source}</div>` : ''}
-                    </div>
-                `;
-            } else {
-                messageHTML = `
-                    <div class="tv-message">
-                        <div class="message-header">
-                            <span class="message-type">${message.type.toUpperCase()}</span>
-                            <span class="message-date">${message.date}</span>
-                        </div>
-                        <div class="message-body">
-                            ${message.content}
-                        </div>
-                        ${message.source ? `<div style="margin-top: 15px; color: #888; font-size: 0.9rem;">${message.source}</div>` : ''}
-                    </div>
-                `;
-            }
-            
-            tvContent.innerHTML = messageHTML;
-        }
-
-        function showPrevMessage() {
-            currentMessageIndex--;
-            if (currentMessageIndex < 0) {
-                currentMessageIndex = appDatabase.tvMessages.length - 1;
-            }
-            renderTVMessage(currentMessageIndex);
-        }
-
-        function showNextMessage() {
-            currentMessageIndex++;
-            if (currentMessageIndex >= appDatabase.tvMessages.length) {
-                currentMessageIndex = 0;
-            }
-            renderTVMessage(currentMessageIndex);
-        }
-
-        function toggleAutoScroll() {
-            const btn = document.getElementById('autoScroll');
-            if (autoScrollInterval) {
-                stopAutoScroll();
-                btn.textContent = 'Auto Scroll: OFF';
-            } else {
-                startAutoScroll();
-                btn.textContent = 'Auto Scroll: ON';
-            }
-        }
-
-        function startAutoScroll() {
-            autoScrollInterval = setInterval(() => {
-                showNextMessage();
-            }, 5000); // Change message every 5 seconds
-        }
-
-        function stopAutoScroll() {
-            if (autoScrollInterval) {
-                clearInterval(autoScrollInterval);
-                autoScrollInterval = null;
-            }
-        }
-
-        function renderLatestMessage() {
-            const latest = appDatabase.tvMessages[0];
-            const preview = document.getElementById('latestMessagePreview');
-            
-            if (latest) {
-                let text = '';
-                if (latest.type === 'conversation') {
-                    text = `${latest.content[0].speaker}: ${latest.content[0].message}`;
-                } else {
-                    text = latest.content;
-                }
-                
-                if (text.length > 100) {
-                    text = text.substring(0, 100) + '...';
-                }
-                
-                preview.textContent = text;
-            }
-        }
-
-        // ================================
-        // 5. MESSAGE EDITOR (Admin Only)
-        // ================================
-        function openMessageEditor() {
-            if (appDatabase.currentUser.role !== 'admin') {
-                alert('Only admin can add messages');
-                return;
-            }
-            document.getElementById('messageEditor').classList.add('active');
-        }
-
-        function closeMessageEditor() {
-            document.getElementById('messageEditor').classList.remove('active');
-            document.getElementById('messageContent').value = '';
-            document.getElementById('messageSource').value = '';
-            document.getElementById('conversationLines').value = '';
-        }
-
-        function toggleConversationFields() {
-            const type = document.getElementById('messageType').value;
-            const fields = document.getElementById('conversationFields');
-            fields.style.display = type === 'conversation' ? 'block' : 'none';
-        }
-
-        function saveNewMessage() {
-            const type = document.getElementById('messageType').value;
-            const content = document.getElementById('messageContent').value;
-            const source = document.getElementById('messageSource').value;
-            
-            if (!content) {
-                alert('Please enter message content');
-                return;
-            }
-            
-            const newMessage = {
-                id: appDatabase.tvMessages.length + 1,
-                type: type,
-                title: type.charAt(0).toUpperCase() + type.slice(1),
-                date: new Date().toISOString().split('T')[0],
-                source: source
-            };
-            
-            if (type === 'conversation') {
-                const lines = document.getElementById('conversationLines').value.split('\n');
-                newMessage.content = lines.filter(line => line.trim()).map(line => {
-                    const parts = line.split(':');
-                    return {
-                        speaker: parts[0].trim(),
-                        message: parts.slice(1).join(':').trim()
-                    };
-                });
-            } else {
-                newMessage.content = content;
-            }
-            
-            appDatabase.tvMessages.unshift(newMessage);
-            closeMessageEditor();
-            renderTVMessage(0);
-            renderLatestMessage();
-            
-            // Save to localStorage
-            localStorage.setItem('tvMessages', JSON.stringify(appDatabase.tvMessages));
-            
-            alert('Message published successfully!');
-        }
-
-        // ================================
-        // 6. TASK MANAGER (from previous)
-        // ================================
-        function initTaskManager() {
-            // Load tasks from localStorage
-            const savedTasks = localStorage.getItem('faithTasks');
-            if (savedTasks) {
-                appDatabase.tasks = JSON.parse(savedTasks);
-            }
-            
-            // Setup tab switching
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    if (tab.dataset.tab === 'tv') return;
-                    
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
-                });
-            });
-        }
-
-        function renderTasks() {
-            // Render daily tasks
-            const dailyTasksEl = document.getElementById('dailyTasks');
-            dailyTasksEl.innerHTML = appDatabase.tasks.daily.map(task => `
-                <div class="task-item" data-id="${task.id}">
-                    <div class="task-info">
-                        <div class="task-name">${task.name}</div>
-                        <div class="task-desc">
-                            <i class="fas fa-pray"></i>
-                            ${task.description}
-                        </div>
-                    </div>
-                    <div class="task-checkbox ${task.completed ? 'completed' : ''}">
-                        ${task.completed ? '<i class="fas fa-check"></i>' : ''}
-                    </div>
-                </div>
-            `).join('');
-            
-            // Add click listeners
-            document.querySelectorAll('.task-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const taskId = item.dataset.id;
-                    const task = appDatabase.tasks.daily.find(t => t.id === taskId);
-                    if (task) {
-                        task.completed = !task.completed;
-                        renderTasks();
-                        updateStats();
-                        showNotification(task);
-                        localStorage.setItem('faithTasks', JSON.stringify(appDatabase.tasks));
-                    }
-                });
-            });
-        }
-
-        function updateStats() {
-            const completed = appDatabase.tasks.daily.filter(t => t.completed).length;
-            appDatabase.stats.completedToday = completed;
-            
-            document.getElementById('completedToday').textContent = completed;
-            document.getElementById('totalTasks').textContent = appDatabase.tasks.daily.length;
-            
-            // Update streak
-            const today = new Date().toDateString();
-            if (appDatabase.stats.lastLogin !== today) {
-                if (completed > 0) {
-                    appDatabase.stats.streak++;
-                }
-                appDatabase.stats.lastLogin = today;
-                localStorage.setItem('streak', appDatabase.stats.streak);
-                localStorage.setItem('lastLogin', today);
-            }
-            
-            document.getElementById('streakCount').textContent = appDatabase.stats.streak;
-        }
-
-        function showNotification(task) {
-            if (!task.completed) return;
-            
-            const notifications = [
-                `MashaAllah! ${task.name} completed.`,
-                `Allah says: "Indeed, prayer has been decreed upon the believers a decree of specified times." (Quran 4:103)`,
-                `The Prophet ﷺ said: "The first matter the slave will be accountable for is prayer."`
-            ];
-            
-            document.getElementById('notificationVerse').textContent = notifications[1];
-            document.getElementById('notificationMessage').textContent = `${notifications[0]} ${notifications[2]}`;
-            document.getElementById('notificationModal').classList.add('active');
-            
-            document.getElementById('closeNotification').addEventListener('click', () => {
-                document.getElementById('notificationModal').classList.remove('active');
-            });
-        }
-
-        // ================================
-        // 7. LOCK SYSTEM (simplified)
-        // ================================
-        function initLockSystem() {
-            // Simple PIN system for demo
-            document.querySelectorAll('.key[data-key]').forEach(key => {
-                key.addEventListener('click', () => {
-                    const pin = key.dataset.key;
-                    // Simple check - in real app, validate against stored PIN
-                    document.getElementById('lockScreen').classList.add('hidden');
-                });
-            });
-            
-            document.getElementById('clearBtn').addEventListener('click', () => {
-                // Clear PIN logic
-            });
-        }
-
-        // ================================
         // 8. UTILITY FUNCTIONS
         // ================================
         function updateDate() {
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+            const hijriMonths = ['Muharram', 'Safar', 'Rabi\' al-Awwal', 'Rabi\' al-Thani', 
+                                'Jumada al-Awwal', 'Jumada al-Thani', 'Rajab', 'Sha\'ban', 
+                                'Ramadan', 'Shawwal', 'Dhu al-Qi\'dah', 'Dhu al-Hijjah'];
+            const hijriDate = `1 ${hijriMonths[now.getMonth()]} 1445 AH`;
+            
+            document.getElementById('currentDate').innerHTML = `
+                ${now.toLocaleDateString('en-US', options)}<br>
+                <span style="color: var(--accent);">${hijriDate}</span>
+            `;
         }
 
-        function renderStats() {
-            updateStats();
+        function showNotification(title, message) {
+            alert(`${title}\n\n${message}`);
         }
 
         // ================================
         // 9. INITIALIZE EVERYTHING
         // ================================
         document.addEventListener('DOMContentLoaded', () => {
-            initUserManagement();
+            initializeApp();
+            
+            // Setup admin controls after DOM is loaded
+            setTimeout(() => {
+                setupAdminControls();
+            }, 100);
         });
 
-        // ================================
-        // 10. EXPORT FUNCTIONS (for debugging)
-        // ================================
-        window.app = {
-            database: appDatabase,
-            openTV: openTV,
-            addMessage: openMessageEditor,
-            changeTheme: applyTheme
-        };
-
-        console.log('FaithTask Pro loaded successfully!');
-        console.log('Admin credentials: admin / admin123 / secret');
-        console.log('User credentials: user / 1234');
+        // Export for debugging
+        window.app = appDatabase;
+        console.log('FaithTask Pro - Fixed Version Loaded!');
+        console.log('TV messages are now PUBLIC and visible to all users');
+        console.log('Admin can post messages that everyone can see');
     </script>
 </body>
 </html>
