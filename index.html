@@ -3,1299 +3,1176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Islamic Speed Racer - Car Game</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Islamic Food Business Tracker</title>
     <style>
-        /* RESET & BASE */
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #1a1a1a;
+            --accent-color: #FF8C00;
+            --accent-light: #FFA500;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --success: #00aa00;
+            --danger: #ff4444;
+            --border-color: #333333;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: #000;
-            color: white;
-            overflow: hidden;
-            height: 100vh;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* GAME CONTAINER - FULLSCREEN */
-        .game-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        /* GAME CANVAS - FULLSCREEN */
-        #gameCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, #0c2461, #1e3799);
-        }
-
-        /* MINIMAL CONTROL PANEL */
-        .control-panel {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 5px;
-            z-index: 100;
-        }
-
-        .mini-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #f1c40f;
-            color: #f1c40f;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .mini-btn:hover {
-            background: #f1c40f;
-            color: #000;
-            transform: scale(1.1);
-        }
-
-        /* GAME STATS - MINIMAL */
-        .game-stats {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 15px;
+        header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 2px solid var(--accent-color);
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--secondary-bg), var(--primary-bg));
             border-radius: 10px;
-            border: 2px solid #2ecc71;
-            display: flex;
-            gap: 15px;
-            z-index: 100;
         }
 
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        h1 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            font-size: 2.5em;
         }
 
-        .stat-value {
-            font-size: 20px;
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        .bismillah {
+            font-size: 1.5em;
+            color: var(--accent-light);
+            margin-top: 10px;
             font-weight: bold;
-            color: #2ecc71;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: var(--secondary-bg);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .card-title {
+            color: var(--accent-color);
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-box {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
 
         .stat-label {
-            font-size: 10px;
-            color: #ecf0f1;
-            text-transform: uppercase;
+            color: var(--text-secondary);
         }
 
-        /* SPEEDOMETER */
-        .speedometer {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 120px;
-            height: 120px;
-            z-index: 100;
-        }
-
-        .speed-circle {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 5px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: #e74c3c;
-            transform: rotate(45deg);
-        }
-
-        .speed-value {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
+        .stat-value {
+            color: var(--accent-light);
             font-weight: bold;
-            color: #e74c3c;
         }
 
-        .speed-label {
-            position: absolute;
-            top: calc(50% + 25px);
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 10px;
-            color: #ecf0f1;
-            text-transform: uppercase;
+        .profit {
+            color: var(--success);
         }
 
-        /* ISLAMIC THEME ELEMENTS */
-        .islamic-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.03) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 50;
+        .loss {
+            color: var(--danger);
         }
 
-        .quran-verse {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-            font-style: italic;
-            text-align: center;
-            max-width: 80%;
-            z-index: 100;
-        }
-
-        /* MOBILE CONTROLS */
-        .mobile-controls {
-            position: fixed;
-            bottom: 100px;
-            left: 0;
-            right: 0;
-            display: none;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 100;
-        }
-
-        .mobile-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.6);
-            border: 2px solid #3498db;
-            color: white;
-            font-size: 24px;
+        .tabs {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.7;
+            background-color: var(--secondary-bg);
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
         }
 
-        /* GAME OVER SCREEN */
-        .game-over {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 30px;
-            border-radius: 20px;
+        .tab {
+            flex: 1;
+            padding: 15px;
             text-align: center;
-            display: none;
-            z-index: 1000;
-            border: 3px solid #f1c40f;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .game-over h2 {
-            color: #e74c3c;
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-
-        .final-stats {
-            margin: 20px 0;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 10px 0;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-        }
-
-        /* START SCREEN */
-        .start-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0c2461 0%, #1e3799 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .game-logo {
-            font-size: 48px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #f1c40f, #e74c3c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .game-instructions {
-            text-align: center;
-            margin-bottom: 30px;
-            max-width: 500px;
-        }
-
-        .instruction-item {
-            margin: 10px 0;
-            color: #ecf0f1;
-            font-size: 14px;
-        }
-
-        .start-btn {
-            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            background-color: var(--secondary-bg);
+            color: var(--text-secondary);
             border: none;
-            color: white;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            font-weight: bold;
         }
 
-        .start-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        .tab:hover {
+            background-color: #2a2a2a;
         }
 
-        /* PAUSE SCREEN */
-        .pause-screen {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
+        .tab.active {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .tab-content {
             display: none;
-            z-index: 1000;
-            border: 3px solid #3498db;
+            background-color: var(--secondary-bg);
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            border: 1px solid var(--border-color);
+            border-top: none;
         }
 
-        /* RESPONSIVE */
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 1em;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-light);
+        }
+
+        .btn-secondary {
+            background-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #444444;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: var(--primary-bg);
+            color: var(--accent-color);
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:hover {
+            background-color: rgba(255, 140, 0, 0.1);
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .edit-btn {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .dua-box {
+            background: linear-gradient(135deg, var(--primary-bg), #1a0a00);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-style: italic;
+        }
+
+        .arabic {
+            font-size: 1.2em;
+            text-align: right;
+            direction: rtl;
+            margin-bottom: 10px;
+            color: var(--accent-light);
+        }
+
+        .translation {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .alert.success {
+            background-color: rgba(0, 170, 0, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert.error {
+            background-color: rgba(255, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
         @media (max-width: 768px) {
-            .game-stats {
-                top: 5px;
-                left: 5px;
-                padding: 5px 10px;
-                gap: 10px;
+            .dashboard {
+                grid-template-columns: 1fr;
             }
-
-            .stat-value {
-                font-size: 16px;
+            
+            .tabs {
+                flex-direction: column;
             }
-
-            .speedometer {
-                width: 80px;
-                height: 80px;
-                bottom: 10px;
-                right: 10px;
+            
+            .tab {
+                border-radius: 0;
             }
-
-            .speed-value {
-                font-size: 18px;
-            }
-
-            .mobile-controls {
-                display: flex;
-            }
-        }
-
-        @media (max-height: 600px) {
-            .game-stats {
-                top: 5px;
-                padding: 5px;
-            }
-
-            .speedometer {
-                bottom: 5px;
-                right: 5px;
-                width: 70px;
-                height: 70px;
-            }
-        }
-
-        /* ANIMATIONS */
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        .blink {
-            animation: blink 1s infinite;
         }
     </style>
 </head>
 <body>
-    <!-- START SCREEN -->
-    <div class="start-screen" id="startScreen">
-        <div class="game-logo">ISLAMIC SPEED RACER</div>
-        <div class="game-instructions">
-            <div class="instruction-item">🚗 Drive through Islamic cities at high speed</div>
-            <div class="instruction-item">🕌 Avoid obstacles and collect blessings</div>
-            <div class="instruction-item">📿 Complete the race before time runs out</div>
-            <div class="instruction-item">🕋 Reach Makkah to win!</div>
-        </div>
-        <button class="start-btn" id="startGameBtn">
-            <i class="fas fa-play"></i> START RACE
-        </button>
-    </div>
+    <div class="container">
+        <header>
+            <h1>🍌🥥 Islamic Food Business Tracker</h1>
+            <div class="subtitle">Track your halal business with barakah</div>
+            <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+        </header>
 
-    <!-- GAME CONTAINER -->
-    <div class="game-container">
-        <canvas id="gameCanvas"></canvas>
-        
-        <!-- MINIMAL CONTROL PANEL -->
-        <div class="control-panel">
-            <button class="mini-btn" id="pauseBtn" title="Pause">
-                <i class="fas fa-pause"></i>
-            </button>
-            <button class="mini-btn" id="soundBtn" title="Sound On/Off">
-                <i class="fas fa-volume-up"></i>
-            </button>
-            <button class="mini-btn" id="fullscreenBtn" title="Fullscreen">
-                <i class="fas fa-expand"></i>
-            </button>
+        <div class="dua-box">
+            <div class="arabic">اللَّهُمَّ بَارِكْ لِي فِيمَا رَزَقْتَنِي</div>
+            <div class="translation">"O Allah, bless me in what You have provided me."</div>
         </div>
 
-        <!-- GAME STATS -->
-        <div class="game-stats">
-            <div class="stat-item">
-                <div class="stat-value" id="score">0</div>
-                <div class="stat-label">Score</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="time">60</div>
-                <div class="stat-label">Time</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="distance">0</div>
-                <div class="stat-label">KM</div>
-            </div>
-        </div>
+        <div id="alert" class="alert"></div>
 
-        <!-- SPEEDOMETER -->
-        <div class="speedometer">
-            <div class="speed-circle" id="speedCircle"></div>
-            <div class="speed-value" id="speedValue">0</div>
-            <div class="speed-label">KM/H</div>
-        </div>
-
-        <!-- ISLAMIC ELEMENTS -->
-        <div class="islamic-overlay"></div>
-        <div class="quran-verse" id="quranVerse">
-            "And He has made for you from ships and animals those which you ride." (Quran 43:12)
-        </div>
-
-        <!-- MOBILE CONTROLS -->
-        <div class="mobile-controls">
-            <div class="mobile-btn" id="leftBtn">
-                <i class="fas fa-arrow-left"></i>
-            </div>
-            <div class="mobile-btn" id="rightBtn">
-                <i class="fas fa-arrow-right"></i>
-            </div>
-        </div>
-
-        <!-- PAUSE SCREEN -->
-        <div class="pause-screen" id="pauseScreen">
-            <h2>GAME PAUSED</h2>
-            <button class="start-btn" id="resumeBtn" style="margin: 10px;">
-                <i class="fas fa-play"></i> RESUME
-            </button>
-            <button class="start-btn" style="background: linear-gradient(to bottom, #e74c3c, #c0392b); margin: 10px;">
-                <i class="fas fa-redo"></i> RESTART
-            </button>
-        </div>
-
-        <!-- GAME OVER SCREEN -->
-        <div class="game-over" id="gameOverScreen">
-            <h2 id="gameOverTitle">RACE COMPLETE!</h2>
-            <div class="final-stats">
-                <div class="stat-row">
-                    <span>Final Score:</span>
-                    <span id="finalScore">0</span>
+        <div class="dashboard">
+            <div class="card">
+                <h3 class="card-title">📊 Today's Summary</h3>
+                <div class="stat-box">
+                    <span class="stat-label">Total Items Made:</span>
+                    <span class="stat-value" id="totalMade">0</span>
                 </div>
-                <div class="stat-row">
-                    <span>Distance:</span>
-                    <span id="finalDistance">0 KM</span>
+                <div class="stat-box">
+                    <span class="stat-label">Total Items Sold:</span>
+                    <span class="stat-value" id="totalSold">0</span>
                 </div>
-                <div class="stat-row">
-                    <span>Time Remaining:</span>
-                    <span id="finalTime">0s</span>
+                <div class="stat-box">
+                    <span class="stat-label">Total Revenue:</span>
+                    <span class="stat-value" id="totalRevenue">0 MVR</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Total Profit:</span>
+                    <span class="stat-value profit" id="totalProfit">0 MVR</span>
                 </div>
             </div>
-            <button class="start-btn" id="playAgainBtn">
-                <i class="fas fa-redo"></i> PLAY AGAIN
-            </button>
+
+            <div class="card">
+                <h3 class="card-title">💰 Weekly Stats</h3>
+                <div class="stat-box">
+                    <span class="stat-label">Week Profit:</span>
+                    <span class="stat-value profit" id="weekProfit">0 MVR</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Best Seller:</span>
+                    <span class="stat-value" id="bestSeller">-</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Profit Margin:</span>
+                    <span class="stat-value" id="profitMargin">0%</span>
+                </div>
+                <button class="btn" onclick="viewReport()">📈 View Full Report</button>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">📦 Inventory Status</h3>
+                <div id="inventoryList">
+                    <div class="stat-box">
+                        <span class="stat-label">Bananas:</span>
+                        <span class="stat-value">Loading...</span>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="showTab('inventory')">Manage Inventory</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('ingredients')">🛒 Ingredients</button>
+            <button class="tab" onclick="showTab('recipes')">🍽️ Recipes</button>
+            <button class="tab" onclick="showTab('sales')">💰 Daily Sales</button>
+            <button class="tab" onclick="showTab('inventory')">📦 Inventory</button>
+        </div>
+
+        <div id="ingredients" class="tab-content active">
+            <h2 class="card-title">Manage Ingredients</h2>
+            <form id="ingredientForm">
+                <div class="form-group">
+                    <label for="ingredientName">Ingredient Name:</label>
+                    <input type="text" id="ingredientName" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="unit">Unit:</label>
+                    <select id="unit" required>
+                        <option value="piece">Piece</option>
+                        <option value="gram">Gram (g)</option>
+                        <option value="kg">Kilogram (kg)</option>
+                        <option value="ml">Milliliter (ml)</option>
+                        <option value="liter">Liter (L)</option>
+                        <option value="pack">Pack</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="purchasePrice">Purchase Price (MVR):</label>
+                    <input type="number" id="purchasePrice" step="0.01" required>
+                </div>
+                <button type="submit" class="btn">➕ Add Ingredient</button>
+            </form>
+
+            <div class="table-container">
+                <h3 class="card-title">Ingredient List</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Cost/Unit</th>
+                            <th>Total Value</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ingredientTable">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="recipes" class="tab-content">
+            <h2 class="card-title">Manage Recipes</h2>
+            <form id="recipeForm">
+                <div class="form-group">
+                    <label for="recipeName">Recipe Name:</label>
+                    <input type="text" id="recipeName" required>
+                </div>
+                <div class="form-group">
+                    <label for="piecesMade">Pieces Made per Batch:</label>
+                    <input type="number" id="piecesMade" required>
+                </div>
+                <div class="form-group">
+                    <label for="sellingPrice">Selling Price per Piece (MVR):</label>
+                    <input type="number" id="sellingPrice" step="0.01" required>
+                </div>
+                <h3 class="card-title">Ingredients for this Recipe</h3>
+                <div id="recipeIngredients">
+                    <div class="form-group">
+                        <select class="ingredient-select">
+                            <option value="">Select Ingredient</option>
+                        </select>
+                        <input type="number" class="ingredient-qty" placeholder="Quantity" step="0.01">
+                        <button type="button" class="btn-secondary" onclick="addIngredientRow()">➕ Add More</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn">🍳 Save Recipe</button>
+            </form>
+
+            <div class="table-container">
+                <h3 class="card-title">Recipe List</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Recipe</th>
+                            <th>Cost/Piece</th>
+                            <th>Sell Price</th>
+                            <th>Profit/Piece</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recipeTable">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="sales" class="tab-content">
+            <h2 class="card-title">Daily Sales Tracking</h2>
+            <form id="salesForm">
+                <div class="form-group">
+                    <label for="salesDate">Date:</label>
+                    <input type="date" id="salesDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="salesRecipe">Select Recipe:</label>
+                    <select id="salesRecipe" required>
+                        <option value="">Select Recipe</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="piecesMadeToday">Pieces Made Today:</label>
+                    <input type="number" id="piecesMadeToday" required>
+                </div>
+                <div class="form-group">
+                    <label for="piecesSoldToday">Pieces Sold Today:</label>
+                    <input type="number" id="piecesSoldToday" required>
+                </div>
+                <button type="submit" class="btn">📊 Record Sales</button>
+            </form>
+
+            <div class="table-container">
+                <h3 class="card-title">Sales History</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Item</th>
+                            <th>Made</th>
+                            <th>Sold</th>
+                            <th>Cost</th>
+                            <th>Revenue</th>
+                            <th>Profit</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesTable">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="inventory" class="tab-content">
+            <h2 class="card-title">Inventory Management</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Current Stock</th>
+                            <th>Used Today</th>
+                            <th>Remaining</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTable">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn" onclick="generateShoppingList()">🛍️ Generate Shopping List</button>
+            <div id="shoppingList" class="card" style="display: none; margin-top: 20px;">
+                <h3 class="card-title">🛒 Shopping List</h3>
+                <div id="shoppingItems"></div>
+            </div>
+        </div>
+
+        <div class="dua-box" style="margin-top: 40px;">
+            <div class="arabic">رَبِّ زِدْنِي عِلْمًا وَارْزُقْنِي فَهْمًا</div>
+            <div class="translation">"My Lord, increase me in knowledge and grant me understanding."</div>
         </div>
     </div>
 
     <script>
-        // ============================================
-        // ISLAMIC SPEED RACER - CAR GAME
-        // ============================================
-
-        // Game variables
-        let canvas, ctx;
-        let gameRunning = false;
-        let gamePaused = false;
-        let score = 0;
-        let distance = 0;
-        let timeLeft = 60;
-        let speed = 0;
-        let maxSpeed = 200;
-        let acceleration = 0.5;
-        let deceleration = 0.3;
-        let gameLoop;
-        let soundEnabled = true;
-        let lastTime = 0;
-
-        // Car variables
-        let car = {
-            x: 0,
-            y: 0,
-            width: 60,
-            height: 100,
-            color: '#3498db',
-            lane: 1, // 0 = left, 1 = middle, 2 = right
-            maxLanes: 3
-        };
-
-        // Road variables
-        let road = {
-            width: 400,
-            lanes: 3,
-            markingWidth: 10,
-            markingGap: 30,
-            markingOffset: 0
-        };
-
-        // Game objects
-        let obstacles = [];
-        let collectibles = [];
-        let particles = [];
-        let buildings = [];
-
-        // Keys object
-        let keys = {
-            ArrowLeft: false,
-            ArrowRight: false,
-            ArrowUp: false,
-            ArrowDown: false
-        };
-
-        // Islamic-themed collectibles
-        const collectibleTypes = [
-            { type: 'prayer', symbol: '🕌', color: '#2ecc71', points: 100 },
-            { type: 'quran', symbol: '📖', color: '#f1c40f', points: 50 },
-            { type: 'charity', symbol: '💰', color: '#9b59b6', points: 75 },
-            { type: 'fasting', symbol: '🌙', color: '#3498db', points: 60 }
-        ];
-
-        // Islamic-themed obstacles
-        const obstacleTypes = [
-            { type: 'rock', symbol: '🪨', color: '#7f8c8d' },
-            { type: 'camel', symbol: '🐫', color: '#d35400' },
-            { type: 'barrier', symbol: '🚧', color: '#e74c3c' },
-            { type: 'tree', symbol: '🌳', color: '#27ae60' }
-        ];
-
-        // Quran verses
-        const quranVerses = [
-            "And He has made for you from ships and animals those which you ride. (43:12)",
-            "Travel through the land and observe how He began creation. (29:20)",
-            "And Allah has made for you from your homes a place of rest. (16:80)",
-            "Whoever does righteousness - it is for his own soul. (41:46)"
-        ];
-
-        // Initialize game
-        function init() {
-            canvas = document.getElementById('gameCanvas');
-            ctx = canvas.getContext('2d');
-            
-            // Set canvas size to full window
-            resizeCanvas();
-            
-            // Set initial car position
-            resetCarPosition();
-            
-            // Setup event listeners
-            setupEventListeners();
-            
-            // Start game loop
-            requestAnimationFrame(gameUpdate);
+        // Data storage
+        let ingredients = JSON.parse(localStorage.getItem('ingredients')) || [];
+        let recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+        let sales = JSON.parse(localStorage.getItem('sales')) || [];
+        
+        // Sample data if empty
+        if (ingredients.length === 0) {
+            ingredients = [
+                { id: 1, name: "Banana", quantity: 10, unit: "piece", purchasePrice: 50 },
+                { id: 2, name: "Milk Chocolate", quantity: 200, unit: "gram", purchasePrice: 30 },
+                { id: 3, name: "Peanuts", quantity: 100, unit: "gram", purchasePrice: 10 },
+                { id: 4, name: "Desiccated Coconut", quantity: 500, unit: "gram", purchasePrice: 25 },
+                { id: 5, name: "Condensed Milk", quantity: 200, unit: "ml", purchasePrice: 16 },
+                { id: 6, name: "Cardamom Powder", quantity: 50, unit: "gram", purchasePrice: 20 }
+            ];
+            saveIngredients();
         }
 
-        // Resize canvas to window
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            resetCarPosition();
-        }
-
-        // Reset car position
-        function resetCarPosition() {
-            car.x = canvas.width / 2 - car.width / 2;
-            car.y = canvas.height - car.height - 50;
-            car.lane = 1;
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Keyboard controls
-            document.addEventListener('keydown', (e) => {
-                if (keys.hasOwnProperty(e.key)) {
-                    keys[e.key] = true;
-                    e.preventDefault();
+        if (recipes.length === 0) {
+            recipes = [
+                {
+                    id: 1,
+                    name: "Chocolate Banana Bites",
+                    piecesPerBatch: 10,
+                    sellPrice: 8,
+                    ingredients: [
+                        { ingredientId: 1, quantity: 2 },
+                        { ingredientId: 2, quantity: 100 },
+                        { ingredientId: 3, quantity: 50 }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "Coconut Cardamom Balls",
+                    piecesPerBatch: 10,
+                    sellPrice: 6,
+                    ingredients: [
+                        { ingredientId: 4, quantity: 200 },
+                        { ingredientId: 5, quantity: 100 },
+                        { ingredientId: 6, quantity: 10 }
+                    ]
                 }
+            ];
+            saveRecipes();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadIngredientsTable();
+            loadRecipesTable();
+            loadSalesTable();
+            loadInventoryTable();
+            updateDashboard();
+            populateRecipeSelect();
+            populateIngredientSelect();
+        });
+
+        // Save functions
+        function saveIngredients() {
+            localStorage.setItem('ingredients', JSON.stringify(ingredients));
+        }
+
+        function saveRecipes() {
+            localStorage.setItem('recipes', JSON.stringify(recipes));
+        }
+
+        function saveSales() {
+            localStorage.setItem('sales', JSON.stringify(sales));
+        }
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
-
-            document.addEventListener('keyup', (e) => {
-                if (keys.hasOwnProperty(e.key)) {
-                    keys[e.key] = false;
-                    e.preventDefault();
-                }
-            });
-
-            // Window resize
-            window.addEventListener('resize', resizeCanvas);
-
-            // Game control buttons
-            document.getElementById('startGameBtn').addEventListener('click', startGame);
-            document.getElementById('pauseBtn').addEventListener('click', togglePause);
-            document.getElementById('resumeBtn').addEventListener('click', togglePause);
-            document.getElementById('playAgainBtn').addEventListener('click', restartGame);
-            document.getElementById('soundBtn').addEventListener('click', toggleSound);
-            document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
-
-            // Mobile controls
-            document.getElementById('leftBtn').addEventListener('touchstart', () => keys.ArrowLeft = true);
-            document.getElementById('leftBtn').addEventListener('touchend', () => keys.ArrowLeft = false);
-            document.getElementById('rightBtn').addEventListener('touchstart', () => keys.ArrowRight = true);
-            document.getElementById('rightBtn').addEventListener('touchend', () => keys.ArrowRight = false);
-
-            // Touch controls for acceleration
-            canvas.addEventListener('touchstart', (e) => {
-                keys.ArrowUp = true;
-                e.preventDefault();
-            });
-
-            canvas.addEventListener('touchend', (e) => {
-                keys.ArrowUp = false;
-                e.preventDefault();
-            });
-
-            // Mouse controls
-            canvas.addEventListener('mousedown', () => keys.ArrowUp = true);
-            canvas.addEventListener('mouseup', () => keys.ArrowUp = false);
-
-            // Prevent context menu
-            canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-        }
-
-        // Start game
-        function startGame() {
-            document.getElementById('startScreen').style.display = 'none';
-            gameRunning = true;
-            gamePaused = false;
-            
-            // Reset game variables
-            score = 0;
-            distance = 0;
-            timeLeft = 60;
-            speed = 0;
-            
-            // Clear arrays
-            obstacles = [];
-            collectibles = [];
-            particles = [];
-            buildings = [];
-            
-            // Create initial buildings
-            createBuildings();
-            
-            // Update UI
-            updateUI();
-        }
-
-        // Game update loop
-        function gameUpdate(currentTime) {
-            const deltaTime = Math.min(currentTime - lastTime, 100) / 16; // Normalize delta time
-            lastTime = currentTime;
-            
-            if (!gameRunning || gamePaused) {
-                requestAnimationFrame(gameUpdate);
-                return;
-            }
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw background
-            drawBackground();
-            
-            // Draw road
-            drawRoad();
-            
-            // Draw buildings
-            drawBuildings();
-            
-            // Update and draw objects
-            updateObjects(deltaTime);
-            
-            // Draw car
-            drawCar();
-            
-            // Draw particles
-            drawParticles();
-            
-            // Draw HUD
-            drawHUD();
-            
-            // Update game state
-            updateGameState(deltaTime);
-            
-            // Check collisions
-            checkCollisions();
-            
-            // Continue game loop
-            requestAnimationFrame(gameUpdate);
-        }
-
-        // Draw background
-        function drawBackground() {
-            // Sky gradient
-            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, '#0c2461');
-            gradient.addColorStop(1, '#1e3799');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Stars
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            for (let i = 0; i < 50; i++) {
-                const x = (i * 13.7) % canvas.width;
-                const y = (i * 8.3) % (canvas.height / 2);
-                const size = Math.random() * 2;
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            // Moon
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.beginPath();
-            ctx.arc(canvas.width - 100, 100, 40, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Crescent inside moon
-            ctx.fillStyle = '#0c2461';
-            ctx.beginPath();
-            ctx.arc(canvas.width - 115, 85, 35, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        // Draw road
-        function drawRoad() {
-            const roadX = (canvas.width - road.width) / 2;
-            
-            // Road surface
-            ctx.fillStyle = '#34495e';
-            ctx.fillRect(roadX, 0, road.width, canvas.height);
-            
-            // Road edges
-            ctx.fillStyle = '#7f8c8d';
-            ctx.fillRect(roadX - 10, 0, 10, canvas.height);
-            ctx.fillRect(roadX + road.width, 0, 10, canvas.height);
-            
-            // Lane markings
-            ctx.fillStyle = '#f1c40f';
-            const laneWidth = road.width / road.lanes;
-            
-            for (let i = 1; i < road.lanes; i++) {
-                const x = roadX + i * laneWidth - road.markingWidth / 2;
-                
-                // Draw dashed line
-                for (let y = road.markingOffset % (road.markingGap * 2); y < canvas.height; y += road.markingGap * 2) {
-                    ctx.fillRect(x, y, road.markingWidth, road.markingGap);
-                }
-            }
-            
-            // Animate road markings
-            road.markingOffset += speed * 0.1;
-        }
-
-        // Draw car
-        function drawCar() {
-            const laneWidth = road.width / car.maxLanes;
-            const roadX = (canvas.width - road.width) / 2;
-            
-            // Calculate target position based on lane
-            const targetX = roadX + (car.lane + 0.5) * laneWidth - car.width / 2;
-            
-            // Smooth lane changing
-            car.x += (targetX - car.x) * 0.1;
-            
-            // Car body
-            ctx.fillStyle = car.color;
-            ctx.fillRect(car.x, car.y, car.width, car.height);
-            
-            // Car details
-            ctx.fillStyle = '#2980b9';
-            ctx.fillRect(car.x + 5, car.y + 5, car.width - 10, 20); // Roof
-            ctx.fillRect(car.x + 10, car.y + car.height - 20, 15, 15); // Wheel
-            ctx.fillRect(car.x + car.width - 25, car.y + car.height - 20, 15, 15); // Wheel
-            
-            // Windows
-            ctx.fillStyle = '#2c3e50';
-            ctx.fillRect(car.x + 10, car.y + 30, car.width - 20, 30);
-            
-            // Headlights
-            ctx.fillStyle = '#f1c40f';
-            ctx.fillRect(car.x, car.y + 20, 5, 10);
-            ctx.fillRect(car.x + car.width - 5, car.y + 20, 5, 10);
-            
-            // Taillights
-            if (speed > 0) {
-                ctx.fillStyle = '#e74c3c';
-                ctx.fillRect(car.x, car.y + car.height - 15, 5, 10);
-                ctx.fillRect(car.x + car.width - 5, car.y + car.height - 15, 5, 10);
-            }
-            
-            // Speed lines effect
-            if (speed > 100) {
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.lineWidth = 2;
-                for (let i = 0; i < 5; i++) {
-                    ctx.beginPath();
-                    ctx.moveTo(car.x + Math.random() * car.width, car.y + car.height);
-                    ctx.lineTo(car.x + Math.random() * car.width, car.y + car.height + 50);
-                    ctx.stroke();
-                }
-            }
-        }
-
-        // Create buildings
-        function createBuildings() {
-            buildings = [];
-            const buildingTypes = ['🕌', '🏢', '🏛️', '🏨', '🏠'];
-            const buildingColors = ['#2ecc71', '#3498db', '#9b59b6', '#e74c3c', '#f39c12'];
-            
-            for (let i = 0; i < 20; i++) {
-                const side = Math.random() > 0.5 ? 'left' : 'right';
-                const x = side === 'left' 
-                    ? Math.random() * (canvas.width / 2 - road.width / 2 - 100)
-                    : canvas.width / 2 + road.width / 2 + Math.random() * (canvas.width / 2 - road.width / 2 - 100);
-                
-                buildings.push({
-                    x: x,
-                    y: -Math.random() * canvas.height,
-                    width: 60 + Math.random() * 60,
-                    height: 100 + Math.random() * 200,
-                    color: buildingColors[Math.floor(Math.random() * buildingColors.length)],
-                    symbol: buildingTypes[Math.floor(Math.random() * buildingTypes.length)],
-                    speed: 2 + Math.random() * 3
-                });
-            }
-        }
-
-        // Draw buildings
-        function drawBuildings() {
-            buildings.forEach(building => {
-                // Update position
-                building.y += building.speed * (speed / 50);
-                
-                // Reset if off screen
-                if (building.y > canvas.height) {
-                    building.y = -building.height;
-                    building.x = Math.random() > 0.5 
-                        ? Math.random() * (canvas.width / 2 - road.width / 2 - 100)
-                        : canvas.width / 2 + road.width / 2 + Math.random() * (canvas.width / 2 - road.width / 2 - 100);
-                }
-                
-                // Draw building
-                ctx.fillStyle = building.color;
-                ctx.fillRect(building.x, building.y, building.width, building.height);
-                
-                // Draw windows
-                ctx.fillStyle = '#f1c40f';
-                const windowSize = 8;
-                const windowGap = 15;
-                for (let wx = building.x + 10; wx < building.x + building.width - 10; wx += windowGap) {
-                    for (let wy = building.y + 10; wy < building.y + building.height - 10; wy += windowGap) {
-                        if (Math.random() > 0.3) {
-                            ctx.fillRect(wx, wy, windowSize, windowSize);
-                        }
-                    }
-                }
-                
-                // Draw symbol
-                ctx.fillStyle = 'white';
-                ctx.font = '24px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(building.symbol, building.x + building.width / 2, building.y + 30);
-            });
-        }
-
-        // Update objects
-        function updateObjects(deltaTime) {
-            // Update speed based on input
-            if (keys.ArrowUp) {
-                speed = Math.min(speed + acceleration * deltaTime, maxSpeed);
-            } else {
-                speed = Math.max(speed - deceleration * deltaTime, 0);
-            }
-            
-            // Update distance
-            distance += speed * 0.01;
-            
-            // Handle lane changing
-            if (keys.ArrowLeft && car.lane > 0) {
-                car.lane--;
-                keys.ArrowLeft = false;
-                createParticles(car.x + car.width / 2, car.y + car.height, '#3498db');
-            }
-            
-            if (keys.ArrowRight && car.lane < car.maxLanes - 1) {
-                car.lane++;
-                keys.ArrowRight = false;
-                createParticles(car.x + car.width / 2, car.y + car.height, '#3498db');
-            }
-            
-            // Spawn obstacles
-            if (Math.random() < 0.02 * (speed / 100) && obstacles.length < 5) {
-                spawnObstacle();
-            }
-            
-            // Spawn collectibles
-            if (Math.random() < 0.03 * (speed / 100) && collectibles.length < 3) {
-                spawnCollectible();
-            }
-            
-            // Update obstacles
-            obstacles.forEach((obstacle, index) => {
-                obstacle.y += (3 + speed * 0.05) * deltaTime;
-                
-                // Remove if off screen
-                if (obstacle.y > canvas.height) {
-                    obstacles.splice(index, 1);
-                }
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
             });
             
-            // Update collectibles
-            collectibles.forEach((collectible, index) => {
-                collectible.y += (2 + speed * 0.03) * deltaTime;
-                
-                // Remove if off screen
-                if (collectible.y > canvas.height) {
-                    collectibles.splice(index, 1);
-                }
-            });
-            
-            // Update particles
-            particles.forEach((particle, index) => {
-                particle.y += particle.speed;
-                particle.life -= 0.02;
-                
-                // Remove if dead
-                if (particle.life <= 0) {
-                    particles.splice(index, 1);
-                }
-            });
-            
-            // Draw obstacles
-            drawObstacles();
-            
-            // Draw collectibles
-            drawCollectibles();
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
         }
 
-        // Draw obstacles
-        function drawObstacles() {
-            obstacles.forEach(obstacle => {
-                ctx.save();
-                ctx.translate(obstacle.x, obstacle.y);
-                
-                // Draw obstacle
-                ctx.fillStyle = obstacle.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, obstacle.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Draw symbol
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(obstacle.symbol, 0, 0);
-                
-                ctx.restore();
-            });
+        // Alert system
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
         }
 
-        // Draw collectibles
-        function drawCollectibles() {
-            collectibles.forEach(collectible => {
-                ctx.save();
-                ctx.translate(collectible.x, collectible.y);
-                
-                // Draw glow effect
-                ctx.shadowColor = collectible.color;
-                ctx.shadowBlur = 15;
-                
-                // Draw collectible
-                ctx.fillStyle = collectible.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, collectible.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.shadowBlur = 0;
-                
-                // Draw symbol
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(collectible.symbol, 0, 0);
-                
-                ctx.restore();
-            });
-        }
-
-        // Spawn obstacle
-        function spawnObstacle() {
-            const laneWidth = road.width / car.maxLanes;
-            const roadX = (canvas.width - road.width) / 2;
-            const lane = Math.floor(Math.random() * car.maxLanes);
-            const obstacleType = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+        // INGREDIENTS MANAGEMENT
+        document.getElementById('ingredientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            obstacles.push({
-                x: roadX + (lane + 0.5) * laneWidth,
-                y: -50,
-                radius: 25,
-                speed: 3,
-                color: obstacleType.color,
-                symbol: obstacleType.symbol,
-                type: obstacleType.type
-            });
-        }
-
-        // Spawn collectible
-        function spawnCollectible() {
-            const laneWidth = road.width / car.maxLanes;
-            const roadX = (canvas.width - road.width) / 2;
-            const lane = Math.floor(Math.random() * car.maxLanes);
-            const collectibleType = collectibleTypes[Math.floor(Math.random() * collectibleTypes.length)];
-            
-            collectibles.push({
-                x: roadX + (lane + 0.5) * laneWidth,
-                y: -50,
-                radius: 20,
-                speed: 2,
-                color: collectibleType.color,
-                symbol: collectibleType.symbol,
-                type: collectibleType.type,
-                points: collectibleType.points
-            });
-        }
-
-        // Create particles
-        function createParticles(x, y, color) {
-            for (let i = 0; i < 10; i++) {
-                particles.push({
-                    x: x + Math.random() * 20 - 10,
-                    y: y + Math.random() * 20 - 10,
-                    radius: Math.random() * 3 + 1,
-                    speed: Math.random() * 3 + 1,
-                    color: color,
-                    life: 1
-                });
-            }
-        }
-
-        // Draw particles
-        function drawParticles() {
-            particles.forEach(particle => {
-                ctx.globalAlpha = particle.life;
-                ctx.fillStyle = particle.color;
-                ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1;
-            });
-        }
-
-        // Draw HUD
-        function drawHUD() {
-            // Draw score
-            ctx.fillStyle = 'white';
-            ctx.font = '16px Arial';
-            ctx.textAlign = 'left';
-            ctx.fillText(`SCORE: ${score}`, 20, 30);
-            
-            // Draw distance
-            ctx.fillText(`DISTANCE: ${distance.toFixed(1)} KM`, 20, 60);
-            
-            // Draw time
-            ctx.fillText(`TIME: ${timeLeft.toFixed(1)}s`, 20, 90);
-            
-            // Draw speed
-            ctx.fillText(`SPEED: ${speed.toFixed(0)} KM/H`, 20, 120);
-            
-            // Draw controls hint
-            if (speed === 0) {
-                ctx.textAlign = 'center';
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-                ctx.font = '14px Arial';
-                ctx.fillText('Press UP or tap screen to accelerate', canvas.width / 2, canvas.height - 50);
-                ctx.fillText('Use LEFT/RIGHT arrows to change lanes', canvas.width / 2, canvas.height - 30);
-            }
-            
-            // Draw finish line progress
-            if (distance < 5) {
-                const progress = distance / 5;
-                ctx.fillStyle = 'rgba(46, 204, 113, 0.5)';
-                ctx.fillRect(canvas.width / 2 - 100, canvas.height - 20, 200 * progress, 10);
-                ctx.strokeStyle = '#2ecc71';
-                ctx.strokeRect(canvas.width / 2 - 100, canvas.height - 20, 200, 10);
-                
-                ctx.fillStyle = 'white';
-                ctx.textAlign = 'center';
-                ctx.fillText('TO MAKKAH', canvas.width / 2, canvas.height - 25);
-            }
-        }
-
-        // Update game state
-        function updateGameState(deltaTime) {
-            // Update time
-            timeLeft -= 0.016 * deltaTime;
-            
-            // Check game over conditions
-            if (timeLeft <= 0) {
-                gameOver(false);
-                return;
-            }
-            
-            if (distance >= 5) {
-                gameOver(true);
-                return;
-            }
-            
-            // Update UI
-            updateUI();
-            
-            // Randomly change Quran verse
-            if (Math.random() < 0.001) {
-                document.getElementById('quranVerse').textContent = 
-                    quranVerses[Math.floor(Math.random() * quranVerses.length)];
-            }
-        }
-
-        // Check collisions
-        function checkCollisions() {
-            // Car bounds
-            const carBounds = {
-                x: car.x,
-                y: car.y,
-                width: car.width,
-                height: car.height
+            const ingredient = {
+                id: Date.now(),
+                name: document.getElementById('ingredientName').value,
+                quantity: parseFloat(document.getElementById('quantity').value),
+                unit: document.getElementById('unit').value,
+                purchasePrice: parseFloat(document.getElementById('purchasePrice').value)
             };
             
-            // Check collision with obstacles
-            obstacles.forEach((obstacle, index) => {
-                const dx = carBounds.x + carBounds.width/2 - obstacle.x;
-                const dy = carBounds.y + carBounds.height/2 - obstacle.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < (carBounds.width/2 + obstacle.radius)) {
-                    // Collision detected
-                    score -= 50;
-                    if (score < 0) score = 0;
-                    speed = Math.max(speed - 30, 0);
-                    obstacles.splice(index, 1);
-                    createParticles(obstacle.x, obstacle.y, '#e74c3c');
-                    playSound('crash');
-                }
-            });
+            ingredients.push(ingredient);
+            saveIngredients();
+            loadIngredientsTable();
+            loadInventoryTable();
+            updateDashboard();
+            populateIngredientSelect();
             
-            // Check collision with collectibles
-            collectibles.forEach((collectible, index) => {
-                const dx = carBounds.x + carBounds.width/2 - collectible.x;
-                const dy = carBounds.y + carBounds.height/2 - collectible.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+            showAlert(`Ingredient "${ingredient.name}" added successfully!`);
+            this.reset();
+        });
+
+        function loadIngredientsTable() {
+            const tbody = document.getElementById('ingredientTable');
+            tbody.innerHTML = '';
+            
+            ingredients.forEach(ingredient => {
+                const costPerUnit = ingredient.purchasePrice / ingredient.quantity;
+                const totalValue = ingredient.purchasePrice;
                 
-                if (distance < (carBounds.width/2 + collectible.radius)) {
-                    // Collectible collected
-                    score += collectible.points;
-                    timeLeft += 2; // Bonus time
-                    collectibles.splice(index, 1);
-                    createParticles(collectible.x, collectible.y, collectible.color);
-                    playSound('collect');
-                }
+                const row = `
+                    <tr>
+                        <td>${ingredient.name}</td>
+                        <td>${ingredient.quantity}</td>
+                        <td>${ingredient.unit}</td>
+                        <td>${costPerUnit.toFixed(2)} MVR</td>
+                        <td>${totalValue.toFixed(2)} MVR</td>
+                        <td class="actions">
+                            <button class="action-btn edit-btn" onclick="editIngredient(${ingredient.id})">✏️</button>
+                            <button class="action-btn delete-btn" onclick="deleteIngredient(${ingredient.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
             });
         }
 
-        // Update UI
-        function updateUI() {
-            document.getElementById('score').textContent = score;
-            document.getElementById('time').textContent = timeLeft.toFixed(0);
-            document.getElementById('distance').textContent = distance.toFixed(1);
-            document.getElementById('speedValue').textContent = speed.toFixed(0);
-            
-            // Update speedometer circle
-            const speedPercent = speed / maxSpeed;
-            const speedCircle = document.getElementById('speedCircle');
-            speedCircle.style.borderTopColor = speedPercent > 0.8 ? '#e74c3c' : '#2ecc71';
-            speedCircle.style.transform = `rotate(${45 + speedPercent * 270}deg)`;
-        }
-
-        // Game over
-        function gameOver(success) {
-            gameRunning = false;
-            
-            document.getElementById('gameOverTitle').textContent = 
-                success ? 'RACE COMPLETE!' : 'TIME UP!';
-            document.getElementById('finalScore').textContent = score;
-            document.getElementById('finalDistance').textContent = distance.toFixed(1) + ' KM';
-            document.getElementById('finalTime').textContent = timeLeft.toFixed(1) + 's';
-            
-            // Bonus points for remaining time
-            if (success) {
-                score += Math.floor(timeLeft * 10);
-                document.getElementById('finalScore').textContent = score;
+        function editIngredient(id) {
+            const ingredient = ingredients.find(i => i.id === id);
+            if (ingredient) {
+                document.getElementById('ingredientName').value = ingredient.name;
+                document.getElementById('quantity').value = ingredient.quantity;
+                document.getElementById('unit').value = ingredient.unit;
+                document.getElementById('purchasePrice').value = ingredient.purchasePrice;
+                
+                // Remove from array
+                ingredients = ingredients.filter(i => i.id !== id);
+                saveIngredients();
+                showAlert(`Editing "${ingredient.name}"`);
             }
-            
-            document.getElementById('gameOverScreen').style.display = 'block';
         }
 
-        // Toggle pause
-        function togglePause() {
-            if (!gameRunning) return;
-            
-            gamePaused = !gamePaused;
-            document.getElementById('pauseScreen').style.display = gamePaused ? 'block' : 'none';
-            document.getElementById('pauseBtn').innerHTML = gamePaused ? 
-                '<i class="fas fa-play"></i>' : 
-                '<i class="fas fa-pause"></i>';
+        function deleteIngredient(id) {
+            if (confirm('Are you sure you want to delete this ingredient?')) {
+                ingredients = ingredients.filter(i => i.id !== id);
+                saveIngredients();
+                loadIngredientsTable();
+                loadInventoryTable();
+                updateDashboard();
+                showAlert('Ingredient deleted successfully!');
+            }
         }
 
-        // Restart game
-        function restartGame() {
-            document.getElementById('gameOverScreen').style.display = 'none';
-            startGame();
-        }
-
-        // Toggle sound
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            document.getElementById('soundBtn').innerHTML = soundEnabled ? 
-                '<i class="fas fa-volume-up"></i>' : 
-                '<i class="fas fa-volume-mute"></i>';
-        }
-
-        // Toggle fullscreen
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+        // RECIPES MANAGEMENT
+        function populateIngredientSelect() {
+            const selects = document.querySelectorAll('.ingredient-select');
+            selects.forEach(select => {
+                select.innerHTML = '<option value="">Select Ingredient</option>';
+                ingredients.forEach(ingredient => {
+                    select.innerHTML += `<option value="${ingredient.id}">${ingredient.name}</option>`;
                 });
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
+            });
         }
 
-        // Play sound
-        function playSound(type) {
-            if (!soundEnabled) return;
+        function addIngredientRow() {
+            const container = document.getElementById('recipeIngredients');
+            const div = document.createElement('div');
+            div.className = 'form-group';
+            div.innerHTML = `
+                <select class="ingredient-select">
+                    <option value="">Select Ingredient</option>
+                    ${ingredients.map(i => `<option value="${i.id}">${i.name}</option>`).join('')}
+                </select>
+                <input type="number" class="ingredient-qty" placeholder="Quantity" step="0.01">
+                <button type="button" class="btn-secondary" onclick="this.parentElement.remove()">🗑️ Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        document.getElementById('recipeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
+            // Collect ingredients
+            const ingredientRows = document.querySelectorAll('#recipeIngredients .form-group');
+            const recipeIngredients = [];
+            
+            ingredientRows.forEach(row => {
+                const select = row.querySelector('.ingredient-select');
+                const qtyInput = row.querySelector('.ingredient-qty');
                 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                switch(type) {
-                    case 'collect':
-                        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
-                        oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
-                        oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
-                        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                        oscillator.start(audioContext.currentTime);
-                        oscillator.stop(audioContext.currentTime + 0.3);
-                        break;
-                        
-                    case 'crash':
-                        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                        oscillator.start(audioContext.currentTime);
-                        oscillator.stop(audioContext.currentTime + 0.5);
-                        break;
+                if (select.value && qtyInput.value) {
+                    recipeIngredients.push({
+                        ingredientId: parseInt(select.value),
+                        quantity: parseFloat(qtyInput.value)
+                    });
                 }
-            } catch (e) {
-                console.log('Audio not supported:', e);
+            });
+            
+            if (recipeIngredients.length === 0) {
+                showAlert('Please add at least one ingredient!', 'error');
+                return;
+            }
+            
+            const recipe = {
+                id: Date.now(),
+                name: document.getElementById('recipeName').value,
+                piecesPerBatch: parseInt(document.getElementById('piecesMade').value),
+                sellPrice: parseFloat(document.getElementById('sellingPrice').value),
+                ingredients: recipeIngredients
+            };
+            
+            recipes.push(recipe);
+            saveRecipes();
+            loadRecipesTable();
+            populateRecipeSelect();
+            updateDashboard();
+            
+            showAlert(`Recipe "${recipe.name}" added successfully!`);
+            this.reset();
+            // Reset ingredients
+            document.getElementById('recipeIngredients').innerHTML = `
+                <div class="form-group">
+                    <select class="ingredient-select">
+                        <option value="">Select Ingredient</option>
+                    </select>
+                    <input type="number" class="ingredient-qty" placeholder="Quantity" step="0.01">
+                    <button type="button" class="btn-secondary" onclick="addIngredientRow()">➕ Add More</button>
+                </div>
+            `;
+            populateIngredientSelect();
+        });
+
+        function calculateRecipeCost(recipe) {
+            let totalCost = 0;
+            
+            recipe.ingredients.forEach(recipeIngredient => {
+                const ingredient = ingredients.find(i => i.id === recipeIngredient.ingredientId);
+                if (ingredient) {
+                    const costPerUnit = ingredient.purchasePrice / ingredient.quantity;
+                    totalCost += costPerUnit * recipeIngredient.quantity;
+                }
+            });
+            
+            return totalCost;
+        }
+
+        function loadRecipesTable() {
+            const tbody = document.getElementById('recipeTable');
+            tbody.innerHTML = '';
+            
+            recipes.forEach(recipe => {
+                const totalCost = calculateRecipeCost(recipe);
+                const costPerPiece = totalCost / recipe.piecesPerBatch;
+                const profitPerPiece = recipe.sellPrice - costPerPiece;
+                
+                const row = `
+                    <tr>
+                        <td>${recipe.name}</td>
+                        <td>${costPerPiece.toFixed(2)} MVR</td>
+                        <td>${recipe.sellPrice.toFixed(2)} MVR</td>
+                        <td class="${profitPerPiece >= 0 ? 'profit' : 'loss'}">${profitPerPiece.toFixed(2)} MVR</td>
+                        <td class="actions">
+                            <button class="action-btn edit-btn" onclick="editRecipe(${recipe.id})">✏️</button>
+                            <button class="action-btn delete-btn" onclick="deleteRecipe(${recipe.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function editRecipe(id) {
+            showAlert('Edit feature coming soon!', 'error');
+        }
+
+        function deleteRecipe(id) {
+            if (confirm('Are you sure you want to delete this recipe?')) {
+                recipes = recipes.filter(r => r.id !== id);
+                saveRecipes();
+                loadRecipesTable();
+                populateRecipeSelect();
+                updateDashboard();
+                showAlert('Recipe deleted successfully!');
             }
         }
 
-        // Initialize when page loads
-        window.addEventListener('load', init);
+        // SALES MANAGEMENT
+        function populateRecipeSelect() {
+            const select = document.getElementById('salesRecipe');
+            select.innerHTML = '<option value="">Select Recipe</option>';
+            recipes.forEach(recipe => {
+                select.innerHTML += `<option value="${recipe.id}">${recipe.name}</option>`;
+            });
+        }
 
-        // Export for debugging
-        window.game = {
-            startGame,
-            togglePause,
-            restartGame,
-            getState: () => ({ score, distance, timeLeft, speed })
-        };
+        document.getElementById('salesForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const recipeId = parseInt(document.getElementById('salesRecipe').value);
+            const recipe = recipes.find(r => r.id === recipeId);
+            
+            if (!recipe) {
+                showAlert('Please select a valid recipe!', 'error');
+                return;
+            }
+            
+            const sale = {
+                id: Date.now(),
+                date: document.getElementById('salesDate').value,
+                recipeId: recipeId,
+                piecesMade: parseInt(document.getElementById('piecesMadeToday').value),
+                piecesSold: parseInt(document.getElementById('piecesSoldToday').value)
+            };
+            
+            // Update inventory
+            recipe.ingredients.forEach(recipeIngredient => {
+                const ingredient = ingredients.find(i => i.id === recipeIngredient.ingredientId);
+                if (ingredient) {
+                    // Calculate quantity used for this batch
+                    const quantityPerPiece = recipeIngredient.quantity / recipe.piecesPerBatch;
+                    const totalUsed = quantityPerPiece * sale.piecesMade;
+                    ingredient.quantity -= totalUsed;
+                }
+            });
+            
+            sales.push(sale);
+            saveSales();
+            saveIngredients();
+            
+            loadSalesTable();
+            loadInventoryTable();
+            updateDashboard();
+            
+            showAlert(`Sales recorded for ${recipe.name}!`);
+            this.reset();
+        });
 
-        console.log('Islamic Speed Racer Game Loaded!');
-        console.log('Controls: Arrow keys to drive, reach Makkah in 5KM');
+        function loadSalesTable() {
+            const tbody = document.getElementById('salesTable');
+            tbody.innerHTML = '';
+            
+            let totalRevenue = 0;
+            let totalCost = 0;
+            let totalProfit = 0;
+            
+            sales.forEach(sale => {
+                const recipe = recipes.find(r => r.id === sale.recipeId);
+                if (recipe) {
+                    const recipeCost = calculateRecipeCost(recipe);
+                    const costPerPiece = recipeCost / recipe.piecesPerBatch;
+                    const totalSaleCost = costPerPiece * sale.piecesMade;
+                    const revenue = recipe.sellPrice * sale.piecesSold;
+                    const profit = revenue - totalSaleCost;
+                    
+                    totalRevenue += revenue;
+                    totalCost += totalSaleCost;
+                    totalProfit += profit;
+                    
+                    const row = `
+                        <tr>
+                            <td>${sale.date}</td>
+                            <td>${recipe.name}</td>
+                            <td>${sale.piecesMade}</td>
+                            <td>${sale.piecesSold}</td>
+                            <td>${totalSaleCost.toFixed(2)} MVR</td>
+                            <td>${revenue.toFixed(2)} MVR</td>
+                            <td class="${profit >= 0 ? 'profit' : 'loss'}">${profit.toFixed(2)} MVR</td>
+                            <td class="actions">
+                                <button class="action-btn delete-btn" onclick="deleteSale(${sale.id})">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                }
+            });
+            
+            // Add totals row
+            if (sales.length > 0) {
+                tbody.innerHTML += `
+                    <tr style="font-weight: bold; background-color: rgba(255, 140, 0, 0.1);">
+                        <td colspan="4">TOTAL</td>
+                        <td>${totalCost.toFixed(2)} MVR</td>
+                        <td>${totalRevenue.toFixed(2)} MVR</td>
+                        <td class="${totalProfit >= 0 ? 'profit' : 'loss'}">${totalProfit.toFixed(2)} MVR</td>
+                        <td></td>
+                    </tr>
+                `;
+            }
+        }
+
+        function deleteSale(id) {
+            if (confirm('Are you sure you want to delete this sales record?')) {
+                sales = sales.filter(s => s.id !== id);
+                saveSales();
+                loadSalesTable();
+                updateDashboard();
+                showAlert('Sales record deleted!');
+            }
+        }
+
+        // INVENTORY MANAGEMENT
+        function loadInventoryTable() {
+            const tbody = document.getElementById('inventoryTable');
+            tbody.innerHTML = '';
+            
+            let inventoryList = '';
+            
+            ingredients.forEach(ingredient => {
+                // Calculate used today
+                let usedToday = 0;
+                const today = new Date().toISOString().split('T')[0];
+                
+                sales.forEach(sale => {
+                    if (sale.date === today) {
+                        const recipe = recipes.find(r => r.id === sale.recipeId);
+                        if (recipe) {
+                            const recipeIngredient = recipe.ingredients.find(ri => ri.ingredientId === ingredient.id);
+                            if (recipeIngredient) {
+                                const quantityPerPiece = recipeIngredient.quantity / recipe.piecesPerBatch;
+                                usedToday += quantityPerPiece * sale.piecesMade;
+                            }
+                        }
+                    }
+                });
+                
+                const remaining = ingredient.quantity - usedToday;
+                const status = remaining <= 0 ? '❌ Out of Stock' : 
+                              remaining < (ingredient.quantity * 0.2) ? '⚠️ Low Stock' : '✅ In Stock';
+                
+                const row = `
+                    <tr>
+                        <td>${ingredient.name}</td>
+                        <td>${ingredient.quantity.toFixed(2)} ${ingredient.unit}</td>
+                        <td>${usedToday.toFixed(2)} ${ingredient.unit}</td>
+                        <td>${remaining.toFixed(2)} ${ingredient.unit}</td>
+                        <td>${status}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="restockIngredient(${ingredient.id})">🛒 Restock</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+                
+                // Update inventory list in dashboard
+                inventoryList += `
+                    <div class="stat-box">
+                        <span class="stat-label">${ingredient.name}:</span>
+                        <span class="stat-value">${remaining.toFixed(1)} ${ingredient.unit}</span>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('inventoryList').innerHTML = inventoryList;
+        }
+
+        function restockIngredient(id) {
+            const ingredient = ingredients.find(i => i.id === id);
+            if (ingredient) {
+                const addQty = prompt(`How much ${ingredient.unit} of ${ingredient.name} to add?`);
+                if (addQty && !isNaN(addQty)) {
+                    ingredient.quantity += parseFloat(addQty);
+                    saveIngredients();
+                    loadInventoryTable();
+                    showAlert(`${addQty} ${ingredient.unit} of ${ingredient.name} added to stock!`);
+                }
+            }
+        }
+
+        function generateShoppingList() {
+            const shoppingList = document.getElementById('shoppingList');
+            const shoppingItems = document.getElementById('shoppingItems');
+            shoppingItems.innerHTML = '';
+            
+            let listHTML = '';
+            
+            ingredients.forEach(ingredient => {
+                const remaining = ingredient.quantity;
+                if (remaining <= ingredient.quantity * 0.2) { // If less than 20% stock
+                    const needed = Math.max(ingredient.quantity - remaining, ingredient.quantity * 0.5);
+                    listHTML += `
+                        <div class="stat-box">
+                            <span class="stat-label">${ingredient.name}:</span>
+                            <span class="stat-value">${needed.toFixed(1)} ${ingredient.unit}</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (listHTML === '') {
+                listHTML = '<p>All items are sufficiently stocked! 🎉</p>';
+            }
+            
+            shoppingItems.innerHTML = listHTML;
+            shoppingList.style.display = 'block';
+        }
+
+        // DASHBOARD UPDATES
+        function updateDashboard() {
+            // Today's date
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Calculate today's totals
+            let totalMade = 0;
+            let totalSold = 0;
+            let totalRevenue = 0;
+            let totalCost = 0;
+            
+            sales.forEach(sale => {
+                if (sale.date === today) {
+                    totalMade += sale.piecesMade;
+                    totalSold += sale.piecesSold;
+                    
+                    const recipe = recipes.find(r => r.id === sale.recipeId);
+                    if (recipe) {
+                        const recipeCost = calculateRecipeCost(recipe);
+                        const costPerPiece = recipeCost / recipe.piecesPerBatch;
+                        
+                        totalRevenue += recipe.sellPrice * sale.piecesSold;
+                        totalCost += costPerPiece * sale.piecesMade;
+                    }
+                }
+            });
+            
+            const totalProfit = totalRevenue - totalCost;
+            
+            // Update dashboard
+            document.getElementById('totalMade').textContent = totalMade;
+            document.getElementById('totalSold').textContent = totalSold;
+            document.getElementById('totalRevenue').textContent = `${totalRevenue.toFixed(2)} MVR`;
+            document.getElementById('totalProfit').textContent = `${totalProfit.toFixed(2)} MVR`;
+            
+            // Calculate weekly stats
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            let weekProfit = 0;
+            let bestSeller = '';
+            let bestSellerCount = 0;
+            const salesByRecipe = {};
+            
+            sales.forEach(sale => {
+                const saleDate = new Date(sale.date);
+                if (saleDate >= oneWeekAgo) {
+                    const recipe = recipes.find(r => r.id === sale.recipeId);
+                    if (recipe) {
+                        const recipeCost = calculateRecipeCost(recipe);
+                        const costPerPiece = recipeCost / recipe.piecesPerBatch;
+                        const profit = recipe.sellPrice * sale.piecesSold - costPerPiece * sale.piecesMade;
+                        weekProfit += profit;
+                        
+                        // Track best seller
+                        salesByRecipe[recipe.name] = (salesByRecipe[recipe.name] || 0) + sale.piecesSold;
+                    }
+                }
+            });
+            
+            // Find best seller
+            for (const [recipe, count] of Object.entries(salesByRecipe)) {
+                if (count > bestSellerCount) {
+                    bestSellerCount = count;
+                    bestSeller = recipe;
+                }
+            }
+            
+            document.getElementById('weekProfit').textContent = `${weekProfit.toFixed(2)} MVR`;
+            document.getElementById('bestSeller').textContent = bestSeller || '-';
+            
+            const profitMargin = totalCost > 0 ? ((totalProfit / totalCost) * 100) : 0;
+            document.getElementById('profitMargin').textContent = `${profitMargin.toFixed(1)}%`;
+        }
+
+        function viewReport() {
+            // Simple report generation
+            let report = `📊 BUSINESS REPORT\n`;
+            report += `Generated: ${new Date().toLocaleDateString()}\n\n`;
+            
+            report += `TODAY'S SUMMARY:\n`;
+            report += `Items Made: ${document.getElementById('totalMade').textContent}\n`;
+            report += `Items Sold: ${document.getElementById('totalSold').textContent}\n`;
+            report += `Revenue: ${document.getElementById('totalRevenue').textContent}\n`;
+            report += `Profit: ${document.getElementById('totalProfit').textContent}\n\n`;
+            
+            report += `WEEKLY PERFORMANCE:\n`;
+            report += `Weekly Profit: ${document.getElementById('weekProfit').textContent}\n`;
+            report += `Best Seller: ${document.getElementById('bestSeller').textContent}\n`;
+            report += `Profit Margin: ${document.getElementById('profitMargin').textContent}\n\n`;
+            
+            report += `DU'A FOR SUCCESS:\n`;
+            report += `اللَّهُمَّ بَارِكْ لِي فِيمَا رَزَقْتَنِي\n`;
+            report += `"O Allah, bless me in what You have provided me."`;
+            
+            alert(report);
+        }
+
+        // Initialize date to today
+        document.getElementById('salesDate').value = new Date().toISOString().split('T')[0];
     </script>
 </body>
 </html>
