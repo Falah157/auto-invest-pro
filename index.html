@@ -4543,32 +4543,25 @@
             setInterval(checkOverdueItems, 300000); // Check every 5 minutes
         }
 
-        function checkPrayerTimes() {
-            if (!familyData.settings.notifications.prayer) return;
-            
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            
-            // Sample prayer times
-            const prayerTimes = [
-                { name: 'Fajr', time: '05:30' },
-                { name: 'Dhuhr', time: '12:30' },
-                { name: 'Asr', time: '16:00' },
-                { name: 'Maghrib', time: '18:15' },
-                { name: 'Isha', time: '19:30' }
-            ];
-            
-            prayerTimes.forEach(prayer => {
-                const [prayerHour, prayerMinute] = prayer.time.split(':').map(Number);
-                if (hours === prayerHour && minutes === prayerMinute) {
-                    showNotification(`🕌 It's time for ${prayer.name} prayer!`, 'info');
-                    if (soundEnabled) {
-                        playSound('prayerSound');
-                    }
-                }
-            });
-        }
+       function togglePrayer(prayerName) {
+    const today = new Date().toISOString().split('T')[0];
+    if (!familyData.prayers[today]) {
+        familyData.prayers[today] = {};
+    }
+    
+    // Toggle prayer status
+    familyData.prayers[today][prayerName] = !familyData.prayers[today][prayerName];
+    saveData();
+    updatePrayerProgress();
+    
+    // Show notification
+    const status = familyData.prayers[today][prayerName] ? 'completed ✅' : 'pending ⏰';
+    showNotification(`${prayerName.toUpperCase()} prayer marked as ${status}!`, 'success');
+    
+    if (familyData.prayers[today][prayerName] && soundEnabled) {
+        playSound('prayerSound');
+    }
+}
 
         function checkOverdueItems() {
             const today = new Date().toISOString().split('T')[0];
