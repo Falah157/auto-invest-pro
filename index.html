@@ -1039,43 +1039,62 @@
                 </div>
 
                 <!-- Today's Prayer Status -->
-                <div class="card">
-                    <h2 class="card-title">🕌 Today's Prayers</h2>
-                    <div class="prayer-grid">
-                        <div class="prayer-card" onclick="togglePrayer('fajr')" id="fajrCard">
-                            <div style="font-weight: bold;">Fajr</div>
-                            <div style="font-size: 0.9em;">5:30 AM</div>
-                            <div class="prayer-status" style="margin-top: 5px;">⏰</div>
-                        </div>
-                        <div class="prayer-card" onclick="togglePrayer('dhuhr')" id="dhuhrCard">
-                            <div style="font-weight: bold;">Dhuhr</div>
-                            <div style="font-size: 0.9em;">12:30 PM</div>
-                            <div class="prayer-status" style="margin-top: 5px;">⏰</div>
-                        </div>
-                        <div class="prayer-card" onclick="togglePrayer('asr')" id="asrCard">
-                            <div style="font-weight: bold;">Asr</div>
-                            <div style="font-size: 0.9em;">4:00 PM</div>
-                            <div class="prayer-status" style="margin-top: 5px;">⏰</div>
-                        </div>
-                        <div class="prayer-card" onclick="togglePrayer('maghrib')" id="maghribCard">
-                            <div style="font-weight: bold;">Maghrib</div>
-                            <div style="font-size: 0.9em;">6:15 PM</div>
-                            <div class="prayer-status" style="margin-top: 5px;">⏰</div>
-                        </div>
-                        <div class="prayer-card" onclick="togglePrayer('isha')" id="ishaCard">
-                            <div style="font-weight: bold;">Isha</div>
-                            <div style="font-size: 0.9em;">7:30 PM</div>
-                            <div class="prayer-status" style="margin-top: 5px;">⏰</div>
-                        </div>
-                    </div>
-                    <div class="progress-container" style="margin-top: 15px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="color: var(--neon-green);">Prayer Completion</span>
-                            <span id="prayerPercentage">0%</span>
-                        </div>
-                        <div class="progress-bar" style="width: 0%;" id="prayerProgressBar"></div>
-                    </div>
-                </div>
+<div class="card">
+    <h2 class="card-title">🕌 Today's Prayers</h2>
+    <p style="color: var(--neon-blue); margin-bottom: 15px; font-size: 0.9em;">
+        Click each prayer after you complete it
+    </p>
+    
+    <div class="prayer-grid">
+        <div class="prayer-card" onclick="togglePrayer('fajr')" id="fajrCard">
+            <div style="font-weight: bold; font-size: 1.2em;">🌅 Fajr</div>
+            <div class="prayer-status" style="margin-top: 10px; font-size: 1.5em;">⏰</div>
+            <div style="font-size: 0.8em; color: var(--neon-green); margin-top: 10px;">
+                Click when done
+            </div>
+        </div>
+        
+        <div class="prayer-card" onclick="togglePrayer('dhuhr')" id="dhuhrCard">
+            <div style="font-weight: bold; font-size: 1.2em;">☀️ Dhuhr</div>
+            <div class="prayer-status" style="margin-top: 10px; font-size: 1.5em;">⏰</div>
+            <div style="font-size: 0.8em; color: var(--neon-green); margin-top: 10px;">
+                Click when done
+            </div>
+        </div>
+        
+        <div class="prayer-card" onclick="togglePrayer('asr')" id="asrCard">
+            <div style="font-weight: bold; font-size: 1.2em;">⛅ Asr</div>
+            <div class="prayer-status" style="margin-top: 10px; font-size: 1.5em;">⏰</div>
+            <div style="font-size: 0.8em; color: var(--neon-green); margin-top: 10px;">
+                Click when done
+            </div>
+        </div>
+        
+        <div class="prayer-card" onclick="togglePrayer('maghrib')" id="maghribCard">
+            <div style="font-weight: bold; font-size: 1.2em;">🌇 Maghrib</div>
+            <div class="prayer-status" style="margin-top: 10px; font-size: 1.5em;">⏰</div>
+            <div style="font-size: 0.8em; color: var(--neon-green); margin-top: 10px;">
+                Click when done
+            </div>
+        </div>
+        
+        <div class="prayer-card" onclick="togglePrayer('isha')" id="ishaCard">
+            <div style="font-weight: bold; font-size: 1.2em;">🌙 Isha</div>
+            <div class="prayer-status" style="margin-top: 10px; font-size: 1.5em;">⏰</div>
+            <div style="font-size: 0.8em; color: var(--neon-green); margin-top: 10px;">
+                Click when done
+            </div>
+        </div>
+    </div>
+    
+    <div class="progress-container" style="margin-top: 15px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="color: var(--neon-green);">Prayer Completion</span>
+            <span id="prayerPercentage">0%</span>
+        </div>
+        <div class="progress-bar" style="width: 0%;" id="prayerProgressBar"></div>
+    </div>
+</div>
 
                 <!-- Today's Tasks -->
                 <div class="card">
