@@ -2050,6 +2050,108 @@
         </div>
     </div>
 
+    <!-- Add Quran Session Modal -->
+    <div id="addQuranSessionModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('addQuranSessionModal')">&times;</button>
+            <h2 style="color: var(--neon-green); margin-bottom: 20px;">📖 Add Quran Session</h2>
+            <form id="quranSessionForm">
+                <div class="form-group">
+                    <label class="form-label">Family Member</label>
+                    <select class="form-select" id="quranMember" required>
+                        <!-- Family members will be populated -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Surah</label>
+                    <select class="form-select" id="quranSurah" required>
+                        <option value="al-fatihah">Al-Fatihah (1)</option>
+                        <option value="al-baqarah">Al-Baqarah (2)</option>
+                        <option value="al-imran">Al-Imran (3)</option>
+                        <option value="an-nisa">An-Nisa (4)</option>
+                        <option value="al-maidah">Al-Maidah (5)</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">From Ayah</label>
+                        <input type="number" class="form-input" id="quranFromAyah" min="1" max="286" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">To Ayah</label>
+                        <input type="number" class="form-input" id="quranToAyah" min="1" max="286" value="10" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Session Type</label>
+                    <select class="form-select" id="quranSessionType" required>
+                        <option value="memorization">Memorization</option>
+                        <option value="revision">Revision</option>
+                        <option value="recitation">Recitation</option>
+                        <option value="tajweed">Tajweed Practice</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration (minutes)</label>
+                    <input type="number" class="form-input" id="quranDuration" min="5" max="180" value="30" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-textarea" id="quranNotes" rows="2" placeholder="Any feedback or observations..."></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 20px;">
+                    📖 Save Session
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Invite Member Modal -->
+    <div id="inviteMemberModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('inviteMemberModal')">&times;</button>
+            <h2 style="color: var(--neon-blue); margin-bottom: 20px;">📧 Invite Family Member</h2>
+            <form id="inviteForm">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="inviteEmail" required placeholder="family.member@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="inviteName" required placeholder="Family member's name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Relationship</label>
+                    <select class="form-select" id="inviteRelationship" required>
+                        <option value="parent">Parent</option>
+                        <option value="child">Child</option>
+                        <option value="spouse">Spouse</option>
+                        <option value="grandparent">Grandparent</option>
+                        <option value="aunt_uncle">Aunt/Uncle</option>
+                        <option value="cousin">Cousin</option>
+                        <option value="guardian">Guardian</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Access Level</label>
+                    <select class="form-select" id="inviteAccessLevel">
+                        <option value="view_only">View Only</option>
+                        <option value="limited_edit">Limited Edit</option>
+                        <option value="full_access">Full Access</option>
+                        <option value="child_access">Child Access</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message (Optional)</label>
+                    <textarea class="form-textarea" id="inviteMessage" rows="3" placeholder="Add a personal message..."></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 20px;">
+                    📤 Send Invitation
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Notification Container -->
     <div id="notificationContainer"></div>
 
@@ -2117,6 +2219,7 @@
         let currentTab = 'dashboard';
         let soundEnabled = true;
         let selectedTemplate = 'parent_access';
+        let currentWeek = 48;
 
         // Islamic reminders data
         const islamicReminders = [
@@ -2714,6 +2817,87 @@
             }
         }
 
+        function editTask(taskId) {
+            const task = familyData.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            openAddTaskModal();
+            
+            // Fill form with task data
+            setTimeout(() => {
+                document.getElementById('taskTitle').value = task.title;
+                document.getElementById('taskDescription').value = task.description;
+                document.getElementById('taskDueDate').value = task.dueDate;
+                document.getElementById('taskDueTime').value = task.dueTime;
+                document.getElementById('taskPriority').value = task.priority;
+                document.getElementById('taskCategory').value = task.category;
+                
+                // Select assigned members
+                const assignedSelect = document.getElementById('taskAssignedTo');
+                Array.from(assignedSelect.options).forEach(option => {
+                    option.selected = task.assignedTo.includes(parseInt(option.value));
+                });
+                
+                // Set reminders
+                document.getElementById('reminderNotification').checked = task.reminders?.notification || false;
+                document.getElementById('reminderSound').checked = task.reminders?.sound || false;
+                document.getElementById('reminderEmail').checked = task.reminders?.email || false;
+                
+                // Change form to update mode
+                const form = document.getElementById('taskForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    updateTask(taskId);
+                };
+                
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.textContent = '✏️ Update Task';
+                submitBtn.style.background = 'linear-gradient(45deg, var(--neon-yellow), var(--neon-orange))';
+            }, 100);
+        }
+
+        function updateTask(taskId) {
+            const taskIndex = familyData.tasks.findIndex(t => t.id === taskId);
+            if (taskIndex === -1) return;
+            
+            const updatedTask = {
+                ...familyData.tasks[taskIndex],
+                title: document.getElementById('taskTitle').value,
+                description: document.getElementById('taskDescription').value,
+                dueDate: document.getElementById('taskDueDate').value,
+                dueTime: document.getElementById('taskDueTime').value,
+                priority: document.getElementById('taskPriority').value,
+                category: document.getElementById('taskCategory').value,
+                assignedTo: Array.from(document.getElementById('taskAssignedTo').selectedOptions).map(opt => parseInt(opt.value)),
+                reminders: {
+                    notification: document.getElementById('reminderNotification').checked,
+                    sound: document.getElementById('reminderSound').checked,
+                    email: document.getElementById('reminderEmail').checked
+                }
+            };
+            
+            familyData.tasks[taskIndex] = updatedTask;
+            saveData();
+            closeModal('addTaskModal');
+            
+            showNotification(`Task "${updatedTask.title}" updated successfully!`, 'success');
+            
+            loadDashboard();
+            if (currentTab === 'tasks') loadTasks();
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                familyData.tasks = familyData.tasks.filter(t => t.id !== taskId);
+                saveData();
+                
+                showNotification('Task deleted successfully!', 'success');
+                
+                loadDashboard();
+                if (currentTab === 'tasks') loadTasks();
+            }
+        }
+
         // ==================== HOMEWORK MANAGEMENT ====================
         function loadHomework(filter = 'all') {
             const container = document.getElementById('homeworkGrid');
@@ -2886,6 +3070,56 @@
                 });
         }
 
+        function editHomework(homeworkId) {
+            const hw = familyData.homework.find(h => h.id === homeworkId);
+            if (!hw) return;
+            
+            openAddHomeworkModal();
+            
+            // Fill form with homework data
+            setTimeout(() => {
+                document.getElementById('homeworkSubject').value = hw.subject;
+                document.getElementById('homeworkTitle').value = hw.title;
+                document.getElementById('homeworkDescription').value = hw.description;
+                document.getElementById('homeworkAssignedTo').value = hw.assignedTo;
+                document.getElementById('homeworkDueDate').value = hw.dueDate;
+                
+                // Change form to update mode
+                const form = document.getElementById('homeworkForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    updateHomework(homeworkId);
+                };
+                
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.textContent = '✏️ Update Homework';
+                submitBtn.style.background = 'linear-gradient(45deg, var(--neon-yellow), var(--neon-orange))';
+            }, 100);
+        }
+
+        function updateHomework(homeworkId) {
+            const hwIndex = familyData.homework.findIndex(h => h.id === homeworkId);
+            if (hwIndex === -1) return;
+            
+            const updatedHw = {
+                ...familyData.homework[hwIndex],
+                subject: document.getElementById('homeworkSubject').value,
+                title: document.getElementById('homeworkTitle').value,
+                description: document.getElementById('homeworkDescription').value,
+                assignedTo: parseInt(document.getElementById('homeworkAssignedTo').value),
+                dueDate: document.getElementById('homeworkDueDate').value
+            };
+            
+            familyData.homework[hwIndex] = updatedHw;
+            saveData();
+            closeModal('addHomeworkModal');
+            
+            showNotification(`Homework "${updatedHw.title}" updated successfully!`, 'success');
+            
+            loadDashboard();
+            if (currentTab === 'homework') loadHomework();
+        }
+
         function markHomeworkComplete(homeworkId) {
             const hw = familyData.homework.find(h => h.id === homeworkId);
             if (hw) {
@@ -3000,111 +3234,330 @@
             });
         }
 
-        // ==================== SHARING & PERMISSIONS ====================
-        function loadSharingTab() {
-            loadSharedMembers();
-        }
-
-        function loadSharedMembers() {
-            const container = document.getElementById('sharedMembersList');
+        function generateWeeklyPrayerChart() {
+            const container = document.getElementById('weeklyPrayerChart');
             container.innerHTML = '';
             
-            familyData.sharedAccess.forEach(access => {
-                const memberDiv = document.createElement('div');
-                memberDiv.style.cssText = `
-                    background: rgba(0, 0, 0, 0.5);
-                    border: 2px solid var(--neon-blue);
-                    padding: 15px;
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const today = new Date();
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                const dayPrayers = familyData.prayers[dateStr] || {};
+                const completed = Object.values(dayPrayers).filter(p => p).length;
+                const percentage = Math.round((completed / 5) * 100);
+                
+                const dayDiv = document.createElement('div');
+                dayDiv.style.cssText = `
                     margin-bottom: 10px;
-                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
                 `;
                 
-                // Count enabled permissions
-                const enabledPermissions = Object.values(access.permissions).filter(p => p).length;
-                const totalPermissions = Object.keys(access.permissions).length;
-                
-                memberDiv.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div style="font-weight: bold; color: var(--neon-blue);">
-                            ${access.email}
-                        </div>
-                        <span style="
-                            background: ${access.status === 'accepted' ? 'var(--neon-green)' : 'var(--neon-yellow)'};
-                            color: white;
-                            padding: 3px 10px;
-                            border-radius: 15px;
-                            font-size: 0.8em;
-                        ">
-                            ${access.status.toUpperCase()}
-                        </span>
+                dayDiv.innerHTML = `
+                    <div style="width: 60px; color: var(--neon-blue);">${days[date.getDay()]}</div>
+                    <div style="flex: 1; height: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden;">
+                        <div style="height: 100%; width: ${percentage}%; background: linear-gradient(90deg, var(--neon-green), var(--neon-yellow)); border-radius: 10px;"></div>
                     </div>
-                    <div style="color: var(--text-glow); font-size: 0.9em; margin-bottom: 10px;">
-                        ${access.relationship} • ${enabledPermissions}/${totalPermissions} permissions
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="editPermissions('${access.email}')" class="btn btn-sm">
-                            ✏️ Edit Permissions
-                        </button>
-                        <button onclick="revokeAccess('${access.email}')" class="btn btn-sm" style="
-                            background: linear-gradient(45deg, #ff0000, #ff5555);
-                        ">
-                            🗑️ Revoke Access
-                        </button>
-                    </div>
+                    <div style="width: 40px; text-align: right; color: var(--neon-green);">${percentage}%</div>
                 `;
-                container.appendChild(memberDiv);
-            });
-        }
-
-        function openShareModal() {
-            const modal = document.getElementById('shareModal');
-            modal.style.display = 'flex';
-        }
-
-        function selectTemplate(template) {
-            selectedTemplate = template;
-            
-            // Update UI
-            document.querySelectorAll('.permission-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.closest('.permission-item').classList.add('active');
-            
-            // Show custom permissions if selected
-            const customPerms = document.getElementById('customPermissions');
-            customPerms.style.display = template === 'custom' ? 'block' : 'none';
-            
-            // Apply template permissions
-            if (template !== 'custom') {
-                applyTemplatePermissions(template);
+                container.appendChild(dayDiv);
             }
         }
 
-        function applyTemplatePermissions(template) {
-            const permissions = {
-                full: { dashboard: true, tasks: true, homework: true, prayer: true, schedule: true, quran: true, financial: true, health: true },
-                parent: { dashboard: true, tasks: true, homework: true, prayer: true, schedule: true, quran: false, financial: false, health: true },
-                read_only: { dashboard: true, tasks: false, homework: false, prayer: false, schedule: false, quran: false, financial: false, health: false }
-            };
+        function updatePrayerStatistics() {
+            // Calculate Fajr attendance for the month
+            let fajrCount = 0;
+            let totalDays = 0;
+            const today = new Date();
             
-            const templatePerms = permissions[template] || permissions.parent;
-            
-            // Update permission items
-            Object.keys(templatePerms).forEach(perm => {
-                const item = document.querySelector(`.permission-item[onclick*="${perm}"]`);
-                if (item) {
-                    if (templatePerms[perm]) {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
+            for (let i = 0; i < 30; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                const prayers = familyData.prayers[dateStr];
+                
+                if (prayers) {
+                    totalDays++;
+                    if (prayers.fajr) fajrCount++;
                 }
+            }
+            
+            const fajrPercentage = totalDays > 0 ? Math.round((fajrCount / totalDays) * 100) : 0;
+            document.getElementById('fajrStats').textContent = `${fajrPercentage}%`;
+            
+            // Calculate total prayers for the month
+            let totalPrayers = 0;
+            Object.values(familyData.prayers).forEach(dayPrayers => {
+                totalPrayers += Object.values(dayPrayers).filter(p => p).length;
+            });
+            document.getElementById('totalPrayers').textContent = totalPrayers;
+            
+            // Find best performer (simplified)
+            document.getElementById('bestPerformer').textContent = "Yusuf";
+            
+            // Update current streak
+            document.getElementById('currentStreak').textContent = calculatePrayerStreak();
+        }
+
+        function updatePrayerTimes() {
+            const method = document.getElementById('prayerMethod').value;
+            const location = document.getElementById('prayerLocation').value;
+            const notifications = document.getElementById('prayerNotifications').checked;
+            
+            familyData.settings.prayerMethod = method;
+            familyData.settings.location = location;
+            familyData.settings.notifications.prayer = notifications;
+            saveData();
+            
+            showNotification('🕌 Prayer times updated successfully!', 'success');
+        }
+
+        // ==================== SCHEDULE MANAGEMENT ====================
+        function loadSchedule() {
+            updateScheduleTable();
+        }
+
+        function updateScheduleTable() {
+            const container = document.getElementById('scheduleTable');
+            container.innerHTML = '';
+            
+            // Update current week display
+            document.getElementById('currentWeek').textContent = `Week ${currentWeek}`;
+            
+            // Create header
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>Time</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                    <th>Sunday</th>
+                </tr>
+            `;
+            container.appendChild(thead);
+            
+            // Create time slots
+            const tbody = document.createElement('tbody');
+            const timeSlots = [
+                '06:00-08:00', '08:00-10:00', '10:00-12:00',
+                '12:00-14:00', '14:00-16:00', '16:00-18:00',
+                '18:00-20:00', '20:00-22:00'
+            ];
+            
+            timeSlots.forEach(timeSlot => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="font-weight: bold; color: var(--neon-yellow);">${timeSlot}</td>
+                    <td onclick="addScheduleEvent('mon', '${timeSlot}')" style="cursor: pointer;">+ Add</td>
+                    <td onclick="addScheduleEvent('tue', '${timeSlot}')" style="cursor: pointer;">+ Add</td>
+                    <td onclick="addScheduleEvent('wed', '${timeSlot}')" style="cursor: pointer;">+ Add</td>
+                    <td onclick="addScheduleEvent('thu', '${timeSlot}')" style="cursor: pointer;">+ Add</td>
+                    <td onclick="addScheduleEvent('fri', '${timeSlot}')" style="cursor: pointer;">+ Add</td>
+                    <td onclick="addScheduleEvent('sat', '${timeSlot}')" style="cursor: pointer;">+ Add</td>
+                    <td onclick="addScheduleEvent('sun', '${timeSlot}')" style="cursor: pointer;">+ Add</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            container.appendChild(tbody);
+            
+            // Load existing schedule events
+            loadScheduleEvents();
+        }
+
+        function loadScheduleEvents() {
+            // This would load from familyData.schedule
+            // For now, we'll add some sample events
+            const sampleEvents = [
+                { day: 'mon', time: '08:00-10:00', title: 'School', person: 'Yusuf, Maryam' },
+                { day: 'wed', time: '14:00-16:00', title: 'Quran Class', person: 'Yusuf' },
+                { day: 'fri', time: '18:00-20:00', title: 'Family Time', person: 'All' },
+                { day: 'sat', time: '10:00-12:00', title: 'Grocery Shopping', person: 'Mom' }
+            ];
+            
+            sampleEvents.forEach(event => {
+                addEventToTable(event.day, event.time, event.title, event.person);
             });
         }
 
-        function togglePermission(permission) {
-            const item = event.target.closest('.permission-item');
-            item.classList.toggle('active');
+        function addEventToTable(day, time, title, person) {
+            const dayIndex = {
+                'mon': 1, 'tue': 2, 'wed': 3,
+                'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7
+            }[day];
+            
+            if (!dayIndex) return;
+            
+            const table = document.getElementById('scheduleTable');
+            const timeSlots = [
+                '06:00-08:00', '08:00-10:00', '10:00-12:00',
+                '12:00-14:00', '14:00-16:00', '16:00-18:00',
+                '18:00-20:00', '20:00-22:00'
+            ];
+            
+            const rowIndex = timeSlots.indexOf(time) + 1; // +1 for header row
+            if (rowIndex > 0 && table.rows[rowIndex]) {
+                const cell = table.rows[rowIndex].cells[dayIndex];
+                cell.innerHTML = `
+                    <div style="background: rgba(0, 100, 255, 0.2); padding: 5px; border-radius: 5px; border: 1px solid var(--neon-blue);">
+                        <div style="font-weight: bold; color: var(--neon-blue);">${title}</div>
+                        <div style="font-size: 0.8em; color: var(--text-glow);">👤 ${person}</div>
+                    </div>
+                `;
+                cell.style.cursor = 'pointer';
+                cell.onclick = function() {
+                    editScheduleEvent(day, time, title, person);
+                };
+            }
+        }
+
+        function addScheduleEvent(day, time) {
+            const title = prompt('Enter event title:');
+            if (!title) return;
+            
+            const person = prompt('Who is this for? (e.g., Yusuf, Maryam, All):');
+            if (!person) return;
+            
+            addEventToTable(day, time, title, person);
+            
+            // Save to data
+            if (!familyData.schedule[`week${currentWeek}`]) {
+                familyData.schedule[`week${currentWeek}`] = {};
+            }
+            if (!familyData.schedule[`week${currentWeek}`][day]) {
+                familyData.schedule[`week${currentWeek}`][day] = {};
+            }
+            familyData.schedule[`week${currentWeek}`][day][time] = {
+                title: title,
+                person: person,
+                created: new Date().toISOString()
+            };
+            
+            saveData();
+            showNotification(`Event "${title}" added to schedule!`, 'success');
+        }
+
+        function prevWeek() {
+            currentWeek--;
+            if (currentWeek < 1) currentWeek = 52;
+            updateScheduleTable();
+        }
+
+        function nextWeek() {
+            currentWeek++;
+            if (currentWeek > 52) currentWeek = 1;
+            updateScheduleTable();
+        }
+
+        // ==================== QURAN MANAGEMENT ====================
+        function loadQuranTab() {
+            updateQuranStats();
+            loadQuranProgress();
+        }
+
+        function updateQuranStats() {
+            // Calculate memorized pages (simplified)
+            const totalPages = 604;
+            const memorizedPages = Math.round(totalPages * 0.07); // 7%
+            document.getElementById('memorizedPages').textContent = memorizedPages;
+            
+            // Update other stats
+            document.getElementById('currentJuz').textContent = "3";
+            document.getElementById('dailyRevision').textContent = "30";
+            document.getElementById('quranStreak').textContent = "14";
+        }
+
+        function loadQuranProgress() {
+            const container = document.getElementById('quranProgressGrid');
+            container.innerHTML = '';
+            
+            const surahs = [
+                { name: 'Al-Fatihah', progress: 100 },
+                { name: 'Al-Baqarah', progress: 15 },
+                { name: 'Al-Imran', progress: 10 },
+                { name: 'An-Nisa', progress: 5 },
+                { name: 'Al-Maidah', progress: 20 }
+            ];
+            
+            surahs.forEach(surah => {
+                const surahDiv = document.createElement('div');
+                surahDiv.style.cssText = `
+                    background: rgba(0, 0, 0, 0.5);
+                    border: 2px solid var(--neon-blue);
+                    border-radius: 10px;
+                    padding: 15px;
+                    margin-bottom: 10px;
+                `;
+                
+                surahDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <div style="font-weight: bold; color: var(--neon-blue);">${surah.name}</div>
+                        <div style="color: var(--neon-green);">${surah.progress}%</div>
+                    </div>
+                    <div style="height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow: hidden;">
+                        <div style="height: 100%; width: ${surah.progress}%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));"></div>
+                    </div>
+                `;
+                container.appendChild(surahDiv);
+            });
+        }
+
+        function openAddQuranSessionModal() {
+            const modal = document.getElementById('addQuranSessionModal');
+            modal.style.display = 'flex';
+            
+            // Populate family members dropdown
+            const memberSelect = document.getElementById('quranMember');
+            memberSelect.innerHTML = '';
+            familyData.members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = `${member.name} (${member.role})`;
+                memberSelect.appendChild(option);
+            });
+        }
+
+        function addQuranSession() {
+            const memberId = parseInt(document.getElementById('quranMember').value);
+            const surah = document.getElementById('quranSurah').value;
+            const fromAyah = parseInt(document.getElementById('quranFromAyah').value);
+            const toAyah = parseInt(document.getElementById('quranToAyah').value);
+            const type = document.getElementById('quranSessionType').value;
+            const duration = parseInt(document.getElementById('quranDuration').value);
+            const notes = document.getElementById('quranNotes').value;
+            
+            const session = {
+                id: Date.now(),
+                memberId: memberId,
+                surah: surah,
+                fromAyah: fromAyah,
+                toAyah: toAyah,
+                type: type,
+                duration: duration,
+                notes: notes,
+                date: new Date().toISOString()
+            };
+            
+            if (!familyData.quranSessions) {
+                familyData.quranSessions = [];
+            }
+            familyData.quranSessions.push(session);
+            saveData();
+            closeModal('addQuranSessionModal');
+            
+            showNotification('📖 Quran session recorded successfully!', 'success');
+            
+            if (currentTab === 'quran') {
+                loadQuranTab();
+            }
         }
 
         // ==================== FINANCIAL MANAGEMENT ====================
@@ -3194,6 +3647,40 @@
             });
         }
 
+        function filterExpenses(category) {
+            const filtered = familyData.expenses.filter(e => e.category === category);
+            const container = document.getElementById('transactionsList');
+            container.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--neon-blue); padding: 30px;">
+                            No ${category} expenses found!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filtered.forEach(expense => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(expense.date)}</td>
+                    <td>${expense.description}</td>
+                    <td>${expense.category}</td>
+                    <td style="color: var(--neon-pink); font-weight: bold;">
+                        ${parseFloat(expense.amount).toFixed(2)} MVR
+                    </td>
+                    <td>
+                        <button onclick="editExpense(${expense.id})" class="btn btn-sm">Edit</button>
+                        <button onclick="deleteExpense(${expense.id})" class="btn btn-sm" style="background: var(--neon-pink);">Delete</button>
+                    </td>
+                `;
+                container.appendChild(row);
+            });
+        }
+
         function openAddExpenseModal() {
             const modal = document.getElementById('addExpenseModal');
             modal.style.display = 'flex';
@@ -3202,6 +3689,98 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('expenseDate').value = today;
         }
+
+        function editExpense(expenseId) {
+            const expense = familyData.expenses.find(e => e.id === expenseId);
+            if (!expense) return;
+            
+            openAddExpenseModal();
+            
+            // Fill form with expense data
+            setTimeout(() => {
+                document.getElementById('expenseDescription').value = expense.description;
+                document.getElementById('expenseAmount').value = expense.amount;
+                document.getElementById('expenseCategory').value = expense.category;
+                document.getElementById('expenseDate').value = expense.date;
+                document.getElementById('expensePaidBy').value = expense.paidBy || 'mom';
+                document.getElementById('expenseNotes').value = expense.notes || '';
+                
+                // Change form to update mode
+                const form = document.getElementById('expenseForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    updateExpense(expenseId);
+                };
+                
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.textContent = '✏️ Update Expense';
+                submitBtn.style.background = 'linear-gradient(45deg, var(--neon-yellow), var(--neon-orange))';
+            }, 100);
+        }
+
+        function updateExpense(expenseId) {
+            const expenseIndex = familyData.expenses.findIndex(e => e.id === expenseId);
+            if (expenseIndex === -1) return;
+            
+            const updatedExpense = {
+                ...familyData.expenses[expenseIndex],
+                description: document.getElementById('expenseDescription').value,
+                amount: parseFloat(document.getElementById('expenseAmount').value),
+                category: document.getElementById('expenseCategory').value,
+                date: document.getElementById('expenseDate').value,
+                paidBy: document.getElementById('expensePaidBy').value,
+                notes: document.getElementById('expenseNotes').value
+            };
+            
+            familyData.expenses[expenseIndex] = updatedExpense;
+            saveData();
+            closeModal('addExpenseModal');
+            
+            showNotification(`Expense "${updatedExpense.description}" updated successfully!`, 'success');
+            
+            loadFinancialTab();
+        }
+
+        function deleteExpense(expenseId) {
+            if (confirm('Are you sure you want to delete this expense?')) {
+                familyData.expenses = familyData.expenses.filter(e => e.id !== expenseId);
+                saveData();
+                
+                showNotification('Expense deleted successfully!', 'success');
+                loadFinancialTab();
+            }
+        }
+
+        // Expense Form Submission
+        document.getElementById('expenseForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const expense = {
+                id: Date.now(),
+                description: document.getElementById('expenseDescription').value,
+                amount: parseFloat(document.getElementById('expenseAmount').value),
+                category: document.getElementById('expenseCategory').value,
+                date: document.getElementById('expenseDate').value,
+                paidBy: document.getElementById('expensePaidBy').value,
+                notes: document.getElementById('expenseNotes').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            if (!familyData.expenses) {
+                familyData.expenses = [];
+            }
+            familyData.expenses.push(expense);
+            saveData();
+            closeModal('addExpenseModal');
+            
+            showNotification(`Expense "${expense.description}" added successfully!`, 'success');
+            
+            if (currentTab === 'financial') {
+                loadFinancialTab();
+            }
+            
+            this.reset();
+        });
 
         // ==================== HEALTH MANAGEMENT ====================
         function loadHealthTab() {
@@ -3223,6 +3802,11 @@
             }).length;
             
             document.getElementById('upcomingAppointments').textContent = upcomingAppointments;
+            
+            // Update other stats
+            document.getElementById('vaccinationsDue').textContent = "1";
+            document.getElementById('activeMedications').textContent = "3";
+            document.getElementById('lastCheckup').textContent = "15";
         }
 
         function loadMedicalRecords() {
@@ -3280,6 +3864,48 @@
             });
         }
 
+        function loadVaccinationSchedule() {
+            const container = document.getElementById('vaccinationList');
+            container.innerHTML = '';
+            
+            const vaccinations = [
+                { vaccine: 'MMR', child: 'Yusuf', dueDate: '2024-12-20', status: 'pending' },
+                { vaccine: 'HPV', child: 'Maryam', dueDate: '2024-12-25', status: 'scheduled' },
+                { vaccine: 'Flu Shot', child: 'Mom', dueDate: '2024-12-15', status: 'completed' }
+            ];
+            
+            vaccinations.forEach(vaccine => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${vaccine.vaccine}</td>
+                    <td>${vaccine.child}</td>
+                    <td>${formatDate(vaccine.dueDate)}</td>
+                    <td>
+                        <span style="
+                            display: inline-block;
+                            padding: 3px 8px;
+                            border-radius: 4px;
+                            font-size: 0.8em;
+                            background: ${vaccine.status === 'completed' ? 'rgba(0,255,0,0.2)' : 
+                                      vaccine.status === 'scheduled' ? 'rgba(255,255,0,0.2)' : 'rgba(255,0,0,0.2)'};
+                            color: ${vaccine.status === 'completed' ? 'var(--neon-green)' : 
+                                   vaccine.status === 'scheduled' ? 'var(--neon-yellow)' : 'var(--neon-pink)'};
+                            border: 1px solid ${vaccine.status === 'completed' ? 'var(--neon-green)' : 
+                                            vaccine.status === 'scheduled' ? 'var(--neon-yellow)' : 'var(--neon-pink)'};
+                        ">
+                            ${vaccine.status.toUpperCase()}
+                        </span>
+                    </td>
+                    <td>
+                        <button onclick="markVaccination('${vaccine.vaccine}', '${vaccine.child}')" class="btn btn-sm">
+                            ✓ Mark Done
+                        </button>
+                    </td>
+                `;
+                container.appendChild(row);
+            });
+        }
+
         function openAddHealthRecordModal() {
             const modal = document.getElementById('addHealthRecordModal');
             modal.style.display = 'flex';
@@ -3298,6 +3924,243 @@
                 memberSelect.appendChild(option);
             });
         }
+
+        function viewHealthRecord(recordId) {
+            const record = familyData.healthRecords.find(r => r.id === recordId);
+            if (!record) return;
+            
+            const member = familyData.members.find(m => m.id === record.memberId);
+            
+            alert(`Health Record Details:\n\n` +
+                  `Type: ${record.type}\n` +
+                  `For: ${member?.name || 'Unknown'}\n` +
+                  `Date: ${formatDate(record.date)}\n` +
+                  `Description: ${record.description}\n` +
+                  `Provider: ${record.provider || 'Not specified'}\n` +
+                  `Notes: ${record.notes || 'None'}`);
+        }
+
+        function markVaccination(vaccine, child) {
+            showNotification(`Vaccination ${vaccine} for ${child} marked as completed!`, 'success');
+        }
+
+        // Health Record Form Submission
+        document.getElementById('healthRecordForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const healthRecord = {
+                id: Date.now(),
+                memberId: parseInt(document.getElementById('healthMember').value),
+                type: document.getElementById('healthType').value,
+                description: document.getElementById('healthDescription').value,
+                date: document.getElementById('healthDate').value,
+                provider: document.getElementById('healthProvider').value,
+                notes: document.getElementById('healthNotes').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            if (!familyData.healthRecords) {
+                familyData.healthRecords = [];
+            }
+            familyData.healthRecords.push(healthRecord);
+            saveData();
+            closeModal('addHealthRecordModal');
+            
+            showNotification(`Health record for "${healthRecord.type}" added successfully!`, 'success');
+            
+            if (currentTab === 'health') {
+                loadHealthTab();
+            }
+            
+            this.reset();
+        });
+
+        // ==================== SHARING & PERMISSIONS ====================
+        function loadSharingTab() {
+            loadSharedMembers();
+        }
+
+        function loadSharedMembers() {
+            const container = document.getElementById('sharedMembersList');
+            container.innerHTML = '';
+            
+            familyData.sharedAccess.forEach(access => {
+                const memberDiv = document.createElement('div');
+                memberDiv.style.cssText = `
+                    background: rgba(0, 0, 0, 0.5);
+                    border: 2px solid var(--neon-blue);
+                    padding: 15px;
+                    margin-bottom: 10px;
+                    border-radius: 10px;
+                `;
+                
+                // Count enabled permissions
+                const enabledPermissions = Object.values(access.permissions).filter(p => p).length;
+                const totalPermissions = Object.keys(access.permissions).length;
+                
+                memberDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="font-weight: bold; color: var(--neon-blue);">
+                            ${access.email}
+                        </div>
+                        <span style="
+                            background: ${access.status === 'accepted' ? 'var(--neon-green)' : 'var(--neon-yellow)'};
+                            color: white;
+                            padding: 3px 10px;
+                            border-radius: 15px;
+                            font-size: 0.8em;
+                        ">
+                            ${access.status.toUpperCase()}
+                        </span>
+                    </div>
+                    <div style="color: var(--text-glow); font-size: 0.9em; margin-bottom: 10px;">
+                        ${access.relationship} • ${enabledPermissions}/${totalPermissions} permissions
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="editPermissions('${access.email}')" class="btn btn-sm">
+                            ✏️ Edit Permissions
+                        </button>
+                        <button onclick="revokeAccess('${access.email}')" class="btn btn-sm" style="
+                            background: linear-gradient(45deg, #ff0000, #ff5555);
+                        ">
+                            🗑️ Revoke Access
+                        </button>
+                    </div>
+                `;
+                container.appendChild(memberDiv);
+            });
+        }
+
+        function openShareModal() {
+            const modal = document.getElementById('shareModal');
+            modal.style.display = 'flex';
+        }
+
+        function openInviteMemberModal() {
+            const modal = document.getElementById('inviteMemberModal');
+            modal.style.display = 'flex';
+        }
+
+        function selectTemplate(template) {
+            selectedTemplate = template;
+            
+            // Update UI
+            document.querySelectorAll('.permission-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.permission-item').classList.add('active');
+            
+            // Show custom permissions if selected
+            const customPerms = document.getElementById('customPermissions');
+            customPerms.style.display = template === 'custom' ? 'block' : 'none';
+            
+            // Apply template permissions
+            if (template !== 'custom') {
+                applyTemplatePermissions(template);
+            }
+        }
+
+        function applyTemplatePermissions(template) {
+            const permissions = {
+                full_access: { dashboard: true, tasks: true, homework: true, prayer: true, schedule: true, quran: true, financial: true, health: true },
+                parent_access: { dashboard: true, tasks: true, homework: true, prayer: true, schedule: true, quran: false, financial: false, health: true },
+                read_only: { dashboard: true, tasks: false, homework: false, prayer: false, schedule: false, quran: false, financial: false, health: false }
+            };
+            
+            const templatePerms = permissions[template] || permissions.parent_access;
+            
+            // Update permission items
+            Object.keys(templatePerms).forEach(perm => {
+                const item = document.querySelector(`.permission-item[onclick*="${perm}"]`);
+                if (item) {
+                    if (templatePerms[perm]) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                }
+            });
+        }
+
+        function togglePermission(permission) {
+            const item = event.target.closest('.permission-item');
+            item.classList.toggle('active');
+        }
+
+        function toggleModalPermission(permission) {
+            const item = event.target.closest('.permission-item');
+            item.classList.toggle('active');
+        }
+
+        function toggleCustomPermissions() {
+            const accessLevel = document.getElementById('shareAccessLevel').value;
+            const customPerms = document.getElementById('customPermissionsModal');
+            customPerms.style.display = accessLevel === 'custom' ? 'block' : 'none';
+        }
+
+        function editPermissions(email) {
+            openShareModal();
+            // Here you would load the specific user's permissions
+            showNotification(`Editing permissions for ${email}`, 'info');
+        }
+
+        function revokeAccess(email) {
+            if (confirm(`Are you sure you want to revoke access for ${email}?`)) {
+                familyData.sharedAccess = familyData.sharedAccess.filter(a => a.email !== email);
+                saveData();
+                loadSharingTab();
+                showNotification(`Access revoked for ${email}`, 'success');
+            }
+        }
+
+        // Share Form Submission
+        document.getElementById('shareForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('shareEmail').value;
+            const relationship = document.getElementById('shareRelationship').value;
+            const accessLevel = document.getElementById('shareAccessLevel').value;
+            
+            // Get permissions based on access level
+            let permissions = {};
+            if (accessLevel === 'custom') {
+                permissions = {
+                    dashboard: document.querySelector('#customPermissionsModal .permission-item:nth-child(1)').classList.contains('active'),
+                    tasks: document.querySelector('#customPermissionsModal .permission-item:nth-child(2)').classList.contains('active'),
+                    homework: document.querySelector('#customPermissionsModal .permission-item:nth-child(3)').classList.contains('active'),
+                    prayer: document.querySelector('#customPermissionsModal .permission-item:nth-child(4)').classList.contains('active'),
+                    schedule: document.querySelector('#customPermissionsModal .permission-item:nth-child(5)').classList.contains('active'),
+                    quran: document.querySelector('#customPermissionsModal .permission-item:nth-child(6)').classList.contains('active'),
+                    financial: document.querySelector('#customPermissionsModal .permission-item:nth-child(7)').classList.contains('active'),
+                    health: document.querySelector('#customPermissionsModal .permission-item:nth-child(8)').classList.contains('active')
+                };
+            } else {
+                const templatePerms = {
+                    'full': { dashboard: true, tasks: true, homework: true, prayer: true, schedule: true, quran: true, financial: true, health: true },
+                    'parent': { dashboard: true, tasks: true, homework: true, prayer: true, schedule: true, quran: false, financial: false, health: true },
+                    'read_only': { dashboard: true, tasks: false, homework: false, prayer: false, schedule: false, quran: false, financial: false, health: false }
+                };
+                permissions = templatePerms[accessLevel] || templatePerms.parent;
+            }
+            
+            const newAccess = {
+                id: Date.now(),
+                email: email,
+                relationship: relationship,
+                permissions: permissions,
+                status: 'pending',
+                invitedAt: new Date().toISOString()
+            };
+            
+            familyData.sharedAccess.push(newAccess);
+            saveData();
+            closeModal('shareModal');
+            
+            showNotification(`Invitation sent to ${email}!`, 'success');
+            loadSharingTab();
+            
+            this.reset();
+        });
 
         // ==================== SETTINGS ====================
         function loadSettingsTab() {
@@ -3379,6 +4242,80 @@
             input.click();
         }
 
+        function clearData() {
+            if (confirm('⚠️ WARNING: This will clear ALL data! Are you sure?')) {
+                localStorage.removeItem('neonParentingData');
+                familyData = {
+                    currentUser: {
+                        id: 1,
+                        name: "Mom",
+                        role: "admin",
+                        avatar: "👩",
+                        email: "mom@family.com"
+                    },
+                    members: [
+                        { id: 1, name: "Mom", role: "admin", age: 35, avatar: "👩", color: "#ff00ff", email: "mom@family.com" },
+                        { id: 2, name: "Dad", role: "parent", age: 37, avatar: "👨", color: "#00ffff", email: "dad@family.com" },
+                        { id: 3, name: "Yusuf", role: "child", age: 8, avatar: "👦", color: "#00ff00", grade: "3rd Grade" },
+                        { id: 4, name: "Maryam", role: "child", age: 5, avatar: "👧", color: "#ffff00", grade: "Kindergarten" }
+                    ],
+                    prayers: {},
+                    tasks: [],
+                    homework: [],
+                    expenses: [],
+                    healthRecords: [],
+                    quranSessions: [],
+                    schedule: {},
+                    sharedAccess: [],
+                    settings: {
+                        soundEnabled: true,
+                        notifications: {
+                            prayer: true,
+                            tasks: true,
+                            homework: true,
+                            sound: true
+                        },
+                        theme: "neon",
+                        prayerMethod: "muslim_world_league",
+                        location: "Malé, Maldives"
+                    },
+                    lastBackup: new Date().toISOString().split('T')[0]
+                };
+                saveData();
+                location.reload();
+            }
+        }
+
+        function resetApp() {
+            if (confirm('This will reset the app to factory settings. Continue?')) {
+                clearData();
+            }
+        }
+
+        function setTheme(theme) {
+            familyData.settings.theme = theme;
+            saveData();
+            
+            // Apply theme
+            const root = document.documentElement;
+            if (theme === 'dark') {
+                root.style.setProperty('--dark-bg', '#0a0a0a');
+                root.style.setProperty('--darker-bg', '#050505');
+            } else if (theme === 'light') {
+                root.style.setProperty('--dark-bg', '#f0f0f0');
+                root.style.setProperty('--darker-bg', '#e0e0e0');
+                root.style.setProperty('--text-glow', '#333333');
+                root.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.9)');
+            } else {
+                root.style.setProperty('--dark-bg', '#0a0a1a');
+                root.style.setProperty('--darker-bg', '#050510');
+                root.style.setProperty('--text-glow', 'rgba(255, 255, 255, 0.9)');
+                root.style.setProperty('--card-bg', 'rgba(10, 10, 26, 0.8)');
+            }
+            
+            showNotification(`Theme changed to ${theme}!`, 'success');
+        }
+
         function updateDataSize() {
             const dataStr = JSON.stringify(familyData);
             const size = (new Blob([dataStr]).size / 1024).toFixed(1);
@@ -3388,6 +4325,7 @@
 
         // ==================== UTILITY FUNCTIONS ====================
         function formatDate(dateString) {
+            if (!dateString) return 'N/A';
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', {
                 month: 'short',
@@ -3572,31 +4510,9 @@
             this.reset();
         });
 
-        document.getElementById('expenseForm')?.addEventListener('submit', function(e) {
+        document.getElementById('quranSessionForm')?.addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const expense = {
-                id: Date.now(),
-                description: document.getElementById('expenseDescription').value,
-                amount: parseFloat(document.getElementById('expenseAmount').value),
-                category: document.getElementById('expenseCategory').value,
-                date: document.getElementById('expenseDate').value,
-                paidBy: document.getElementById('expensePaidBy').value,
-                notes: document.getElementById('expenseNotes').value,
-                createdAt: new Date().toISOString()
-            };
-            
-            familyData.expenses.push(expense);
-            saveData();
-            closeModal('addExpenseModal');
-            
-            showNotification(`Expense "${expense.description}" added successfully!`, 'success');
-            
-            if (currentTab === 'financial') {
-                loadFinancialTab();
-            }
-            
-            this.reset();
+            addQuranSession();
         });
 
         // ==================== BACKGROUND SERVICES ====================
@@ -3675,12 +4591,17 @@
         function addChild() {
             const name = prompt("Enter child's name:");
             if (name) {
+                const age = prompt("Enter child's age:");
+                const grade = prompt("Enter child's grade (optional):");
+                
                 const child = {
                     id: Date.now(),
                     name: name,
                     role: 'child',
+                    age: parseInt(age) || 0,
                     avatar: '👶',
                     color: getRandomColor(),
+                    grade: grade || '',
                     createdAt: new Date().toISOString()
                 };
                 
@@ -3701,7 +4622,31 @@
         }
 
         function generateReport() {
-            showNotification('📊 Report generation feature coming soon!', 'info');
+            // Generate a simple report
+            const report = `
+                Family Report - ${new Date().toLocaleDateString()}
+                
+                Family Members: ${familyData.members.length}
+                Children: ${familyData.members.filter(m => m.role === 'child').length}
+                
+                Tasks:
+                - Total: ${familyData.tasks.length}
+                - Pending: ${familyData.tasks.filter(t => t.status === 'pending').length}
+                - Completed: ${familyData.tasks.filter(t => t.status === 'completed').length}
+                
+                Homework:
+                - Total: ${familyData.homework.length}
+                - Pending: ${familyData.homework.filter(h => h.status === 'pending').length}
+                
+                Financial:
+                - Monthly Expenses: ${familyData.expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2)} MVR
+                
+                Prayer:
+                - Current Streak: ${calculatePrayerStreak()} days
+            `;
+            
+            alert(report);
+            showNotification('📊 Report generated!', 'success');
         }
 
         // Initialize the app
