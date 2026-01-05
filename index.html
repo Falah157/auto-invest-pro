@@ -3,294 +3,461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>☕ Cafe Delight - Ordering App</title>
+    <title>🚀 QuickOrder - Waiter's App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* CSS Variables */
         :root {
-            --primary: #8B4513;
-            --secondary: #D2691E;
-            --accent: #FFD700;
-            --light: #FFF8DC;
-            --dark: #5D2906;
+            --primary: #2E8B57;
+            --primary-dark: #1E6B47;
+            --secondary: #FF7F50;
+            --secondary-dark: #E06C3D;
+            --accent: #4169E1;
+            --danger: #FF4444;
+            --warning: #FFAA00;
             --success: #28a745;
-            --danger: #dc3545;
-            --gray: #6c757d;
-            --light-gray: #f8f9fa;
-            --shadow: 0 2px 10px rgba(0,0,0,0.1);
-            --radius: 15px;
+            --light: #F8F9FA;
+            --dark: #343A40;
+            --gray: #6C757D;
+            --border: #DEE2E6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.08);
+            --radius: 8px;
+            --radius-sm: 4px;
         }
 
-        /* Reset & Base */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%);
-            min-height: 100vh;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.4;
+            user-select: none;
         }
 
         .hidden {
             display: none !important;
         }
 
-        /* Loading Screen */
-        #loading {
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .waiter-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        /* Quick Actions Bar */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .quick-actions::-webkit-scrollbar {
+            display: none;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .action-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Orders Container */
+        .orders-container {
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .table-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(46, 139, 87, 0.2);
+        }
+
+        .table-header {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .table-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-new { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-processing { background: #cce5ff; color: #004085; }
+
+        .table-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .icon-btn.edit { color: var(--accent); }
+        .icon-btn.delete { color: var(--danger); }
+        .icon-btn.complete { color: var(--success); }
+
+        /* Order Items */
+        .order-items {
+            padding: 16px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .item-notes {
+            font-size: 12px;
+            color: var(--gray);
+            font-style: italic;
+        }
+
+        .item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-badge {
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Add Order Button */
+        .add-order-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 127, 80, 0.3);
+            z-index: 90;
+            transition: all 0.2s;
+        }
+
+        .add-order-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 127, 80, 0.4);
+        }
+
+        /* Modals */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--light);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
         }
 
-        .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid var(--light);
-            border-top: 5px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .modal {
+            background: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s;
         }
 
-        /* Header */
-        header {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            background: var(--primary);
             color: white;
-            padding: 15px 20px;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-top {
+            padding: 16px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
         }
 
-        .header-top h1 {
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        #cart-btn {
-            background: var(--accent);
+        .modal-close {
+            background: none;
             border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            cursor: pointer;
-            color: var(--dark);
-            font-size: 1.2rem;
-        }
-
-        #cart-count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--danger);
-            color: white;
-            width: 22px;
-            height: 22px;
             border-radius: 50%;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: background 0.2s;
         }
 
-        /* Table Selection */
-        .table-select {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px 15px;
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
+        .modal-close:hover {
+            background: rgba(255,255,255,0.1);
         }
 
-        #table-number {
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: none;
-            background: white;
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        /* Quick Order Form */
+        .quick-order-form {
+            display: grid;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 14px;
             color: var(--dark);
-            font-weight: 500;
-            flex: 1;
         }
 
-        /* Categories */
-        .categories {
-            display: flex;
-            gap: 10px;
-            padding: 15px 20px;
-            overflow-x: auto;
-            background: white;
-            border-bottom: 1px solid #eee;
-            scrollbar-width: none;
+        .form-input, .form-select, .form-textarea {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.2s;
         }
 
-        .categories::-webkit-scrollbar {
-            display: none;
-        }
-
-        .category-btn {
-            padding: 8px 20px;
-            border: 2px solid var(--primary);
-            background: white;
-            color: var(--primary);
-            border-radius: 25px;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .category-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Search */
-        .search-box {
-            margin: 15px 20px;
-            background: white;
-            border-radius: 25px;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: var(--shadow);
-        }
-
-        .search-box i {
-            color: var(--primary);
-        }
-
-        #search-input {
-            border: none;
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
-            width: 100%;
-            font-size: 1rem;
-            background: transparent;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1);
         }
 
-        /* Menu Grid */
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Menu Items Grid */
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
-            padding: 0 20px 20px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
         }
 
         .menu-item {
-            background: white;
+            background: var(--light);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            padding: 12px;
+            text-align: center;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
         .menu-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
 
-        .item-image {
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
-            border-bottom: 2px solid var(--light);
+        .menu-item.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
-        .item-info {
-            padding: 15px;
-        }
-
-        .item-name {
+        .menu-item-name {
             font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--dark);
-            font-size: 1rem;
+            margin-bottom: 4px;
         }
 
-        .item-description {
-            font-size: 0.8rem;
+        .menu-item-price {
+            font-size: 14px;
             color: var(--gray);
-            margin-bottom: 10px;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
-        .item-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .menu-item.active .menu-item-price {
+            color: rgba(255,255,255,0.9);
         }
 
-        .item-price {
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-
-        .quantity-controls {
+        /* Quantity Selector */
+        .quantity-selector {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .qty-btn {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             border: 2px solid var(--primary);
             background: white;
             color: var(--primary);
+            font-size: 20px;
+            font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
             transition: all 0.2s;
         }
 
@@ -299,331 +466,102 @@
             color: white;
         }
 
-        .quantity {
-            font-weight: bold;
-            min-width: 25px;
+        .quantity-display {
+            font-size: 20px;
+            font-weight: 700;
+            min-width: 40px;
             text-align: center;
-            font-size: 1.1rem;
         }
 
-        /* Cart Sidebar */
-        #cart-sidebar {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 90%;
-            max-width: 400px;
-            height: 100%;
+        /* Sync Panel */
+        .sync-panel {
             background: white;
-            z-index: 1001;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            border-top: 1px solid var(--border);
+            z-index: 95;
         }
 
-        #cart-sidebar.active {
-            transform: translateX(0);
-        }
-
-        .cart-header {
-            padding: 20px;
-            background: var(--primary);
-            color: white;
+        .sync-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 12px;
         }
 
-        #close-cart {
-            background: none;
-            border: none;
+        .sync-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .pending-count {
+            background: var(--warning);
             color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.2s;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 14px;
         }
 
-        #close-cart:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .cart-items {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .cart-item-info h4 {
-            margin-bottom: 5px;
-            color: var(--dark);
-        }
-
-        .cart-item-price {
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .cart-item-qty {
-            font-weight: bold;
-            font-size: 1.1rem;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        .remove-item {
-            color: var(--danger);
-            background: none;
+        .sync-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #3a56c4 100%);
+            color: white;
             border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 1.2rem;
-            width: 30px;
-            height: 30px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.2s;
+            gap: 8px;
+            transition: all 0.2s;
         }
 
-        .remove-item:hover {
-            background: rgba(220,53,69,0.1);
+        .sync-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
         }
 
-        .empty-cart {
+        .sync-btn.syncing {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        /* Empty State */
+        .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             color: var(--gray);
         }
 
-        .empty-cart i {
-            font-size: 3rem;
-            margin-bottom: 15px;
+        .empty-icon {
+            font-size: 48px;
             color: #ddd;
+            margin-bottom: 16px;
         }
 
-        /* Cart Summary */
-        .cart-summary {
-            padding: 20px;
-            border-top: 2px solid var(--light);
-            background: var(--light-gray);
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-        }
-
-        .summary-row.total {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px solid #ddd;
-            color: var(--dark);
-        }
-
-        .special-notes {
-            margin: 20px 0;
-        }
-
-        #notes {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            resize: vertical;
-            min-height: 80px;
-            font-family: inherit;
-            font-size: 0.9rem;
-        }
-
-        #notes:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .checkout-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.3s;
-            margin-bottom: 10px;
-        }
-
-        .checkout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(139,69,19,0.3);
-        }
-
-        .checkout-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .clear-btn {
-            width: 100%;
-            padding: 12px;
-            background: white;
-            color: var(--danger);
-            border: 2px solid var(--danger);
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-
-        .clear-btn:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        /* Overlay */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        #overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Modals */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1002;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: var(--radius);
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transform: translateY(20px);
-            transition: transform 0.3s;
-        }
-
-        .modal.active .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal h2 {
-            color: var(--success);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .order-details {
-            background: var(--light-gray);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-
-        .modal-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .modal-btn:hover {
-            background: var(--secondary);
-        }
-
-        /* Toast Notifications */
+        /* Toast */
         .toast {
             position: fixed;
-            bottom: 20px;
+            top: 20px;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            transform: translateX(-50%) translateY(-100px);
             background: var(--dark);
             color: white;
             padding: 12px 24px;
             border-radius: var(--radius);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 1003;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1100;
             opacity: 0;
             transition: all 0.3s;
+            max-width: 90%;
+            text-align: center;
         }
 
         .toast.show {
@@ -631,858 +569,917 @@
             opacity: 1;
         }
 
-        /* Admin Panel */
-        .admin-panel {
-            padding: 20px;
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: var(--warning); }
+
+        /* Animations */
+        @keyframes slideIn {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
+        .table-card {
+            animation: slideIn 0.3s ease-out;
         }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin: 10px 0;
-        }
-
-        .orders-list {
-            background: white;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .order-row {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            align-items: center;
-        }
-
-        .order-row.header {
-            background: var(--light-gray);
-            font-weight: bold;
-            color: var(--dark);
-        }
-
-        .status-btn {
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: none;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-preparing { background: #d1ecf1; color: #0c5460; }
-        .status-ready { background: #d4edda; color: #155724; }
-        .status-completed { background: #d1d1d1; color: #333; }
 
         /* Responsive */
         @media (max-width: 480px) {
+            .orders-container {
+                padding: 12px;
+            }
+            
             .menu-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 10px;
-                padding: 0 15px 15px;
+                grid-template-columns: repeat(2, 1fr);
             }
             
-            .header-top h1 {
-                font-size: 1.3rem;
+            .app-title {
+                font-size: 16px;
             }
             
-            .cart-header {
-                padding: 15px;
+            .waiter-info {
+                font-size: 12px;
+                padding: 4px 8px;
             }
         }
 
-        @media (max-width: 360px) {
-            .menu-grid {
-                grid-template-columns: 1fr;
+        /* Print Styles for Kitchen Tickets */
+        @media print {
+            .quick-actions,
+            .add-order-btn,
+            .sync-panel,
+            .app-header {
+                display: none !important;
+            }
+            
+            .table-card {
+                break-inside: avoid;
+                border: 2px solid #000 !important;
+                margin-bottom: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading">
-        <div class="loader"></div>
-        <p>Loading Cafe Menu...</p>
-    </div>
-
-    <!-- Main App Container -->
-    <div id="app" class="hidden">
+    <!-- Main App -->
+    <div id="app">
         <!-- Header -->
-        <header>
-            <div class="header-top">
-                <h1><i class="fas fa-coffee"></i> Cafe Delight</h1>
-                <div class="user-info">
-                    <span id="user-name">Guest</span>
-                    <button id="cart-btn">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count">0</span>
-                    </button>
+        <header class="app-header">
+            <div class="header-content">
+                <div class="app-title">
+                    <i class="fas fa-concierge-bell"></i>
+                    <span>QuickOrder Pro</span>
                 </div>
-            </div>
-            
-            <!-- Table Selection -->
-            <div class="table-select">
-                <label for="table-number"><i class="fas fa-chair"></i> Table:</label>
-                <select id="table-number">
-                    <option value="takeaway">Takeaway</option>
-                    <option value="1">Table 1</option>
-                    <option value="2">Table 2</option>
-                    <option value="3">Table 3</option>
-                    <option value="4">Table 4</option>
-                    <option value="5">Table 5</option>
-                    <option value="6">Table 6</option>
-                    <option value="7">Table 7</option>
-                    <option value="8">Table 8</option>
-                </select>
+                <div class="waiter-info">
+                    <i class="fas fa-user-tie"></i>
+                    <span id="waiter-name">Loading...</span>
+                </div>
             </div>
         </header>
 
-        <!-- Categories Navigation -->
-        <nav class="categories">
-            <button class="category-btn active" data-category="all">All Items</button>
-            <button class="category-btn" data-category="hot-drinks">☕ Hot Drinks</button>
-            <button class="category-btn" data-category="cold-drinks">🥤 Cold Drinks</button>
-            <button class="category-btn" data-category="food">🍔 Food</button>
-            <button class="category-btn" data-category="desserts">🍰 Desserts</button>
-            <button class="category-btn" data-category="breakfast">🍳 Breakfast</button>
-        </nav>
-
-        <!-- Search Box -->
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="search-input" placeholder="Search menu items...">
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="action-btn active" data-filter="all">
+                <i class="fas fa-list"></i> All Tables
+            </button>
+            <button class="action-btn" data-filter="pending">
+                <i class="fas fa-clock"></i> Pending
+            </button>
+            <button class="action-btn" data-filter="new">
+                <i class="fas fa-exclamation-circle"></i> New Orders
+            </button>
+            <button class="action-btn" data-filter="processing">
+                <i class="fas fa-utensils"></i> In Kitchen
+            </button>
+            <button class="action-btn" onclick="printAllOrders()">
+                <i class="fas fa-print"></i> Print All
+            </button>
         </div>
 
-        <!-- Menu Items Grid -->
-        <main>
-            <div id="menu-container" class="menu-grid">
-                <!-- Menu items loaded dynamically -->
+        <!-- Orders List -->
+        <main class="orders-container" id="orders-container">
+            <!-- Orders will be loaded here -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>No Active Orders</h3>
+                <p>Tap the + button to take a new order</p>
             </div>
         </main>
 
-        <!-- Cart Sidebar -->
-        <aside id="cart-sidebar">
-            <div class="cart-header">
-                <h2><i class="fas fa-shopping-cart"></i> Your Order</h2>
-                <button id="close-cart">&times;</button>
-            </div>
-            
-            <div class="cart-items" id="cart-items-container">
-                <div class="empty-cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <p>Your cart is empty</p>
-                    <p>Add items from the menu</p>
+        <!-- Add Order Button -->
+        <button class="add-order-btn" onclick="openNewOrderModal()">
+            <i class="fas fa-plus"></i>
+        </button>
+
+        <!-- Sync Panel -->
+        <div class="sync-panel">
+            <div class="sync-info">
+                <div class="sync-stats">
+                    <span>Pending Sync:</span>
+                    <span class="pending-count" id="pending-count">0</span>
                 </div>
-            </div>
-            
-            <div class="cart-summary">
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span id="subtotal">$0.00</span>
-                </div>
-                <div class="summary-row">
-                    <span>Tax (10%)</span>
-                    <span id="tax">$0.00</span>
-                </div>
-                <div class="summary-row total">
-                    <span>Total Amount</span>
-                    <span id="total">$0.00</span>
-                </div>
-                
-                <div class="special-notes">
-                    <textarea id="notes" placeholder="Any special instructions or allergies?"></textarea>
-                </div>
-                
-                <button id="checkout-btn" class="checkout-btn" disabled>
-                    <i class="fas fa-paper-plane"></i> Place Order
-                </button>
-                
-                <button id="clear-cart" class="clear-btn">
-                    <i class="fas fa-trash"></i> Clear Cart
+                <button class="sync-btn" onclick="syncToMainSystem()">
+                    <i class="fas fa-sync-alt"></i>
+                    Sync to Main System
                 </button>
             </div>
-        </aside>
+            <div style="font-size: 12px; color: var(--gray); text-align: center;">
+                Orders are stored locally. Sync when you have time.
+            </div>
+        </div>
 
-        <!-- Overlay for cart -->
-        <div id="overlay"></div>
+        <!-- Modals -->
+        
+        <!-- New Order Modal -->
+        <div class="modal-overlay" id="new-order-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>📝 Take New Order</h3>
+                    <button class="modal-close" onclick="closeModal('new-order-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="quick-order-form">
+                        <div class="form-group">
+                            <label class="form-label">Table Number *</label>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                                <button class="table-option" data-table="1" onclick="selectTable(1)">1</button>
+                                <button class="table-option" data-table="2" onclick="selectTable(2)">2</button>
+                                <button class="table-option" data-table="3" onclick="selectTable(3)">3</button>
+                                <button class="table-option" data-table="4" onclick="selectTable(4)">4</button>
+                                <button class="table-option" data-table="5" onclick="selectTable(5)">5</button>
+                                <button class="table-option" data-table="6" onclick="selectTable(6)">6</button>
+                                <button class="table-option" data-table="7" onclick="selectTable(7)">7</button>
+                                <button class="table-option" data-table="8" onclick="selectTable(8)">8</button>
+                                <button class="table-option" data-table="9" onclick="selectTable(9)">9</button>
+                                <button class="table-option" data-table="10" onclick="selectTable(10)">10</button>
+                                <button class="table-option" data-table="11" onclick="selectTable(11)">11</button>
+                                <button class="table-option" data-table="12" onclick="selectTable(12)">12</button>
+                            </div>
+                            <input type="number" id="table-input" class="form-input" placeholder="Or enter table number" min="1" max="50">
+                        </div>
 
-        <!-- Order Confirmation Modal -->
-        <div id="order-modal" class="modal">
-            <div class="modal-content">
-                <h2><i class="fas fa-check-circle"></i> Order Confirmed!</h2>
-                <p>Your order <strong>#<span id="order-number">1234</span></strong> has been placed.</p>
-                <p>Estimated preparation time: <strong>15-20 minutes</strong></p>
-                <div class="order-details">
-                    <h3><i class="fas fa-receipt"></i> Order Summary:</h3>
-                    <div id="order-summary"></div>
-                    <div class="summary-row total">
-                        <span>Total:</span>
-                        <span id="order-total">$0.00</span>
+                        <div class="form-group">
+                            <label class="form-label">Customer Count</label>
+                            <input type="number" id="customer-count" class="form-input" value="1" min="1" max="20">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Quick Items *</label>
+                            <div class="menu-grid" id="quick-items">
+                                <!-- Quick items loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="quantity-selector">
+                            <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
+                            <div class="quantity-display" id="current-quantity">1</div>
+                            <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Special Instructions</label>
+                            <textarea id="order-notes" class="form-textarea" placeholder="Allergies, modifications, etc."></textarea>
+                        </div>
+
+                        <button class="sync-btn" onclick="addToCurrentOrder()" style="width: 100%; margin-top: 16px;">
+                            <i class="fas fa-plus-circle"></i> Add to Order
+                        </button>
                     </div>
                 </div>
-                <button id="close-modal" class="modal-btn">Continue Shopping</button>
+            </div>
+        </div>
+
+        <!-- Current Order Modal -->
+        <div class="modal-overlay" id="current-order-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>🛒 Current Order - Table <span id="current-table">?</span></h3>
+                    <button class="modal-close" onclick="closeModal('current-order-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="current-order-items">
+                        <!-- Current order items shown here -->
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                        <button class="sync-btn" onclick="submitOrder()" style="width: 100%; background: var(--success);">
+                            <i class="fas fa-paper-plane"></i> Submit Order to Kitchen
+                        </button>
+                        <button class="sync-btn" onclick="clearCurrentOrder()" style="width: 100%; margin-top: 10px; background: var(--danger);">
+                            <i class="fas fa-trash"></i> Clear Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Order Modal -->
+        <div class="modal-overlay" id="edit-order-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>✏️ Edit Order</h3>
+                    <button class="modal-close" onclick="closeModal('edit-order-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Edit form loaded dynamically -->
+                </div>
             </div>
         </div>
 
         <!-- Toast Notification -->
-        <div id="toast" class="toast"></div>
+        <div class="toast" id="toast"></div>
     </div>
 
     <script>
-        // Telegram Web App Integration
+        // =================== INITIALIZATION ===================
         const tg = window.Telegram.WebApp;
-        
+        let orders = JSON.parse(localStorage.getItem('waiter_orders')) || [];
+        let currentOrder = {
+            table: null,
+            customerCount: 1,
+            items: [],
+            notes: '',
+            timestamp: null
+        };
+        let currentWaiter = {
+            id: 'waiter_001',
+            name: 'Waiter'
+        };
+        let selectedTable = null;
+        let currentQuantity = 1;
+        let selectedMenuItem = null;
+
+        // Menu items for quick selection
+        const menuItems = [
+            { id: 1, name: 'Espresso', price: 3.5, category: 'drinks', color: '#8B4513' },
+            { id: 2, name: 'Cappuccino', price: 4.5, category: 'drinks', color: '#D2691E' },
+            { id: 3, name: 'Americano', price: 3.8, category: 'drinks', color: '#8B4513' },
+            { id: 4, name: 'Latte', price: 4.8, category: 'drinks', color: '#D2691E' },
+            { id: 5, name: 'Iced Coffee', price: 4.2, category: 'cold', color: '#4169E1' },
+            { id: 6, name: 'Club Sandwich', price: 8.5, category: 'food', color: '#FF7F50' },
+            { id: 7, name: 'Caesar Salad', price: 7.8, category: 'food', color: '#28a745' },
+            { id: 8, name: 'Burger', price: 9.5, category: 'food', color: '#FF7F50' },
+            { id: 9, name: 'Fries', price: 4.5, category: 'sides', color: '#FFAA00' },
+            { id: 10, name: 'Pizza', price: 11.5, category: 'food', color: '#FF7F50' },
+            { id: 11, name: 'Coke', price: 2.5, category: 'drinks', color: '#4169E1' },
+            { id: 12, name: 'Water', price: 1.5, category: 'drinks', color: '#4169E1' },
+            { id: 13, name: 'Beer', price: 5.5, category: 'drinks', color: '#FFAA00' },
+            { id: 14, name: 'Wine', price: 7.5, category: 'drinks', color: '#8B4513' },
+            { id: 15, name: 'Dessert', price: 6.5, category: 'dessert', color: '#E91E63' }
+        ];
+
         // Initialize Telegram Web App
         tg.expand();
         tg.enableClosingConfirmation();
-        tg.setHeaderColor('#8B4513');
-        tg.setBackgroundColor('#FFF8DC');
-        
-        // Menu Data
-        const menuData = {
-            "hot-drinks": [
-                {
-                    id: 1,
-                    name: "Espresso",
-                    description: "Strong black coffee shot",
-                    price: 3.50,
-                    image: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&h=300&fit=crop",
-                    category: "hot-drinks",
-                    popular: true
-                },
-                {
-                    id: 2,
-                    name: "Cappuccino",
-                    description: "Espresso with steamed milk foam",
-                    price: 4.50,
-                    image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=300&fit=crop",
-                    category: "hot-drinks",
-                    popular: true
-                },
-                {
-                    id: 3,
-                    name: "Latte",
-                    description: "Smooth coffee with lots of milk",
-                    price: 4.80,
-                    image: "https://images.unsplash.com/photo-1561047029-3000c68339ca?w=400&h=300&fit=crop",
-                    category: "hot-drinks",
-                    popular: true
-                },
-                {
-                    id: 4,
-                    name: "Americano",
-                    description: "Espresso with hot water",
-                    price: 3.80,
-                    image: "https://images.unsplash.com/photo-1551030173-122aabc4489c?w=400&h=300&fit=crop",
-                    category: "hot-drinks"
-                },
-                {
-                    id: 5,
-                    name: "Hot Chocolate",
-                    description: "Rich creamy chocolate drink",
-                    price: 4.20,
-                    image: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=400&h=300&fit=crop",
-                    category: "hot-drinks"
-                }
-            ],
-            "cold-drinks": [
-                {
-                    id: 6,
-                    name: "Iced Coffee",
-                    description: "Chilled coffee with ice",
-                    price: 4.00,
-                    image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop",
-                    category: "cold-drinks",
-                    popular: true
-                },
-                {
-                    id: 7,
-                    name: "Iced Latte",
-                    description: "Cold latte with ice cubes",
-                    price: 4.80,
-                    image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=300&fit=crop",
-                    category: "cold-drinks"
-                },
-                {
-                    id: 8,
-                    name: "Fresh Lemonade",
-                    description: "Homemade lemon refreshment",
-                    price: 3.50,
-                    image: "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",
-                    category: "cold-drinks",
-                    popular: true
-                },
-                {
-                    id: 9,
-                    name: "Iced Tea",
-                    description: "Refreshing tea with lemon",
-                    price: 3.20,
-                    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop",
-                    category: "cold-drinks"
-                }
-            ],
-            "food": [
-                {
-                    id: 10,
-                    name: "Club Sandwich",
-                    description: "Triple decker with chicken & bacon",
-                    price: 8.50,
-                    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop",
-                    category: "food",
-                    popular: true
-                },
-                {
-                    id: 11,
-                    name: "Caesar Salad",
-                    description: "Fresh greens with chicken & dressing",
-                    price: 7.80,
-                    image: "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop",
-                    category: "food"
-                },
-                {
-                    id: 12,
-                    name: "Beef Burger",
-                    description: "Juicy beef patty with cheese",
-                    price: 9.50,
-                    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
-                    category: "food",
-                    popular: true
-                },
-                {
-                    id: 13,
-                    name: "Margherita Pizza",
-                    description: "Classic tomato & mozzarella",
-                    price: 10.50,
-                    image: "https://images.unsplash.com/photo-1593246049226-ded77bf90326?w=400&h=300&fit=crop",
-                    category: "food"
-                }
-            ],
-            "desserts": [
-                {
-                    id: 14,
-                    name: "Chocolate Cake",
-                    description: "Rich moist chocolate delight",
-                    price: 5.50,
-                    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop",
-                    category: "desserts",
-                    popular: true
-                },
-                {
-                    id: 15,
-                    name: "Cheesecake",
-                    description: "Creamy New York style",
-                    price: 6.00,
-                    image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&h=300&fit=crop",
-                    category: "desserts"
-                },
-                {
-                    id: 16,
-                    name: "Tiramisu",
-                    description: "Italian coffee-flavored dessert",
-                    price: 6.50,
-                    image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop",
-                    category: "desserts",
-                    popular: true
-                },
-                {
-                    id: 17,
-                    name: "Ice Cream Sundae",
-                    description: "Vanilla ice cream with toppings",
-                    price: 4.80,
-                    image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop",
-                    category: "desserts"
-                }
-            ],
-            "breakfast": [
-                {
-                    id: 18,
-                    name: "Avocado Toast",
-                    description: "Smashed avocado on artisan bread",
-                    price: 7.50,
-                    image: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=400&h=300&fit=crop",
-                    category: "breakfast",
-                    popular: true
-                },
-                {
-                    id: 19,
-                    name: "Pancakes",
-                    description: "Fluffy pancakes with maple syrup",
-                    price: 8.00,
-                    image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop",
-                    category: "breakfast"
-                },
-                {
-                    id: 20,
-                    name: "Full Breakfast",
-                    description: "Eggs, bacon, sausage & toast",
-                    price: 12.50,
-                    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop",
-                    category: "breakfast"
-                }
-            ]
-        };
+        tg.setHeaderColor('#2E8B57');
+        tg.setBackgroundColor('#F8F9FA');
 
-        // Application State
-        let cart = JSON.parse(localStorage.getItem('cafe_cart')) || [];
-        let currentCategory = 'all';
-        let searchQuery = '';
-        let orders = JSON.parse(localStorage.getItem('cafe_orders')) || [];
-        let orderCounter = parseInt(localStorage.getItem('order_counter')) || 1000;
-
-        // DOM Elements
-        const loadingScreen = document.getElementById('loading');
-        const appContainer = document.getElementById('app');
-        const menuContainer = document.getElementById('menu-container');
-        const cartBtn = document.getElementById('cart-btn');
-        const cartCount = document.getElementById('cart-count');
-        const cartSidebar = document.getElementById('cart-sidebar');
-        const closeCartBtn = document.getElementById('close-cart');
-        const overlay = document.getElementById('overlay');
-        const cartItemsContainer = document.getElementById('cart-items-container');
-        const subtotalEl = document.getElementById('subtotal');
-        const taxEl = document.getElementById('tax');
-        const totalEl = document.getElementById('total');
-        const checkoutBtn = document.getElementById('checkout-btn');
-        const clearCartBtn = document.getElementById('clear-cart');
-        const searchInput = document.getElementById('search-input');
-        const categoryBtns = document.querySelectorAll('.category-btn');
-        const orderModal = document.getElementById('order-modal');
-        const closeModalBtn = document.getElementById('close-modal');
-        const orderNumberEl = document.getElementById('order-number');
-        const orderSummaryEl = document.getElementById('order-summary');
-        const orderTotalEl = document.getElementById('order-total');
-        const toast = document.getElementById('toast');
-        const tableSelect = document.getElementById('table-number');
-        const notesInput = document.getElementById('notes');
-        const userNameEl = document.getElementById('user-name');
-
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                loadingScreen.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                initUserData();
-                renderMenu();
-                updateCartUI();
-                setupEventListeners();
-            }, 1000);
-        });
-
-        // Initialize User Data from Telegram
-        function initUserData() {
-            if (tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                userNameEl.textContent = user.first_name || 'Guest';
-                localStorage.setItem('telegram_user', JSON.stringify(user));
+        // Get waiter info from Telegram or local storage
+        if (tg.initDataUnsafe.user) {
+            const user = tg.initDataUnsafe.user;
+            currentWaiter = {
+                id: user.id.toString(),
+                name: user.first_name || 'Waiter'
+            };
+            document.getElementById('waiter-name').textContent = currentWaiter.name;
+        } else {
+            const savedWaiter = localStorage.getItem('current_waiter');
+            if (savedWaiter) {
+                currentWaiter = JSON.parse(savedWaiter);
+                document.getElementById('waiter-name').textContent = currentWaiter.name;
             }
         }
 
-        // Setup Event Listeners
+        // Save waiter info
+        localStorage.setItem('current_waiter', JSON.stringify(currentWaiter));
+
+        // =================== DOM ELEMENTS ===================
+        const ordersContainer = document.getElementById('orders-container');
+        const pendingCountEl = document.getElementById('pending-count');
+        const quickItemsContainer = document.getElementById('quick-items');
+        const currentQuantityEl = document.getElementById('current-quantity');
+        const tableInput = document.getElementById('table-input');
+        const customerCountInput = document.getElementById('customer-count');
+        const orderNotesInput = document.getElementById('order-notes');
+        const toastEl = document.getElementById('toast');
+
+        // =================== INITIAL RENDER ===================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQuickItems();
+            renderOrders();
+            updatePendingCount();
+            setupEventListeners();
+            
+            // Check for unsaved orders on load
+            const unsaved = JSON.parse(localStorage.getItem('unsaved_order'));
+            if (unsaved && unsaved.items.length > 0) {
+                currentOrder = unsaved;
+                showToast('You have an unsaved order. Continue?', 'warning');
+            }
+        });
+
         function setupEventListeners() {
-            // Cart toggle
-            cartBtn.addEventListener('click', toggleCart);
-            closeCartBtn.addEventListener('click', closeCart);
-            overlay.addEventListener('click', closeCart);
-
-            // Cart actions
-            checkoutBtn.addEventListener('click', placeOrder);
-            clearCartBtn.addEventListener('click', clearCart);
-
-            // Search
-            searchInput.addEventListener('input', (e) => {
-                searchQuery = e.target.value.toLowerCase();
-                renderMenu();
-            });
-
-            // Category filter
-            categoryBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    categoryBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentCategory = btn.dataset.category;
-                    renderMenu();
+            // Filter buttons
+            document.querySelectorAll('.action-btn[data-filter]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const filter = this.dataset.filter;
+                    renderOrders(filter);
                 });
             });
 
-            // Modal close
-            closeModalBtn.addEventListener('click', () => {
-                orderModal.classList.remove('active');
-                overlay.classList.remove('active');
+            // Table input
+            tableInput.addEventListener('change', function() {
+                if (this.value) {
+                    selectTable(parseInt(this.value));
+                }
             });
 
-            // Table change
-            tableSelect.addEventListener('change', () => {
-                showToast(`Table set to: ${tableSelect.value === 'takeaway' ? 'Takeaway' : 'Table ' + tableSelect.value}`);
+            // Customer count input
+            customerCountInput.addEventListener('change', function() {
+                if (currentOrder.table) {
+                    currentOrder.customerCount = parseInt(this.value) || 1;
+                }
+            });
+
+            // Order notes
+            orderNotesInput.addEventListener('input', function() {
+                if (currentOrder.table) {
+                    currentOrder.notes = this.value;
+                }
             });
         }
 
-        // Render Menu Items
-        function renderMenu() {
-            menuContainer.innerHTML = '';
-            
-            let allItems = [];
-            Object.values(menuData).forEach(category => {
-                allItems = allItems.concat(category);
-            });
-
-            // Filter by category
-            let filteredItems = currentCategory === 'all' 
-                ? allItems 
-                : menuData[currentCategory] || [];
-
-            // Filter by search
-            if (searchQuery) {
-                filteredItems = filteredItems.filter(item => 
-                    item.name.toLowerCase().includes(searchQuery) || 
-                    item.description.toLowerCase().includes(searchQuery)
-                );
-            }
-
-            // Render items
-            filteredItems.forEach(item => {
-                const cartItem = cart.find(ci => ci.id === item.id);
-                const quantity = cartItem ? cartItem.quantity : 0;
-
+        // =================== QUICK ITEMS RENDER ===================
+        function loadQuickItems() {
+            quickItemsContainer.innerHTML = '';
+            menuItems.forEach(item => {
                 const itemEl = document.createElement('div');
                 itemEl.className = 'menu-item';
                 itemEl.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" class="item-image" onerror="this.src='https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=300&fit=crop'">
-                    <div class="item-info">
-                        <div class="item-name">${item.name} ${item.popular ? '🔥' : ''}</div>
-                        <div class="item-description">${item.description}</div>
-                        <div class="item-bottom">
-                            <div class="item-price">$${item.price.toFixed(2)}</div>
-                            <div class="quantity-controls">
-                                <button class="qty-btn minus" data-id="${item.id}">-</button>
-                                <span class="quantity">${quantity}</span>
-                                <button class="qty-btn plus" data-id="${item.id}">+</button>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="menu-item-name">${item.name}</div>
+                    <div class="menu-item-price">$${item.price.toFixed(2)}</div>
                 `;
-                
-                menuContainer.appendChild(itemEl);
-            });
-
-            // Add event listeners to quantity buttons
-            document.querySelectorAll('.qty-btn.minus').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const id = parseInt(e.target.dataset.id);
-                    updateCartItem(id, -1);
-                });
-            });
-
-            document.querySelectorAll('.qty-btn.plus').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const id = parseInt(e.target.dataset.id);
-                    updateCartItem(id, 1);
-                });
+                itemEl.style.borderLeft = `4px solid ${item.color}`;
+                itemEl.addEventListener('click', () => selectMenuItem(item));
+                quickItemsContainer.appendChild(itemEl);
             });
         }
 
-        // Cart Functions
-        function updateCartItem(itemId, change) {
-            const item = getAllItems().find(i => i.id === itemId);
-            if (!item) return;
+        function selectMenuItem(item) {
+            selectedMenuItem = item;
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            event.target.closest('.menu-item').classList.add('active');
+            currentQuantity = 1;
+            currentQuantityEl.textContent = currentQuantity;
+        }
 
-            const cartIndex = cart.findIndex(ci => ci.id === itemId);
-            
-            if (cartIndex > -1) {
-                // Update existing item
-                cart[cartIndex].quantity += change;
-                
-                if (cart[cartIndex].quantity <= 0) {
-                    cart.splice(cartIndex, 1);
-                    showToast(`${item.name} removed from cart`);
-                } else {
-                    showToast(`${item.name} updated: ${cart[cartIndex].quantity}`);
+        function adjustQuantity(change) {
+            currentQuantity = Math.max(1, currentQuantity + change);
+            currentQuantityEl.textContent = currentQuantity;
+        }
+
+        function selectTable(tableNumber) {
+            selectedTable = tableNumber;
+            document.querySelectorAll('.table-option').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.table) === tableNumber) {
+                    btn.classList.add('active');
                 }
-            } else if (change > 0) {
-                // Add new item
-                cart.push({
-                    ...item,
-                    quantity: 1
-                });
-                showToast(`${item.name} added to cart`);
+            });
+            tableInput.value = tableNumber;
+            
+            // Initialize current order for this table
+            if (!currentOrder.table || currentOrder.table !== tableNumber) {
+                currentOrder = {
+                    table: tableNumber,
+                    customerCount: parseInt(customerCountInput.value) || 1,
+                    items: [],
+                    notes: orderNotesInput.value,
+                    timestamp: new Date().toISOString()
+                };
+            }
+        }
+
+        // =================== ORDER MANAGEMENT ===================
+        function addToCurrentOrder() {
+            if (!selectedTable) {
+                showToast('Please select a table first', 'error');
+                return;
+            }
+            
+            if (!selectedMenuItem) {
+                showToast('Please select a menu item', 'error');
+                return;
             }
 
-            saveCart();
-            updateCartUI();
-            renderMenu();
+            const existingItem = currentOrder.items.find(item => item.id === selectedMenuItem.id);
+            
+            if (existingItem) {
+                existingItem.quantity += currentQuantity;
+            } else {
+                currentOrder.items.push({
+                    ...selectedMenuItem,
+                    quantity: currentQuantity,
+                    notes: ''
+                });
+            }
+
+            // Save current order temporarily
+            localStorage.setItem('unsaved_order', JSON.stringify(currentOrder));
+            
+            showToast(`${currentQuantity}x ${selectedMenuItem.name} added`, 'success');
+            
+            // Reset selection
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            selectedMenuItem = null;
+            currentQuantity = 1;
+            currentQuantityEl.textContent = currentQuantity;
+            
+            // Show current order modal
+            showCurrentOrder();
         }
 
-        function updateCartUI() {
-            // Update cart count
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            cartCount.textContent = totalItems;
+        function showCurrentOrder() {
+            const currentTableEl = document.getElementById('current-table');
+            const currentOrderItemsEl = document.getElementById('current-order-items');
             
-            // Update cart items display
-            if (cart.length === 0) {
-                cartItemsContainer.innerHTML = `
-                    <div class="empty-cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <p>Your cart is empty</p>
-                        <p>Add items from the menu</p>
+            if (!currentOrder.table || currentOrder.items.length === 0) {
+                showToast('No items in current order', 'warning');
+                return;
+            }
+            
+            currentTableEl.textContent = currentOrder.table;
+            
+            let itemsHTML = '<h4>Current Items:</h4>';
+            let total = 0;
+            
+            currentOrder.items.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                itemsHTML += `
+                    <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <div>
+                            <strong>${item.quantity}x ${item.name}</strong>
+                            <div style="font-size: 12px; color: #666;">$${item.price.toFixed(2)} each</div>
+                        </div>
+                        <div style="font-weight: bold;">$${itemTotal.toFixed(2)}</div>
                     </div>
                 `;
-                checkoutBtn.disabled = true;
-            } else {
-                let cartHTML = '';
-                cart.forEach(item => {
-                    cartHTML += `
-                        <div class="cart-item">
-                            <div class="cart-item-info">
-                                <h4>${item.name}</h4>
-                                <div class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+            });
+            
+            itemsHTML += `
+                <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px solid #000; font-weight: bold;">
+                    <div>TOTAL:</div>
+                    <div>$${total.toFixed(2)}</div>
+                </div>
+                <div style="font-size: 12px; color: #666; margin-top: 10px;">
+                    Customers: ${currentOrder.customerCount} | Table: ${currentOrder.table}
+                </div>
+            `;
+            
+            currentOrderItemsEl.innerHTML = itemsHTML;
+            openModal('current-order-modal');
+        }
+
+        function submitOrder() {
+            if (!currentOrder.table || currentOrder.items.length === 0) {
+                showToast('No items to submit', 'error');
+                return;
+            }
+
+            // Add order to list
+            const newOrder = {
+                id: Date.now().toString(),
+                table: currentOrder.table,
+                customerCount: currentOrder.customerCount,
+                items: [...currentOrder.items],
+                notes: currentOrder.notes,
+                waiter: currentWaiter.name,
+                status: 'new',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                synced: false
+            };
+
+            orders.unshift(newOrder); // Add to beginning
+            saveOrders();
+            
+            // Clear current order
+            clearCurrentOrder();
+            
+            // Update UI
+            renderOrders();
+            updatePendingCount();
+            
+            showToast(`Order #${newOrder.id.substring(8)} submitted to kitchen`, 'success');
+            closeModal('current-order-modal');
+            
+            // Haptic feedback
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+        }
+
+        function clearCurrentOrder() {
+            currentOrder = {
+                table: null,
+                customerCount: 1,
+                items: [],
+                notes: '',
+                timestamp: null
+            };
+            
+            customerCountInput.value = 1;
+            orderNotesInput.value = '';
+            tableInput.value = '';
+            selectedTable = null;
+            selectedMenuItem = null;
+            currentQuantity = 1;
+            currentQuantityEl.textContent = 1;
+            
+            document.querySelectorAll('.table-option').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            
+            localStorage.removeItem('unsaved_order');
+            showToast('Order cleared', 'warning');
+        }
+
+        // =================== ORDERS RENDERING ===================
+        function renderOrders(filter = 'all') {
+            let filteredOrders = [...orders];
+            
+            // Apply filter
+            if (filter !== 'all') {
+                filteredOrders = filteredOrders.filter(order => order.status === filter);
+            }
+            
+            // Sort by creation date (newest first)
+            filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            if (filteredOrders.length === 0) {
+                ordersContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3>No ${filter === 'all' ? '' : filter} Orders</h3>
+                        <p>${filter === 'all' ? 'Tap the + button to take a new order' : 'No orders in this status'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let ordersHTML = '';
+            
+            filteredOrders.forEach(order => {
+                const orderTime = new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
+                const totalAmount = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                
+                let itemsHTML = '';
+                order.items.forEach(item => {
+                    itemsHTML += `
+                        <div class="order-item">
+                            <div class="item-info">
+                                <div class="item-name">${item.quantity}x ${item.name}</div>
+                                ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
                             </div>
-                            <div class="cart-item-controls">
-                                <button class="remove-item" data-id="${item.id}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                <div class="cart-item-qty">${item.quantity}</div>
-                                <button class="qty-btn plus" data-id="${item.id}">+</button>
-                                <button class="qty-btn minus" data-id="${item.id}">-</button>
+                            <div class="item-quantity">
+                                <div class="quantity-badge">${item.quantity}</div>
                             </div>
                         </div>
                     `;
                 });
-                cartItemsContainer.innerHTML = cartHTML;
-                checkoutBtn.disabled = false;
                 
-                // Add event listeners to cart controls
-                cartItemsContainer.querySelectorAll('.remove-item').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = parseInt(e.target.closest('button').dataset.id);
-                        removeFromCart(id);
-                    });
-                });
-                
-                cartItemsContainer.querySelectorAll('.qty-btn.plus').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = parseInt(e.target.dataset.id);
-                        updateCartItem(id, 1);
-                    });
-                });
-                
-                cartItemsContainer.querySelectorAll('.qty-btn.minus').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = parseInt(e.target.dataset.id);
-                        updateCartItem(id, -1);
-                    });
-                });
-            }
-            
-            // Update totals
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const tax = subtotal * 0.1;
-            const total = subtotal + tax;
-            
-            subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-            taxEl.textContent = `$${tax.toFixed(2)}`;
-            totalEl.textContent = `$${total.toFixed(2)}`;
-        }
-
-        function removeFromCart(itemId) {
-            const item = cart.find(ci => ci.id === itemId);
-            if (item) {
-                showToast(`${item.name} removed from cart`);
-                cart = cart.filter(ci => ci.id !== itemId);
-                saveCart();
-                updateCartUI();
-                renderMenu();
-            }
-        }
-
-        function clearCart() {
-            if (cart.length === 0) return;
-            
-            if (confirm('Are you sure you want to clear your cart?')) {
-                cart = [];
-                saveCart();
-                updateCartUI();
-                renderMenu();
-                showToast('Cart cleared');
-                closeCart();
-            }
-        }
-
-        function saveCart() {
-            localStorage.setItem('cafe_cart', JSON.stringify(cart));
-        }
-
-        function getAllItems() {
-            return Object.values(menuData).flat();
-        }
-
-        // Cart UI Controls
-        function toggleCart() {
-            cartSidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            document.body.style.overflow = cartSidebar.classList.contains('active') ? 'hidden' : '';
-        }
-
-        function closeCart() {
-            cartSidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // Order Processing
-        function placeOrder() {
-            if (cart.length === 0) return;
-            
-            const table = tableSelect.value === 'takeaway' ? 'Takeaway' : `Table ${tableSelect.value}`;
-            const notes = notesInput.value.trim();
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const tax = subtotal * 0.1;
-            const total = subtotal + tax;
-            
-            // Generate order
-            orderCounter++;
-            const order = {
-                id: orderCounter,
-                items: [...cart],
-                table: table,
-                notes: notes,
-                subtotal: subtotal,
-                tax: tax,
-                total: total,
-                timestamp: new Date().toISOString(),
-                status: 'pending'
-            };
-            
-            // Save order
-            orders.push(order);
-            localStorage.setItem('cafe_orders', JSON.stringify(orders));
-            localStorage.setItem('order_counter', orderCounter.toString());
-            
-            // Send to Telegram (if in Mini App)
-            if (tg.sendData) {
-                tg.sendData(JSON.stringify({
-                    type: 'order',
-                    orderId: orderCounter,
-                    table: table,
-                    total: total,
-                    items: cart.length
-                }));
-            }
-            
-            // Update UI
-            showOrderConfirmation(order);
-            
-            // Clear cart
-            cart = [];
-            saveCart();
-            updateCartUI();
-            renderMenu();
-            notesInput.value = '';
-            
-            // Close cart
-            closeCart();
-            
-            // Show success message
-            tg.HapticFeedback.impactOccurred('heavy');
-            showToast('Order placed successfully!', 'success');
-        }
-
-        function showOrderConfirmation(order) {
-            orderNumberEl.textContent = order.id;
-            orderTotalEl.textContent = `$${order.total.toFixed(2)}`;
-            
-            let summaryHTML = '';
-            order.items.forEach(item => {
-                summaryHTML += `
-                    <div class="summary-row">
-                        <span>${item.quantity}x ${item.name}</span>
-                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                ordersHTML += `
+                    <div class="table-card" data-order-id="${order.id}">
+                        <div class="table-header">
+                            <div class="table-info">
+                                <div class="table-number">Table ${order.table}</div>
+                                <div class="table-status status-${order.status}">${order.status}</div>
+                                <span style="font-size: 12px; color: #666;">${orderTime} • ${totalItems} items</span>
+                            </div>
+                            <div class="table-controls">
+                                <button class="icon-btn edit" onclick="editOrder('${order.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                ${order.status === 'new' ? `
+                                <button class="icon-btn complete" onclick="markOrderProcessing('${order.id}')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                ` : ''}
+                                <button class="icon-btn delete" onclick="deleteOrder('${order.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="order-items">
+                            ${itemsHTML}
+                            <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-weight: bold;">
+                                <div>Total: $${totalAmount.toFixed(2)}</div>
+                                <div style="font-size: 12px; color: #666;">${order.customerCount} customer(s)</div>
+                            </div>
+                            ${order.notes ? `
+                            <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; font-size: 12px; color: #666;">
+                                <strong>Notes:</strong> ${order.notes}
+                            </div>
+                            ` : ''}
+                            <div style="font-size: 11px; color: #999; margin-top: 10px; display: flex; justify-content: space-between;">
+                                <span>Waiter: ${order.waiter}</span>
+                                <span>${order.synced ? '✅ Synced' : '⏳ Pending sync'}</span>
+                            </div>
+                        </div>
                     </div>
                 `;
             });
             
-            orderSummaryEl.innerHTML = summaryHTML;
-            orderModal.classList.add('active');
-            overlay.classList.add('active');
+            ordersContainer.innerHTML = ordersHTML;
         }
 
-        // Utility Functions
-        function showToast(message, type = 'info') {
-            toast.textContent = message;
-            toast.className = 'toast';
-            toast.classList.add('show');
+        // =================== ORDER ACTIONS ===================
+        function editOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
             
-            if (type === 'success') {
-                toast.style.background = 'var(--success)';
-            } else if (type === 'error') {
-                toast.style.background = 'var(--danger)';
-            } else {
-                toast.style.background = 'var(--dark)';
+            const modalBody = document.querySelector('#edit-order-modal .modal-body');
+            let itemsHTML = '';
+            
+            order.items.forEach((item, index) => {
+                itemsHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <div>
+                            <strong>${item.name}</strong>
+                            <div style="font-size: 12px; color: #666;">$${item.price.toFixed(2)} each</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button onclick="adjustOrderItemQuantity('${orderId}', ${index}, -1)" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white;">-</button>
+                            <span style="font-weight: bold; min-width: 30px; text-align: center;">${item.quantity}</span>
+                            <button onclick="adjustOrderItemQuantity('${orderId}', ${index}, 1)" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white;">+</button>
+                            <button onclick="removeOrderItem('${orderId}', ${index})" style="color: #ff4444; background: none; border: none;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h4>Edit Order - Table ${order.table}</h4>
+                    <p style="font-size: 12px; color: #666;">Created: ${new Date(order.createdAt).toLocaleString()}</p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Status</label>
+                    <select id="edit-order-status" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="new" ${order.status === 'new' ? 'selected' : ''}>New</option>
+                        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                        <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Customer Count</label>
+                    <input type="number" id="edit-customer-count" value="${order.customerCount}" min="1" max="50" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h5>Order Items</h5>
+                    ${itemsHTML}
+                    <button onclick="openNewOrderModalForEdit('${orderId}')" style="width: 100%; padding: 10px; background: #f8f9fa; border: 1px dashed #ddd; border-radius: 4px; margin-top: 10px;">
+                        <i class="fas fa-plus"></i> Add More Items
+                    </button>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Special Instructions</label>
+                    <textarea id="edit-order-notes" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; min-height: 80px;">${order.notes || ''}</textarea>
+                </div>
+                
+                <button onclick="saveOrderChanges('${orderId}')" style="width: 100%; padding: 12px; background: #2E8B57; color: white; border: none; border-radius: 4px; font-weight: bold;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            `;
+            
+            openModal('edit-order-modal');
+        }
+
+        function adjustOrderItemQuantity(orderId, itemIndex, change) {
+            const order = orders.find(o => o.id === orderId);
+            if (order && order.items[itemIndex]) {
+                order.items[itemIndex].quantity = Math.max(1, order.items[itemIndex].quantity + change);
+                order.updatedAt = new Date().toISOString();
+                order.synced = false;
+                saveOrders();
+                editOrder(orderId); // Refresh edit modal
+            }
+        }
+
+        function removeOrderItem(orderId, itemIndex) {
+            const order = orders.find(o => o.id === orderId);
+            if (order && order.items[itemIndex]) {
+                order.items.splice(itemIndex, 1);
+                order.updatedAt = new Date().toISOString();
+                order.synced = false;
+                
+                // If no items left, delete the order
+                if (order.items.length === 0) {
+                    deleteOrder(orderId);
+                    closeModal('edit-order-modal');
+                } else {
+                    saveOrders();
+                    editOrder(orderId); // Refresh edit modal
+                }
+            }
+        }
+
+        function saveOrderChanges(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = document.getElementById('edit-order-status').value;
+                order.customerCount = parseInt(document.getElementById('edit-customer-count').value) || 1;
+                order.notes = document.getElementById('edit-order-notes').value;
+                order.updatedAt = new Date().toISOString();
+                order.synced = false;
+                
+                saveOrders();
+                renderOrders();
+                updatePendingCount();
+                showToast('Order updated', 'success');
+                closeModal('edit-order-modal');
+            }
+        }
+
+        function markOrderProcessing(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'processing';
+                order.updatedAt = new Date().toISOString();
+                order.synced = false;
+                saveOrders();
+                renderOrders();
+                updatePendingCount();
+                showToast('Order sent to kitchen', 'success');
+            }
+        }
+
+        function deleteOrder(orderId) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                orders = orders.filter(o => o.id !== orderId);
+                saveOrders();
+                renderOrders();
+                updatePendingCount();
+                showToast('Order deleted', 'warning');
+            }
+        }
+
+        // =================== SYNC FUNCTIONS ===================
+        async function syncToMainSystem() {
+            const pendingOrders = orders.filter(order => !order.synced);
+            
+            if (pendingOrders.length === 0) {
+                showToast('All orders are already synced', 'warning');
+                return;
             }
             
+            const syncBtn = document.querySelector('.sync-btn');
+            const originalText = syncBtn.innerHTML;
+            
+            // Show syncing state
+            syncBtn.classList.add('syncing');
+            syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';
+            syncBtn.disabled = true;
+            
+            try {
+                // Simulate API call to main system
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Mark all as synced
+                pendingOrders.forEach(order => {
+                    order.synced = true;
+                    order.syncedAt = new Date().toISOString();
+                });
+                
+                saveOrders();
+                updatePendingCount();
+                
+                showToast(`${pendingOrders.length} orders synced successfully!`, 'success');
+                
+                // Send data to Telegram bot (if in Mini App)
+                if (tg.sendData) {
+                    const syncData = {
+                        type: 'sync',
+                        waiter: currentWaiter,
+                        orders: pendingOrders.map(order => ({
+                            id: order.id,
+                            table: order.table,
+                            items: order.items,
+                            total: order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+                        })),
+                        timestamp: new Date().toISOString()
+                    };
+                    tg.sendData(JSON.stringify(syncData));
+                }
+                
+            } catch (error) {
+                console.error('Sync failed:', error);
+                showToast('Sync failed. Please try again.', 'error');
+            } finally {
+                // Restore button state
+                syncBtn.classList.remove('syncing');
+                syncBtn.innerHTML = originalText;
+                syncBtn.disabled = false;
+            }
+        }
+
+        function updatePendingCount() {
+            const pending = orders.filter(order => !order.synced).length;
+            pendingCountEl.textContent = pending;
+            
+            // Update Telegram Main Button
+            if (pending > 0) {
+                tg.MainButton.setParams({
+                    text: `SYNC (${pending})`,
+                    color: '#FF4444',
+                    text_color: '#FFFFFF'
+                });
+                tg.MainButton.onClick(syncToMainSystem);
+                tg.MainButton.show();
+            } else {
+                tg.MainButton.hide();
+            }
+        }
+
+        // =================== UTILITY FUNCTIONS ===================
+        function saveOrders() {
+            localStorage.setItem('waiter_orders', JSON.stringify(orders));
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function openNewOrderModal() {
+            openModal('new-order-modal');
+        }
+
+        function showToast(message, type = 'info') {
+            toastEl.textContent = message;
+            toastEl.className = 'toast';
+            toastEl.classList.add(type, 'show');
+            
             setTimeout(() => {
-                toast.classList.remove('show');
+                toastEl.classList.remove('show');
             }, 3000);
         }
 
-        // Admin Functions (for future expansion)
-        function getOrderStats() {
-            const today = new Date().toDateString();
-            const todayOrders = orders.filter(o => new Date(o.timestamp).toDateString() === today);
-            
-            return {
-                totalOrders: orders.length,
-                todayOrders: todayOrders.length,
-                totalRevenue: orders.reduce((sum, o) => sum + o.total, 0),
-                pendingOrders: orders.filter(o => o.status === 'pending').length
-            };
+        function printAllOrders() {
+            window.print();
         }
 
-        // Initialize Telegram Main Button
+        // =================== TELEGRAM INTEGRATION ===================
         tg.MainButton.setParams({
-            text: 'VIEW CART',
-            color: '#8B4513',
+            text: 'QUICK ORDER',
+            color: '#2E8B57',
             text_color: '#FFFFFF'
         });
 
-        tg.MainButton.onClick(() => {
-            toggleCart();
-        });
-
+        tg.MainButton.onClick(openNewOrderModal);
         tg.MainButton.show();
 
-        // Update main button text based on cart
-        function updateMainButton() {
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            if (totalItems > 0) {
-                tg.MainButton.setText(`VIEW CART (${totalItems})`);
-            } else {
-                tg.MainButton.setText('VIEW CART');
+        // Handle back button
+        tg.BackButton.onClick(() => {
+            const openModal = document.querySelector('.modal-overlay.active');
+            if (openModal) {
+                closeModal(openModal.id);
+            } else if (ordersContainer.innerHTML.includes('table-card')) {
+                // If showing orders, maybe minimize or close
+                tg.close();
             }
-        }
+        });
 
-        // Call updateMainButton whenever cart changes
-        const originalUpdateCartUI = updateCartUI;
-        updateCartUI = function() {
-            originalUpdateCartUI();
-            updateMainButton();
-        };
+        // Show back button when modal is open
+        const observer = new MutationObserver(() => {
+            const hasModal = document.querySelector('.modal-overlay.active');
+            if (hasModal) {
+                tg.BackButton.show();
+            } else {
+                tg.BackButton.hide();
+            }
+        });
+
+        observer.observe(document.body, { attributes: true, childList: true, subtree: true });
     </script>
 </body>
 </html>
