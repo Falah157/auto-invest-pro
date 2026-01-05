@@ -3,26 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 QuickOrder - Waiter's App</title>
+    <title>📊 Cafe Orders History</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Telegram-like Styles */
         :root {
-            --primary: #2E8B57;
-            --primary-dark: #1E6B47;
-            --secondary: #FF7F50;
-            --secondary-dark: #E06C3D;
-            --accent: #4169E1;
-            --danger: #FF4444;
-            --warning: #FFAA00;
-            --success: #28a745;
-            --light: #F8F9FA;
-            --dark: #343A40;
-            --gray: #6C757D;
-            --border: #DEE2E6;
-            --shadow: 0 2px 10px rgba(0,0,0,0.08);
-            --radius: 8px;
-            --radius-sm: 4px;
+            --tg-bg: #18222d;
+            --tg-secondary-bg: #1e2a38;
+            --tg-text: #ffffff;
+            --tg-secondary-text: #8e8e93;
+            --tg-accent: #2ea6ff;
+            --tg-green: #33c659;
+            --tg-red: #ff3b30;
+            --tg-border: #2c3b4d;
+            --tg-card-bg: #222f3d;
         }
 
         * {
@@ -34,25 +28,27 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: var(--light);
-            color: var(--dark);
+            background: var(--tg-bg);
+            color: var(--tg-text);
             line-height: 1.4;
-            user-select: none;
+            font-size: 15px;
         }
 
-        .hidden {
-            display: none !important;
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding-bottom: 80px;
         }
 
         /* Header */
         .app-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
+            background: var(--tg-secondary-bg);
             padding: 12px 16px;
+            border-bottom: 1px solid var(--tg-border);
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
         }
 
         .header-content {
@@ -62,240 +58,222 @@
         }
 
         .app-title {
+            font-size: 18px;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 18px;
+            gap: 8px;
+        }
+
+        .stats-badge {
+            background: var(--tg-accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
             font-weight: 600;
         }
 
-        .waiter-info {
+        /* Tabs */
+        .tabs {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255,255,255,0.15);
-            padding: 6px 12px;
-            border-radius: 20px;
+            border-bottom: 1px solid var(--tg-border);
+            background: var(--tg-secondary-bg);
+            position: sticky;
+            top: 53px;
+            z-index: 99;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: var(--tg-secondary-text);
             font-size: 14px;
-        }
-
-        /* Quick Actions Bar */
-        .quick-actions {
-            display: flex;
-            gap: 8px;
-            padding: 12px 16px;
-            background: white;
-            border-bottom: 1px solid var(--border);
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .quick-actions::-webkit-scrollbar {
-            display: none;
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: var(--light);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            font-size: 14px;
-            white-space: nowrap;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            position: relative;
         }
 
-        .action-btn:hover {
-            background: #e9ecef;
-            transform: translateY(-1px);
+        .tab.active {
+            color: var(--tg-accent);
         }
 
-        .action-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--tg-accent);
+            border-radius: 3px 3px 0 0;
         }
 
-        /* Orders Container */
-        .orders-container {
-            padding: 16px;
-            max-width: 600px;
-            margin: 0 auto;
+        /* Orders List */
+        .orders-list {
+            padding: 8px 0;
         }
 
-        /* Table Card */
-        .table-card {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 16px;
+        .order-card {
+            background: var(--tg-card-bg);
+            margin: 8px 12px;
+            border-radius: 12px;
             overflow: hidden;
-            border: 2px solid transparent;
-            transition: all 0.2s;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            border: 1px solid var(--tg-border);
         }
 
-        .table-card.active {
-            border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(46, 139, 87, 0.2);
+        .order-card:hover {
+            transform: translateY(-2px);
+            background: #253341;
         }
 
-        .table-header {
-            background: linear-gradient(to right, #f8f9fa, #e9ecef);
-            padding: 12px 16px;
+        .order-card:active {
+            transform: translateY(0);
+        }
+
+        .order-header {
+            padding: 14px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
         }
 
-        .table-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .order-id {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            color: var(--tg-accent);
+            font-weight: 600;
         }
 
-        .table-number {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .table-status {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
+        .order-status {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 10px;
             font-weight: 600;
             text-transform: uppercase;
         }
 
-        .status-new { background: #d4edda; color: #155724; }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-processing { background: #cce5ff; color: #004085; }
+        .status-completed { background: rgba(51, 198, 89, 0.2); color: var(--tg-green); }
+        .status-pending { background: rgba(255, 204, 0, 0.2); color: #ffcc00; }
+        .status-cancelled { background: rgba(255, 59, 48, 0.2); color: var(--tg-red); }
 
-        .table-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .icon-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .icon-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .icon-btn.edit { color: var(--accent); }
-        .icon-btn.delete { color: var(--danger); }
-        .icon-btn.complete { color: var(--success); }
-
-        /* Order Items */
-        .order-items {
-            padding: 16px;
-        }
-
-        .order-item {
+        .order-body {
+            padding: 0 16px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
         }
 
-        .order-item:last-child {
-            border-bottom: none;
-        }
-
-        .item-info {
-            flex: 1;
-        }
-
-        .item-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .item-notes {
-            font-size: 12px;
-            color: var(--gray);
-            font-style: italic;
-        }
-
-        .item-quantity {
+        .order-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .quantity-badge {
-            background: var(--primary);
-            color: white;
-            width: 30px;
-            height: 30px;
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .customer-avatar {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
+            background: var(--tg-accent);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
             font-size: 14px;
+            font-weight: 600;
         }
 
-        /* Add Order Button */
-        .add-order-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
-            color: white;
-            border: none;
+        .customer-name {
+            font-weight: 500;
+        }
+
+        .order-meta {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 127, 80, 0.3);
-            z-index: 90;
-            transition: all 0.2s;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
         }
 
-        .add-order-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(255, 127, 80, 0.4);
+        .order-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--tg-green);
         }
 
-        /* Modals */
+        .order-time {
+            font-size: 12px;
+            color: var(--tg-secondary-text);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--tg-border);
+            margin: 8px 12px;
+            opacity: 0.5;
+        }
+
+        /* Summary Card */
+        .summary-card {
+            background: var(--tg-card-bg);
+            margin: 16px 12px;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--tg-border);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .summary-label {
+            color: var(--tg-secondary-text);
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        .summary-total {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--tg-border);
+            font-size: 18px;
+        }
+
+        .summary-total .summary-value {
+            color: var(--tg-green);
+            font-size: 20px;
+        }
+
+        /* Order Detail Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
+            backdrop-filter: blur(5px);
         }
 
         .modal-overlay.active {
@@ -304,13 +282,13 @@
         }
 
         .modal {
-            background: white;
-            border-radius: var(--radius);
+            background: var(--tg-card-bg);
+            border-radius: 16px;
             width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
+            max-width: 400px;
+            max-height: 85vh;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid var(--tg-border);
             transform: translateY(20px);
             transition: transform 0.3s;
         }
@@ -320,248 +298,290 @@
         }
 
         .modal-header {
-            background: var(--primary);
-            color: white;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 20px 16px;
+            text-align: center;
+            border-bottom: 1px solid var(--tg-border);
+            background: linear-gradient(135deg, var(--tg-secondary-bg) 0%, var(--tg-card-bg) 100%);
         }
 
-        .modal-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            transition: background 0.2s;
+            gap: 8px;
         }
 
-        .modal-close:hover {
-            background: rgba(255,255,255,0.1);
+        .modal-subtitle {
+            color: var(--tg-secondary-text);
+            font-size: 14px;
         }
 
         .modal-body {
-            padding: 20px;
+            padding: 20px 16px;
             overflow-y: auto;
             max-height: 60vh;
         }
 
-        /* Quick Order Form */
-        .quick-order-form {
-            display: grid;
-            gap: 16px;
-        }
-
-        .form-group {
+        /* Order Detail Content */
+        .customer-section {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--dark);
-        }
-
-        .form-input, .form-select, .form-textarea {
-            padding: 12px 16px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            font-size: 16px;
-            font-family: inherit;
-            transition: border-color 0.2s;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1);
-        }
-
-        .form-textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        /* Menu Items Grid */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            align-items: center;
             gap: 12px;
-            margin-top: 16px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--tg-secondary-bg);
+            border-radius: 12px;
         }
 
-        .menu-item {
-            background: var(--light);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
+        .customer-avatar.large {
+            width: 48px;
+            height: 48px;
+            font-size: 18px;
         }
 
-        .menu-item:hover {
-            background: white;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .menu-item.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .menu-item-name {
-            font-weight: 600;
+        .customer-details h3 {
+            font-size: 16px;
             margin-bottom: 4px;
         }
 
-        .menu-item-price {
+        .customer-id {
+            font-size: 12px;
+            color: var(--tg-secondary-text);
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .items-section {
+            margin: 20px 0;
+        }
+
+        .section-title {
             font-size: 14px;
-            color: var(--gray);
+            color: var(--tg-secondary-text);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .menu-item.active .menu-item-price {
-            color: rgba(255,255,255,0.9);
-        }
-
-        /* Quantity Selector */
-        .quantity-selector {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .qty-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            background: white;
-            color: var(--primary);
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .qty-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .quantity-display {
-            font-size: 20px;
-            font-weight: 700;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        /* Sync Panel */
-        .sync-panel {
-            background: white;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 16px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            border-top: 1px solid var(--border);
-            z-index: 95;
-        }
-
-        .sync-info {
+        .item-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .sync-stats {
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+        }
+
+        .item-emoji {
+            font-size: 20px;
+            width: 36px;
+            text-align: center;
+        }
+
+        .item-details h4 {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .item-price {
+            font-size: 14px;
+            color: var(--tg-green);
             font-weight: 600;
         }
 
-        .pending-count {
-            background: var(--warning);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
+        .item-quantity {
+            font-size: 12px;
+            color: var(--tg-secondary-text);
+        }
+
+        .total-section {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 2px solid var(--tg-border);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .total-amount {
+            color: var(--tg-green);
+            font-size: 22px;
+        }
+
+        .meta-section {
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--tg-secondary-bg);
+            border-radius: 12px;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
             font-size: 14px;
         }
 
-        .sync-btn {
-            background: linear-gradient(135deg, var(--accent) 0%, #3a56c4 100%);
-            color: white;
+        .meta-label {
+            color: var(--tg-secondary-text);
+        }
+
+        .meta-value {
+            font-weight: 500;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .modal-actions {
+            padding: 16px;
+            border-top: 1px solid var(--tg-border);
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 14px;
             border: none;
-            padding: 12px 24px;
-            border-radius: var(--radius);
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
+        }
+
+        .action-btn.primary {
+            background: var(--tg-accent);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: #1d8ed8;
+        }
+
+        .action-btn.secondary {
+            background: var(--tg-secondary-bg);
+            color: var(--tg-text);
+        }
+
+        .action-btn.secondary:hover {
+            background: #2c3b4d;
+        }
+
+        /* Filter Buttons */
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            background: var(--tg-secondary-bg);
+            position: sticky;
+            top: 105px;
+            z-index: 98;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--tg-border);
+            background: var(--tg-card-bg);
+            color: var(--tg-text);
+            font-size: 13px;
+            cursor: pointer;
             transition: all 0.2s;
         }
 
-        .sync-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
-        }
-
-        .sync-btn.syncing {
-            background: var(--gray);
-            cursor: not-allowed;
+        .filter-btn.active {
+            background: var(--tg-accent);
+            border-color: var(--tg-accent);
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: var(--gray);
+            color: var(--tg-secondary-text);
         }
 
         .empty-icon {
             font-size: 48px;
-            color: #ddd;
             margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Search Bar */
+        .search-container {
+            padding: 12px;
+            background: var(--tg-secondary-bg);
+            position: sticky;
+            top: 105px;
+            z-index: 98;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            background: var(--tg-card-bg);
+            border: 1px solid var(--tg-border);
+            border-radius: 12px;
+            color: var(--tg-text);
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--tg-secondary-text);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--tg-secondary-text);
         }
 
         /* Toast */
         .toast {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: var(--dark);
-            color: white;
-            padding: 12px 24px;
-            border-radius: var(--radius);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(-50%) translateY(100px);
+            background: var(--tg-secondary-bg);
+            color: var(--tg-text);
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             z-index: 1100;
             opacity: 0;
             transition: all 0.3s;
             max-width: 90%;
             text-align: center;
+            border: 1px solid var(--tg-border);
+            backdrop-filter: blur(10px);
         }
 
         .toast.show {
@@ -569,565 +589,541 @@
             opacity: 1;
         }
 
-        .toast.success { background: var(--success); }
-        .toast.error { background: var(--danger); }
-        .toast.warning { background: var(--warning); }
-
-        /* Animations */
-        @keyframes slideIn {
-            from { transform: translateY(10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--tg-secondary-text);
         }
 
-        .table-card {
-            animation: slideIn 0.3s ease-out;
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--tg-border);
+            border-top-color: var(--tg-accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .order-card {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Print Styles */
+        @media print {
+            .tabs, .filter-buttons, .search-container, .modal-overlay {
+                display: none !important;
+            }
+            
+            .order-card {
+                break-inside: avoid;
+                border: 1px solid #000 !important;
+                margin: 10px 0 !important;
+            }
         }
 
         /* Responsive */
         @media (max-width: 480px) {
-            .orders-container {
-                padding: 12px;
+            .order-card {
+                margin: 6px 8px;
             }
             
-            .menu-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .modal {
+                max-height: 90vh;
             }
             
-            .app-title {
-                font-size: 16px;
-            }
-            
-            .waiter-info {
-                font-size: 12px;
-                padding: 4px 8px;
-            }
-        }
-
-        /* Print Styles for Kitchen Tickets */
-        @media print {
-            .quick-actions,
-            .add-order-btn,
-            .sync-panel,
-            .app-header {
-                display: none !important;
-            }
-            
-            .table-card {
-                break-inside: avoid;
-                border: 2px solid #000 !important;
-                margin-bottom: 20px;
+            .modal-actions {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
     <!-- Main App -->
-    <div id="app">
+    <div id="app" class="container">
         <!-- Header -->
         <header class="app-header">
             <div class="header-content">
                 <div class="app-title">
-                    <i class="fas fa-concierge-bell"></i>
-                    <span>QuickOrder Pro</span>
+                    <span>📊 ORDERS HISTORY</span>
                 </div>
-                <div class="waiter-info">
-                    <i class="fas fa-user-tie"></i>
-                    <span id="waiter-name">Loading...</span>
-                </div>
+                <div class="stats-badge" id="orders-count">20 orders</div>
             </div>
         </header>
 
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <button class="action-btn active" data-filter="all">
-                <i class="fas fa-list"></i> All Tables
-            </button>
-            <button class="action-btn" data-filter="pending">
-                <i class="fas fa-clock"></i> Pending
-            </button>
-            <button class="action-btn" data-filter="new">
-                <i class="fas fa-exclamation-circle"></i> New Orders
-            </button>
-            <button class="action-btn" data-filter="processing">
-                <i class="fas fa-utensils"></i> In Kitchen
-            </button>
-            <button class="action-btn" onclick="printAllOrders()">
-                <i class="fas fa-print"></i> Print All
-            </button>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="all">All Orders</button>
+            <button class="tab" data-tab="today">Today</button>
+            <button class="tab" data-tab="week">This Week</button>
+        </div>
+
+        <!-- Search -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="search-icon">🔍</i>
+                <input type="text" class="search-input" id="search-input" placeholder="Search by customer or order ID...">
+            </div>
         </div>
 
         <!-- Orders List -->
-        <main class="orders-container" id="orders-container">
-            <!-- Orders will be loaded here -->
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
-                <h3>No Active Orders</h3>
-                <p>Tap the + button to take a new order</p>
+        <div class="orders-list" id="orders-list">
+            <!-- Orders loaded dynamically -->
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading orders...</p>
             </div>
-        </main>
+        </div>
 
-        <!-- Add Order Button -->
-        <button class="add-order-btn" onclick="openNewOrderModal()">
-            <i class="fas fa-plus"></i>
-        </button>
+        <!-- Summary Card -->
+        <div class="summary-card">
+            <div class="summary-row">
+                <span class="summary-label">📈 Total Orders</span>
+                <span class="summary-value" id="total-orders">20</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">💰 Total Revenue</span>
+                <span class="summary-value" id="total-revenue">$123</span>
+            </div>
+            <div class="summary-row summary-total">
+                <span class="summary-label">📊 Average Order</span>
+                <span class="summary-value" id="average-order">$6.15</span>
+            </div>
+        </div>
+    </div>
 
-        <!-- Sync Panel -->
-        <div class="sync-panel">
-            <div class="sync-info">
-                <div class="sync-stats">
-                    <span>Pending Sync:</span>
-                    <span class="pending-count" id="pending-count">0</span>
+    <!-- Order Detail Modal -->
+    <div class="modal-overlay" id="order-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>✅ ORDER COMPLETED!</span>
                 </div>
-                <button class="sync-btn" onclick="syncToMainSystem()">
-                    <i class="fas fa-sync-alt"></i>
-                    Sync to Main System
+                <div class="modal-subtitle" id="modal-subtitle">Order details</div>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Customer Info -->
+                <div class="customer-section">
+                    <div class="customer-avatar large" id="customer-avatar">H</div>
+                    <div class="customer-details">
+                        <h3 id="customer-name">Hero</h3>
+                        <div class="customer-id" id="customer-id">CUST001</div>
+                    </div>
+                </div>
+
+                <!-- Items List -->
+                <div class="items-section">
+                    <div class="section-title">Items</div>
+                    <div id="order-items">
+                        <!-- Items loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Total -->
+                <div class="total-section">
+                    <div class="section-title">Payment</div>
+                    <div class="total-row">
+                        <span>TOTAL:</span>
+                        <span class="total-amount" id="order-total">$15</span>
+                    </div>
+                </div>
+
+                <!-- Order Meta -->
+                <div class="meta-section">
+                    <div class="meta-row">
+                        <span class="meta-label">🆔 Order ID</span>
+                        <span class="meta-value" id="modal-order-id">ORDER20251112112138</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">⏰ Time</span>
+                        <span class="meta-value" id="modal-time">2025-11-12 11:21</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">📝 Status</span>
+                        <span class="meta-value" id="modal-status">Completed</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">💾 Storage</span>
+                        <span class="meta-value" id="modal-storage">Local Database</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="action-btn secondary" onclick="closeModal()">
+                    <span>← Back</span>
+                </button>
+                <button class="action-btn primary" onclick="reprintOrder()">
+                    <span>🖨️ Reprint</span>
                 </button>
             </div>
-            <div style="font-size: 12px; color: var(--gray); text-align: center;">
-                Orders are stored locally. Sync when you have time.
-            </div>
         </div>
-
-        <!-- Modals -->
-        
-        <!-- New Order Modal -->
-        <div class="modal-overlay" id="new-order-modal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h3>📝 Take New Order</h3>
-                    <button class="modal-close" onclick="closeModal('new-order-modal')">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="quick-order-form">
-                        <div class="form-group">
-                            <label class="form-label">Table Number *</label>
-                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
-                                <button class="table-option" data-table="1" onclick="selectTable(1)">1</button>
-                                <button class="table-option" data-table="2" onclick="selectTable(2)">2</button>
-                                <button class="table-option" data-table="3" onclick="selectTable(3)">3</button>
-                                <button class="table-option" data-table="4" onclick="selectTable(4)">4</button>
-                                <button class="table-option" data-table="5" onclick="selectTable(5)">5</button>
-                                <button class="table-option" data-table="6" onclick="selectTable(6)">6</button>
-                                <button class="table-option" data-table="7" onclick="selectTable(7)">7</button>
-                                <button class="table-option" data-table="8" onclick="selectTable(8)">8</button>
-                                <button class="table-option" data-table="9" onclick="selectTable(9)">9</button>
-                                <button class="table-option" data-table="10" onclick="selectTable(10)">10</button>
-                                <button class="table-option" data-table="11" onclick="selectTable(11)">11</button>
-                                <button class="table-option" data-table="12" onclick="selectTable(12)">12</button>
-                            </div>
-                            <input type="number" id="table-input" class="form-input" placeholder="Or enter table number" min="1" max="50">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Customer Count</label>
-                            <input type="number" id="customer-count" class="form-input" value="1" min="1" max="20">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Quick Items *</label>
-                            <div class="menu-grid" id="quick-items">
-                                <!-- Quick items loaded dynamically -->
-                            </div>
-                        </div>
-
-                        <div class="quantity-selector">
-                            <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
-                            <div class="quantity-display" id="current-quantity">1</div>
-                            <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Special Instructions</label>
-                            <textarea id="order-notes" class="form-textarea" placeholder="Allergies, modifications, etc."></textarea>
-                        </div>
-
-                        <button class="sync-btn" onclick="addToCurrentOrder()" style="width: 100%; margin-top: 16px;">
-                            <i class="fas fa-plus-circle"></i> Add to Order
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Current Order Modal -->
-        <div class="modal-overlay" id="current-order-modal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h3>🛒 Current Order - Table <span id="current-table">?</span></h3>
-                    <button class="modal-close" onclick="closeModal('current-order-modal')">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div id="current-order-items">
-                        <!-- Current order items shown here -->
-                    </div>
-                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
-                        <button class="sync-btn" onclick="submitOrder()" style="width: 100%; background: var(--success);">
-                            <i class="fas fa-paper-plane"></i> Submit Order to Kitchen
-                        </button>
-                        <button class="sync-btn" onclick="clearCurrentOrder()" style="width: 100%; margin-top: 10px; background: var(--danger);">
-                            <i class="fas fa-trash"></i> Clear Order
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Edit Order Modal -->
-        <div class="modal-overlay" id="edit-order-modal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h3>✏️ Edit Order</h3>
-                    <button class="modal-close" onclick="closeModal('edit-order-modal')">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <!-- Edit form loaded dynamically -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Toast Notification -->
-        <div class="toast" id="toast"></div>
     </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
     <script>
         // =================== INITIALIZATION ===================
         const tg = window.Telegram.WebApp;
-        let orders = JSON.parse(localStorage.getItem('waiter_orders')) || [];
-        let currentOrder = {
-            table: null,
-            customerCount: 1,
-            items: [],
-            notes: '',
-            timestamp: null
-        };
-        let currentWaiter = {
-            id: 'waiter_001',
-            name: 'Waiter'
-        };
-        let selectedTable = null;
-        let currentQuantity = 1;
-        let selectedMenuItem = null;
+        let orders = [];
+        let filteredOrders = [];
+        let currentTab = 'all';
+        let currentSearch = '';
 
-        // Menu items for quick selection
-        const menuItems = [
-            { id: 1, name: 'Espresso', price: 3.5, category: 'drinks', color: '#8B4513' },
-            { id: 2, name: 'Cappuccino', price: 4.5, category: 'drinks', color: '#D2691E' },
-            { id: 3, name: 'Americano', price: 3.8, category: 'drinks', color: '#8B4513' },
-            { id: 4, name: 'Latte', price: 4.8, category: 'drinks', color: '#D2691E' },
-            { id: 5, name: 'Iced Coffee', price: 4.2, category: 'cold', color: '#4169E1' },
-            { id: 6, name: 'Club Sandwich', price: 8.5, category: 'food', color: '#FF7F50' },
-            { id: 7, name: 'Caesar Salad', price: 7.8, category: 'food', color: '#28a745' },
-            { id: 8, name: 'Burger', price: 9.5, category: 'food', color: '#FF7F50' },
-            { id: 9, name: 'Fries', price: 4.5, category: 'sides', color: '#FFAA00' },
-            { id: 10, name: 'Pizza', price: 11.5, category: 'food', color: '#FF7F50' },
-            { id: 11, name: 'Coke', price: 2.5, category: 'drinks', color: '#4169E1' },
-            { id: 12, name: 'Water', price: 1.5, category: 'drinks', color: '#4169E1' },
-            { id: 13, name: 'Beer', price: 5.5, category: 'drinks', color: '#FFAA00' },
-            { id: 14, name: 'Wine', price: 7.5, category: 'drinks', color: '#8B4513' },
-            { id: 15, name: 'Dessert', price: 6.5, category: 'dessert', color: '#E91E63' }
+        // Sample data with your exact format
+        const sampleOrders = [
+            {
+                id: 'ORDER20251112104950',
+                customer: { name: 'kotharey', avatar: 'K', id: 'CUST001' },
+                amount: 5,
+                time: '2025-11-12 10:49',
+                status: 'completed',
+                items: [
+                    { name: 'Coffee', emoji: '☕', price: 5, quantity: 1 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251112093405',
+                customer: { name: 'fallo', avatar: 'F', id: 'CUST002' },
+                amount: 10,
+                time: '2025-11-12 09:34',
+                status: 'completed',
+                items: [
+                    { name: 'Burger', emoji: '🍔', price: 8, quantity: 1 },
+                    { name: 'Fries', emoji: '🍟', price: 2, quantity: 1 }
+                ],
+                payment: { method: 'Card', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251112080624',
+                customer: { name: 'Fallo', avatar: 'F', id: 'CUST003' },
+                amount: 20,
+                time: '2025-11-12 08:06',
+                status: 'completed',
+                items: [
+                    { name: 'Pizza', emoji: '🍕', price: 15, quantity: 1 },
+                    { name: 'Coke', emoji: '🥤', price: 3, quantity: 1 },
+                    { name: 'Ice Cream', emoji: '🍦', price: 2, quantity: 1 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251112074947',
+                customer: { name: 'fallo', avatar: 'F', id: 'CUST004' },
+                amount: 15,
+                time: '2025-11-12 07:49',
+                status: 'pending',
+                items: [
+                    { name: 'Coffee', emoji: '☕', price: 5, quantity: 2 },
+                    { name: 'Croissant', emoji: '🥐', price: 5, quantity: 1 }
+                ],
+                payment: { method: 'Card', status: 'pending' }
+            },
+            {
+                id: 'ORDER20251111175440',
+                customer: { name: 'Faudy', avatar: 'F', id: 'CUST005' },
+                amount: 13,
+                time: '2025-11-11 17:54',
+                status: 'completed',
+                items: [
+                    { name: 'Tea', emoji: '🍵', price: 3, quantity: 1 },
+                    { name: 'Sandwich', emoji: '🥪', price: 10, quantity: 1 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111174601',
+                customer: { name: 'fallo', avatar: 'F', id: 'CUST006' },
+                amount: 10,
+                time: '2025-11-11 17:46',
+                status: 'completed',
+                items: [
+                    { name: 'Water', emoji: '💧', price: 5, quantity: 2 }
+                ],
+                payment: { method: 'Card', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111174214',
+                customer: { name: 'fallo', avatar: 'F', id: 'CUST007' },
+                amount: 10,
+                time: '2025-11-11 17:42',
+                status: 'cancelled',
+                items: [
+                    { name: 'Coffee', emoji: '☕', price: 5, quantity: 2 }
+                ],
+                payment: { method: 'Cash', status: 'refunded' }
+            },
+            {
+                id: 'ORDER20251111153412',
+                customer: { name: 'fallo', avatar: 'F', id: 'CUST008' },
+                amount: 20,
+                time: '2025-11-11 15:34',
+                status: 'completed',
+                items: [
+                    { name: 'Steak', emoji: '🥩', price: 18, quantity: 1 },
+                    { name: 'Water', emoji: '💧', price: 2, quantity: 1 }
+                ],
+                payment: { method: 'Card', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111152237',
+                customer: { name: 'Siday', avatar: 'S', id: 'CUST009' },
+                amount: 10,
+                time: '2025-11-11 15:22',
+                status: 'completed',
+                items: [
+                    { name: 'Salad', emoji: '🥗', price: 8, quantity: 1 },
+                    { name: 'Juice', emoji: '🧃', price: 2, quantity: 1 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111144545',
+                customer: { name: 'fallo', avatar: 'F', id: 'CUST010' },
+                amount: 10,
+                time: '2025-11-11 14:45',
+                status: 'completed',
+                items: [
+                    { name: 'Pasta', emoji: '🍝', price: 10, quantity: 1 }
+                ],
+                payment: { method: 'Card', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111133412',
+                customer: { name: 'John', avatar: 'J', id: 'CUST011' },
+                amount: 8,
+                time: '2025-11-11 13:34',
+                status: 'completed',
+                items: [
+                    { name: 'Coffee', emoji: '☕', price: 4, quantity: 2 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111122137',
+                customer: { name: 'Emma', avatar: 'E', id: 'CUST012' },
+                amount: 12,
+                time: '2025-11-11 12:21',
+                status: 'completed',
+                items: [
+                    { name: 'Cake', emoji: '🍰', price: 6, quantity: 2 }
+                ],
+                payment: { method: 'Card', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111111549',
+                customer: { name: 'Mike', avatar: 'M', id: 'CUST013' },
+                amount: 18,
+                time: '2025-11-11 11:15',
+                status: 'completed',
+                items: [
+                    { name: 'Burger', emoji: '🍔', price: 9, quantity: 2 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111100928',
+                customer: { name: 'Sarah', avatar: 'S', id: 'CUST014' },
+                amount: 7,
+                time: '2025-11-11 10:09',
+                status: 'completed',
+                items: [
+                    { name: 'Tea', emoji: '🍵', price: 3.5, quantity: 2 }
+                ],
+                payment: { method: 'Card', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111085716',
+                customer: { name: 'David', avatar: 'D', id: 'CUST015' },
+                amount: 22,
+                time: '2025-11-11 08:57',
+                status: 'completed',
+                items: [
+                    { name: 'Pizza', emoji: '🍕', price: 15, quantity: 1 },
+                    { name: 'Beer', emoji: '🍺', price: 7, quantity: 1 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111074503',
+                customer: { name: 'Lisa', avatar: 'L', id: 'CUST016' },
+                amount: 9,
+                time: '2025-11-11 07:45',
+                status: 'completed',
+                items: [
+                    { name: 'Croissant', emoji: '🥐', price: 4.5, quantity: 2 }
+                ],
+                payment: { method: 'Card', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111063251',
+                customer: { name: 'Tom', avatar: 'T', id: 'CUST017' },
+                amount: 14,
+                time: '2025-11-11 06:32',
+                status: 'completed',
+                items: [
+                    { name: 'Breakfast Set', emoji: '🍳', price: 14, quantity: 1 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111052148',
+                customer: { name: 'Anna', avatar: 'A', id: 'CUST018' },
+                amount: 6,
+                time: '2025-11-11 05:21',
+                status: 'completed',
+                items: [
+                    { name: 'Coffee', emoji: '☕', price: 3, quantity: 2 }
+                ],
+                payment: { method: 'Card', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111041537',
+                customer: { name: 'Peter', avatar: 'P', id: 'CUST019' },
+                amount: 16,
+                time: '2025-11-11 04:15',
+                status: 'completed',
+                items: [
+                    { name: 'Steak', emoji: '🥩', price: 16, quantity: 1 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            },
+            {
+                id: 'ORDER20251111031226',
+                customer: { name: 'Maria', avatar: 'M', id: 'CUST020' },
+                amount: 11,
+                time: '2025-11-11 03:12',
+                status: 'completed',
+                items: [
+                    { name: 'Pasta', emoji: '🍝', price: 11, quantity: 1 }
+                ],
+                payment: { method: 'Card', status: 'paid' }
+            }
         ];
 
-        // Initialize Telegram Web App
-        tg.expand();
-        tg.enableClosingConfirmation();
-        tg.setHeaderColor('#2E8B57');
-        tg.setBackgroundColor('#F8F9FA');
-
-        // Get waiter info from Telegram or local storage
-        if (tg.initDataUnsafe.user) {
-            const user = tg.initDataUnsafe.user;
-            currentWaiter = {
-                id: user.id.toString(),
-                name: user.first_name || 'Waiter'
-            };
-            document.getElementById('waiter-name').textContent = currentWaiter.name;
-        } else {
-            const savedWaiter = localStorage.getItem('current_waiter');
-            if (savedWaiter) {
-                currentWaiter = JSON.parse(savedWaiter);
-                document.getElementById('waiter-name').textContent = currentWaiter.name;
-            }
-        }
-
-        // Save waiter info
-        localStorage.setItem('current_waiter', JSON.stringify(currentWaiter));
-
         // =================== DOM ELEMENTS ===================
-        const ordersContainer = document.getElementById('orders-container');
-        const pendingCountEl = document.getElementById('pending-count');
-        const quickItemsContainer = document.getElementById('quick-items');
-        const currentQuantityEl = document.getElementById('current-quantity');
-        const tableInput = document.getElementById('table-input');
-        const customerCountInput = document.getElementById('customer-count');
-        const orderNotesInput = document.getElementById('order-notes');
+        const ordersListEl = document.getElementById('orders-list');
+        const ordersCountEl = document.getElementById('orders-count');
+        const totalOrdersEl = document.getElementById('total-orders');
+        const totalRevenueEl = document.getElementById('total-revenue');
+        const averageOrderEl = document.getElementById('average-order');
+        const searchInputEl = document.getElementById('search-input');
+        const orderModalEl = document.getElementById('order-modal');
         const toastEl = document.getElementById('toast');
+        const tabs = document.querySelectorAll('.tab');
 
-        // =================== INITIAL RENDER ===================
+        // =================== INITIAL LOAD ===================
         document.addEventListener('DOMContentLoaded', () => {
-            loadQuickItems();
-            renderOrders();
-            updatePendingCount();
+            // Initialize Telegram Web App
+            tg.expand();
+            tg.setHeaderColor('#18222d');
+            tg.setBackgroundColor('#18222d');
+            
+            // Load orders from localStorage or use sample data
+            loadOrders();
+            
+            // Setup event listeners
             setupEventListeners();
             
-            // Check for unsaved orders on load
-            const unsaved = JSON.parse(localStorage.getItem('unsaved_order'));
-            if (unsaved && unsaved.items.length > 0) {
-                currentOrder = unsaved;
-                showToast('You have an unsaved order. Continue?', 'warning');
-            }
+            // Initial render
+            renderOrders();
+            updateStats();
         });
 
         function setupEventListeners() {
-            // Filter buttons
-            document.querySelectorAll('.action-btn[data-filter]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    const filter = this.dataset.filter;
-                    renderOrders(filter);
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentTab = tab.dataset.tab;
+                    filterOrders();
                 });
             });
 
-            // Table input
-            tableInput.addEventListener('change', function() {
-                if (this.value) {
-                    selectTable(parseInt(this.value));
+            // Search
+            searchInputEl.addEventListener('input', () => {
+                currentSearch = searchInputEl.value.toLowerCase();
+                filterOrders();
+            });
+
+            // Close modal on overlay click
+            orderModalEl.addEventListener('click', (e) => {
+                if (e.target === orderModalEl) {
+                    closeModal();
                 }
             });
 
-            // Customer count input
-            customerCountInput.addEventListener('change', function() {
-                if (currentOrder.table) {
-                    currentOrder.customerCount = parseInt(this.value) || 1;
-                }
-            });
-
-            // Order notes
-            orderNotesInput.addEventListener('input', function() {
-                if (currentOrder.table) {
-                    currentOrder.notes = this.value;
+            // Escape key to close modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && orderModalEl.classList.contains('active')) {
+                    closeModal();
                 }
             });
         }
 
-        // =================== QUICK ITEMS RENDER ===================
-        function loadQuickItems() {
-            quickItemsContainer.innerHTML = '';
-            menuItems.forEach(item => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'menu-item';
-                itemEl.innerHTML = `
-                    <div class="menu-item-name">${item.name}</div>
-                    <div class="menu-item-price">$${item.price.toFixed(2)}</div>
-                `;
-                itemEl.style.borderLeft = `4px solid ${item.color}`;
-                itemEl.addEventListener('click', () => selectMenuItem(item));
-                quickItemsContainer.appendChild(itemEl);
-            });
-        }
-
-        function selectMenuItem(item) {
-            selectedMenuItem = item;
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            event.target.closest('.menu-item').classList.add('active');
-            currentQuantity = 1;
-            currentQuantityEl.textContent = currentQuantity;
-        }
-
-        function adjustQuantity(change) {
-            currentQuantity = Math.max(1, currentQuantity + change);
-            currentQuantityEl.textContent = currentQuantity;
-        }
-
-        function selectTable(tableNumber) {
-            selectedTable = tableNumber;
-            document.querySelectorAll('.table-option').forEach(btn => {
-                btn.classList.remove('active');
-                if (parseInt(btn.dataset.table) === tableNumber) {
-                    btn.classList.add('active');
-                }
-            });
-            tableInput.value = tableNumber;
-            
-            // Initialize current order for this table
-            if (!currentOrder.table || currentOrder.table !== tableNumber) {
-                currentOrder = {
-                    table: tableNumber,
-                    customerCount: parseInt(customerCountInput.value) || 1,
-                    items: [],
-                    notes: orderNotesInput.value,
-                    timestamp: new Date().toISOString()
-                };
-            }
-        }
-
-        // =================== ORDER MANAGEMENT ===================
-        function addToCurrentOrder() {
-            if (!selectedTable) {
-                showToast('Please select a table first', 'error');
-                return;
-            }
-            
-            if (!selectedMenuItem) {
-                showToast('Please select a menu item', 'error');
-                return;
-            }
-
-            const existingItem = currentOrder.items.find(item => item.id === selectedMenuItem.id);
-            
-            if (existingItem) {
-                existingItem.quantity += currentQuantity;
+        function loadOrders() {
+            // Try to load from localStorage first
+            const savedOrders = localStorage.getItem('cafe_orders');
+            if (savedOrders) {
+                orders = JSON.parse(savedOrders);
             } else {
-                currentOrder.items.push({
-                    ...selectedMenuItem,
-                    quantity: currentQuantity,
-                    notes: ''
-                });
+                // Use sample data and save it
+                orders = sampleOrders;
+                localStorage.setItem('cafe_orders', JSON.stringify(orders));
             }
-
-            // Save current order temporarily
-            localStorage.setItem('unsaved_order', JSON.stringify(currentOrder));
             
-            showToast(`${currentQuantity}x ${selectedMenuItem.name} added`, 'success');
-            
-            // Reset selection
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            selectedMenuItem = null;
-            currentQuantity = 1;
-            currentQuantityEl.textContent = currentQuantity;
-            
-            // Show current order modal
-            showCurrentOrder();
+            // Sort by time (newest first)
+            orders.sort((a, b) => new Date(b.time) - new Date(a.time));
         }
 
-        function showCurrentOrder() {
-            const currentTableEl = document.getElementById('current-table');
-            const currentOrderItemsEl = document.getElementById('current-order-items');
+        function filterOrders() {
+            let filtered = [...orders];
             
-            if (!currentOrder.table || currentOrder.items.length === 0) {
-                showToast('No items in current order', 'warning');
-                return;
+            // Apply tab filter
+            const now = new Date();
+            if (currentTab === 'today') {
+                const today = now.toISOString().split('T')[0];
+                filtered = filtered.filter(order => order.time.startsWith(today));
+            } else if (currentTab === 'week') {
+                const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(order => new Date(order.time) >= weekAgo);
             }
             
-            currentTableEl.textContent = currentOrder.table;
-            
-            let itemsHTML = '<h4>Current Items:</h4>';
-            let total = 0;
-            
-            currentOrder.items.forEach((item, index) => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                itemsHTML += `
-                    <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <div>
-                            <strong>${item.quantity}x ${item.name}</strong>
-                            <div style="font-size: 12px; color: #666;">$${item.price.toFixed(2)} each</div>
-                        </div>
-                        <div style="font-weight: bold;">$${itemTotal.toFixed(2)}</div>
-                    </div>
-                `;
-            });
-            
-            itemsHTML += `
-                <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px solid #000; font-weight: bold;">
-                    <div>TOTAL:</div>
-                    <div>$${total.toFixed(2)}</div>
-                </div>
-                <div style="font-size: 12px; color: #666; margin-top: 10px;">
-                    Customers: ${currentOrder.customerCount} | Table: ${currentOrder.table}
-                </div>
-            `;
-            
-            currentOrderItemsEl.innerHTML = itemsHTML;
-            openModal('current-order-modal');
-        }
-
-        function submitOrder() {
-            if (!currentOrder.table || currentOrder.items.length === 0) {
-                showToast('No items to submit', 'error');
-                return;
+            // Apply search filter
+            if (currentSearch) {
+                filtered = filtered.filter(order => 
+                    order.customer.name.toLowerCase().includes(currentSearch) ||
+                    order.id.toLowerCase().includes(currentSearch) ||
+                    order.items.some(item => item.name.toLowerCase().includes(currentSearch))
+                );
             }
-
-            // Add order to list
-            const newOrder = {
-                id: Date.now().toString(),
-                table: currentOrder.table,
-                customerCount: currentOrder.customerCount,
-                items: [...currentOrder.items],
-                notes: currentOrder.notes,
-                waiter: currentWaiter.name,
-                status: 'new',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                synced: false
-            };
-
-            orders.unshift(newOrder); // Add to beginning
-            saveOrders();
             
-            // Clear current order
-            clearCurrentOrder();
-            
-            // Update UI
+            filteredOrders = filtered;
             renderOrders();
-            updatePendingCount();
-            
-            showToast(`Order #${newOrder.id.substring(8)} submitted to kitchen`, 'success');
-            closeModal('current-order-modal');
-            
-            // Haptic feedback
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
-            }
         }
 
-        function clearCurrentOrder() {
-            currentOrder = {
-                table: null,
-                customerCount: 1,
-                items: [],
-                notes: '',
-                timestamp: null
-            };
-            
-            customerCountInput.value = 1;
-            orderNotesInput.value = '';
-            tableInput.value = '';
-            selectedTable = null;
-            selectedMenuItem = null;
-            currentQuantity = 1;
-            currentQuantityEl.textContent = 1;
-            
-            document.querySelectorAll('.table-option').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            
-            localStorage.removeItem('unsaved_order');
-            showToast('Order cleared', 'warning');
-        }
-
-        // =================== ORDERS RENDERING ===================
-        function renderOrders(filter = 'all') {
-            let filteredOrders = [...orders];
-            
-            // Apply filter
-            if (filter !== 'all') {
-                filteredOrders = filteredOrders.filter(order => order.status === filter);
-            }
-            
-            // Sort by creation date (newest first)
-            filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            
+        function renderOrders() {
             if (filteredOrders.length === 0) {
-                ordersContainer.innerHTML = `
+                ordersListEl.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">
-                            <i class="fas fa-clipboard-list"></i>
-                        </div>
-                        <h3>No ${filter === 'all' ? '' : filter} Orders</h3>
-                        <p>${filter === 'all' ? 'Tap the + button to take a new order' : 'No orders in this status'}</p>
+                        <div class="empty-icon">📭</div>
+                        <h3>No orders found</h3>
+                        <p>${currentSearch ? 'Try a different search' : 'No orders in this period'}</p>
                     </div>
                 `;
                 return;
@@ -1135,351 +1131,237 @@
             
             let ordersHTML = '';
             
-            filteredOrders.forEach(order => {
-                const orderTime = new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
-                const totalAmount = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                
-                let itemsHTML = '';
-                order.items.forEach(item => {
-                    itemsHTML += `
-                        <div class="order-item">
-                            <div class="item-info">
-                                <div class="item-name">${item.quantity}x ${item.name}</div>
-                                ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
-                            </div>
-                            <div class="item-quantity">
-                                <div class="quantity-badge">${item.quantity}</div>
-                            </div>
-                        </div>
-                    `;
-                });
+            filteredOrders.forEach((order, index) => {
+                const orderDate = new Date(order.time);
+                const formattedTime = `${orderDate.getHours().toString().padStart(2, '0')}:${orderDate.getMinutes().toString().padStart(2, '0')}`;
+                const formattedDate = `${(orderDate.getMonth() + 1).toString().padStart(2, '0')}/${orderDate.getDate().toString().padStart(2, '0')}`;
                 
                 ordersHTML += `
-                    <div class="table-card" data-order-id="${order.id}">
-                        <div class="table-header">
-                            <div class="table-info">
-                                <div class="table-number">Table ${order.table}</div>
-                                <div class="table-status status-${order.status}">${order.status}</div>
-                                <span style="font-size: 12px; color: #666;">${orderTime} • ${totalItems} items</span>
-                            </div>
-                            <div class="table-controls">
-                                <button class="icon-btn edit" onclick="editOrder('${order.id}')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                ${order.status === 'new' ? `
-                                <button class="icon-btn complete" onclick="markOrderProcessing('${order.id}')">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                ` : ''}
-                                <button class="icon-btn delete" onclick="deleteOrder('${order.id}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                    <div class="order-card" onclick="viewOrder('${order.id}')">
+                        <div class="order-header">
+                            <div class="order-id">${order.id}</div>
+                            <div class="order-status status-${order.status}">${order.status}</div>
                         </div>
-                        <div class="order-items">
-                            ${itemsHTML}
-                            <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-weight: bold;">
-                                <div>Total: $${totalAmount.toFixed(2)}</div>
-                                <div style="font-size: 12px; color: #666;">${order.customerCount} customer(s)</div>
+                        <div class="order-body">
+                            <div class="order-info">
+                                <div class="customer-avatar">${order.customer.avatar}</div>
+                                <div class="customer-info">
+                                    <div class="customer-name">${order.customer.name}</div>
+                                </div>
                             </div>
-                            ${order.notes ? `
-                            <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; font-size: 12px; color: #666;">
-                                <strong>Notes:</strong> ${order.notes}
-                            </div>
-                            ` : ''}
-                            <div style="font-size: 11px; color: #999; margin-top: 10px; display: flex; justify-content: space-between;">
-                                <span>Waiter: ${order.waiter}</span>
-                                <span>${order.synced ? '✅ Synced' : '⏳ Pending sync'}</span>
+                            <div class="order-meta">
+                                <div class="order-amount">$${order.amount}</div>
+                                <div class="order-time">${formattedDate} ${formattedTime}</div>
                             </div>
                         </div>
                     </div>
                 `;
+                
+                // Add divider if not last item
+                if (index < filteredOrders.length - 1) {
+                    ordersHTML += '<div class="divider"></div>';
+                }
             });
             
-            ordersContainer.innerHTML = ordersHTML;
+            ordersListEl.innerHTML = ordersHTML;
         }
 
-        // =================== ORDER ACTIONS ===================
-        function editOrder(orderId) {
+        function viewOrder(orderId) {
             const order = orders.find(o => o.id === orderId);
             if (!order) return;
             
-            const modalBody = document.querySelector('#edit-order-modal .modal-body');
-            let itemsHTML = '';
+            // Format date and time
+            const orderDate = new Date(order.time);
+            const formattedDate = orderDate.toISOString().split('T')[0];
+            const formattedTime = `${orderDate.getHours().toString().padStart(2, '0')}:${orderDate.getMinutes().toString().padStart(2, '0')}`;
+            const fullDateTime = `${formattedDate} ${formattedTime}`;
             
-            order.items.forEach((item, index) => {
+            // Update modal content
+            document.getElementById('customer-avatar').textContent = order.customer.avatar;
+            document.getElementById('customer-name').textContent = order.customer.name;
+            document.getElementById('customer-id').textContent = order.customer.id;
+            document.getElementById('modal-order-id').textContent = order.id;
+            document.getElementById('modal-time').textContent = fullDateTime;
+            document.getElementById('order-total').textContent = `$${order.amount}`;
+            document.getElementById('modal-status').textContent = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+            document.getElementById('modal-storage').textContent = 'Local Database';
+            
+            // Build items list
+            let itemsHTML = '';
+            order.items.forEach(item => {
+                const itemTotal = item.price * item.quantity;
                 itemsHTML += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <div>
-                            <strong>${item.name}</strong>
-                            <div style="font-size: 12px; color: #666;">$${item.price.toFixed(2)} each</div>
+                    <div class="item-row">
+                        <div class="item-info">
+                            <div class="item-emoji">${item.emoji}</div>
+                            <div class="item-details">
+                                <h4>${item.name}</h4>
+                                <div class="item-quantity">x${item.quantity}</div>
+                            </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <button onclick="adjustOrderItemQuantity('${orderId}', ${index}, -1)" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white;">-</button>
-                            <span style="font-weight: bold; min-width: 30px; text-align: center;">${item.quantity}</span>
-                            <button onclick="adjustOrderItemQuantity('${orderId}', ${index}, 1)" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white;">+</button>
-                            <button onclick="removeOrderItem('${orderId}', ${index})" style="color: #ff4444; background: none; border: none;">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+                        <div class="item-price">$${itemTotal}</div>
                     </div>
                 `;
             });
+            document.getElementById('order-items').innerHTML = itemsHTML;
             
-            modalBody.innerHTML = `
-                <div style="margin-bottom: 20px;">
-                    <h4>Edit Order - Table ${order.table}</h4>
-                    <p style="font-size: 12px; color: #666;">Created: ${new Date(order.createdAt).toLocaleString()}</p>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Status</label>
-                    <select id="edit-order-status" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-                        <option value="new" ${order.status === 'new' ? 'selected' : ''}>New</option>
-                        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
-                        <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
-                        <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
-                    </select>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Customer Count</label>
-                    <input type="number" id="edit-customer-count" value="${order.customerCount}" min="1" max="50" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <h5>Order Items</h5>
-                    ${itemsHTML}
-                    <button onclick="openNewOrderModalForEdit('${orderId}')" style="width: 100%; padding: 10px; background: #f8f9fa; border: 1px dashed #ddd; border-radius: 4px; margin-top: 10px;">
-                        <i class="fas fa-plus"></i> Add More Items
-                    </button>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Special Instructions</label>
-                    <textarea id="edit-order-notes" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; min-height: 80px;">${order.notes || ''}</textarea>
-                </div>
-                
-                <button onclick="saveOrderChanges('${orderId}')" style="width: 100%; padding: 12px; background: #2E8B57; color: white; border: none; border-radius: 4px; font-weight: bold;">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-            `;
+            // Update subtitle based on status
+            const subtitleMap = {
+                'completed': '✅ Order completed successfully',
+                'pending': '⏳ Order is being processed',
+                'cancelled': '❌ Order was cancelled'
+            };
+            document.getElementById('modal-subtitle').textContent = subtitleMap[order.status] || 'Order details';
             
-            openModal('edit-order-modal');
-        }
-
-        function adjustOrderItemQuantity(orderId, itemIndex, change) {
-            const order = orders.find(o => o.id === orderId);
-            if (order && order.items[itemIndex]) {
-                order.items[itemIndex].quantity = Math.max(1, order.items[itemIndex].quantity + change);
-                order.updatedAt = new Date().toISOString();
-                order.synced = false;
-                saveOrders();
-                editOrder(orderId); // Refresh edit modal
-            }
-        }
-
-        function removeOrderItem(orderId, itemIndex) {
-            const order = orders.find(o => o.id === orderId);
-            if (order && order.items[itemIndex]) {
-                order.items.splice(itemIndex, 1);
-                order.updatedAt = new Date().toISOString();
-                order.synced = false;
-                
-                // If no items left, delete the order
-                if (order.items.length === 0) {
-                    deleteOrder(orderId);
-                    closeModal('edit-order-modal');
-                } else {
-                    saveOrders();
-                    editOrder(orderId); // Refresh edit modal
-                }
-            }
-        }
-
-        function saveOrderChanges(orderId) {
-            const order = orders.find(o => o.id === orderId);
-            if (order) {
-                order.status = document.getElementById('edit-order-status').value;
-                order.customerCount = parseInt(document.getElementById('edit-customer-count').value) || 1;
-                order.notes = document.getElementById('edit-order-notes').value;
-                order.updatedAt = new Date().toISOString();
-                order.synced = false;
-                
-                saveOrders();
-                renderOrders();
-                updatePendingCount();
-                showToast('Order updated', 'success');
-                closeModal('edit-order-modal');
-            }
-        }
-
-        function markOrderProcessing(orderId) {
-            const order = orders.find(o => o.id === orderId);
-            if (order) {
-                order.status = 'processing';
-                order.updatedAt = new Date().toISOString();
-                order.synced = false;
-                saveOrders();
-                renderOrders();
-                updatePendingCount();
-                showToast('Order sent to kitchen', 'success');
-            }
-        }
-
-        function deleteOrder(orderId) {
-            if (confirm('Are you sure you want to delete this order?')) {
-                orders = orders.filter(o => o.id !== orderId);
-                saveOrders();
-                renderOrders();
-                updatePendingCount();
-                showToast('Order deleted', 'warning');
-            }
-        }
-
-        // =================== SYNC FUNCTIONS ===================
-        async function syncToMainSystem() {
-            const pendingOrders = orders.filter(order => !order.synced);
-            
-            if (pendingOrders.length === 0) {
-                showToast('All orders are already synced', 'warning');
-                return;
-            }
-            
-            const syncBtn = document.querySelector('.sync-btn');
-            const originalText = syncBtn.innerHTML;
-            
-            // Show syncing state
-            syncBtn.classList.add('syncing');
-            syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';
-            syncBtn.disabled = true;
-            
-            try {
-                // Simulate API call to main system
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Mark all as synced
-                pendingOrders.forEach(order => {
-                    order.synced = true;
-                    order.syncedAt = new Date().toISOString();
-                });
-                
-                saveOrders();
-                updatePendingCount();
-                
-                showToast(`${pendingOrders.length} orders synced successfully!`, 'success');
-                
-                // Send data to Telegram bot (if in Mini App)
-                if (tg.sendData) {
-                    const syncData = {
-                        type: 'sync',
-                        waiter: currentWaiter,
-                        orders: pendingOrders.map(order => ({
-                            id: order.id,
-                            table: order.table,
-                            items: order.items,
-                            total: order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-                        })),
-                        timestamp: new Date().toISOString()
-                    };
-                    tg.sendData(JSON.stringify(syncData));
-                }
-                
-            } catch (error) {
-                console.error('Sync failed:', error);
-                showToast('Sync failed. Please try again.', 'error');
-            } finally {
-                // Restore button state
-                syncBtn.classList.remove('syncing');
-                syncBtn.innerHTML = originalText;
-                syncBtn.disabled = false;
-            }
-        }
-
-        function updatePendingCount() {
-            const pending = orders.filter(order => !order.synced).length;
-            pendingCountEl.textContent = pending;
-            
-            // Update Telegram Main Button
-            if (pending > 0) {
-                tg.MainButton.setParams({
-                    text: `SYNC (${pending})`,
-                    color: '#FF4444',
-                    text_color: '#FFFFFF'
-                });
-                tg.MainButton.onClick(syncToMainSystem);
-                tg.MainButton.show();
-            } else {
-                tg.MainButton.hide();
-            }
-        }
-
-        // =================== UTILITY FUNCTIONS ===================
-        function saveOrders() {
-            localStorage.setItem('waiter_orders', JSON.stringify(orders));
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
+            // Open modal
+            orderModalEl.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Haptic feedback
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
+        function closeModal() {
+            orderModalEl.classList.remove('active');
             document.body.style.overflow = '';
         }
 
-        function openNewOrderModal() {
-            openModal('new-order-modal');
+        function updateStats() {
+            const totalOrders = orders.length;
+            const totalRevenue = orders.reduce((sum, order) => sum + order.amount, 0);
+            const averageOrder = totalOrders > 0 ? (totalRevenue / totalOrders).toFixed(2) : 0;
+            const today = new Date().toISOString().split('T')[0];
+            const todayOrders = orders.filter(order => order.time.startsWith(today)).length;
+            
+            // Update counters
+            ordersCountEl.textContent = `${totalOrders} orders`;
+            totalOrdersEl.textContent = totalOrders;
+            totalRevenueEl.textContent = `$${totalRevenue}`;
+            averageOrderEl.textContent = `$${averageOrder}`;
+            
+            // Update Telegram Main Button with today's stats
+            tg.MainButton.setParams({
+                text: `📊 Today: ${todayOrders} orders`,
+                color: '#2ea6ff',
+                text_color: '#ffffff'
+            });
+            tg.MainButton.show();
+        }
+
+        function reprintOrder() {
+            const orderId = document.getElementById('modal-order-id').textContent;
+            showToast(`🖨️ Reprinting order ${orderId}...`, 'info');
+            
+            // Simulate reprint action
+            setTimeout(() => {
+                showToast('✅ Receipt sent to printer', 'success');
+            }, 1000);
         }
 
         function showToast(message, type = 'info') {
             toastEl.textContent = message;
             toastEl.className = 'toast';
-            toastEl.classList.add(type, 'show');
+            toastEl.classList.add('show');
+            
+            // Add type class if needed
+            if (type === 'success') {
+                toastEl.style.background = 'rgba(51, 198, 89, 0.9)';
+            } else if (type === 'error') {
+                toastEl.style.background = 'rgba(255, 59, 48, 0.9)';
+            } else if (type === 'warning') {
+                toastEl.style.background = 'rgba(255, 204, 0, 0.9)';
+            }
             
             setTimeout(() => {
                 toastEl.classList.remove('show');
             }, 3000);
         }
 
-        function printAllOrders() {
-            window.print();
-        }
-
         // =================== TELEGRAM INTEGRATION ===================
-        tg.MainButton.setParams({
-            text: 'QUICK ORDER',
-            color: '#2E8B57',
-            text_color: '#FFFFFF'
+        tg.MainButton.onClick(() => {
+            // Show today's summary
+            const today = new Date().toISOString().split('T')[0];
+            const todayOrders = orders.filter(order => order.time.startsWith(today));
+            const todayRevenue = todayOrders.reduce((sum, order) => sum + order.amount, 0);
+            
+            showToast(`📊 Today: ${todayOrders.length} orders, $${todayRevenue} revenue`, 'info');
         });
-
-        tg.MainButton.onClick(openNewOrderModal);
-        tg.MainButton.show();
 
         // Handle back button
         tg.BackButton.onClick(() => {
-            const openModal = document.querySelector('.modal-overlay.active');
-            if (openModal) {
-                closeModal(openModal.id);
-            } else if (ordersContainer.innerHTML.includes('table-card')) {
-                // If showing orders, maybe minimize or close
+            if (orderModalEl.classList.contains('active')) {
+                closeModal();
+            } else {
                 tg.close();
             }
         });
 
         // Show back button when modal is open
         const observer = new MutationObserver(() => {
-            const hasModal = document.querySelector('.modal-overlay.active');
-            if (hasModal) {
+            if (orderModalEl.classList.contains('active')) {
                 tg.BackButton.show();
             } else {
                 tg.BackButton.hide();
             }
         });
 
-        observer.observe(document.body, { attributes: true, childList: true, subtree: true });
+        observer.observe(orderModalEl, { attributes: true, attributeFilter: ['class'] });
+
+        // =================== DATA MANAGEMENT ===================
+        function addTestOrder() {
+            const newOrder = {
+                id: `ORDER${new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 14)}`,
+                customer: { 
+                    name: 'Test Customer', 
+                    avatar: 'T', 
+                    id: `CUST${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`
+                },
+                amount: Math.floor(Math.random() * 50) + 5,
+                time: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                status: 'completed',
+                items: [
+                    { name: 'Test Item', emoji: '🧪', price: 10, quantity: 1 }
+                ],
+                payment: { method: 'Cash', status: 'paid' }
+            };
+            
+            orders.unshift(newOrder);
+            localStorage.setItem('cafe_orders', JSON.stringify(orders));
+            filterOrders();
+            updateStats();
+            showToast('✅ Test order added', 'success');
+        }
+
+        function exportOrders() {
+            const dataStr = JSON.stringify(orders, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `orders_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showToast('📁 Orders exported to JSON', 'success');
+        }
+
+        function clearAllOrders() {
+            if (confirm('Are you sure you want to clear all orders? This cannot be undone.')) {
+                localStorage.removeItem('cafe_orders');
+                orders = [];
+                filterOrders();
+                updateStats();
+                showToast('🗑️ All orders cleared', 'warning');
+            }
+        }
+
+        // Expose functions to console for testing
+        window.addTestOrder = addTestOrder;
+        window.exportOrders = exportOrders;
+        window.clearAllOrders = clearAllOrders;
     </script>
 </body>
 </html>
