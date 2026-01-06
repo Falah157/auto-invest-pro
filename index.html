@@ -2,1585 +2,1390 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏗️ KANDITHEEMU ROAD PROJECT - Complete Monitoring System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏗️ KANDITHEEMU ROAD PROJECT - WORKING SYSTEM</title>
     <style>
-        /* Previous CSS remains, adding new styles for new features */
-        
-        /* Technical Data Styles */
-        .technical-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
+        :root {
+            --primary: #2E7D32;
+            --secondary: #1565C0;
+            --accent: #FF9800;
+            --danger: #D32F2F;
+            --success: #388E3C;
+            --warning: #FFA000;
+            --dark: #263238;
+            --light: #F5F7FA;
+            --border: #CFD8DC;
+            --card-bg: white;
+            --text: #37474F;
         }
         
-        .tech-item {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: Arial, sans-serif;
             background: var(--light);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
+            color: var(--text);
+            padding-bottom: 80px;
         }
         
-        .tech-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--primary);
-            margin: 5px 0;
-        }
-        
-        .tech-label {
-            font-size: 11px;
-            color: var(--text-light);
-            text-transform: uppercase;
-        }
-        
-        /* Financial Dashboard */
-        .financial-summary {
-            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-        }
-        
-        .cost-breakdown {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        /* Quality Control */
-        .qc-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .qc-pass { background: #e8f5e9; color: var(--success); }
-        .qc-fail { background: #ffebee; color: var(--danger); }
-        .qc-pending { background: #fff3e0; color: var(--warning); }
-        
-        /* Timeline View */
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-            margin: 20px 0;
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--border);
-        }
-        
-        .timeline-item {
-            position: relative;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: var(--light);
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -25px;
-            top: 15px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary);
-        }
-        
-        /* Boat Schedule */
-        .boat-schedule {
-            background: linear-gradient(135deg, #01579b 0%, #0277bd 100%);
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        /* Enhanced Tables */
-        .enhanced-table {
-            width: 100%;
-            font-size: 13px;
-        }
-        
-        .enhanced-table th {
-            background: var(--dark);
-            color: white;
-            padding: 12px;
-            text-align: left;
-        }
-        
-        .enhanced-table td {
-            padding: 10px;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .enhanced-table tr:nth-child(even) {
-            background: var(--light);
-        }
-        
-        /* Progress Timeline */
-        .milestone-tracker {
+        .header-top {
             display: flex;
             justify-content: space-between;
-            margin: 20px 0;
-            position: relative;
+            align-items: center;
+            margin-bottom: 10px;
         }
         
-        .milestone {
+        .container { padding: 15px; }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        
+        .stat-box {
             text-align: center;
-            flex: 1;
-            position: relative;
-        }
-        
-        .milestone.completed .milestone-dot {
-            background: var(--success);
-            border-color: var(--success);
-        }
-        
-        .milestone.in-progress .milestone-dot {
-            background: var(--warning);
-            border-color: var(--warning);
-            animation: pulse 2s infinite;
-        }
-        
-        .milestone.pending .milestone-dot {
+            padding: 10px;
             background: var(--light);
-            border-color: var(--border);
-        }
-        
-        .milestone-dot {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 3px solid var(--border);
-            margin: 0 auto 10px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
-        }
-        
-        /* Tide Chart */
-        .tide-chart {
-            height: 100px;
-            background: linear-gradient(to bottom, #e3f2fd, #bbdefb);
             border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-            margin: 15px 0;
         }
         
-        .tide-wave {
-            position: absolute;
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text);
+            margin-top: 5px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+        }
+        
+        .list-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-completed { background: #E8F5E9; color: var(--success); }
+        .status-pending { background: #FFF3E0; color: var(--warning); }
+        .status-delayed { background: #FFEBEE; color: var(--danger); }
+        .status-inprogress { background: #E3F2FD; color: var(--secondary); }
+        
+        .bottom-nav {
+            position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 60%;
-            background: linear-gradient(to top, #2196f3, #64b5f6);
-            border-radius: 50% 50% 0 0;
-            animation: wave 10s infinite linear;
-        }
-        
-        @keyframes wave {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100px); }
-        }
-        
-        /* Environmental Log */
-        .environment-log {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-        
-        /* Emergency Protocols */
-        .emergency-card {
-            background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            text-align: center;
-        }
-        
-        /* New Navigation */
-        .sub-nav {
+            background: white;
+            border-top: 1px solid var(--border);
             display: flex;
-            overflow-x: auto;
-            gap: 5px;
-            margin: 15px 0;
-            padding-bottom: 10px;
+            padding: 10px;
+            z-index: 100;
         }
         
-        .sub-nav-btn {
-            padding: 8px 16px;
-            background: var(--light);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            font-size: 12px;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-        
-        .sub-nav-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        
-        /* Data Export Options */
-        .export-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-        }
-        
-        .export-btn {
-            padding: 12px;
-            background: var(--light);
-            border: 1px solid var(--border);
-            border-radius: 10px;
+        .nav-btn {
+            flex: 1;
             text-align: center;
+            padding: 10px;
+            background: none;
+            border: none;
             cursor: pointer;
-            transition: all 0.2s;
         }
         
-        .export-btn:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
+        .nav-btn.active {
+            color: var(--primary);
+            font-weight: bold;
         }
         
-        /* Photo Documentation */
-        .photo-doc {
-            position: relative;
+        .quick-action {
+            text-align: center;
+            padding: 15px 10px;
+            background: var(--light);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .quick-action:hover {
+            background: #e0e0e0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: var(--border);
+            border-radius: 5px;
+            overflow: hidden;
             margin: 10px 0;
         }
         
-        .photo-meta {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px;
-            font-size: 11px;
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
         }
         
-        /* Signature Capture */
-        .signature-pad {
-            width: 100%;
-            height: 150px;
-            border: 2px dashed var(--border);
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 12px 20px;
             border-radius: 8px;
-            background: var(--light);
-            margin: 15px 0;
-            touch-action: none;
+            z-index: 1000;
+            display: none;
         }
         
-        /* Daily Summary Card */
-        .daily-summary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
+        .toast.show {
+            display: block;
+            animation: fadeIn 0.3s;
         }
         
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 15px;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
-        .summary-item {
-            text-align: center;
-        }
-        
-        .summary-value {
-            font-size: 24px;
+        .section-title {
+            font-size: 18px;
             font-weight: bold;
-            margin: 5px 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .summary-label {
-            font-size: 11px;
-            opacity: 0.9;
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <!-- App Container -->
-    <div id="app">
-        <!-- Enhanced Header -->
-        <header class="app-header">
-            <div class="header-top">
-                <div class="app-title">
-                    <span>🏗️ KANDITHEEMU ROAD PROJECT</span>
-                </div>
-                <div class="project-info">
-                    Phase 2 - Main Road Construction<br>
-                    <small>Contract: GDC/KTD/2024/001</small>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-top">
+            <h2>🏗️ Kanditheemu Road Project</h2>
+            <div>
+                <span id="current-date"></span><br>
+                <small id="current-time"></small>
+            </div>
+        </div>
+        <div class="grid-4" id="quick-stats">
+            <!-- Stats will load here -->
+        </div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab">
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="section-title">🚀 Quick Actions</div>
+                <div class="grid-3">
+                    <div class="quick-action" onclick="openModal('daily-report-modal')">
+                        <div style="font-size: 24px;">📝</div>
+                        <div style="font-size: 12px; margin-top: 5px;">Daily Report</div>
+                    </div>
+                    <div class="quick-action" onclick="openModal('material-modal')">
+                        <div style="font-size: 24px;">📦</div>
+                        <div style="font-size: 12px; margin-top: 5px;">Material Delivery</div>
+                    </div>
+                    <div class="quick-action" onclick="openModal('safety-modal')">
+                        <div style="font-size: 24px;">🛡️</div>
+                        <div style="font-size: 12px; margin-top: 5px;">Safety Check</div>
+                    </div>
+                    <div class="quick-action" onclick="openModal('worker-modal')">
+                        <div style="font-size: 24px;">👷</div>
+                        <div style="font-size: 12px; margin-top: 5px;">Worker Attendance</div>
+                    </div>
+                    <div class="quick-action" onclick="openModal('progress-modal')">
+                        <div style="font-size: 24px;">📏</div>
+                        <div style="font-size: 12px; margin-top: 5px;">Progress Update</div>
+                    </div>
+                    <div class="quick-action" onclick="openModal('cost-modal')">
+                        <div style="font-size: 24px;">💰</div>
+                        <div style="font-size: 12px; margin-top: 5px;">Daily Cost</div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Enhanced Weather & Tide Widget -->
-            <div class="weather-widget">
-                <div style="display: flex; justify-content: space-between; width: 100%;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div class="weather-icon">🌤️</div>
-                        <div class="weather-details">
-                            <div class="weather-temp">30°C</div>
-                            <div class="weather-condition">Partly Cloudy • Tide: High @ 14:30</div>
-                        </div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 12px; opacity: 0.8;">
-                            <div>📅 Day 45 of 180</div>
-                            <div>🕒 08:45 AM</div>
-                        </div>
-                    </div>
+            <!-- Today's Tasks -->
+            <div class="card">
+                <div class="section-title">📋 Today's Tasks</div>
+                <div id="todays-tasks">
+                    <!-- Tasks load here -->
                 </div>
             </div>
             
-            <!-- Main Tabs -->
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('operations')">🏗️ Operations</button>
-                <button class="tab" onclick="switchTab('technical')">📐 Technical</button>
-                <button class="tab" onclick="switchTab('financial')">💰 Financial</button>
-                <button class="tab" onclick="switchTab('labor')">👷 Labor</button>
-                <button class="tab" onclick="switchTab('logistics')">🚚 Logistics</button>
-                <button class="tab" onclick="switchTab('compliance')">📋 Compliance</button>
-            </div>
-        </header>
-
-        <!-- Operations Dashboard -->
-        <div id="operations-content" class="container">
-            <!-- Daily Summary -->
-            <div class="daily-summary">
-                <h3 style="margin-bottom: 15px;">📊 TODAY'S SUMMARY</h3>
-                <div class="summary-grid">
-                    <div class="summary-item">
-                        <div class="summary-value" id="workers-today">24</div>
-                        <div class="summary-label">Workers On Site</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-value" id="meters-done">85</div>
-                        <div class="summary-label">Meters Completed</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-value" id="incidents-today">0</div>
-                        <div class="summary-label">Safety Incidents</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-value" id="cost-today">$2,450</div>
-                        <div class="summary-label">Today's Cost</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sub Navigation -->
-            <div class="sub-nav">
-                <button class="sub-nav-btn active" onclick="showOperationsSub('daily')">📝 Daily Ops</button>
-                <button class="sub-nav-btn" onclick="showOperationsSub('progress')">📈 Progress</button>
-                <button class="sub-nav-btn" onclick="showOperationsSub('equipment')">🔧 Equipment</button>
-                <button class="sub-nav-btn" onclick="showOperationsSub('communications')">📞 Communications</button>
-                <button class="sub-nav-btn" onclick="showOperationsSub('environment')">🌴 Environment</button>
-            </div>
-
-            <!-- Daily Operations -->
-            <div id="daily-ops">
-                <div class="quick-actions">
-                    <button class="action-btn" onclick="openSiteInspection()">
-                        <div class="action-icon" style="background: #E8F5E9; color: var(--success);">📐</div>
-                        <div class="action-text">Site Inspection</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="openWorkerAttendance()">
-                        <div class="action-icon" style="background: #E3F2FD; color: var(--secondary);">👷</div>
-                        <div class="action-text">Worker Attendance</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="openEquipmentCheck()">
-                        <div class="action-icon" style="background: #FFF3E0; color: var(--warning);">🔧</div>
-                        <div class="action-text">Equipment Check</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="openMaterialDelivery()">
-                        <div class="action-icon" style="background: #F3E5F5; color: #7B1FA2);">📦</div>
-                        <div class="action-text">Material Delivery</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="openQualityTests()">
-                        <div class="action-icon" style="background: #E0F2F1; color: #00796B;">🧪</div>
-                        <div class="action-text">Quality Tests</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="openProgressMeasurement()">
-                        <div class="action-icon" style="background: #FFF8E1; color: #FF8F00;">📏</div>
-                        <div class="action-text">Progress Measurement</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="openSafetyInspection()">
-                        <div class="action-icon" style="background: #FFEBEE; color: var(--danger);">🛡️</div>
-                        <div class="action-text">Safety Inspection</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="openEnvironmentalCheck()">
-                        <div class="action-icon" style="background: #E8F5E9; color: #2E7D32);">🌿</div>
-                        <div class="action-text">Environmental Check</div>
-                    </button>
-                    
-                    <button class="action-btn" onclick="openDailyCosting()">
-                        <div class="action-icon" style="background: #F3E5F5; color: #7B1FA2);">💰</div>
-                        <div class="action-text">Daily Costing</div>
-                    </button>
-                </div>
-
-                <!-- Critical Alerts -->
-                <div class="section-card" style="border-left: 4px solid var(--danger);">
-                    <div class="section-header">
-                        <div class="section-title">🚨 CRITICAL ALERTS</div>
-                        <span class="item-status status-delayed">2 Pending</span>
-                    </div>
-                    <div class="section-body">
-                        <div class="list-item">
-                            <div class="item-info">
-                                <div class="item-title">⚠️ Cement stock low (3 days left)</div>
-                                <div class="item-subtitle">Order needed by tomorrow</div>
-                            </div>
-                            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="orderMaterial()">Order Now</button>
-                        </div>
-                        <div class="list-item">
-                            <div class="item-info">
-                                <div class="item-title">⚠️ Excavator service overdue</div>
-                                <div class="item-subtitle">Due for 100-hour service</div>
-                            </div>
-                            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="scheduleService()">Schedule</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Today's Timeline -->
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title">🕒 TODAY'S TIMELINE</div>
-                    </div>
-                    <div class="section-body">
-                        <div class="timeline">
-                            <div class="timeline-item">
-                                <div class="item-title">06:30 - Site Preparation</div>
-                                <div class="item-subtitle">Clearing work area, safety barriers setup</div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="item-title">08:00 - Excavation Work</div>
-                                <div class="item-subtitle">Section 4 (50m) drainage trench</div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="item-title">10:00 - Material Delivery</div>
-                                <div class="item-subtitle">Cement (100 bags), Sand (5m³)</div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="item-title">13:00 - Concrete Pouring</div>
-                                <div class="item-subtitle">Drainage base concrete (Section 4)</div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="item-title">15:00 - Quality Checks</div>
-                                <div class="item-subtitle">Slump test, compaction test</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Boat Schedule -->
-                <div class="boat-schedule">
-                    <div class="section-header" style="border-bottom: 1px solid rgba(255,255,255,0.2); padding: 0 0 10px 0;">
-                        <div class="section-title" style="color: white;">⛴️ BOAT SCHEDULE (Male' - Kanditheemu)</div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
-                        <div>
-                            <div style="font-size: 11px; opacity: 0.8;">Today's Arrivals</div>
-                            <div style="font-size: 14px; margin-top: 5px;">• MV Thundi (09:30) - Construction Materials</div>
-                            <div style="font-size: 14px;">• Speed Boat (14:00) - Engineers Visit</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 11px; opacity: 0.8;">Tomorrow</div>
-                            <div style="font-size: 14px; margin-top: 5px;">• MV Coral (08:00) - Steel, Pipes</div>
-                            <div style="font-size: 14px;">• Supply Boat (16:00) - Fuel, Equipment</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Progress Tracking -->
-            <div id="progress-tracking" style="display: none;">
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title">📈 PROJECT PROGRESS TRACKER</div>
-                    </div>
-                    <div class="section-body">
-                        <!-- Milestone Tracker -->
-                        <div class="milestone-tracker">
-                            <div class="milestone completed">
-                                <div class="milestone-dot"></div>
-                                <div style="font-size: 12px;">Survey</div>
-                                <div style="font-size: 10px; color: var(--text-light);">Day 1-7</div>
-                            </div>
-                            <div class="milestone completed">
-                                <div class="milestone-dot"></div>
-                                <div style="font-size: 12px;">Clearing</div>
-                                <div style="font-size: 10px; color: var(--text-light);">Day 8-14</div>
-                            </div>
-                            <div class="milestone in-progress">
-                                <div class="milestone-dot"></div>
-                                <div style="font-size: 12px;">Drainage</div>
-                                <div style="font-size: 10px; color: var(--text-light);">Day 15-60</div>
-                            </div>
-                            <div class="milestone pending">
-                                <div class="milestone-dot"></div>
-                                <div style="font-size: 12px;">Road Base</div>
-                                <div style="font-size: 10px; color: var(--text-light);">Day 61-100</div>
-                            </div>
-                            <div class="milestone pending">
-                                <div class="milestone-dot"></div>
-                                <div style="font-size: 12px;">Paving</div>
-                                <div style="font-size: 10px; color: var(--text-light);">Day 101-140</div>
-                            </div>
-                            <div class="milestone pending">
-                                <div class="milestone-dot"></div>
-                                <div style="font-size: 12px;">Finishing</div>
-                                <div style="font-size: 10px; color: var(--text-light);">Day 141-180</div>
-                            </div>
-                        </div>
-
-                        <!-- Technical Progress -->
-                        <div class="technical-grid">
-                            <div class="tech-item">
-                                <div class="tech-value">1.2 km</div>
-                                <div class="tech-label">Total Length</div>
-                            </div>
-                            <div class="tech-item">
-                                <div class="tech-value">350 m</div>
-                                <div class="tech-label">Completed</div>
-                            </div>
-                            <div class="tech-item">
-                                <div class="tech-value">29%</div>
-                                <div class="tech-label">Overall Progress</div>
-                            </div>
-                            <div class="tech-item">
-                                <div class="tech-value">45 days</div>
-                                <div class="tech-label">Elapsed Time</div>
-                            </div>
-                            <div class="tech-item">
-                                <div class="tech-value">135 days</div>
-                                <div class="tech-label">Remaining</div>
-                            </div>
-                            <div class="tech-item">
-                                <div class="tech-value">7.8 m/day</div>
-                                <div class="tech-label">Average Rate</div>
-                            </div>
-                        </div>
-
-                        <!-- Section-wise Progress -->
-                        <div style="margin-top: 20px;">
-                            <div style="font-weight: 600; margin-bottom: 10px;">Section-wise Progress</div>
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span>Section 1: School Road (200m)</span>
-                                    <span>85%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 85%"></div>
-                                </div>
-                            </div>
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span>Section 2: Market Road (300m)</span>
-                                    <span>45%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 45%"></div>
-                                </div>
-                            </div>
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span>Section 3: Residential (400m)</span>
-                                    <span>15%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 15%"></div>
-                                </div>
-                            </div>
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span>Section 4: Coastal (300m)</span>
-                                    <span>5%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 5%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Recent Reports -->
+            <div class="card">
+                <div class="section-title">📊 Recent Reports</div>
+                <div id="recent-reports">
+                    <!-- Reports load here -->
                 </div>
             </div>
         </div>
-
-        <!-- Technical Dashboard -->
-        <div id="technical-content" class="container" style="display: none;">
-            <div class="sub-nav">
-                <button class="sub-nav-btn active" onclick="showTechnicalSub('survey')">📐 Survey Data</button>
-                <button class="sub-nav-btn" onclick="showTechnicalSub('qc')">🧪 Quality Control</button>
-                <button class="sub-nav-btn" onclick="showTechnicalSub('measurements')">📏 Measurements</button>
-                <button class="sub-nav-btn" onclick="showTechnicalSub('drawings')">📋 Drawings</button>
-                <button class="sub-nav-btn" onclick="showTechnicalSub('specs')">📄 Specifications</button>
-            </div>
-
-            <!-- Survey Data -->
-            <div id="survey-data">
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title">📐 SURVEY DATA & COORDINATES</div>
-                        <button class="btn btn-outline" style="padding: 8px 16px; font-size: 12px;" onclick="captureGPS()">📍 Capture GPS</button>
-                    </div>
-                    <div class="section-body">
-                        <table class="enhanced-table">
-                            <thead>
-                                <tr>
-                                    <th>Point</th>
-                                    <th>Latitude</th>
-                                    <th>Longitude</th>
-                                    <th>Elevation</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>PK 0+000</td>
-                                    <td>6.5321° N</td>
-                                    <td>73.0654° E</td>
-                                    <td>1.2m</td>
-                                    <td>2024-01-15</td>
-                                    <td><span class="qc-status qc-pass">Verified</span></td>
-                                </tr>
-                                <tr>
-                                    <td>PK 0+200</td>
-                                    <td>6.5325° N</td>
-                                    <td>73.0658° E</td>
-                                    <td>1.5m</td>
-                                    <td>2024-01-15</td>
-                                    <td><span class="qc-status qc-pass">Verified</span></td>
-                                </tr>
-                                <tr>
-                                    <td>PK 0+400</td>
-                                    <td>6.5330° N</td>
-                                    <td>73.0662° E</td>
-                                    <td>1.8m</td>
-                                    <td>2024-01-20</td>
-                                    <td><span class="qc-status qc-pending">Pending</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Quality Control Tests -->
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title">🧪 QUALITY CONTROL TESTS</div>
-                        <button class="btn btn-primary" style="padding: 8px 16px; font-size: 12px;" onclick="recordQCTest()">+ New Test</button>
-                    </div>
-                    <div class="section-body">
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                            <div class="tech-item">
-                                <div class="tech-value">85 mm</div>
-                                <div class="tech-label">Avg. Slump Test</div>
-                                <div style="font-size: 11px; color: var(--success);">Within spec (75-100mm)</div>
-                            </div>
-                            <div class="tech-item">
-                                <div class="tech-value">95%</div>
-                                <div class="tech-label">Compaction</div>
-                                <div style="font-size: 11px; color: var(--success);">Meets requirement</div>
-                            </div>
-                            <div class="tech-item">
-                                <div class="tech-value">25 MPa</div>
-                                <div class="tech-label">Concrete Strength</div>
-                                <div style="font-size: 11px; color: var(--success);">Test after 7 days</div>
-                            </div>
-                            <div class="tech-item">
-                                <div class="tech-value">2%</div>
-                                <div class="tech-label">Moisture Content</div>
-                                <div style="font-size: 11px; color: var(--warning);">Slightly high</div>
-                            </div>
-                        </div>
-                    </div>
+        
+        <!-- Reports Tab -->
+        <div id="reports-tab" style="display: none;">
+            <div class="card">
+                <div class="section-title">📈 All Reports</div>
+                <button class="btn btn-primary" onclick="generateMonthlyReport()" style="width: 100%; margin-bottom: 15px;">
+                    📄 Generate Monthly Report
+                </button>
+                <div id="all-reports">
+                    <!-- All reports load here -->
                 </div>
             </div>
         </div>
-
-        <!-- Financial Dashboard -->
-        <div id="financial-content" class="container" style="display: none;">
-            <div class="financial-summary">
-                <h3 style="margin-bottom: 15px;">💰 FINANCIAL SUMMARY</h3>
-                <div style="display: flex; justify-content: space-between;">
-                    <div>
-                        <div style="font-size: 11px; opacity: 0.8;">Total Budget</div>
-                        <div style="font-size: 28px; font-weight: bold;">$850,000</div>
+        
+        <!-- Materials Tab -->
+        <div id="materials-tab" style="display: none;">
+            <div class="card">
+                <div class="section-title">📦 Material Inventory</div>
+                <button class="btn btn-secondary" onclick="openModal('material-modal')" style="width: 100%; margin-bottom: 15px;">
+                    + Add Material Delivery
+                </button>
+                <div id="materials-list">
+                    <!-- Materials load here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Financial Tab -->
+        <div id="financial-tab" style="display: none;">
+            <div class="card">
+                <div class="section-title">💰 Financial Summary</div>
+                <div class="grid-3">
+                    <div class="stat-box">
+                        <div class="stat-value" id="total-budget">$850,000</div>
+                        <div class="stat-label">Total Budget</div>
                     </div>
-                    <div>
-                        <div style="font-size: 11px; opacity: 0.8;">Spent to Date</div>
-                        <div style="font-size: 28px; font-weight: bold;">$245,300</div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="total-spent">$245,300</div>
+                        <div class="stat-label">Spent to Date</div>
                     </div>
-                    <div>
-                        <div style="font-size: 11px; opacity: 0.8;">Remaining</div>
-                        <div style="font-size: 28px; font-weight: bold;">$604,700</div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="budget-left">$604,700</div>
+                        <div class="stat-label">Remaining</div>
                     </div>
                 </div>
-                
-                <div class="progress-container" style="margin-top: 20px;">
-                    <div class="progress-label" style="color: white;">
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                         <span>Budget Utilization</span>
-                        <span>29%</span>
+                        <span id="budget-percent">29%</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 29%"></div>
+                        <div class="progress-fill" id="budget-progress" style="width: 29%"></div>
                     </div>
                 </div>
             </div>
-
-            <div class="cost-breakdown">
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title">👷 Labor Costs</div>
-                    </div>
-                    <div class="section-body">
-                        <div class="tech-item">
-                            <div class="tech-value">$125,400</div>
-                            <div class="tech-label">Total Labor Cost</div>
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <div style="font-size: 12px; color: var(--text-light);">Daily Average: $2,800</div>
-                            <div style="font-size: 12px; color: var(--text-light);">Workers: 24 @ $25/day</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title">📦 Materials</div>
-                    </div>
-                    <div class="section-body">
-                        <div class="tech-item">
-                            <div class="tech-value">$85,600</div>
-                            <div class="tech-label">Material Cost</div>
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <div style="font-size: 12px; color: var(--text-light);">Cement: $32,000</div>
-                            <div style="font-size: 12px; color: var(--text-light);">Steel: $28,500</div>
-                            <div style="font-size: 12px; color: var(--text-light);">Aggregates: $25,100</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-title">🔧 Equipment</div>
-                    </div>
-                    <div class="section-body">
-                        <div class="tech-item">
-                            <div class="tech-value">$34,300</div>
-                            <div class="tech-label">Equipment Cost</div>
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <div style="font-size: 12px; color: var(--text-light);">Excavator: $15,000</div>
-                            <div style="font-size: 12px; color: var(--text-light);">Roller: $8,500</div>
-                            <div style="font-size: 12px; color: var(--text-light);">Generator: $4,800</div>
-                            <div style="font-size: 12px; color: var(--text-light);">Fuel: $6,000</div>
-                        </div>
-                    </div>
+            
+            <div class="card">
+                <div class="section-title">📅 Daily Costs</div>
+                <button class="btn btn-secondary" onclick="openModal('cost-modal')" style="width: 100%; margin-bottom: 15px;">
+                    + Add Daily Cost
+                </button>
+                <div id="daily-costs">
+                    <!-- Costs load here -->
                 </div>
             </div>
         </div>
-
-        <!-- Additional sections for Labor, Logistics, Compliance would follow similar structure -->
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <button class="nav-item active" onclick="switchMainTab('operations')">
-                <span class="nav-icon">🏗️</span>
-                <span>Operations</span>
-            </button>
-            <button class="nav-item" onclick="switchMainTab('technical')">
-                <span class="nav-icon">📐</span>
-                <span>Technical</span>
-            </button>
-            <button class="nav-item" onclick="switchMainTab('financial')">
-                <span class="nav-icon">💰</span>
-                <span>Financial</span>
-            </button>
-            <button class="nav-item" onclick="switchMainTab('reports')">
-                <span class="nav-icon">📊</span>
-                <span>Reports</span>
-            </button>
-            <button class="nav-item" onclick="switchMainTab('more')">
-                <span class="nav-icon">⋯</span>
-                <span>More</span>
-            </button>
-        </nav>
+        
+        <!-- More Tab -->
+        <div id="more-tab" style="display: none;">
+            <div class="grid-2">
+                <div class="quick-action" onclick="exportData()">
+                    <div style="font-size: 24px;">📤</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Export Data</div>
+                </div>
+                <div class="quick-action" onclick="backupData()">
+                    <div style="font-size: 24px;">💾</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Backup</div>
+                </div>
+                <div class="quick-action" onclick="showHelp()">
+                    <div style="font-size: 24px;">❓</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Help</div>
+                </div>
+                <div class="quick-action" onclick="showSettings()">
+                    <div style="font-size: 24px;">⚙️</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Settings</div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 15px;">
+                <div class="section-title">📞 Emergency Contacts</div>
+                <div class="list-item">
+                    <div>Project Manager</div>
+                    <button class="btn btn-secondary" onclick="callContact('Ahmed Rasheed')">📞 Call</button>
+                </div>
+                <div class="list-item">
+                    <div>Site Supervisor</div>
+                    <button class="btn btn-secondary" onclick="callContact('Ibrahim Mohamed')">📞 Call</button>
+                </div>
+                <div class="list-item">
+                    <div>Emergency Services</div>
+                    <button class="btn btn-danger" onclick="callContact('119')">🚨 Emergency</button>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- MODALS FOR ALL NEW FEATURES -->
     
-    <!-- Site Inspection Modal -->
-    <div class="modal-overlay" id="site-inspection-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">📐 DAILY SITE INSPECTION</div>
-                <button class="modal-close" onclick="closeModal()">×</button>
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+        <button class="nav-btn" onclick="switchTab('reports')">📝 Reports</button>
+        <button class="nav-btn" onclick="switchTab('materials')">📦 Materials</button>
+        <button class="nav-btn" onclick="switchTab('financial')">💰 Financial</button>
+        <button class="nav-btn" onclick="switchTab('more')">⋯ More</button>
+    </div>
+    
+    <!-- MODALS -->
+    
+    <!-- Daily Report Modal -->
+    <div id="daily-report-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;">📝 Daily Site Report</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" id="report-date" value="">
             </div>
-            <div class="modal-body">
-                <!-- Comprehensive inspection form -->
-                <div class="form-group">
-                    <label class="form-label">Inspection Time</label>
-                    <input type="datetime-local" class="form-input" id="inspection-time">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Weather Conditions</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                        <button class="btn btn-outline" onclick="setWeather('sunny')">☀️ Sunny</button>
-                        <button class="btn btn-outline" onclick="setWeather('cloudy')">☁️ Cloudy</button>
-                        <button class="btn btn-outline" onclick="setWeather('rainy')">🌧️ Rainy</button>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Tide Level (for coastal work)</label>
-                    <select class="form-select" id="tide-level">
-                        <option value="low">⬇️ Low Tide</option>
-                        <option value="mid">↔️ Mid Tide</option>
-                        <option value="high">⬆️ High Tide</option>
-                        <option value="spring">🌊 Spring Tide</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Work Area Readiness</label>
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
-                        <div class="item-info">
-                            <div class="item-title">Area properly cleared and leveled</div>
-                            <div class="item-subtitle">No debris, vegetation cleared</div>
-                        </div>
-                    </div>
-                    
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
-                        <div class="item-info">
-                            <div class="item-title">Safety barriers and signage in place</div>
-                            <div class="item-subtitle">Warning signs visible to public</div>
-                        </div>
-                    </div>
-                    
-                    <div class="checklist-item">
-                        <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
-                        <div class="item-info">
-                            <div class="item-title">Access roads clear for equipment</div>
-                            <div class="item-subtitle">No obstacles for machinery movement</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">GPS Coordinates</label>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                        <input type="text" class="form-input" id="gps-lat" placeholder="Latitude">
-                        <input type="text" class="form-input" id="gps-long" placeholder="Longitude">
-                    </div>
-                    <button class="btn btn-outline" style="margin-top: 10px;" onclick="getCurrentLocation()">📍 Get Current Location</button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Inspection Photos</label>
-                    <div class="photo-grid">
-                        <div class="photo-item" onclick="takeInspectionPhoto('overall')">📷 Overall</div>
-                        <div class="photo-item" onclick="takeInspectionPhoto('details')">🔍 Details</div>
-                        <div class="photo-item" onclick="takeInspectionPhoto('issues')">⚠️ Issues</div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Issues Found</label>
-                    <textarea class="form-textarea" id="inspection-issues" placeholder="List any problems found..." rows="3"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Corrective Actions</label>
-                    <textarea class="form-textarea" id="corrective-actions" placeholder="Actions to be taken..." rows="3"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Inspector's Signature</label>
-                    <div class="signature-pad" id="signature-pad"></div>
-                    <button class="btn btn-outline" style="margin-top: 10px;" onclick="clearSignature()">Clear Signature</button>
-                </div>
-                
-                <button class="btn btn-primary" onclick="saveSiteInspection()">
-                    💾 Save Inspection Report
-                </button>
+            
+            <div class="form-group">
+                <label class="form-label">Weather Condition</label>
+                <select class="form-select" id="report-weather">
+                    <option value="sunny">☀️ Sunny</option>
+                    <option value="cloudy">☁️ Cloudy</option>
+                    <option value="rainy">🌧️ Rainy</option>
+                    <option value="stormy">⛈️ Stormy</option>
+                </select>
             </div>
+            
+            <div class="form-group">
+                <label class="form-label">Workers on Site</label>
+                <input type="number" class="form-input" id="report-workers" value="24">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Work Completed Today</label>
+                <textarea class="form-textarea" id="report-work" rows="3" placeholder="What work was done today?"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Materials Used</label>
+                <textarea class="form-textarea" id="report-materials" rows="2" placeholder="Materials used today"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Issues/Problems</label>
+                <textarea class="form-textarea" id="report-issues" rows="2" placeholder="Any issues or delays"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Meters Completed Today</label>
+                <input type="number" class="form-input" id="report-meters" placeholder="Enter meters completed">
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveDailyReport()">
+                💾 Save Daily Report
+            </button>
+            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
+                Cancel
+            </button>
         </div>
     </div>
-
+    
+    <!-- Material Delivery Modal -->
+    <div id="material-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;">📦 Material Delivery</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Material Type</label>
+                <select class="form-select" id="material-type">
+                    <option value="cement">Cement (bags)</option>
+                    <option value="sand">Sand (m³)</option>
+                    <option value="gravel">Gravel (tons)</option>
+                    <option value="steel">Steel Bars</option>
+                    <option value="pipes">Drainage Pipes</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Quantity</label>
+                <input type="number" class="form-input" id="material-qty" placeholder="Enter quantity">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Supplier</label>
+                <input type="text" class="form-input" id="material-supplier" placeholder="Supplier name">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Delivery Date</label>
+                <input type="date" class="form-input" id="material-date" value="">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Cost</label>
+                <input type="number" class="form-input" id="material-cost" placeholder="Cost in USD">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea class="form-textarea" id="material-notes" rows="2" placeholder="Any notes"></textarea>
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveMaterialDelivery()">
+                📦 Save Delivery Record
+            </button>
+            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
+                Cancel
+            </button>
+        </div>
+    </div>
+    
+    <!-- Safety Check Modal -->
+    <div id="safety-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;">🛡️ Daily Safety Check</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" id="safety-date" value="">
+            </div>
+            
+            <div style="margin: 15px 0;">
+                <label style="font-weight: bold; display: block; margin-bottom: 10px;">Safety Checklist:</label>
+                
+                <div style="margin-bottom: 10px;">
+                    <input type="checkbox" id="safety-helmets">
+                    <label for="safety-helmets">All workers wearing helmets</label>
+                </div>
+                
+                <div style="margin-bottom: 10px;">
+                    <input type="checkbox" id="safety-signs">
+                    <label for="safety-signs">Safety signs properly placed</label>
+                </div>
+                
+                <div style="margin-bottom: 10px;">
+                    <input type="checkbox" id="safety-equipment">
+                    <label for="safety-equipment">Equipment in good condition</label>
+                </div>
+                
+                <div style="margin-bottom: 10px;">
+                    <input type="checkbox" id="safety-barriers">
+                    <label for="safety-barriers">Barricades in place</label>
+                </div>
+                
+                <div style="margin-bottom: 10px;">
+                    <input type="checkbox" id="safety-firstaid">
+                    <label for="safety-firstaid">First aid kit available</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Safety Issues Found</label>
+                <textarea class="form-textarea" id="safety-issues" rows="2" placeholder="Any safety issues"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Actions Taken</label>
+                <textarea class="form-textarea" id="safety-actions" rows="2" placeholder="Actions taken"></textarea>
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveSafetyCheck()">
+                ✅ Complete Safety Check
+            </button>
+            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
+                Cancel
+            </button>
+        </div>
+    </div>
+    
     <!-- Worker Attendance Modal -->
-    <div class="modal-overlay" id="worker-attendance-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">👷 WORKER ATTENDANCE & PAYROLL</div>
-                <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="worker-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;">👷 Worker Attendance</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" id="attendance-date" value="">
             </div>
-            <div class="modal-body">
-                <!-- Comprehensive worker management form -->
-                <div class="form-group">
-                    <label class="form-label">Date</label>
-                    <input type="date" class="form-input" id="attendance-date">
+            
+            <div style="margin: 15px 0;">
+                <label style="font-weight: bold; display: block; margin-bottom: 10px;">Mark Attendance:</label>
+                
+                <div id="worker-list">
+                    <!-- Worker list loads here -->
                 </div>
                 
-                <div style="margin: 20px 0;">
-                    <div style="font-weight: 600; margin-bottom: 10px;">Worker Categories</div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                        <div class="tech-item">
-                            <div class="tech-value" id="skilled-count">8</div>
-                            <div class="tech-label">Skilled</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-value" id="unskilled-count">12</div>
-                            <div class="tech-label">Unskilled</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-value" id="operator-count">4</div>
-                            <div class="tech-label">Operators</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Worker List (Tick present workers)</label>
-                    <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px;">
-                        <!-- Worker list would be loaded dynamically -->
-                        <div class="checklist-item">
-                            <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
-                            <div class="item-info">
-                                <div class="item-title">Ahmed Rasheed (Operator)</div>
-                                <div class="item-subtitle">Excavator, Roller</div>
-                            </div>
-                            <div style="font-weight: 600;">$30/day</div>
-                        </div>
-                        <!-- More workers... -->
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Hours Worked (if different from standard)</label>
-                    <input type="number" class="form-input" id="hours-worked" placeholder="Standard: 8 hours" min="1" max="12">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Overtime Hours</label>
-                    <input type="number" class="form-input" id="overtime-hours" placeholder="Overtime hours">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Daily Wage Calculation</label>
-                    <div style="background: var(--light); padding: 15px; border-radius: 8px;">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>Total Workers:</span>
-                            <span id="total-workers">24</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
-                            <span>Total Wages:</span>
-                            <span id="total-wages">$2,400</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
-                            <span>Overtime:</span>
-                            <span id="overtime-cost">$0</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-top: 5px; font-weight: 600; border-top: 1px solid var(--border); padding-top: 5px;">
-                            <span>Daily Total:</span>
-                            <span id="daily-total">$2,400</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Notes (Absences, injuries, etc.)</label>
-                    <textarea class="form-textarea" id="attendance-notes" placeholder="Any notes..." rows="2"></textarea>
-                </div>
-                
-                <button class="btn btn-primary" onclick="saveWorkerAttendance()">
-                    👷 Save Attendance & Payroll
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="markAllPresent()">
+                    ✅ Mark All Present
                 </button>
             </div>
+            
+            <div class="form-group">
+                <label class="form-label">Absent Workers (Names)</label>
+                <textarea class="form-textarea" id="absent-workers" rows="2" placeholder="Names of absent workers"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Daily Labor Cost</label>
+                <input type="number" class="form-input" id="labor-cost" placeholder="Total labor cost today">
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveWorkerAttendance()">
+                👷 Save Attendance
+            </button>
+            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
+                Cancel
+            </button>
         </div>
     </div>
-
-    <!-- Add more modals for Equipment Check, Quality Tests, Progress Measurement, etc. -->
-
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
+    
+    <!-- Progress Update Modal -->
+    <div id="progress-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;">📏 Progress Update</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" id="progress-date" value="">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Section</label>
+                <select class="form-select" id="progress-section">
+                    <option value="section1">Section 1 - School Road</option>
+                    <option value="section2">Section 2 - Market Road</option>
+                    <option value="section3">Section 3 - Residential</option>
+                    <option value="section4">Section 4 - Coastal</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Meters Completed Today</label>
+                <input type="number" class="form-input" id="progress-meters" placeholder="Enter meters">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Work Type</label>
+                <select class="form-select" id="progress-worktype">
+                    <option value="excavation">Excavation</option>
+                    <option value="drainage">Drainage Work</option>
+                    <option value="base">Road Base</option>
+                    <option value="paving">Paving</option>
+                    <option value="finishing">Finishing</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Photos Taken (Count)</label>
+                <input type="number" class="form-input" id="progress-photos" value="0">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea class="form-textarea" id="progress-notes" rows="2" placeholder="Progress notes"></textarea>
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveProgressUpdate()">
+                📈 Save Progress Update
+            </button>
+            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
+                Cancel
+            </button>
+        </div>
+    </div>
+    
+    <!-- Daily Cost Modal -->
+    <div id="cost-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;">💰 Daily Cost Entry</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" id="cost-date" value="">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Cost Type</label>
+                <select class="form-select" id="cost-type">
+                    <option value="labor">Labor</option>
+                    <option value="materials">Materials</option>
+                    <option value="equipment">Equipment</option>
+                    <option value="fuel">Fuel</option>
+                    <option value="transport">Transport</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Amount (USD)</label>
+                <input type="number" class="form-input" id="cost-amount" placeholder="Enter amount">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea" id="cost-description" rows="2" placeholder="What is this cost for?"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Paid To</label>
+                <input type="text" class="form-input" id="cost-paidto" placeholder="Who was paid?">
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveDailyCost()">
+                💰 Save Cost Entry
+            </button>
+            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
+                Cancel
+            </button>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
     <script>
-        // =================== COMPREHENSIVE APP STATE ===================
-        let currentMainTab = 'operations';
-        let currentSubTab = 'daily';
-        let projectData = {
-            operations: {},
-            technical: {},
-            financial: {},
-            labor: {},
-            logistics: {},
-            compliance: {},
-            // ... more categories
+        // ============== APP DATA ==============
+        let appData = {
+            project: {
+                name: "Kanditheemu Road Project",
+                budget: 850000,
+                spent: 245300,
+                progress: 29,
+                safetyScore: 98
+            },
+            dailyReports: [],
+            materials: [],
+            safetyChecks: [],
+            workerAttendance: [],
+            progressUpdates: [],
+            dailyCosts: [],
+            tasks: []
         };
         
-        // =================== INITIALIZATION ===================
+        // ============== INITIALIZE APP ==============
         document.addEventListener('DOMContentLoaded', function() {
-            initializeComprehensiveApp();
-            loadOperationsData();
-            updateRealTimeData();
-            setInterval(updateRealTimeData, 60000);
+            loadAppData();
+            updateDateTime();
+            setInterval(updateDateTime, 60000);
+            loadDashboard();
             
-            // Initialize signature pad if needed
-            initializeSignaturePad();
+            // Set today's date in all date fields
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                if (!input.value) input.value = today;
+            });
         });
         
-        function initializeComprehensiveApp() {
-            // Load comprehensive data structure
-            const savedData = localStorage.getItem('kanditheemu_project_data');
-            
-            if (savedData) {
-                projectData = JSON.parse(savedData);
+        function loadAppData() {
+            const saved = localStorage.getItem('kanditheemuAppData');
+            if (saved) {
+                appData = JSON.parse(saved);
             } else {
-                // Initialize with comprehensive default data
-                projectData = {
-                    projectInfo: {
-                        name: "Kanditheemu Main Road Development Phase 2",
-                        contractNo: "GDC/KTD/2024/001",
-                        startDate: "2024-01-01",
-                        endDate: "2024-06-30",
-                        totalLength: 1200, // meters
-                        totalBudget: 850000, // USD
-                        client: "Kanditheemu Island Council",
-                        contractor: "GDC Construction",
-                        projectManager: "Ahmed Rasheed",
-                        siteEngineer: "Ibrahim Mohamed"
-                    },
-                    
-                    operations: {
-                        dailyLogs: [],
-                        inspections: [],
-                        equipmentLogs: [],
-                        safetyIncidents: [],
-                        progressMeasurements: [],
-                        weatherLogs: [],
-                        tideData: []
-                    },
-                    
-                    technical: {
-                        surveyPoints: [],
-                        qualityTests: [],
-                        drawings: [],
-                        specifications: [],
-                        measurements: [],
-                        asBuiltData: []
-                    },
-                    
-                    financial: {
-                        budgetBreakdown: {
-                            labor: 350000,
-                            materials: 300000,
-                            equipment: 150000,
-                            overheads: 50000
-                        },
-                        expenses: [],
-                        invoices: [],
-                        payments: [],
-                        dailyCosts: []
-                    },
-                    
-                    labor: {
-                        workers: [
-                            { id: 1, name: "Ahmed Rasheed", role: "Operator", rate: 30, category: "skilled" },
-                            { id: 2, name: "Ibrahim Mohamed", role: "Foreman", rate: 35, category: "skilled" },
-                            // ... more workers
-                        ],
-                        attendance: [],
-                        payroll: [],
-                        training: [],
-                        incidents: []
-                    },
-                    
-                    logistics: {
-                        materialOrders: [],
-                        deliveries: [],
-                        boatSchedule: [],
-                        inventory: [],
-                        equipment: []
-                    },
-                    
-                    compliance: {
-                        permits: [],
-                        inspections: [],
-                        environmental: [],
-                        community: [],
-                        reports: []
-                    },
-                    
-                    timeline: {
-                        milestones: [
-                            { id: 1, name: "Survey Complete", date: "2024-01-07", status: "completed" },
-                            { id: 2, name: "Clearing Complete", date: "2024-01-14", status: "completed" },
-                            { id: 3, name: "Drainage 50%", date: "2024-02-15", status: "in-progress" },
-                            { id: 4, name: "Drainage Complete", date: "2024-03-15", status: "pending" },
-                            // ... more milestones
-                        ],
-                        criticalPath: []
-                    },
-                    
-                    documents: {
-                        photos: [],
-                        reports: [],
-                        certificates: [],
-                        communications: []
+                // Create sample data for first-time users
+                appData.dailyReports = [
+                    {
+                        id: 1,
+                        date: new Date().toISOString().split('T')[0],
+                        weather: "sunny",
+                        workers: 24,
+                        work: "Completed drainage work near school, laid 50m pipes",
+                        materials: "Used 20 cement bags",
+                        issues: "Minor delay due to rain",
+                        meters: 85,
+                        timestamp: new Date().toISOString()
                     }
-                };
+                ];
+                
+                appData.materials = [
+                    {
+                        id: 1,
+                        type: "cement",
+                        quantity: 100,
+                        supplier: "Maldives Cement Co.",
+                        date: new Date().toISOString().split('T')[0],
+                        cost: 2500,
+                        notes: "Good quality"
+                    }
+                ];
+                
+                appData.tasks = [
+                    { id: 1, title: "Morning site inspection", time: "07:30", status: "pending" },
+                    { id: 2, title: "Check material deliveries", time: "09:00", status: "completed" },
+                    { id: 3, title: "Safety checklist", time: "10:00", status: "inprogress" },
+                    { id: 4, title: "Progress measurement", time: "14:00", status: "pending" },
+                    { id: 5, title: "Submit daily report", time: "16:00", status: "pending" }
+                ];
+                
+                saveAppData();
             }
-            
-            saveComprehensiveData();
         }
         
-        // =================== MAIN FUNCTIONS ===================
-        
-        function switchMainTab(tab) {
-            currentMainTab = tab;
-            
-            // Hide all main content sections
-            document.querySelectorAll('.container').forEach(container => {
-                container.style.display = 'none';
-            });
-            
-            // Show selected tab content
-            document.getElementById(tab + '-content').style.display = 'block';
-            
-            // Update navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Load appropriate data
-            switch(tab) {
-                case 'operations':
-                    loadOperationsData();
-                    break;
-                case 'technical':
-                    loadTechnicalData();
-                    break;
-                case 'financial':
-                    loadFinancialData();
-                    break;
-                case 'labor':
-                    loadLaborData();
-                    break;
-                case 'logistics':
-                    loadLogisticsData();
-                    break;
-                case 'compliance':
-                    loadComplianceData();
-                    break;
-            }
-            
-            showToast(`Switched to ${tab} dashboard`, 'info');
+        function saveAppData() {
+            localStorage.setItem('kanditheemuAppData', JSON.stringify(appData));
         }
         
-        function showOperationsSub(sub) {
-            currentSubTab = sub;
+        // ============== UI FUNCTIONS ==============
+        function switchTab(tab) {
+            // Hide all tabs
+            document.getElementById('dashboard-tab').style.display = 'none';
+            document.getElementById('reports-tab').style.display = 'none';
+            document.getElementById('materials-tab').style.display = 'none';
+            document.getElementById('financial-tab').style.display = 'none';
+            document.getElementById('more-tab').style.display = 'none';
             
-            // Hide all operation subs
-            document.querySelectorAll('#operations-content > div[id]').forEach(div => {
-                div.style.display = 'none';
-            });
+            // Show selected tab
+            document.getElementById(tab + '-tab').style.display = 'block';
             
-            // Show selected sub
-            document.getElementById(sub).style.display = 'block';
-            
-            // Update sub navigation
-            document.querySelectorAll('.sub-nav-btn').forEach(btn => {
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-        }
-        
-        function showTechnicalSub(sub) {
-            // Similar implementation for technical sub-tabs
-            // ...
-        }
-        
-        // =================== DATA LOADING FUNCTIONS ===================
-        
-        function loadOperationsData() {
-            // Update daily summary
-            const today = new Date().toISOString().split('T')[0];
-            const todayWorkers = projectData.labor.attendance
-                .filter(a => a.date === today)
-                .reduce((sum, a) => sum + a.present, 0);
             
-            document.getElementById('workers-today').textContent = todayWorkers || 24;
-            
-            // Calculate meters completed today
-            const todayProgress = projectData.operations.progressMeasurements
-                .filter(p => p.date === today)
-                .reduce((sum, p) => sum + (p.meters || 0), 0);
-            
-            document.getElementById('meters-done').textContent = todayProgress || 85;
-            
-            // Update incidents
-            const todayIncidents = projectData.operations.safetyIncidents
-                .filter(i => i.date === today && i.severity === 'major').length;
-            
-            document.getElementById('incidents-today').textContent = todayIncidents;
-            
-            // Calculate today's cost
-            const todayCost = projectData.financial.dailyCosts
-                .find(c => c.date === today)?.total || 2450;
-            
-            document.getElementById('cost-today').textContent = '$' + todayCost.toLocaleString();
-        }
-        
-        function loadTechnicalData() {
-            // Load survey data, quality tests, etc.
-            // Implementation details...
-        }
-        
-        function loadFinancialData() {
-            // Calculate and display financial data
-            const totalSpent = projectData.financial.expenses
-                .reduce((sum, e) => sum + e.amount, 0);
-            
-            const remaining = projectData.projectInfo.totalBudget - totalSpent;
-            const utilization = (totalSpent / projectData.projectInfo.totalBudget * 100).toFixed(1);
-            
-            // Update financial summary display
-            // Implementation details...
-        }
-        
-        // =================== MODAL OPERATIONS ===================
-        
-        function openSiteInspection() {
-            openModal('site-inspection-modal');
-        }
-        
-        function saveSiteInspection() {
-            const inspection = {
-                id: Date.now(),
-                date: document.getElementById('inspection-time').value,
-                weather: document.getElementById('weather-condition').value,
-                tide: document.getElementById('tide-level').value,
-                gps: {
-                    lat: document.getElementById('gps-lat').value,
-                    long: document.getElementById('gps-long').value
-                },
-                issues: document.getElementById('inspection-issues').value,
-                actions: document.getElementById('corrective-actions').value,
-                signature: getSignatureData(),
-                timestamp: new Date().toISOString()
-            };
-            
-            projectData.operations.inspections.unshift(inspection);
-            saveComprehensiveData();
-            closeModal();
-            showToast('✅ Site inspection saved successfully', 'success');
-        }
-        
-        function openWorkerAttendance() {
-            openModal('worker-attendance-modal');
-            loadWorkerList();
-        }
-        
-        function saveWorkerAttendance() {
-            const attendance = {
-                id: Date.now(),
-                date: document.getElementById('attendance-date').value,
-                presentWorkers: getPresentWorkers(),
-                hours: document.getElementById('hours-worked').value || 8,
-                overtime: document.getElementById('overtime-hours').value || 0,
-                notes: document.getElementById('attendance-notes').value,
-                totalCost: calculateDailyWages(),
-                timestamp: new Date().toISOString()
-            };
-            
-            projectData.labor.attendance.unshift(attendance);
-            
-            // Update payroll
-            projectData.financial.expenses.push({
-                type: 'labor',
-                date: attendance.date,
-                amount: attendance.totalCost,
-                description: 'Daily wages for ' + attendance.presentWorkers.length + ' workers'
-            });
-            
-            saveComprehensiveData();
-            closeModal();
-            loadOperationsData();
-            showToast('👷 Worker attendance saved', 'success');
-        }
-        
-        // =================== UTILITY FUNCTIONS ===================
-        
-        function saveComprehensiveData() {
-            localStorage.setItem('kanditheemu_project_data', JSON.stringify(projectData));
-        }
-        
-        function updateRealTimeData() {
-            // Update time, weather, tide information
-            const now = new Date();
-            
-            // Calculate tide based on location and time (simplified)
-            const tideLevel = calculateTide(now);
-            
-            // Update display
-            const timeString = now.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: true 
-            });
-            
-            // Update weather widget with tide info
-            document.querySelector('.weather-widget .weather-condition').textContent = 
-                `Partly Cloudy • Tide: ${tideLevel} @ ${timeString}`;
-        }
-        
-        function calculateTide(date) {
-            // Simplified tide calculation for Kanditheemu
-            // In real app, use actual tide tables or API
-            const hours = date.getHours();
-            const minutes = date.getMinutes();
-            const totalMinutes = hours * 60 + minutes;
-            
-            // Simplified: two high tides per day approximately
-            const tide1High = 6 * 60; // 6:00 AM
-            const tide1Low = 12 * 60; // 12:00 PM
-            const tide2High = 18 * 60; // 6:00 PM
-            const tide2Low = 0; // 12:00 AM
-            
-            if (Math.abs(totalMinutes - tide1High) < 90) return "High";
-            if (Math.abs(totalMinutes - tide1Low) < 90) return "Low";
-            if (Math.abs(totalMinutes - tide2High) < 90) return "High";
-            if (Math.abs(totalMinutes - tide2Low) < 90) return "Low";
-            
-            // Calculate if rising or falling
-            if ((totalMinutes > tide1High && totalMinutes < tide1Low) || 
-                (totalMinutes > tide2High && totalMinutes < tide2Low + 24*60)) {
-                return "Falling";
-            } else {
-                return "Rising";
+            // Load tab data
+            switch(tab) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+                case 'materials':
+                    loadMaterials();
+                    break;
+                case 'financial':
+                    loadFinancial();
+                    break;
+                case 'more':
+                    // Nothing to load
+                    break;
             }
         }
         
-        function getCurrentLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        document.getElementById('gps-lat').value = position.coords.latitude.toFixed(6);
-                        document.getElementById('gps-long').value = position.coords.longitude.toFixed(6);
-                        showToast('📍 Location captured', 'success');
-                    },
-                    (error) => {
-                        showToast('❌ Unable to get location', 'error');
-                    }
-                );
-            } else {
-                showToast('❌ Geolocation not supported', 'error');
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            
+            // Load data if needed
+            if (modalId === 'worker-modal') {
+                loadWorkerList();
             }
         }
         
-        function initializeSignaturePad() {
-            // Signature pad initialization code
-            // Would use a library like Signature Pad in production
-        }
-        
-        function getSignatureData() {
-            // Get signature data from pad
-            return "signature_data_placeholder";
-        }
-        
-        function loadWorkerList() {
-            // Load workers into attendance modal
-            // Implementation details...
-        }
-        
-        function getPresentWorkers() {
-            // Get list of workers marked present
-            return []; // Implementation details
-        }
-        
-        function calculateDailyWages() {
-            // Calculate total wages for the day
-            const workers = getPresentWorkers();
-            const hours = document.getElementById('hours-worked').value || 8;
-            const overtime = document.getElementById('overtime-hours').value || 0;
-            
-            let total = 0;
-            workers.forEach(worker => {
-                const dailyRate = worker.rate || 25;
-                total += dailyRate * (hours / 8);
-                total += (dailyRate * 1.5) * (overtime / 8); // Overtime at 1.5x
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
             });
             
-            return total;
+            // Clear form fields
+            document.querySelectorAll('.form-input, .form-textarea').forEach(input => {
+                if (input.type !== 'date') input.value = '';
+            });
         }
-        
-        function openEquipmentCheck() {
-            showToast('🔧 Equipment check feature opening...', 'info');
-            // Implementation
-        }
-        
-        function openQualityTests() {
-            showToast('🧪 Quality tests feature opening...', 'info');
-            // Implementation
-        }
-        
-        function openProgressMeasurement() {
-            showToast('📏 Progress measurement feature opening...', 'info');
-            // Implementation
-        }
-        
-        function openSafetyInspection() {
-            showToast('🛡️ Safety inspection feature opening...', 'info');
-            // Implementation
-        }
-        
-        function openEnvironmentalCheck() {
-            showToast('🌿 Environmental check feature opening...', 'info');
-            // Implementation
-        }
-        
-        function openDailyCosting() {
-            showToast('💰 Daily costing feature opening...', 'info');
-            // Implementation
-        }
-        
-        function orderMaterial() {
-            showToast('📦 Material order initiated', 'success');
-            // Implementation
-        }
-        
-        function scheduleService() {
-            showToast('🔧 Service scheduling initiated', 'success');
-            // Implementation
-        }
-        
-        function setWeather(weather) {
-            document.getElementById('weather-condition').value = weather;
-            showToast(`Weather set to ${weather}`, 'info');
-        }
-        
-        function clearSignature() {
-            // Clear signature pad
-            showToast('Signature cleared', 'info');
-        }
-        
-        function takeInspectionPhoto(type) {
-            // In real app, use camera API
-            showToast(`Taking ${type} photo...`, 'info');
-        }
-        
-        function captureGPS() {
-            getCurrentLocation();
-        }
-        
-        function recordQCTest() {
-            showToast('Recording quality test...', 'info');
-            // Implementation
-        }
-        
-        // =================== TOAST FUNCTION ===================
         
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.className = `toast ${type} show`;
+            toast.className = 'toast show';
+            
+            // Add color based on type
+            if (type === 'success') toast.style.background = '#388E3C';
+            else if (type === 'error') toast.style.background = '#D32F2F';
+            else if (type === 'warning') toast.style.background = '#FFA000';
+            else toast.style.background = '#263238';
             
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
         
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
+        // ============== DATA LOADING ==============
+        function loadDashboard() {
+            updateStats();
+            loadTasks();
+            loadRecentReports();
         }
         
-        function closeModal() {
-            document.querySelectorAll('.modal-overlay').forEach(modal => {
-                modal.classList.remove('active');
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Calculate today's workers
+            const todayAttendance = appData.workerAttendance.find(a => a.date === today);
+            const workersToday = todayAttendance ? todayAttendance.presentCount : 24;
+            
+            // Calculate today's progress
+            const todayProgress = appData.progressUpdates
+                .filter(p => p.date === today)
+                .reduce((sum, p) => sum + (parseInt(p.meters) || 0), 0);
+            
+            // Calculate today's cost
+            const todayCost = appData.dailyCosts
+                .filter(c => c.date === today)
+                .reduce((sum, c) => sum + (parseFloat(c.amount) || 0), 0);
+            
+            // Update stats display
+            document.getElementById('quick-stats').innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-value">${workersToday}</div>
+                    <div class="stat-label">Workers Today</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${todayProgress}m</div>
+                    <div class="stat-label">Today's Progress</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">$${todayCost.toLocaleString()}</div>
+                    <div class="stat-label">Today's Cost</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${appData.project.progress}%</div>
+                    <div class="stat-label">Overall Progress</div>
+                </div>
+            `;
+        }
+        
+        function loadTasks() {
+            const container = document.getElementById('todays-tasks');
+            container.innerHTML = '';
+            
+            appData.tasks.forEach(task => {
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div>
+                            <div style="font-weight: bold;">${task.title}</div>
+                            <div style="font-size: 12px; color: #666;">${task.time}</div>
+                        </div>
+                        <span class="status status-${task.status}">${task.status}</span>
+                    </div>
+                `;
             });
         }
         
-        function toggleCheck(element) {
-            element.classList.toggle('checked');
-            element.innerHTML = element.classList.contains('checked') ? '✓' : '';
+        function loadRecentReports() {
+            const container = document.getElementById('recent-reports');
+            container.innerHTML = '';
+            
+            const recentReports = appData.dailyReports.slice(0, 3);
+            
+            if (recentReports.length === 0) {
+                container.innerHTML = '<div class="empty-state">No reports yet</div>';
+                return;
+            }
+            
+            recentReports.forEach(report => {
+                const date = new Date(report.date).toLocaleDateString();
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div>
+                            <div style="font-weight: bold;">${date} - Daily Report</div>
+                            <div style="font-size: 12px; color: #666;">${report.work.substring(0, 50)}...</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="viewReport(${report.id})">View</button>
+                    </div>
+                `;
+            });
         }
         
-        // =================== EXPORT FUNCTIONS ===================
+        function loadReports() {
+            const container = document.getElementById('all-reports');
+            container.innerHTML = '';
+            
+            if (appData.dailyReports.length === 0) {
+                container.innerHTML = '<div class="empty-state">No reports yet</div>';
+                return;
+            }
+            
+            appData.dailyReports.forEach(report => {
+                const date = new Date(report.date).toLocaleDateString();
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div>
+                            <div style="font-weight: bold;">${date} - Daily Report</div>
+                            <div style="font-size: 12px; color: #666;">Workers: ${report.workers} | Weather: ${report.weather}</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="viewReport(${report.id})">View</button>
+                    </div>
+                `;
+            });
+        }
         
-        // Export all functions to window object
-        window.switchMainTab = switchMainTab;
-        window.showOperationsSub = showOperationsSub;
-        window.showTechnicalSub = showTechnicalSub;
-        window.openSiteInspection = openSiteInspection;
-        window.openWorkerAttendance = openWorkerAttendance;
-        window.openEquipmentCheck = openEquipmentCheck;
-        window.openQualityTests = openQualityTests;
-        window.openProgressMeasurement = openProgressMeasurement;
-        window.openSafetyInspection = openSafetyInspection;
-        window.openEnvironmentalCheck = openEnvironmentalCheck;
-        window.openDailyCosting = openDailyCosting;
-        window.orderMaterial = orderMaterial;
-        window.scheduleService = scheduleService;
-        window.getCurrentLocation = getCurrentLocation;
-        window.setWeather = setWeather;
-        window.clearSignature = clearSignature;
-        window.takeInspectionPhoto = takeInspectionPhoto;
-        window.captureGPS = captureGPS;
-        window.recordQCTest = recordQCTest;
-        window.saveSiteInspection = saveSiteInspection;
-        window.saveWorkerAttendance = saveWorkerAttendance;
+        function loadMaterials() {
+            const container = document.getElementById('materials-list');
+            container.innerHTML = '';
+            
+            if (appData.materials.length === 0) {
+                container.innerHTML = '<div class="empty-state">No materials recorded yet</div>';
+                return;
+            }
+            
+            appData.materials.forEach(material => {
+                const date = new Date(material.date).toLocaleDateString();
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div>
+                            <div style="font-weight: bold;">${material.type.toUpperCase()}</div>
+                            <div style="font-size: 12px; color: #666;">Qty: ${material.quantity} | ${date}</div>
+                        </div>
+                        <div>
+                            <span style="font-weight: bold;">$${material.cost}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function loadFinancial() {
+            // Update budget display
+            const spent = appData.dailyCosts.reduce((sum, cost) => sum + (parseFloat(cost.amount) || 0), 0);
+            const remaining = appData.project.budget - spent;
+            const percent = ((spent / appData.project.budget) * 100).toFixed(1);
+            
+            document.getElementById('total-spent').textContent = '$' + spent.toLocaleString();
+            document.getElementById('budget-left').textContent = '$' + remaining.toLocaleString();
+            document.getElementById('budget-percent').textContent = percent + '%';
+            document.getElementById('budget-progress').style.width = percent + '%';
+            
+            // Load daily costs
+            const container = document.getElementById('daily-costs');
+            container.innerHTML = '';
+            
+            const recentCosts = appData.dailyCosts.slice(0, 5);
+            
+            if (recentCosts.length === 0) {
+                container.innerHTML = '<div class="empty-state">No costs recorded yet</div>';
+                return;
+            }
+            
+            recentCosts.forEach(cost => {
+                const date = new Date(cost.date).toLocaleDateString();
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div>
+                            <div style="font-weight: bold;">${date} - ${cost.type}</div>
+                            <div style="font-size: 12px; color: #666;">${cost.description}</div>
+                        </div>
+                        <div>
+                            <span style="font-weight: bold; color: #D32F2F;">$${cost.amount}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function loadWorkerList() {
+            const container = document.getElementById('worker-list');
+            container.innerHTML = '';
+            
+            // Sample worker list
+            const workers = [
+                "Ahmed Rasheed", "Ibrahim Mohamed", "Ali Hussain", "Mohamed Saleem",
+                "Hassan Ahmed", "Abdulla Jameel", "Fareed Ibrahim", "Shafiu Ahmed"
+            ];
+            
+            workers.forEach(worker => {
+                container.innerHTML += `
+                    <div style="margin-bottom: 8px; display: flex; align-items: center;">
+                        <input type="checkbox" id="worker-${worker.replace(/\s+/g, '-')}" checked>
+                        <label for="worker-${worker.replace(/\s+/g, '-')}" style="margin-left: 8px;">${worker}</label>
+                    </div>
+                `;
+            });
+        }
+        
+        // ============== DATA SAVING ==============
+        function saveDailyReport() {
+            const report = {
+                id: Date.now(),
+                date: document.getElementById('report-date').value,
+                weather: document.getElementById('report-weather').value,
+                workers: parseInt(document.getElementById('report-workers').value) || 0,
+                work: document.getElementById('report-work').value,
+                materials: document.getElementById('report-materials').value,
+                issues: document.getElementById('report-issues').value,
+                meters: parseInt(document.getElementById('report-meters').value) || 0,
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.dailyReports.unshift(report);
+            
+            // Mark daily report task as completed
+            const reportTask = appData.tasks.find(t => t.title.includes('daily report'));
+            if (reportTask) reportTask.status = 'completed';
+            
+            saveAppData();
+            closeModal();
+            loadDashboard();
+            showToast('✅ Daily report saved successfully!', 'success');
+        }
+        
+        function saveMaterialDelivery() {
+            const material = {
+                id: Date.now(),
+                type: document.getElementById('material-type').value,
+                quantity: parseInt(document.getElementById('material-qty').value) || 0,
+                supplier: document.getElementById('material-supplier').value,
+                date: document.getElementById('material-date').value,
+                cost: parseFloat(document.getElementById('material-cost').value) || 0,
+                notes: document.getElementById('material-notes').value
+            };
+            
+            appData.materials.unshift(material);
+            
+            // Add to daily costs
+            appData.dailyCosts.unshift({
+                id: Date.now(),
+                date: material.date,
+                type: 'materials',
+                amount: material.cost,
+                description: `Material: ${material.type}, Qty: ${material.quantity}`,
+                paidTo: material.supplier
+            });
+            
+            saveAppData();
+            closeModal();
+            showToast('📦 Material delivery recorded!', 'success');
+            
+            if (document.getElementById('materials-tab').style.display !== 'none') {
+                loadMaterials();
+            }
+        }
+        
+        function saveSafetyCheck() {
+            const safety = {
+                id: Date.now(),
+                date: document.getElementById('safety-date').value,
+                helmets: document.getElementById('safety-helmets').checked,
+                signs: document.getElementById('safety-signs').checked,
+                equipment: document.getElementById('safety-equipment').checked,
+                barriers: document.getElementById('safety-barriers').checked,
+                firstaid: document.getElementById('safety-firstaid').checked,
+                issues: document.getElementById('safety-issues').value,
+                actions: document.getElementById('safety-actions').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.safetyChecks.unshift(safety);
+            
+            // Mark safety task as completed
+            const safetyTask = appData.tasks.find(t => t.title.includes('Safety'));
+            if (safetyTask) safetyTask.status = 'completed';
+            
+            saveAppData();
+            closeModal();
+            showToast('🛡️ Safety check completed!', 'success');
+        }
+        
+        function saveWorkerAttendance() {
+            const attendance = {
+                id: Date.now(),
+                date: document.getElementById('attendance-date').value,
+                presentCount: countPresentWorkers(),
+                absent: document.getElementById('absent-workers').value,
+                cost: parseFloat(document.getElementById('labor-cost').value) || 0,
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.workerAttendance.unshift(attendance);
+            
+            // Add labor cost
+            if (attendance.cost > 0) {
+                appData.dailyCosts.unshift({
+                    id: Date.now(),
+                    date: attendance.date,
+                    type: 'labor',
+                    amount: attendance.cost,
+                    description: `Daily wages for ${attendance.presentCount} workers`,
+                    paidTo: 'Workers'
+                });
+            }
+            
+            saveAppData();
+            closeModal();
+            loadDashboard(); // Update stats
+            showToast('👷 Worker attendance saved!', 'success');
+        }
+        
+        function saveProgressUpdate() {
+            const progress = {
+                id: Date.now(),
+                date: document.getElementById('progress-date').value,
+                section: document.getElementById('progress-section').value,
+                meters: parseInt(document.getElementById('progress-meters').value) || 0,
+                workType: document.getElementById('progress-worktype').value,
+                photos: parseInt(document.getElementById('progress-photos').value) || 0,
+                notes: document.getElementById('progress-notes').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.progressUpdates.unshift(progress);
+            
+            // Update overall progress (simplified)
+            appData.project.progress = Math.min(100, appData.project.progress + 1);
+            
+            // Mark progress task as completed
+            const progressTask = appData.tasks.find(t => t.title.includes('progress'));
+            if (progressTask) progressTask.status = 'completed';
+            
+            saveAppData();
+            closeModal();
+            loadDashboard();
+            showToast('📈 Progress update saved!', 'success');
+        }
+        
+        function saveDailyCost() {
+            const cost = {
+                id: Date.now(),
+                date: document.getElementById('cost-date').value,
+                type: document.getElementById('cost-type').value,
+                amount: parseFloat(document.getElementById('cost-amount').value) || 0,
+                description: document.getElementById('cost-description').value,
+                paidTo: document.getElementById('cost-paidto').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.dailyCosts.unshift(cost);
+            
+            // Update total spent
+            appData.project.spent += cost.amount;
+            
+            saveAppData();
+            closeModal();
+            showToast('💰 Cost entry saved!', 'success');
+            
+            if (document.getElementById('financial-tab').style.display !== 'none') {
+                loadFinancial();
+            }
+        }
+        
+        // ============== UTILITY FUNCTIONS ==============
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('current-date').textContent = 
+                now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            document.getElementById('current-time').textContent = 
+                now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        function markAllPresent() {
+            document.querySelectorAll('#worker-list input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        }
+        
+        function countPresentWorkers() {
+            let count = 0;
+            document.querySelectorAll('#worker-list input[type="checkbox"]').forEach(checkbox => {
+                if (checkbox.checked) count++;
+            });
+            return count;
+        }
+        
+        function viewReport(id) {
+            const report = appData.dailyReports.find(r => r.id === id);
+            if (report) {
+                alert(
+                    `📝 DAILY REPORT\n\n` +
+                    `Date: ${report.date}\n` +
+                    `Weather: ${report.weather}\n` +
+                    `Workers: ${report.workers}\n` +
+                    `Progress: ${report.meters} meters\n\n` +
+                    `Work Completed:\n${report.work}\n\n` +
+                    `Materials Used:\n${report.materials}\n\n` +
+                    `Issues:\n${report.issues}`
+                );
+            }
+        }
+        
+        function generateMonthlyReport() {
+            const today = new Date();
+            const month = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            
+            const monthlyReports = appData.dailyReports.filter(report => {
+                const reportDate = new Date(report.date);
+                return reportDate.getMonth() === today.getMonth() && 
+                       reportDate.getFullYear() === today.getFullYear();
+            });
+            
+            const totalMeters = monthlyReports.reduce((sum, r) => sum + (r.meters || 0), 0);
+            const totalCost = appData.dailyCosts
+                .filter(c => {
+                    const costDate = new Date(c.date);
+                    return costDate.getMonth() === today.getMonth() && 
+                           costDate.getFullYear() === today.getFullYear();
+                })
+                .reduce((sum, c) => sum + (c.amount || 0), 0);
+            
+            const report = `
+📊 MONTHLY REPORT - ${month}
+
+Summary:
+• Days worked: ${monthlyReports.length}
+• Total progress: ${totalMeters} meters
+• Total cost: $${totalCost.toLocaleString()}
+• Average daily progress: ${Math.round(totalMeters / monthlyReports.length)} meters/day
+• Average daily cost: $${Math.round(totalCost / monthlyReports.length).toLocaleString()}/day
+
+Project Status:
+• Overall progress: ${appData.project.progress}%
+• Budget used: ${((appData.project.spent / appData.project.budget) * 100).toFixed(1)}%
+• Remaining budget: $${(appData.project.budget - appData.project.spent).toLocaleString()}
+
+Safety Record:
+• Safety checks completed: ${appData.safetyChecks.length}
+• No major incidents reported
+
+Recommendations:
+1. Continue current work pace
+2. Monitor material stock levels
+3. Plan for upcoming milestones
+            `;
+            
+            alert(report);
+            showToast('📄 Monthly report generated!', 'success');
+        }
+        
+        function exportData() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `kanditheemu-project-data-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showToast('📤 Data exported successfully!', 'success');
+        }
+        
+        function backupData() {
+            saveAppData();
+            showToast('💾 Data backed up successfully!', 'success');
+        }
+        
+        function showHelp() {
+            alert(
+                '🆘 HELP & GUIDE\n\n' +
+                '1. DAILY REPORT: Record daily work, weather, materials\n' +
+                '2. MATERIAL DELIVERY: Log incoming materials with costs\n' +
+                '3. SAFETY CHECK: Complete daily safety inspection\n' +
+                '4. WORKER ATTENDANCE: Mark worker attendance and calculate wages\n' +
+                '5. PROGRESS UPDATE: Record meters completed\n' +
+                '6. DAILY COST: Track all project expenses\n\n' +
+                '📱 ALL DATA IS SAVED AUTOMATICALLY!\n' +
+                '💾 Works offline\n' +
+                '📤 Export data anytime'
+            );
+        }
+        
+        function showSettings() {
+            alert('⚙️ SETTINGS\n\nData is stored locally in your browser.\nTo clear data, use browser settings.\nTo backup, use Export feature.');
+        }
+        
+        function callContact(name) {
+            if (confirm(`Call ${name}?`)) {
+                showToast(`📞 Calling ${name}...`, 'info');
+                // In real app: window.location.href = `tel:${number}`;
+            }
+        }
+        
+        // ============== WINDOW EXPORTS ==============
+        window.switchTab = switchTab;
+        window.openModal = openModal;
         window.closeModal = closeModal;
-        window.toggleCheck = toggleCheck;
+        window.saveDailyReport = saveDailyReport;
+        window.saveMaterialDelivery = saveMaterialDelivery;
+        window.saveSafetyCheck = saveSafetyCheck;
+        window.saveWorkerAttendance = saveWorkerAttendance;
+        window.saveProgressUpdate = saveProgressUpdate;
+        window.saveDailyCost = saveDailyCost;
+        window.markAllPresent = markAllPresent;
+        window.viewReport = viewReport;
+        window.generateMonthlyReport = generateMonthlyReport;
+        window.exportData = exportData;
+        window.backupData = backupData;
+        window.showHelp = showHelp;
+        window.showSettings = showSettings;
+        window.callContact = callContact;
     </script>
 </body>
 </html>
