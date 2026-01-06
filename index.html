@@ -574,12 +574,18 @@
             color: var(--text-light);
             cursor: pointer;
             overflow: hidden;
+            position: relative;
         }
 
         .photo-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .photo-add {
+            border: 2px dashed var(--border);
+            background: var(--light);
         }
 
         /* Calendar */
@@ -699,6 +705,54 @@
             font-size: 16px;
         }
 
+        /* Photo Viewer */
+        .photo-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-viewer.active {
+            display: flex;
+        }
+
+        .photo-viewer img {
+            max-width: 90%;
+            max-height: 70%;
+            border-radius: 8px;
+        }
+
+        .photo-caption {
+            color: white;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .photo-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         /* Responsive */
         @media (max-width: 360px) {
             .quick-actions {
@@ -753,6 +807,56 @@
             margin-bottom: 15px;
             opacity: 0.5;
         }
+
+        /* Report List */
+        .report-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .report-item {
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .report-date {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .report-content {
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px;
+            background: var(--light);
+            border-bottom: 2px solid var(--border);
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tr:hover {
+            background: var(--light);
+        }
     </style>
 </head>
 <body>
@@ -792,7 +896,7 @@
 
         <!-- Main Content -->
         <main class="container">
-            <!-- Dashboard -->
+            <!-- Dashboard Content -->
             <div id="dashboard-content">
                 <!-- Stats Grid -->
                 <div class="stats-grid">
@@ -887,10 +991,16 @@
                         <a href="#" class="view-all" onclick="openGallery()">View All</a>
                     </div>
                     <div class="section-body">
-                        <div class="photo-grid">
-                            <div class="photo-item" onclick="openPhotoViewer(1)">📷</div>
-                            <div class="photo-item" onclick="openPhotoViewer(2)">🏗️</div>
-                            <div class="photo-item" onclick="openPhotoViewer(3)">🛣️</div>
+                        <div class="photo-grid" id="recent-photos">
+                            <div class="photo-item" onclick="viewPhoto('Site Progress - Day 45', '🏗️')">
+                                <div style="font-size: 32px;">🏗️</div>
+                            </div>
+                            <div class="photo-item" onclick="viewPhoto('Drainage Work', '🛠️')">
+                                <div style="font-size: 32px;">🛠️</div>
+                            </div>
+                            <div class="photo-item" onclick="viewPhoto('Road Base Layer', '🛣️')">
+                                <div style="font-size: 32px;">🛣️</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -914,6 +1024,240 @@
                     </div>
                     <div class="section-body" id="community-feedback">
                         <!-- Feedback loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div id="reports-content" style="display: none;">
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">📊 Project Reports</div>
+                        <button class="btn btn-primary" onclick="generateMonthlyReport()">Generate Monthly Report</button>
+                    </div>
+                    <div class="section-body">
+                        <div class="report-list" id="reports-list">
+                            <!-- Reports loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">📈 Progress Analytics</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Project Completion</span>
+                                <span id="progress-percent">65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill" style="width: 65%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Budget Utilization</span>
+                                <span id="budget-percent">72%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 72%; background: var(--secondary);"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Safety Compliance</span>
+                                <span id="safety-percent">98%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 98%; background: var(--success);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Materials Section -->
+            <div id="materials-content" style="display: none;">
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">📦 Material Inventory</div>
+                        <button class="btn btn-primary" onclick="openMaterialTracking()">+ Add Delivery</button>
+                    </div>
+                    <div class="section-body">
+                        <table class="data-table" id="materials-table">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materials-table-body">
+                                <!-- Materials loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">📅 Delivery Schedule</div>
+                        <button class="btn btn-outline" onclick="openDeliverySchedule()">Full Schedule</button>
+                    </div>
+                    <div class="section-body">
+                        <div id="delivery-schedule">
+                            <!-- Delivery schedule loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety Section -->
+            <div id="safety-content" style="display: none;">
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">🛡️ Safety Dashboard</div>
+                        <button class="btn btn-primary" onclick="openSafetyCheck()">+ New Safety Check</button>
+                    </div>
+                    <div class="section-body">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon stat-safety">✅</div>
+                                <div class="stat-value" id="safety-checks-today">3</div>
+                                <div class="stat-label">Checks Today</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon stat-safety">📅</div>
+                                <div class="stat-value" id="safety-streak">14</div>
+                                <div class="stat-label">Days No Incident</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon stat-safety">⚠️</div>
+                                <div class="stat-value" id="safety-issues">2</div>
+                                <div class="stat-label">Open Issues</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon stat-safety">👷</div>
+                                <div class="stat-value" id="safety-trained">24</div>
+                                <div class="stat-label">Workers Trained</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">📋 Recent Safety Checks</div>
+                        <a href="#" class="view-all" onclick="viewAllSafetyChecks()">View All</a>
+                    </div>
+                    <div class="section-body">
+                        <div id="safety-checks-list">
+                            <!-- Safety checks loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More Section -->
+            <div id="more-content" style="display: none;">
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="exportData()">
+                        <div class="action-icon" style="background: #E3F2FD; color: var(--secondary);">📤</div>
+                        <div class="action-text">Export Data</div>
+                    </button>
+                    
+                    <button class="action-btn" onclick="backupData()">
+                        <div class="action-icon" style="background: #E8F5E9; color: var(--success);">💾</div>
+                        <div class="action-text">Backup</div>
+                    </button>
+                    
+                    <button class="action-btn" onclick="resetData()">
+                        <div class="action-icon" style="background: #FFEBEE; color: var(--danger);">🔄</div>
+                        <div class="action-text">Reset Data</div>
+                    </button>
+                    
+                    <button class="action-btn" onclick="showSettings()">
+                        <div class="action-icon" style="background: #F3E5F5; color: #7B1FA2;">⚙️</div>
+                        <div class="action-text">Settings</div>
+                    </button>
+                    
+                    <button class="action-btn" onclick="showHelp()">
+                        <div class="action-icon" style="background: #FFF3E0; color: var(--warning);">❓</div>
+                        <div class="action-text">Help</div>
+                    </button>
+                    
+                    <button class="action-btn" onclick="showAbout()">
+                        <div class="action-icon" style="background: #E0F2F1; color: #00796B;">ℹ️</div>
+                        <div class="action-text">About</div>
+                    </button>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">🕌 Prayer Times (Kanditheemu)</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="prayer-times">
+                            <div class="prayer-item">
+                                <div class="prayer-name">Fajr</div>
+                                <div class="prayer-time">05:15</div>
+                            </div>
+                            <div class="prayer-item">
+                                <div class="prayer-name">Dhuhr</div>
+                                <div class="prayer-time">12:30</div>
+                            </div>
+                            <div class="prayer-item">
+                                <div class="prayer-name">Asr</div>
+                                <div class="prayer-time">15:45</div>
+                            </div>
+                            <div class="prayer-item">
+                                <div class="prayer-name">Maghrib</div>
+                                <div class="prayer-time">18:20</div>
+                            </div>
+                            <div class="prayer-item">
+                                <div class="prayer-name">Isha</div>
+                                <div class="prayer-time">19:45</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">📞 Emergency Contacts</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="list-item">
+                            <div class="item-info">
+                                <div class="item-title">Project Manager</div>
+                                <div class="item-subtitle">Ahmed Rasheed</div>
+                            </div>
+                            <button class="btn btn-outline" onclick="callContact('+960-1234567')">📞 Call</button>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div class="item-info">
+                                <div class="item-title">Site Supervisor</div>
+                                <div class="item-subtitle">Ibrahim Mohamed</div>
+                            </div>
+                            <button class="btn btn-outline" onclick="callContact('+960-9876543')">📞 Call</button>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div class="item-info">
+                                <div class="item-title">Emergency</div>
+                                <div class="item-subtitle">Hospital / Police</div>
+                            </div>
+                            <button class="btn btn-danger" onclick="callContact('119')">🚨 Emergency</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -993,15 +1337,6 @@
                 <div class="form-group">
                     <label class="form-label">Safety Observations</label>
                     <textarea class="form-textarea" id="safety-observations" placeholder="Safety checks, incidents, or concerns..." rows="2"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Photos Taken Today</label>
-                    <div class="photo-grid">
-                        <div class="photo-item" onclick="addPhoto()">➕</div>
-                        <div class="photo-item">📷</div>
-                        <div class="photo-item">🏗️</div>
-                    </div>
                 </div>
                 
                 <button class="btn btn-primary" onclick="saveDailyReport()">
@@ -1160,14 +1495,6 @@
                     <textarea class="form-textarea" id="material-notes" placeholder="Any special notes..." rows="2"></textarea>
                 </div>
                 
-                <div class="form-group">
-                    <label class="form-label">Delivery Photo</label>
-                    <div class="photo-grid">
-                        <div class="photo-item" onclick="takeMaterialPhoto()">📸</div>
-                        <div class="photo-item" onclick="uploadMaterialPhoto()">📁</div>
-                    </div>
-                </div>
-                
                 <button class="btn btn-primary" onclick="saveMaterialDelivery()">
                     📦 Record Delivery
                 </button>
@@ -1238,7 +1565,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Community Member's Contact</label>
+                    <label class="form-label">Community Member's Contact</div>
                     <input type="text" class="form-input" id="community-contact" placeholder="Phone number or other contact">
                 </div>
                 
@@ -1251,6 +1578,256 @@
                 </button>
             </div>
         </div>
+    </div>
+
+    <!-- Meeting Notes Modal -->
+    <div class="modal-overlay" id="meeting-notes-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🤝 Meeting Notes</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Meeting Date & Time</label>
+                    <input type="datetime-local" class="form-input" id="meeting-time">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Meeting Type</label>
+                    <select class="form-select" id="meeting-type">
+                        <option value="daily">📅 Daily Site Meeting</option>
+                        <option value="weekly">🗓️ Weekly Progress Meeting</option>
+                        <option value="safety">🛡️ Safety Meeting</option>
+                        <option value="community">🏝️ Community Meeting</option>
+                        <option value="vendor">🤝 Vendor Meeting</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Attendees</label>
+                    <input type="text" class="form-input" id="meeting-attendees" placeholder="Names separated by comma">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Discussion Points</label>
+                    <textarea class="form-textarea" id="meeting-discussion" placeholder="Main points discussed..." rows="4"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Decisions Made</label>
+                    <textarea class="form-textarea" id="meeting-decisions" placeholder="Decisions and action items..." rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Next Meeting Date</label>
+                    <input type="date" class="form-input" id="next-meeting-date">
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveMeetingNotes()">
+                    💾 Save Meeting Notes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Report Modal -->
+    <div class="modal-overlay" id="progress-report-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">📊 Progress Report</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Report Period</label>
+                    <select class="form-select" id="report-period">
+                        <option value="weekly">Weekly Report</option>
+                        <option value="monthly">Monthly Report</option>
+                        <option value="quarterly">Quarterly Report</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Progress Percentage</label>
+                    <input type="range" class="form-input" id="progress-percentage" min="0" max="100" value="65" oninput="updateProgressValue(this.value)">
+                    <div class="progress-label">
+                        <span>Progress</span>
+                        <span id="progress-display">65%</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Work Completed This Period</label>
+                    <textarea class="form-textarea" id="period-work" placeholder="Summary of work completed..." rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Challenges Faced</label>
+                    <textarea class="form-textarea" id="period-challenges" placeholder="Major challenges or delays..." rows="2"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Next Period Plan</label>
+                    <textarea class="form-textarea" id="next-period-plan" placeholder="Plan for next period..." rows="3"></textarea>
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveProgressReport()">
+                    📊 Save Progress Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Log Modal -->
+    <div class="modal-overlay" id="weather-log-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🌤️ Weather Log</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-input" id="weather-log-date">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Weather Condition</label>
+                    <select class="form-select" id="weather-log-condition">
+                        <option value="sunny">☀️ Sunny</option>
+                        <option value="partly-cloudy">⛅ Partly Cloudy</option>
+                        <option value="cloudy">☁️ Cloudy</option>
+                        <option value="rainy">🌧️ Rainy</option>
+                        <option value="stormy">⛈️ Stormy</option>
+                        <option value="windy">💨 Windy</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Temperature (°C)</label>
+                        <input type="number" class="form-input" id="weather-temp" placeholder="28">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Humidity (%)</label>
+                        <input type="number" class="form-input" id="weather-humidity" placeholder="65">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Wind Speed (km/h)</label>
+                    <input type="number" class="form-input" id="weather-wind" placeholder="15">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Impact on Work</label>
+                    <select class="form-select" id="weather-impact">
+                        <option value="normal">✅ Normal work possible</option>
+                        <option value="reduced">⚠️ Reduced work capacity</option>
+                        <option value="delayed">⏳ Work delayed</option>
+                        <option value="stopped">🛑 Work stopped</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-textarea" id="weather-notes" placeholder="Any weather-related observations..." rows="2"></textarea>
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveWeatherLog()">
+                    🌤️ Save Weather Log
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Checklist Modal -->
+    <div class="modal-overlay" id="daily-checklist-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">✅ Daily Checklist</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-input" id="checklist-date" value="">
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="item-info">
+                        <div class="item-title">Site inspection completed</div>
+                        <div class="item-subtitle">Morning walkthrough</div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="item-info">
+                        <div class="item-title">Worker attendance recorded</div>
+                        <div class="item-subtitle">All workers accounted for</div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="item-info">
+                        <div class="item-title">Equipment checked</div>
+                        <div class="item-subtitle">All machinery operational</div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="item-info">
+                        <div class="item-title">Materials verified</div>
+                        <div class="item-subtitle">Required materials available</div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="item-info">
+                        <div class="item-title">Safety briefing conducted</div>
+                        <div class="item-subtitle">Morning safety talk</div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="item-info">
+                        <div class="item-title">Progress photos taken</div>
+                        <div class="item-subtitle">Documentation updated</div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <div class="item-info">
+                        <div class="item-title">Community concerns addressed</div>
+                        <div class="item-subtitle">Local feedback reviewed</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Additional Notes</label>
+                    <textarea class="form-textarea" id="checklist-notes" placeholder="Any additional notes..." rows="2"></textarea>
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveDailyChecklist()">
+                    ✅ Complete Daily Checklist
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Viewer -->
+    <div class="photo-viewer" id="photo-viewer">
+        <button class="photo-close" onclick="closePhotoViewer()">×</button>
+        <img id="viewer-image" src="" alt="">
+        <div class="photo-caption" id="photo-caption"></div>
     </div>
 
     <!-- Toast -->
@@ -1272,51 +1849,116 @@
             // Set today's date in date inputs
             const today = new Date().toISOString().split('T')[0];
             document.querySelectorAll('input[type="date"]').forEach(input => {
-                input.value = today;
+                if (!input.value) input.value = today;
             });
             
             // Set current time in datetime inputs
             const now = new Date();
             const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
             document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
-                input.value = localDateTime;
+                if (!input.value) input.value = localDateTime;
             });
         });
         
         function initializeApp() {
             // Load saved data or create default
-            projectData = JSON.parse(localStorage.getItem('road_project_data')) || {
-                project: {
-                    name: "Kanditheemu Road Development",
-                    location: "Kanditheemu Island",
-                    startDate: new Date().toISOString(),
-                    progress: 65,
-                    budgetUsed: 72,
-                    safetyScore: 98
-                },
-                dailyReports: [],
-                materials: [],
-                safetyChecks: [],
-                communityNotes: [],
-                tasks: [
-                    { id: 1, title: "Morning site inspection", time: "07:30", status: "pending" },
-                    { id: 2, title: "Check material deliveries", time: "09:00", status: "pending" },
-                    { id: 3, title: "Safety checklist", time: "10:00", status: "pending" },
-                    { id: 4, title: "Lunch break", time: "12:00", status: "completed" },
-                    { id: 5, title: "Community meeting notes", time: "14:00", status: "pending" },
-                    { id: 6, title: "Submit daily report", time: "16:00", status: "pending" }
-                ],
-                deliveries: [
-                    { id: 1, material: "Cement bags", quantity: 50, time: "Today 09:00", status: "delivered" },
-                    { id: 2, material: "Drainage pipes", quantity: 100, time: "Today 11:00", status: "pending" },
-                    { id: 3, material: "Gravel", quantity: 20, time: "Tomorrow 08:00", status: "scheduled" }
-                ],
-                feedback: [
-                    { id: 1, person: "Ahmed Ibrahim", concern: "Access to house blocked", status: "resolved" },
-                    { id: 2, person: "Island Council", concern: "Progress update requested", status: "pending" },
-                    { id: 3, person: "Local Shop Owner", concern: "Dust control needed", status: "in-progress" }
-                ]
-            };
+            const savedData = localStorage.getItem('road_project_data');
+            
+            if (savedData) {
+                projectData = JSON.parse(savedData);
+            } else {
+                // Create default data structure
+                projectData = {
+                    project: {
+                        name: "Kanditheemu Road Development",
+                        location: "Kanditheemu Island",
+                        startDate: new Date().toISOString(),
+                        progress: 65,
+                        budgetUsed: 72,
+                        safetyScore: 98,
+                        safetyStreak: 14,
+                        workersTrained: 24
+                    },
+                    dailyReports: [
+                        {
+                            id: 1,
+                            date: new Date().toISOString().split('T')[0],
+                            weather: "sunny",
+                            workers: 18,
+                            workCompleted: "Completed drainage work near school area, laid 50m pipes",
+                            materials: "Used 20 cement bags, received 50 new bags",
+                            issues: "Minor delay due to equipment maintenance",
+                            safety: "All safety protocols followed, no incidents",
+                            timestamp: new Date().toISOString()
+                        }
+                    ],
+                    materials: [
+                        {
+                            id: 1,
+                            type: "cement",
+                            quantity: 50,
+                            unit: "bags",
+                            supplier: "Maldives Cement Co.",
+                            deliveryTime: new Date().toISOString(),
+                            receivedBy: "Ahmed Rasheed",
+                            quality: "good",
+                            storage: "Site Store A",
+                            notes: "Good quality cement",
+                            timestamp: new Date().toISOString()
+                        }
+                    ],
+                    safetyChecks: [
+                        {
+                            id: 1,
+                            time: new Date().toISOString(),
+                            notes: "All safety equipment in good condition",
+                            completed: true,
+                            timestamp: new Date().toISOString()
+                        }
+                    ],
+                    communityNotes: [
+                        {
+                            id: 1,
+                            time: new Date().toISOString(),
+                            person: "Ahmed Ibrahim",
+                            contactMethod: "in-person",
+                            topic: "access",
+                            details: "Concern about access to house during construction",
+                            action: "Arranged alternative access route",
+                            followup: "no",
+                            contact: "+960-1234567",
+                            timestamp: new Date().toISOString()
+                        }
+                    ],
+                    meetings: [],
+                    progressReports: [],
+                    weatherLogs: [],
+                    dailyChecklists: [],
+                    tasks: [
+                        { id: 1, title: "Morning site inspection", time: "07:30", status: "completed" },
+                        { id: 2, title: "Check material deliveries", time: "09:00", status: "completed" },
+                        { id: 3, title: "Safety checklist", time: "10:00", status: "inprogress" },
+                        { id: 4, title: "Lunch break", time: "12:00", status: "pending" },
+                        { id: 5, title: "Community meeting notes", time: "14:00", status: "pending" },
+                        { id: 6, title: "Submit daily report", time: "16:00", status: "pending" }
+                    ],
+                    deliveries: [
+                        { id: 1, material: "Cement bags", quantity: 50, time: "Today 09:00", status: "delivered" },
+                        { id: 2, material: "Drainage pipes", quantity: 100, time: "Today 11:00", status: "pending" },
+                        { id: 3, material: "Gravel", quantity: 20, time: "Tomorrow 08:00", status: "scheduled" }
+                    ],
+                    feedback: [
+                        { id: 1, person: "Ahmed Ibrahim", concern: "Access to house blocked", status: "resolved" },
+                        { id: 2, person: "Island Council", concern: "Progress update requested", status: "pending" },
+                        { id: 3, person: "Local Shop Owner", concern: "Dust control needed", status: "inprogress" }
+                    ],
+                    photos: [
+                        { id: 1, title: "Site Progress - Day 45", emoji: "🏗️", date: new Date().toISOString() },
+                        { id: 2, title: "Drainage Work", emoji: "🛠️", date: new Date().toISOString() },
+                        { id: 3, title: "Road Base Layer", emoji: "🛣️", date: new Date().toISOString() }
+                    ]
+                };
+            }
             
             saveData();
         }
@@ -1331,11 +1973,6 @@
                 hour: '2-digit', 
                 minute: '2-digit',
                 hour12: true 
-            });
-            const dateString = now.toLocaleDateString('en-US', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric'
             });
             
             // Update weather widget time
@@ -1438,14 +2075,131 @@
         
         function switchSection(section) {
             currentSection = section;
+            
+            // Hide all sections
+            document.getElementById('dashboard-content').style.display = 'none';
+            document.getElementById('reports-content').style.display = 'none';
+            document.getElementById('materials-content').style.display = 'none';
+            document.getElementById('safety-content').style.display = 'none';
+            document.getElementById('more-content').style.display = 'none';
+            
+            // Show selected section
+            document.getElementById(section + '-content').style.display = 'block';
+            
+            // Update navigation
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             event.target.classList.add('active');
             
-            // For now, just show dashboard with different data
-            loadDashboardData();
+            // Load section data
+            switch(section) {
+                case 'reports':
+                    loadReportsData();
+                    break;
+                case 'materials':
+                    loadMaterialsData();
+                    break;
+                case 'safety':
+                    loadSafetyData();
+                    break;
+                case 'more':
+                    loadMoreData();
+                    break;
+            }
+            
             showToast(`Switched to ${section} section`, 'info');
+        }
+        
+        // =================== SECTION DATA LOADING ===================
+        function loadReportsData() {
+            // Load reports list
+            const reportsList = document.getElementById('reports-list');
+            reportsList.innerHTML = '';
+            
+            projectData.dailyReports.slice(0, 5).forEach(report => {
+                const date = new Date(report.date).toLocaleDateString();
+                reportsList.innerHTML += `
+                    <div class="report-item">
+                        <div class="report-date">${date} - Daily Report</div>
+                        <div class="report-content">${report.workCompleted.substring(0, 100)}...</div>
+                    </div>
+                `;
+            });
+            
+            // Update progress bars
+            document.getElementById('progress-percent').textContent = projectData.project.progress + '%';
+            document.getElementById('progress-fill').style.width = projectData.project.progress + '%';
+            document.getElementById('budget-percent').textContent = projectData.project.budgetUsed + '%';
+            document.getElementById('safety-percent').textContent = projectData.project.safetyScore + '%';
+        }
+        
+        function loadMaterialsData() {
+            // Load materials table
+            const tableBody = document.getElementById('materials-table-body');
+            tableBody.innerHTML = '';
+            
+            projectData.materials.slice(0, 5).forEach(material => {
+                const date = new Date(material.deliveryTime).toLocaleDateString();
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${material.type}</td>
+                        <td>${material.quantity} ${material.unit}</td>
+                        <td><span class="item-status status-completed">Received</span></td>
+                        <td>${date}</td>
+                    </tr>
+                `;
+            });
+            
+            // Load delivery schedule
+            const scheduleContainer = document.getElementById('delivery-schedule');
+            scheduleContainer.innerHTML = '';
+            
+            projectData.deliveries.forEach(delivery => {
+                scheduleContainer.innerHTML += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <div class="item-title">${delivery.material}</div>
+                            <div class="item-subtitle">${delivery.time}</div>
+                        </div>
+                        <div class="item-status status-${delivery.status}">${delivery.status}</div>
+                    </div>
+                `;
+            });
+        }
+        
+        function loadSafetyData() {
+            // Update safety stats
+            const today = new Date().toISOString().split('T')[0];
+            const todayChecks = projectData.safetyChecks.filter(check => 
+                new Date(check.time).toISOString().split('T')[0] === today
+            ).length;
+            
+            document.getElementById('safety-checks-today').textContent = todayChecks;
+            document.getElementById('safety-streak').textContent = projectData.project.safetyStreak;
+            document.getElementById('safety-issues').textContent = projectData.feedback.filter(f => f.status !== 'resolved').length;
+            document.getElementById('safety-trained').textContent = projectData.project.workersTrained;
+            
+            // Load safety checks
+            const checksList = document.getElementById('safety-checks-list');
+            checksList.innerHTML = '';
+            
+            projectData.safetyChecks.slice(0, 3).forEach(check => {
+                const time = new Date(check.time).toLocaleString();
+                checksList.innerHTML += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <div class="item-title">Safety Check</div>
+                            <div class="item-subtitle">${time}</div>
+                        </div>
+                        <div class="item-status status-completed">Completed</div>
+                    </div>
+                `;
+            });
+        }
+        
+        function loadMoreData() {
+            // Already loaded via HTML
         }
         
         // =================== MODAL FUNCTIONS ===================
@@ -1482,16 +2236,16 @@
                 timestamp: new Date().toISOString()
             };
             
-            projectData.dailyReports.push(report);
-            saveData();
+            projectData.dailyReports.unshift(report);
             
             // Update progress
-            projectData.project.progress = Math.min(100, projectData.project.progress + 2);
+            projectData.project.progress = Math.min(100, projectData.project.progress + 1);
             
             // Complete the daily report task
             const reportTask = projectData.tasks.find(t => t.title.includes('daily report'));
             if (reportTask) reportTask.status = 'completed';
             
+            saveData();
             closeModal();
             loadDashboardData();
             showToast('📝 Daily report saved successfully!', 'success');
@@ -1507,13 +2261,15 @@
                 id: Date.now(),
                 time: document.getElementById('safety-check-time').value,
                 notes: document.getElementById('safety-notes').value,
+                completed: true,
                 timestamp: new Date().toISOString()
             };
             
-            projectData.safetyChecks.push(safetyCheck);
+            projectData.safetyChecks.unshift(safetyCheck);
             
-            // Update safety score
+            // Update safety score and streak
             projectData.project.safetyScore = Math.min(100, projectData.project.safetyScore + 1);
+            projectData.project.safetyStreak += 1;
             
             // Complete safety task
             const safetyTask = projectData.tasks.find(t => t.title.includes('Safety'));
@@ -1522,6 +2278,7 @@
             saveData();
             closeModal();
             loadDashboardData();
+            if (currentSection === 'safety') loadSafetyData();
             showToast('✅ Safety checklist completed!', 'success');
         }
         
@@ -1545,13 +2302,13 @@
                 timestamp: new Date().toISOString()
             };
             
-            projectData.materials.push(material);
+            projectData.materials.unshift(material);
             
             // Add to deliveries
             projectData.deliveries.unshift({
                 id: Date.now(),
-                material: material.type,
-                quantity: material.quantity + ' ' + material.unit,
+                material: material.type.charAt(0).toUpperCase() + material.type.slice(1),
+                quantity: material.quantity,
                 time: 'Delivered now',
                 status: 'delivered'
             });
@@ -1563,6 +2320,7 @@
             saveData();
             closeModal();
             loadDashboardData();
+            if (currentSection === 'materials') loadMaterialsData();
             showToast('📦 Material delivery recorded!', 'success');
         }
         
@@ -1585,7 +2343,7 @@
                 timestamp: new Date().toISOString()
             };
             
-            projectData.communityNotes.push(note);
+            projectData.communityNotes.unshift(note);
             
             // Add to feedback
             projectData.feedback.unshift({
@@ -1603,6 +2361,201 @@
             closeModal();
             loadDashboardData();
             showToast('🏝️ Community notes saved!', 'success');
+        }
+        
+        // =================== MEETING NOTES ===================
+        function openMeetingNotes() {
+            openModal('meeting-notes-modal');
+        }
+        
+        function saveMeetingNotes() {
+            const meeting = {
+                id: Date.now(),
+                time: document.getElementById('meeting-time').value,
+                type: document.getElementById('meeting-type').value,
+                attendees: document.getElementById('meeting-attendees').value,
+                discussion: document.getElementById('meeting-discussion').value,
+                decisions: document.getElementById('meeting-decisions').value,
+                nextMeeting: document.getElementById('next-meeting-date').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            projectData.meetings.unshift(meeting);
+            
+            saveData();
+            closeModal();
+            showToast('🤝 Meeting notes saved successfully!', 'success');
+        }
+        
+        // =================== PROGRESS REPORT ===================
+        function openProgressReport() {
+            openModal('progress-report-modal');
+        }
+        
+        function updateProgressValue(value) {
+            document.getElementById('progress-display').textContent = value + '%';
+        }
+        
+        function saveProgressReport() {
+            const report = {
+                id: Date.now(),
+                period: document.getElementById('report-period').value,
+                progress: parseInt(document.getElementById('progress-percentage').value),
+                work: document.getElementById('period-work').value,
+                challenges: document.getElementById('period-challenges').value,
+                nextPlan: document.getElementById('next-period-plan').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            projectData.progressReports.unshift(report);
+            
+            // Update project progress
+            projectData.project.progress = report.progress;
+            
+            saveData();
+            closeModal();
+            loadDashboardData();
+            showToast('📊 Progress report saved!', 'success');
+        }
+        
+        // =================== WEATHER LOG ===================
+        function openWeatherLog() {
+            openModal('weather-log-modal');
+        }
+        
+        function saveWeatherLog() {
+            const log = {
+                id: Date.now(),
+                date: document.getElementById('weather-log-date').value,
+                condition: document.getElementById('weather-log-condition').value,
+                temperature: parseInt(document.getElementById('weather-temp').value) || 0,
+                humidity: parseInt(document.getElementById('weather-humidity').value) || 0,
+                wind: parseInt(document.getElementById('weather-wind').value) || 0,
+                impact: document.getElementById('weather-impact').value,
+                notes: document.getElementById('weather-notes').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            projectData.weatherLogs.unshift(log);
+            
+            saveData();
+            closeModal();
+            showToast('🌤️ Weather log saved!', 'success');
+        }
+        
+        // =================== DAILY CHECKLIST ===================
+        function openDailyChecklist() {
+            openModal('daily-checklist-modal');
+        }
+        
+        function saveDailyChecklist() {
+            const checklist = {
+                id: Date.now(),
+                date: document.getElementById('checklist-date').value,
+                notes: document.getElementById('checklist-notes').value,
+                completed: true,
+                timestamp: new Date().toISOString()
+            };
+            
+            projectData.dailyChecklists.unshift(checklist);
+            
+            saveData();
+            closeModal();
+            showToast('✅ Daily checklist completed!', 'success');
+        }
+        
+        // =================== PHOTO FUNCTIONS ===================
+        function openSitePhotos() {
+            // Show photo gallery
+            const photoGrid = document.getElementById('recent-photos');
+            photoGrid.innerHTML = '';
+            
+            projectData.photos.forEach(photo => {
+                const date = new Date(photo.date).toLocaleDateString();
+                photoGrid.innerHTML += `
+                    <div class="photo-item" onclick="viewPhoto('${photo.title}', '${photo.emoji}')">
+                        <div style="font-size: 32px;">${photo.emoji}</div>
+                    </div>
+                `;
+            });
+            
+            // Add upload button
+            photoGrid.innerHTML += `
+                <div class="photo-item photo-add" onclick="uploadPhoto()">
+                    <div style="font-size: 32px;">➕</div>
+                </div>
+            `;
+            
+            showToast('📸 Photo gallery loaded', 'info');
+        }
+        
+        function viewPhoto(title, emoji) {
+            document.getElementById('viewer-image').src = '';
+            document.getElementById('photo-caption').textContent = title + ' ' + emoji;
+            document.getElementById('photo-viewer').classList.add('active');
+        }
+        
+        function closePhotoViewer() {
+            document.getElementById('photo-viewer').classList.remove('active');
+        }
+        
+        function uploadPhoto() {
+            // In a real app, this would use the device camera or file picker
+            // For now, we'll simulate adding a photo
+            const newPhoto = {
+                id: Date.now(),
+                title: "New Site Photo",
+                emoji: "📷",
+                date: new Date().toISOString()
+            };
+            
+            projectData.photos.unshift(newPhoto);
+            saveData();
+            openSitePhotos();
+            showToast('📸 Photo added to gallery!', 'success');
+        }
+        
+        // =================== OTHER FUNCTIONS ===================
+        function showAllTasks() {
+            // Show all tasks in a modal or separate view
+            let taskList = "📋 All Project Tasks:\n\n";
+            projectData.tasks.forEach((task, index) => {
+                taskList += `${index + 1}. ${task.title} (${task.time}) - ${task.status}\n`;
+            });
+            
+            alert(taskList + "\nTotal: " + projectData.tasks.length + " tasks");
+        }
+        
+        function openGallery() {
+            openSitePhotos();
+        }
+        
+        function openDeliverySchedule() {
+            let schedule = "🚚 Delivery Schedule:\n\n";
+            projectData.deliveries.forEach(delivery => {
+                schedule += `• ${delivery.material}: ${delivery.quantity} units (${delivery.time}) - ${delivery.status}\n`;
+            });
+            
+            alert(schedule);
+        }
+        
+        function openCommunityPortal() {
+            let feedback = "🏝️ Community Feedback Portal:\n\n";
+            projectData.feedback.forEach(item => {
+                feedback += `• ${item.person}: ${item.concern} (${item.status})\n`;
+            });
+            
+            alert(feedback + "\nTotal feedback items: " + projectData.feedback.length);
+        }
+        
+        function viewAllSafetyChecks() {
+            let checks = "🛡️ Safety Check History:\n\n";
+            projectData.safetyChecks.forEach((check, index) => {
+                const date = new Date(check.time).toLocaleDateString();
+                checks += `${index + 1}. ${date}: ${check.notes.substring(0, 50)}...\n`;
+            });
+            
+            alert(checks + "\nTotal safety checks: " + projectData.safetyChecks.length);
         }
         
         function showDuas() {
@@ -1624,57 +2577,88 @@
                   "May Allah make your interactions beneficial and blessed. آمين");
         }
         
-        // =================== OTHER FUNCTIONS ===================
-        function openMeetingNotes() {
-            showToast('Meeting notes feature coming soon!', 'info');
+        // =================== MORE SECTION FUNCTIONS ===================
+        function exportData() {
+            // Create a downloadable JSON file
+            const dataStr = JSON.stringify(projectData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `kanditheemu-project-data-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showToast('📤 Data exported successfully!', 'success');
         }
         
-        function openProgressReport() {
-            showToast('Progress report feature coming soon!', 'info');
+        function backupData() {
+            // Save to localStorage and show confirmation
+            saveData();
+            showToast('💾 Data backed up successfully!', 'success');
         }
         
-        function openSitePhotos() {
-            showToast('Site photos feature coming soon!', 'info');
+        function resetData() {
+            if (confirm("⚠️ Are you sure you want to reset all data? This cannot be undone!")) {
+                localStorage.removeItem('road_project_data');
+                initializeApp();
+                loadDashboardData();
+                showToast('🔄 Data reset complete!', 'success');
+            }
         }
         
-        function openWeatherLog() {
-            showToast('Weather log feature coming soon!', 'info');
+        function showSettings() {
+            alert("⚙️ Settings:\n\n• Project: Kanditheemu Road Development\n• Location: Kanditheemu Island\n• Data stored locally in browser\n• Works offline\n• Auto-saves data");
         }
         
-        function openDailyChecklist() {
-            showToast('Daily checklist feature coming soon!', 'info');
+        function showHelp() {
+            alert("❓ Help & Guide:\n\n1. Daily Report: Record daily work progress\n2. Material Tracking: Log material deliveries\n3. Safety Check: Complete safety inspections\n4. Community Notes: Record community interactions\n5. Photos: Document site progress\n6. Export: Download project data\n\nAll data is saved automatically!");
         }
         
-        function showAllTasks() {
-            showToast('All tasks view coming soon!', 'info');
+        function showAbout() {
+            alert("🏗️ Road Project Assistant v2.0\n\nDesigned for Kanditheemu Infrastructure Project\n\nFeatures:\n• Daily progress tracking\n• Material management\n• Safety compliance\n• Community engagement\n• Photo documentation\n• Offline capable\n• Mobile-friendly");
         }
         
-        function openGallery() {
-            showToast('Photo gallery coming soon!', 'info');
+        function callContact(number) {
+            if (confirm(`Call ${number}?`)) {
+                showToast(`📞 Calling ${number}...`, 'info');
+                // In a real app, this would use tel: link
+                // window.location.href = `tel:${number}`;
+            }
         }
         
-        function openDeliverySchedule() {
-            showToast('Delivery schedule coming soon!', 'info');
-        }
-        
-        function openCommunityPortal() {
-            showToast('Community portal coming soon!', 'info');
-        }
-        
-        function openPhotoViewer(id) {
-            showToast('Photo viewer coming soon!', 'info');
-        }
-        
-        function addPhoto() {
-            showToast('Photo upload feature coming soon!', 'info');
-        }
-        
-        function takeMaterialPhoto() {
-            showToast('Camera feature coming soon! Use mobile camera.', 'info');
-        }
-        
-        function uploadMaterialPhoto() {
-            showToast('Photo upload coming soon!', 'info');
+        function generateMonthlyReport() {
+            // Generate a simple monthly report
+            const report = {
+                month: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+                progress: projectData.project.progress + '%',
+                safetyScore: projectData.project.safetyScore + '%',
+                budgetUsed: projectData.project.budgetUsed + '%',
+                dailyReports: projectData.dailyReports.length,
+                materialsReceived: projectData.materials.length,
+                safetyChecks: projectData.safetyChecks.length,
+                communityInteractions: projectData.communityNotes.length
+            };
+            
+            const reportText = `
+📊 Monthly Project Report - ${report.month}
+
+Project Progress: ${report.progress}
+Safety Score: ${report.safetyScore}
+Budget Utilization: ${report.budgetUsed}
+
+Activities This Month:
+• ${report.dailyReports} daily reports submitted
+• ${report.materialsReceived} material deliveries recorded
+• ${report.safetyChecks} safety checks completed
+• ${report.communityInteractions} community interactions logged
+
+Summary: Project progressing well with strong safety record.
+            `;
+            
+            alert(reportText);
+            showToast('📊 Monthly report generated!', 'success');
         }
         
         // =================== UTILITY FUNCTIONS ===================
@@ -1688,7 +2672,7 @@
             }, 3000);
         }
         
-        // =================== EXPORT FUNCTIONS ===================
+        // =================== EXPORT FUNCTIONS TO WINDOW ===================
         window.switchTab = switchTab;
         window.switchSection = switchSection;
         window.openDailyReport = openDailyReport;
@@ -1704,17 +2688,30 @@
         window.openGallery = openGallery;
         window.openDeliverySchedule = openDeliverySchedule;
         window.openCommunityPortal = openCommunityPortal;
-        window.openPhotoViewer = openPhotoViewer;
-        window.addPhoto = addPhoto;
-        window.takeMaterialPhoto = takeMaterialPhoto;
-        window.uploadMaterialPhoto = uploadMaterialPhoto;
+        window.viewPhoto = viewPhoto;
+        window.uploadPhoto = uploadPhoto;
         window.toggleCheck = toggleCheck;
         window.saveDailyReport = saveDailyReport;
         window.saveSafetyChecklist = saveSafetyChecklist;
         window.saveMaterialDelivery = saveMaterialDelivery;
         window.saveCommunityNotes = saveCommunityNotes;
+        window.saveMeetingNotes = saveMeetingNotes;
+        window.saveProgressReport = saveProgressReport;
+        window.saveWeatherLog = saveWeatherLog;
+        window.saveDailyChecklist = saveDailyChecklist;
         window.showDuas = showDuas;
         window.closeModal = closeModal;
+        window.closePhotoViewer = closePhotoViewer;
+        window.viewAllSafetyChecks = viewAllSafetyChecks;
+        window.exportData = exportData;
+        window.backupData = backupData;
+        window.resetData = resetData;
+        window.showSettings = showSettings;
+        window.showHelp = showHelp;
+        window.showAbout = showAbout;
+        window.callContact = callContact;
+        window.generateMonthlyReport = generateMonthlyReport;
+        window.updateProgressValue = updateProgressValue;
     </script>
 </body>
 </html>
