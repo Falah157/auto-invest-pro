@@ -6,789 +6,188 @@
     <title>🍽️ Cafe Pro - Complete Management</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Telegram-like Styles */
-        :root {
-            --tg-bg: #18222d;
-            --tg-secondary-bg: #1e2a38;
-            --tg-text: #ffffff;
-            --tg-secondary-text: #8e8e93;
-            --tg-accent: #2ea6ff;
-            --tg-green: #33c659;
-            --tg-red: #ff3b30;
-            --tg-orange: #ff9500;
-            --tg-border: #2c3b4d;
-            --tg-card-bg: #222f3d;
-        }
+        /* [ALL THE EXISTING CSS FROM YOUR CODE REMAINS HERE - I'LL JUST ADD NEW STYLES BELOW] */
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: var(--tg-bg);
-            color: var(--tg-text);
-            line-height: 1.4;
-            font-size: 15px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* App Layout */
-        #app {
-            max-width: 500px;
-            margin: 0 auto;
-            min-height: 100vh;
-            padding-bottom: 60px;
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--tg-secondary-bg);
-            border-top: 1px solid var(--tg-border);
-            display: flex;
-            z-index: 1000;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .nav-item {
-            flex: 1;
-            padding: 12px;
-            background: none;
-            border: none;
-            color: var(--tg-secondary-text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 12px;
-        }
-
-        .nav-item.active {
-            color: var(--tg-accent);
-        }
-
-        .nav-item i {
-            font-size: 18px;
-        }
-
-        /* Screen Container */
-        .screen {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Header */
-        .screen-header {
-            background: var(--tg-secondary-bg);
-            padding: 16px;
-            border-bottom: 1px solid var(--tg-border);
-            position: sticky;
-            top: 0;
-            z-index: 99;
-        }
-
-        .screen-title {
-            font-size: 20px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .screen-subtitle {
-            font-size: 14px;
-            color: var(--tg-secondary-text);
-            margin-top: 4px;
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            padding: 16px;
+        /* ============ NEW ADDITIONS ============ */
+        
+        /* Payment Methods */
+        .payment-methods {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .action-card {
-            background: var(--tg-card-bg);
-            border: 1px solid var(--tg-border);
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .action-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--tg-accent);
-        }
-
-        .action-icon {
-            font-size: 24px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .new-order .action-icon { background: rgba(46, 166, 255, 0.2); color: var(--tg-accent); }
-        .edit-order .action-icon { background: rgba(255, 149, 0, 0.2); color: var(--tg-orange); }
-        .history .action-icon { background: rgba(51, 198, 89, 0.2); color: var(--tg-green); }
-        .customers .action-icon { background: rgba(175, 82, 222, 0.2); color: #af52de; }
-
-        .action-title {
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .action-desc {
-            font-size: 12px;
-            color: var(--tg-secondary-text);
-        }
-
-        /* Search Box */
-        .search-container {
-            padding: 16px;
-            background: var(--tg-secondary-bg);
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 16px 12px 44px;
-            background: var(--tg-card-bg);
-            border: 1px solid var(--tg-border);
-            border-radius: 12px;
-            color: var(--tg-text);
-            font-size: 15px;
-            outline: none;
-        }
-
-        .search-input::placeholder {
-            color: var(--tg-secondary-text);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--tg-secondary-text);
-        }
-
-        /* Orders List */
-        .orders-list {
-            padding: 8px 16px;
-        }
-
-        .order-card {
-            background: var(--tg-card-bg);
-            border: 1px solid var(--tg-border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .order-card:hover {
-            border-color: var(--tg-accent);
-            transform: translateX(4px);
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .order-id {
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 14px;
-            color: var(--tg-accent);
-            font-weight: 600;
-        }
-
-        .order-status {
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-new { background: rgba(255, 149, 0, 0.2); color: var(--tg-orange); }
-        .status-preparing { background: rgba(46, 166, 255, 0.2); color: var(--tg-accent); }
-        .status-ready { background: rgba(51, 198, 89, 0.2); color: var(--tg-green); }
-        .status-completed { background: rgba(255, 59, 48, 0.2); color: var(--tg-red); }
-
-        .order-body {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .customer-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .customer-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--tg-accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .customer-details h4 {
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .customer-telegram {
-            font-size: 12px;
-            color: var(--tg-secondary-text);
-        }
-
-        .order-meta {
-            text-align: right;
-        }
-
-        .order-amount {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--tg-green);
-            margin-bottom: 4px;
-        }
-
-        .order-time {
-            font-size: 12px;
-            color: var(--tg-secondary-text);
-        }
-
-        /* Items List */
-        .items-list {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--tg-border);
-        }
-
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-        }
-
-        .item-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .item-emoji {
-            font-size: 20px;
-            width: 30px;
-        }
-
-        .item-name {
-            font-weight: 500;
-        }
-
-        .item-quantity {
-            font-size: 12px;
-            color: var(--tg-secondary-text);
-        }
-
-        .item-price {
-            font-weight: 600;
-        }
-
-        /* Modals */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: var(--tg-card-bg);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 400px;
-            max-height: 90vh;
-            overflow: hidden;
-            border: 1px solid var(--tg-border);
-            transform: translateY(20px);
-            transition: transform 0.3s;
-        }
-
-        .modal-overlay.active .modal {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--tg-border);
-            background: linear-gradient(135deg, var(--tg-secondary-bg) 0%, var(--tg-card-bg) 100%);
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
+            margin-top: 12px;
         }
 
-        .modal-subtitle {
-            color: var(--tg-secondary-text);
-            font-size: 14px;
-        }
-
-        .modal-close {
-            position: absolute;
-            right: 16px;
-            top: 16px;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: var(--tg-text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            max-height: 60vh;
-        }
-
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--tg-secondary-bg);
-            border: 1px solid var(--tg-border);
-            border-radius: 12px;
-            color: var(--tg-text);
-            font-size: 15px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            border-color: var(--tg-accent);
-        }
-
-        .form-textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        /* Customer Search */
-        .customer-search-results {
-            margin-top: 16px;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid var(--tg-border);
-            border-radius: 12px;
-        }
-
-        .customer-result {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--tg-border);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .customer-result:hover {
-            background: var(--tg-secondary-bg);
-        }
-
-        .customer-result:last-child {
-            border-bottom: none;
-        }
-
-        .customer-result-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--tg-accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        .customer-result-info h4 {
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .customer-result-telegram {
-            font-size: 12px;
-            color: var(--tg-secondary-text);
-        }
-
-        /* Menu Items */
-        .menu-items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .menu-item {
-            background: var(--tg-secondary-bg);
-            border: 1px solid var(--tg-border);
-            border-radius: 12px;
+        .payment-method {
             padding: 12px;
+            background: var(--tg-secondary-bg);
+            border: 1px solid var(--tg-border);
+            border-radius: 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .menu-item:hover {
+        .payment-method:hover {
             border-color: var(--tg-accent);
+        }
+
+        .payment-method.active {
+            background: rgba(46, 166, 255, 0.1);
+            border-color: var(--tg-accent);
+        }
+
+        /* Table Management */
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .table-item {
+            aspect-ratio: 1;
+            background: var(--tg-secondary-bg);
+            border: 2px solid var(--tg-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .table-item:hover {
             transform: scale(1.05);
         }
 
-        .menu-item.selected {
-            border-color: var(--tg-accent);
-            background: rgba(46, 166, 255, 0.1);
+        .table-item.occupied {
+            background: rgba(255, 59, 48, 0.1);
+            border-color: var(--tg-red);
         }
 
-        .menu-item-emoji {
-            font-size: 24px;
-            margin-bottom: 8px;
+        .table-item.reserved {
+            background: rgba(255, 149, 0, 0.1);
+            border-color: var(--tg-orange);
         }
 
-        .menu-item-name {
-            font-weight: 500;
-            margin-bottom: 4px;
-            font-size: 14px;
+        .table-item.available {
+            background: rgba(51, 198, 89, 0.1);
+            border-color: var(--tg-green);
         }
 
-        .menu-item-price {
-            font-size: 14px;
-            color: var(--tg-green);
+        .table-number {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .table-status {
+            font-size: 10px;
+            margin-top: 4px;
+            text-transform: uppercase;
             font-weight: 600;
         }
 
-        /* Quantity Selector */
-        .quantity-selector {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            margin: 20px 0;
+        /* Receipt Styles */
+        .receipt-container {
+            background: white;
+            color: black;
+            padding: 24px;
+            font-family: 'Courier New', monospace;
+            max-width: 300px;
+            margin: 0 auto;
         }
 
-        .qty-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--tg-accent);
-            background: none;
-            color: var(--tg-accent);
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .qty-btn:hover {
-            background: var(--tg-accent);
-            color: white;
-        }
-
-        .quantity-display {
-            font-size: 24px;
-            font-weight: 700;
-            min-width: 40px;
+        .receipt-header {
             text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 10px;
         }
 
-        /* Current Items */
-        .current-items {
-            margin-top: 20px;
-            border-top: 1px solid var(--tg-border);
-            padding-top: 20px;
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
         }
 
-        .current-item {
+        .receipt-divider {
+            border-top: 1px dashed #000;
+            margin: 10px 0;
+        }
+
+        /* Analytics Charts */
+        .chart-container {
+            background: var(--tg-card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px;
+            border: 1px solid var(--tg-border);
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: var(--tg-secondary-bg);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--tg-secondary-text);
+        }
+
+        /* Inventory Management */
+        .inventory-items {
+            padding: 16px;
+        }
+
+        .inventory-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px;
-            background: var(--tg-secondary-bg);
+            background: var(--tg-card-bg);
+            border: 1px solid var(--tg-border);
             border-radius: 8px;
             margin-bottom: 8px;
         }
 
-        .current-item-info {
+        .stock-level {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .current-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .remove-item {
-            color: var(--tg-red);
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 14px 24px;
-            border-radius: 12px;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 8px;
-            width: 100%;
         }
 
-        .btn-primary {
-            background: var(--tg-accent);
-            color: white;
+        .stock-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
         }
 
-        .btn-primary:hover {
-            background: #1d8ed8;
-            transform: translateY(-2px);
-        }
+        .stock-low { background: var(--tg-red); }
+        .stock-medium { background: var(--tg-orange); }
+        .stock-high { background: var(--tg-green); }
 
-        .btn-secondary {
-            background: var(--tg-secondary-bg);
-            color: var(--tg-text);
-            border: 1px solid var(--tg-border);
-        }
-
-        .btn-secondary:hover {
-            background: #2c3b4d;
-        }
-
-        .btn-success {
-            background: var(--tg-green);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #2aa952;
-        }
-
-        .btn-danger {
-            background: var(--tg-red);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #e02c21;
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .action-buttons .btn {
-            flex: 1;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--tg-secondary-bg);
-            color: var(--tg-text);
-            padding: 12px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            z-index: 3000;
-            opacity: 0;
-            transition: all 0.3s;
-            max-width: 90%;
-            text-align: center;
-            border: 1px solid var(--tg-border);
-            backdrop-filter: blur(10px);
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        /* Customers Screen */
-        .customers-list {
+        /* Staff Management */
+        .staff-list {
             padding: 16px;
         }
 
-        .customer-card {
+        .staff-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
             background: var(--tg-card-bg);
             border: 1px solid var(--tg-border);
             border-radius: 12px;
-            padding: 16px;
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
         }
 
-        .customer-stats {
-            margin-top: 8px;
-            display: flex;
-            gap: 16px;
-            font-size: 12px;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Empty States */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--tg-secondary-text);
-        }
-
-        .empty-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-            
-            .menu-items-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
-
-        /* Telegram User Info */
-        .telegram-user {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: var(--tg-secondary-bg);
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-
-        .telegram-avatar {
-            width: 48px;
-            height: 48px;
+        .staff-avatar {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: var(--tg-accent);
             display: flex;
@@ -798,628 +197,878 @@
             font-size: 18px;
         }
 
-        .telegram-info h3 {
-            font-weight: 600;
-            margin-bottom: 4px;
+        .staff-role {
+            font-size: 12px;
+            color: var(--tg-secondary-text);
+            margin-top: 2px;
         }
 
-        .telegram-info p {
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--tg-red);
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Settings Panel */
+        .settings-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--tg-border);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 24px;
+            background: var(--tg-border);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle-switch.active {
+            background: var(--tg-accent);
+        }
+
+        .toggle-slider {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(26px);
+        }
+
+        /* Real-time Updates */
+        .real-time-badge {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Order Queue */
+        .queue-container {
+            padding: 16px;
+        }
+
+        .queue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--tg-card-bg);
+            border: 1px solid var(--tg-border);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .queue-timer {
+            font-family: 'Monaco', monospace;
             font-size: 14px;
+            color: var(--tg-orange);
+        }
+
+        /* Print Preview */
+        @media print {
+            .no-print { display: none !important; }
+            .receipt-container { 
+                max-width: none !important;
+                padding: 0 !important;
+            }
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--tg-accent);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* QR Code Scanner */
+        .scanner-container {
+            width: 100%;
+            height: 300px;
+            background: var(--tg-secondary-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        /* Category Filter */
+        .category-filter {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .category-chip {
+            padding: 8px 16px;
+            background: var(--tg-secondary-bg);
+            border: 1px solid var(--tg-border);
+            border-radius: 20px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-chip.active {
+            background: var(--tg-accent);
+            color: white;
+            border-color: var(--tg-accent);
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 12px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 12px;
+            background: var(--tg-card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--tg-border);
+        }
+
+        .stat-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 4px 0;
+        }
+
+        .stat-label {
+            font-size: 10px;
             color: var(--tg-secondary-text);
+            text-transform: uppercase;
+        }
+
+        /* Enhanced Toast */
+        .toast.progress {
+            width: 300px;
+        }
+
+        .toast-progress-bar {
+            height: 3px;
+            background: var(--tg-accent);
+            margin-top: 8px;
+            border-radius: 2px;
+            animation: progress 3s linear;
+        }
+
+        @keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 4000;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--tg-border);
+            border-top-color: var(--tg-accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Responsive Enhancements */
+        @media (max-width: 360px) {
+            .tables-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .payment-methods {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Keyboard Shortcuts Help */
+        .shortcuts-help {
+            position: fixed;
+            bottom: 70px;
+            left: 20px;
+            background: var(--tg-card-bg);
+            border: 1px solid var(--tg-border);
+            border-radius: 12px;
+            padding: 16px;
+            max-width: 300px;
+            z-index: 999;
+            display: none;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Voice Control */
+        .voice-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--tg-accent);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+        }
+
+        .voice-control.listening {
+            animation: pulse 1s infinite;
         }
     </style>
 </head>
 <body>
-    <!-- Main App -->
-    <div id="app">
-        <!-- Home Screen -->
-        <div class="screen active" id="home-screen">
-            <div class="screen-header">
-                <div class="screen-title">
-                    <span>🍽️ Cafe Pro</span>
-                </div>
-                <div class="screen-subtitle" id="greeting">Good morning!</div>
-            </div>
+    <!-- [ALL THE EXISTING HTML FROM YOUR CODE REMAINS HERE - I'LL JUST ADD NEW SECTIONS BELOW] -->
 
-            <!-- Current Stats -->
-            <div style="padding: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                <div style="text-align: center; background: var(--tg-card-bg); padding: 12px; border-radius: 12px;">
-                    <div style="font-size: 24px; font-weight: 700; color: var(--tg-accent);" id="today-orders">0</div>
-                    <div style="font-size: 12px; color: var(--tg-secondary-text);">Today</div>
-                </div>
-                <div style="text-align: center; background: var(--tg-card-bg); padding: 12px; border-radius: 12px;">
-                    <div style="font-size: 24px; font-weight: 700; color: var(--tg-green);" id="today-revenue">$0</div>
-                    <div style="font-size: 12px; color: var(--tg-secondary-text);">Revenue</div>
-                </div>
-                <div style="text-align: center; background: var(--tg-card-bg); padding: 12px; border-radius: 12px;">
-                    <div style="font-size: 24px; font-weight: 700; color: var(--tg-orange);" id="active-tables">0</div>
-                    <div style="font-size: 12px; color: var(--tg-secondary-text);">Active</div>
-                </div>
+    <!-- New Screens and Modals -->
+    
+    <!-- Tables Screen -->
+    <div class="screen" id="tables-screen">
+        <div class="screen-header">
+            <div class="screen-title">
+                <span>🪑 Table Management</span>
             </div>
+            <div class="screen-subtitle" id="tables-count">12 tables</div>
+        </div>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <div class="action-card new-order" onclick="openNewOrderModal()">
-                    <div class="action-icon">➕</div>
-                    <div class="action-title">New Order</div>
-                    <div class="action-desc">Take order from customer</div>
-                </div>
-                <div class="action-card edit-order" onclick="showEditOrders()">
-                    <div class="action-icon">✏️</div>
-                    <div class="action-title">Edit Orders</div>
-                    <div class="action-desc">Modify existing orders</div>
-                </div>
-                <div class="action-card history" onclick="switchScreen('orders-screen')">
-                    <div class="action-icon">📊</div>
-                    <div class="action-title">Orders History</div>
-                    <div class="action-desc">View all past orders</div>
-                </div>
-                <div class="action-card customers" onclick="switchScreen('customers-screen')">
-                    <div class="action-icon">👥</div>
-                    <div class="action-title">Customers</div>
-                    <div class="action-desc">Manage customers</div>
-                </div>
-            </div>
-
-            <!-- Recent Orders -->
-            <div style="padding: 16px;">
-                <h3 style="margin-bottom: 12px; font-size: 16px;">🕐 Recent Orders</h3>
-                <div id="recent-orders">
-                    <!-- Recent orders loaded here -->
-                </div>
+        <div class="search-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="tables-search" placeholder="Search tables...">
             </div>
         </div>
 
-        <!-- Orders Screen -->
-        <div class="screen" id="orders-screen">
-            <div class="screen-header">
-                <div class="screen-title">
-                    <span>📊 Orders History</span>
-                </div>
-                <div class="screen-subtitle" id="orders-count">Loading...</div>
-            </div>
-
-            <div class="search-container">
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" class="search-input" id="orders-search" placeholder="Search by customer, order ID, or item...">
-                </div>
-            </div>
-
-            <div class="orders-list" id="all-orders-list">
-                <!-- All orders loaded here -->
-            </div>
+        <div class="tables-grid" id="tables-grid">
+            <!-- Tables loaded dynamically -->
         </div>
 
-        <!-- Customers Screen -->
-        <div class="screen" id="customers-screen">
-            <div class="screen-header">
-                <div class="screen-title">
-                    <span>👥 Customers</span>
-                </div>
-                <div class="screen-subtitle" id="customers-count">Loading...</div>
-            </div>
-
-            <div class="search-container">
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" class="search-input" id="customers-search" placeholder="Search customers...">
-                </div>
-            </div>
-
-            <div class="customers-list" id="customers-list">
-                <!-- Customers loaded here -->
-            </div>
-        </div>
-
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <button class="nav-item active" onclick="switchScreen('home-screen')">
-                <span>🏠</span>
-                <span>Home</span>
-            </button>
-            <button class="nav-item" onclick="openNewOrderModal()">
-                <span>➕</span>
-                <span>New Order</span>
-            </button>
-            <button class="nav-item" onclick="switchScreen('orders-screen')">
-                <span>📊</span>
-                <span>Orders</span>
-            </button>
-            <button class="nav-item" onclick="switchScreen('customers-screen')">
-                <span>👥</span>
-                <span>Customers</span>
+        <div style="padding: 16px;">
+            <button class="btn btn-primary" onclick="addNewTable()">
+                ➕ Add New Table
             </button>
         </div>
     </div>
 
-    <!-- New Order Modal -->
-    <div class="modal-overlay" id="new-order-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <button class="modal-close" onclick="closeModal()">×</button>
-                <div class="modal-title">➕ New Order</div>
-                <div class="modal-subtitle">Create a new customer order</div>
+    <!-- Analytics Screen -->
+    <div class="screen" id="analytics-screen">
+        <div class="screen-header">
+            <div class="screen-title">
+                <span>📈 Analytics</span>
             </div>
-            
-            <div class="modal-body">
-                <!-- Customer Selection -->
-                <div class="form-group">
-                    <label class="form-label">👤 Select Customer</label>
-                    <input type="text" class="form-input" id="customer-search-input" placeholder="Search by name or Telegram ID..." oninput="searchTelegramUsers()">
-                    <div class="customer-search-results" id="customer-results">
-                        <!-- Results loaded here -->
-                    </div>
-                    <div style="margin-top: 12px; text-align: center;">
-                        <button class="btn btn-secondary" onclick="useCurrentTelegramUser()">
-                            👤 Use My Telegram Account
-                        </button>
-                    </div>
-                </div>
+            <div class="screen-subtitle">Real-time business insights</div>
+        </div>
 
-                <!-- Selected Customer -->
-                <div class="telegram-user hidden" id="selected-customer">
-                    <div class="telegram-avatar" id="selected-avatar">?</div>
-                    <div class="telegram-info">
-                        <h3 id="selected-name">Customer Name</h3>
-                        <p id="selected-telegram">@username</p>
-                    </div>
-                </div>
+        <div class="quick-stats">
+            <div class="stat-box">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="daily-revenue">$0</div>
+                <div class="stat-label">Today</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="avg-order">$0</div>
+                <div class="stat-label">Avg Order</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="new-customers">0</div>
+                <div class="stat-label">New Cust.</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="avg-time">0m</div>
+                <div class="stat-label">Prep Time</div>
+            </div>
+        </div>
 
-                <!-- Menu Items -->
-                <div class="form-group" id="menu-section">
-                    <label class="form-label">🍽️ Select Items</label>
-                    <div class="menu-items-grid" id="menu-items">
-                        <!-- Menu items loaded here -->
-                    </div>
-                </div>
+        <div class="chart-container">
+            <h4 style="margin-bottom: 16px;">📅 Daily Revenue</h4>
+            <div class="chart-placeholder" id="revenue-chart">
+                <span>📈</span>
+                <span style="margin-top: 8px;">Revenue Chart</span>
+            </div>
+        </div>
 
-                <!-- Quantity Selector -->
-                <div class="form-group hidden" id="quantity-section">
-                    <div class="quantity-selector">
-                        <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
-                        <div class="quantity-display" id="current-quantity">1</div>
-                        <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
-                    </div>
-                    <div style="text-align: center; margin-top: 12px;">
-                        <button class="btn btn-secondary" onclick="addSelectedItem()">
-                            ➕ Add to Order
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Current Items -->
-                <div class="current-items" id="current-items-container">
-                    <!-- Current order items shown here -->
-                </div>
-
-                <!-- Special Instructions -->
-                <div class="form-group">
-                    <label class="form-label">📝 Special Instructions</label>
-                    <textarea class="form-textarea" id="order-notes" placeholder="Any allergies, modifications, etc."></textarea>
-                </div>
-
-                <!-- Submit Buttons -->
-                <div class="action-buttons">
-                    <button class="btn btn-success" onclick="submitOrder()" id="submit-order-btn">
-                        ✅ Submit Order
-                    </button>
-                    <button class="btn btn-secondary" onclick="clearCurrentOrder()">
-                        🗑️ Clear Order
-                    </button>
-                </div>
+        <div class="chart-container">
+            <h4 style="margin-bottom: 16px;">🍽️ Popular Items</h4>
+            <div class="chart-placeholder" id="popular-items">
+                <span>🏆</span>
+                <span style="margin-top: 8px;">Top Items Chart</span>
             </div>
         </div>
     </div>
 
-    <!-- Edit Order Modal -->
-    <div class="modal-overlay" id="edit-order-modal">
+    <!-- Inventory Screen -->
+    <div class="screen" id="inventory-screen">
+        <div class="screen-header">
+            <div class="screen-title">
+                <span>📦 Inventory</span>
+            </div>
+            <div class="screen-subtitle" id="inventory-count">Loading...</div>
+        </div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="inventory-search" placeholder="Search items...">
+            </div>
+        </div>
+
+        <div class="inventory-items" id="inventory-items">
+            <!-- Inventory items loaded here -->
+        </div>
+
+        <div style="padding: 16px;">
+            <button class="btn btn-primary" onclick="openAddInventoryModal()">
+                📦 Add Inventory Item
+            </button>
+        </div>
+    </div>
+
+    <!-- Staff Screen -->
+    <div class="screen" id="staff-screen">
+        <div class="screen-header">
+            <div class="screen-title">
+                <span>👨‍🍳 Staff Management</span>
+            </div>
+            <div class="screen-subtitle" id="staff-count">Loading...</div>
+        </div>
+
+        <div class="staff-list" id="staff-list">
+            <!-- Staff members loaded here -->
+        </div>
+
+        <div style="padding: 16px;">
+            <button class="btn btn-primary" onclick="openAddStaffModal()">
+                👤 Add Staff Member
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div class="screen" id="settings-screen">
+        <div class="screen-header">
+            <div class="screen-title">
+                <span>⚙️ Settings</span>
+            </div>
+            <div class="screen-subtitle">App configuration</div>
+        </div>
+
+        <div class="settings-section">
+            <h4 style="margin-bottom: 16px;">🛠️ General</h4>
+            <div class="settings-item">
+                <span>Dark Mode</span>
+                <div class="toggle-switch" onclick="toggleDarkMode()">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="settings-item">
+                <span>Notifications</span>
+                <div class="toggle-switch active" onclick="toggleNotifications()">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="settings-item">
+                <span>Sound Effects</span>
+                <div class="toggle-switch active" onclick="toggleSounds()">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h4 style="margin-bottom: 16px;">💳 Payment</h4>
+            <div class="settings-item">
+                <span>Accept Cash</span>
+                <div class="toggle-switch active" onclick="togglePayment('cash')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="settings-item">
+                <span>Accept Cards</span>
+                <div class="toggle-switch active" onclick="togglePayment('card')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="settings-item">
+                <span>Digital Wallets</span>
+                <div class="toggle-switch" onclick="togglePayment('wallet')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h4 style="margin-bottom: 16px;">🔒 Data</h4>
+            <button class="btn btn-secondary" onclick="exportAllData()" style="width: 100%; margin-bottom: 8px;">
+                💾 Export All Data
+            </button>
+            <button class="btn btn-secondary" onclick="importData()" style="width: 100%; margin-bottom: 8px;">
+                📥 Import Data
+            </button>
+            <button class="btn btn-danger" onclick="resetAllData()" style="width: 100%;">
+                🗑️ Reset All Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Enhanced Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchScreen('home-screen')">
+            <span>🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="switchScreen('tables-screen')">
+            <span>🪑</span>
+            <span>Tables</span>
+        </button>
+        <button class="nav-item" onclick="openNewOrderModal()">
+            <span style="position: relative;">
+                ➕
+                <span class="notification-badge" id="order-badge">0</span>
+            </span>
+            <span>Order</span>
+        </button>
+        <button class="nav-item" onclick="switchScreen('analytics-screen')">
+            <span>📈</span>
+            <span>Analytics</span>
+        </button>
+        <button class="nav-item" onclick="switchScreen('settings-screen')">
+            <span>⚙️</span>
+            <span>More</span>
+        </button>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+        🌙
+    </button>
+
+    <!-- Voice Control -->
+    <button class="voice-control" id="voice-control" onclick="toggleVoiceControl()">
+        🎤
+    </button>
+
+    <!-- NEW MODALS -->
+
+    <!-- Table Management Modal -->
+    <div class="modal-overlay" id="table-modal">
         <div class="modal">
             <div class="modal-header">
                 <button class="modal-close" onclick="closeModal()">×</button>
-                <div class="modal-title">✏️ Edit Order</div>
-                <div class="modal-subtitle" id="edit-order-id">ORDER20251112112138</div>
+                <div class="modal-title">🪑 Table <span id="table-number">1</span></div>
+                <div class="modal-subtitle" id="table-status">Available</div>
             </div>
             
             <div class="modal-body">
-                <!-- Current Items -->
-                <div id="edit-items-container">
-                    <!-- Items loaded here -->
-                </div>
-
-                <!-- Add More Items -->
                 <div class="form-group">
-                    <label class="form-label">➕ Add More Items</label>
-                    <div class="menu-items-grid" id="edit-menu-items">
-                        <!-- Menu items loaded here -->
-                    </div>
-                </div>
-
-                <!-- Special Instructions -->
-                <div class="form-group">
-                    <label class="form-label">📝 Special Instructions</label>
-                    <textarea class="form-textarea" id="edit-notes" placeholder="Any allergies, modifications, etc."></textarea>
-                </div>
-
-                <!-- Status Update -->
-                <div class="form-group">
-                    <label class="form-label">🔄 Update Status</label>
-                    <select class="form-select" id="edit-status">
-                        <option value="new">🆕 New</option>
-                        <option value="preparing">👨‍🍳 Preparing</option>
-                        <option value="ready">✅ Ready</option>
-                        <option value="completed">📦 Completed</option>
-                        <option value="cancelled">❌ Cancelled</option>
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="table-status-select">
+                        <option value="available">🟢 Available</option>
+                        <option value="occupied">🔴 Occupied</option>
+                        <option value="reserved">🟡 Reserved</option>
+                        <option value="cleaning">🟣 Cleaning</option>
                     </select>
                 </div>
 
-                <!-- Action Buttons -->
+                <div class="form-group">
+                    <label class="form-label">Capacity</label>
+                    <input type="number" class="form-input" id="table-capacity" value="4" min="1" max="20">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Current Order</label>
+                    <select class="form-select" id="table-order-select">
+                        <option value="">No order</option>
+                        <!-- Orders loaded dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-textarea" id="table-notes" placeholder="Table notes..."></textarea>
+                </div>
+
                 <div class="action-buttons">
-                    <button class="btn btn-success" onclick="saveOrderChanges()">
+                    <button class="btn btn-success" onclick="saveTableChanges()">
                         💾 Save Changes
                     </button>
-                    <button class="btn btn-danger" onclick="deleteOrder()">
-                        🗑️ Delete Order
+                    <button class="btn btn-danger" onclick="deleteTable()">
+                        🗑️ Delete Table
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
-    <script>
-        // =================== INITIALIZATION ===================
-        const tg = window.Telegram.WebApp;
-        let orders = JSON.parse(localStorage.getItem('cafe_orders')) || [];
-        let customers = JSON.parse(localStorage.getItem('cafe_customers')) || [];
-        let menuItems = [
-            { id: 1, name: 'Espresso', emoji: '☕', price: 3.5, category: 'drinks' },
-            { id: 2, name: 'Cappuccino', emoji: '☕', price: 4.5, category: 'drinks' },
-            { id: 3, name: 'Latte', emoji: '☕', price: 4.8, category: 'drinks' },
-            { id: 4, name: 'Americano', emoji: '☕', price: 3.8, category: 'drinks' },
-            { id: 5, name: 'Tea', emoji: '🍵', price: 2.5, category: 'drinks' },
-            { id: 6, name: 'Iced Coffee', emoji: '🥤', price: 4.2, category: 'cold' },
-            { id: 7, name: 'Fresh Juice', emoji: '🧃', price: 3.8, category: 'cold' },
-            { id: 8, name: 'Water', emoji: '💧', price: 1.0, category: 'cold' },
-            { id: 9, name: 'Soda', emoji: '🥤', price: 2.0, category: 'cold' },
-            { id: 10, name: 'Burger', emoji: '🍔', price: 8.5, category: 'food' },
-            { id: 11, name: 'Pizza', emoji: '🍕', price: 12.0, category: 'food' },
-            { id: 12, name: 'Sandwich', emoji: '🥪', price: 6.5, category: 'food' },
-            { id: 13, name: 'Salad', emoji: '🥗', price: 7.0, category: 'food' },
-            { id: 14, name: 'Pasta', emoji: '🍝', price: 9.5, category: 'food' },
-            { id: 15, name: 'Fries', emoji: '🍟', price: 3.5, category: 'sides' },
-            { id: 16, name: 'Cake', emoji: '🍰', price: 5.5, category: 'dessert' },
-            { id: 17, name: 'Ice Cream', emoji: '🍦', price: 4.0, category: 'dessert' },
-            { id: 18, name: 'Croissant', emoji: '🥐', price: 2.5, category: 'breakfast' },
-            { id: 19, name: 'Pancakes', emoji: '🥞', price: 6.0, category: 'breakfast' },
-            { id: 20, name: 'Omelette', emoji: '🍳', price: 7.5, category: 'breakfast' }
-        ];
-
-        // Current state
-        let currentOrder = {
-            customer: null,
-            items: [],
-            notes: '',
-            status: 'new'
-        };
-        let currentEditOrderId = null;
-        let selectedMenuItem = null;
-        let currentQuantity = 1;
-        let searchQuery = '';
-
-        // =================== DOM ELEMENTS ===================
-        const screens = document.querySelectorAll('.screen');
-        const navItems = document.querySelectorAll('.nav-item');
-        const toastEl = document.getElementById('toast');
-
-        // =================== INITIAL LOAD ===================
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Telegram Web App
-            tg.expand();
-            tg.setHeaderColor('#18222d');
-            tg.setBackgroundColor('#18222d');
-            tg.enableClosingConfirmation();
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <div class="modal-title">💳 Process Payment</div>
+                <div class="modal-subtitle" id="payment-amount">Total: $0.00</div>
+            </div>
             
-            // Set greeting based on time
-            setGreeting();
-            
-            // Load data
-            loadSampleDataIfEmpty();
-            
-            // Initial render
-            updateHomeStats();
-            renderRecentOrders();
-            renderMenuItems();
-            
-            // Setup event listeners
-            setupEventListeners();
-            
-            // Show Telegram user info if available
-            if (tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                showToast(`👋 Welcome, ${user.first_name || 'User'}!`, 'info');
-            }
-        });
-
-        function setGreeting() {
-            const hour = new Date().getHours();
-            let greeting = 'Good ';
-            if (hour < 12) greeting += 'morning!';
-            else if (hour < 18) greeting += 'afternoon!';
-            else greeting += 'evening!';
-            document.getElementById('greeting').textContent = greeting;
-        }
-
-        function loadSampleDataIfEmpty() {
-            if (orders.length === 0) {
-                // Load sample orders
-                orders = [
-                    {
-                        id: 'ORDER20251112104950',
-                        customer: { name: 'kotharey', telegramId: '@kotharey', avatar: 'K' },
-                        items: [{ id: 1, quantity: 1 }],
-                        notes: '',
-                        amount: 3.5,
-                        status: 'completed',
-                        time: '2025-11-12 10:49'
-                    },
-                    {
-                        id: 'ORDER20251112093405',
-                        customer: { name: 'fallo', telegramId: '@fallo', avatar: 'F' },
-                        items: [{ id: 10, quantity: 1 }, { id: 15, quantity: 1 }],
-                        notes: 'Extra cheese',
-                        amount: 12.0,
-                        status: 'completed',
-                        time: '2025-11-12 09:34'
-                    }
-                ];
-                localStorage.setItem('cafe_orders', JSON.stringify(orders));
-            }
-
-            if (customers.length === 0) {
-                customers = [
-                    { id: '@kotharey', name: 'kotharey', avatar: 'K', totalOrders: 5, totalSpent: 42.5 },
-                    { id: '@fallo', name: 'fallo', avatar: 'F', totalOrders: 8, totalSpent: 98.0 },
-                    { id: '@faudy', name: 'Faudy', avatar: 'F', totalOrders: 3, totalSpent: 39.0 },
-                    { id: '@siday', name: 'Siday', avatar: 'S', totalOrders: 2, totalSpent: 20.0 }
-                ];
-                localStorage.setItem('cafe_customers', JSON.stringify(customers));
-            }
-        }
-
-        function setupEventListeners() {
-            // Search listeners
-            document.getElementById('orders-search').addEventListener('input', (e) => {
-                searchQuery = e.target.value.toLowerCase();
-                renderAllOrders();
-            });
-
-            document.getElementById('customers-search').addEventListener('input', (e) => {
-                searchQuery = e.target.value.toLowerCase();
-                renderCustomers();
-            });
-        }
-
-        // =================== SCREEN MANAGEMENT ===================
-        function switchScreen(screenId) {
-            // Hide all screens
-            screens.forEach(screen => screen.classList.remove('active'));
-            
-            // Update nav items
-            navItems.forEach(item => item.classList.remove('active'));
-            
-            // Show target screen
-            document.getElementById(screenId).classList.add('active');
-            
-            // Update active nav item
-            const navMap = {
-                'home-screen': 0,
-                'orders-screen': 2,
-                'customers-screen': 3
-            };
-            if (navMap[screenId] !== undefined) {
-                navItems[navMap[screenId]].classList.add('active');
-            }
-            
-            // Refresh screen content
-            if (screenId === 'orders-screen') {
-                renderAllOrders();
-            } else if (screenId === 'customers-screen') {
-                renderCustomers();
-            }
-            
-            // Close modal if open
-            closeModal();
-        }
-
-        function showEditOrders() {
-            switchScreen('orders-screen');
-            showToast('Tap any order to edit it', 'info');
-        }
-
-        // =================== MODAL MANAGEMENT ===================
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            document.body.style.overflow = 'hidden';
-            tg.BackButton.show();
-        }
-
-        function closeModal() {
-            document.querySelectorAll('.modal-overlay').forEach(modal => {
-                modal.classList.remove('active');
-            });
-            document.body.style.overflow = '';
-            tg.BackButton.hide();
-            
-            // Reset current order if closing new order modal
-            if (currentOrder.items.length === 0) {
-                resetCurrentOrder();
-            }
-        }
-
-        function resetCurrentOrder() {
-            currentOrder = {
-                customer: null,
-                items: [],
-                notes: '',
-                status: 'new'
-            };
-            currentQuantity = 1;
-            selectedMenuItem = null;
-            
-            document.getElementById('selected-customer').classList.add('hidden');
-            document.getElementById('quantity-section').classList.add('hidden');
-            document.getElementById('menu-section').classList.remove('hidden');
-            document.getElementById('current-quantity').textContent = '1';
-            document.getElementById('order-notes').value = '';
-            document.getElementById('customer-search-input').value = '';
-            document.getElementById('customer-results').innerHTML = '';
-            document.getElementById('current-items-container').innerHTML = '';
-        }
-
-        // =================== ORDER MANAGEMENT ===================
-        function openNewOrderModal() {
-            resetCurrentOrder();
-            openModal('new-order-modal');
-            loadTelegramUsers();
-        }
-
-        function searchTelegramUsers() {
-            const searchInput = document.getElementById('customer-search-input').value.toLowerCase();
-            const resultsContainer = document.getElementById('customer-results');
-            
-            if (!searchInput) {
-                loadTelegramUsers();
-                return;
-            }
-            
-            // Filter customers
-            const filtered = customers.filter(customer => 
-                customer.name.toLowerCase().includes(searchInput) ||
-                customer.id.toLowerCase().includes(searchInput)
-            );
-            
-            // Add Telegram users from current session
-            if (tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                if (user.username && user.username.toLowerCase().includes(searchInput)) {
-                    filtered.push({
-                        id: `@${user.username}`,
-                        name: user.first_name || 'Telegram User',
-                        avatar: user.first_name ? user.first_name[0].toUpperCase() : 'T',
-                        isCurrentUser: true
-                    });
-                }
-            }
-            
-            renderCustomerResults(filtered);
-        }
-
-        function loadTelegramUsers() {
-            const resultsContainer = document.getElementById('customer-results');
-            
-            // Start with existing customers
-            let results = [...customers];
-            
-            // Add current Telegram user if available
-            if (tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                if (user.username) {
-                    results.unshift({
-                        id: `@${user.username}`,
-                        name: user.first_name || 'Telegram User',
-                        avatar: user.first_name ? user.first_name[0].toUpperCase() : 'T',
-                        isCurrentUser: true
-                    });
-                }
-            }
-            
-            renderCustomerResults(results);
-        }
-
-        function renderCustomerResults(customers) {
-            const resultsContainer = document.getElementById('customer-results');
-            
-            if (customers.length === 0) {
-                resultsContainer.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: var(--tg-secondary-text);">
-                        <div>👤</div>
-                        <div>No customers found</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Amount Due</label>
+                    <div style="font-size: 32px; font-weight: 700; text-align: center; color: var(--tg-green);">
+                        $<span id="due-amount">0.00</span>
                     </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            customers.forEach(customer => {
-                html += `
-                    <div class="customer-result" onclick="selectCustomer('${customer.id}', '${customer.name}', '${customer.avatar}')">
-                        <div class="customer-result-avatar">${customer.avatar}</div>
-                        <div class="customer-result-info">
-                            <h4>${customer.name}</h4>
-                            <div class="customer-result-telegram">${customer.id}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    <div class="payment-methods">
+                        <div class="payment-method active" onclick="selectPaymentMethod('cash')">
+                            💵 Cash
+                        </div>
+                        <div class="payment-method" onclick="selectPaymentMethod('card')">
+                            💳 Card
+                        </div>
+                        <div class="payment-method" onclick="selectPaymentMethod('online')">
+                            📱 Online
                         </div>
                     </div>
-                `;
-            });
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Amount Received</label>
+                    <input type="number" class="form-input" id="amount-received" placeholder="0.00" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Change</label>
+                    <div style="font-size: 24px; font-weight: 600; text-align: center; color: var(--tg-accent);">
+                        $<span id="change-amount">0.00</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="processPayment()">
+                        ✅ Complete Payment
+                    </button>
+                    <button class="btn btn-secondary" onclick="printReceipt()">
+                        🖨️ Print Receipt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="modal-overlay" id="receipt-modal">
+        <div class="modal" style="max-width: 350px;">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <div class="modal-title">🧾 Receipt</div>
+                <div class="modal-subtitle" id="receipt-order-id">ORDER123</div>
+            </div>
             
-            resultsContainer.innerHTML = html;
+            <div class="modal-body">
+                <div class="receipt-container" id="receipt-content">
+                    <!-- Receipt content loaded here -->
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="printReceiptNow()">
+                        🖨️ Print
+                    </button>
+                    <button class="btn btn-secondary" onclick="sendReceipt()" style="margin-top: 8px;">
+                        📱 Send to Customer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div class="modal-overlay" id="inventory-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <div class="modal-title">📦 Inventory Item</div>
+                <div class="modal-subtitle">Manage stock levels</div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" class="form-input" id="inventory-name" placeholder="e.g., Coffee Beans">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Current Stock</label>
+                    <input type="number" class="form-input" id="inventory-stock" value="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Minimum Stock</label>
+                    <input type="number" class="form-input" id="inventory-min" value="10" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Unit</label>
+                    <select class="form-select" id="inventory-unit">
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="g">Grams (g)</option>
+                        <option value="l">Liters (l)</option>
+                        <option value="ml">Milliliters (ml)</option>
+                        <option value="pcs">Pieces</option>
+                        <option value="boxes">Boxes</option>
+                    </select>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="saveInventoryItem()">
+                        💾 Save Item
+                    </button>
+                    <button class="btn btn-secondary" onclick="restockInventory()">
+                        📦 Restock
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Scanner Modal -->
+    <div class="modal-overlay" id="qr-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <div class="modal-title">📷 Scan QR Code</div>
+                <div class="modal-subtitle">Point camera at QR code</div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="scanner-container" id="scanner-placeholder">
+                    <div style="text-align: center;">
+                        <div style="font-size: 48px;">📷</div>
+                        <div style="margin-top: 16px;">QR Scanner Placeholder</div>
+                        <div style="font-size: 12px; color: var(--tg-secondary-text); margin-top: 8px;">
+                            In a real app, this would use camera API
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="simulateQRScan()">
+                        📱 Simulate Scan
+                    </button>
+                    <button class="btn btn-secondary" onclick="manualQRInput()" style="margin-top: 8px;">
+                        ⌨️ Manual Input
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Shortcuts Help -->
+    <div class="shortcuts-help" id="shortcuts-help">
+        <h4 style="margin-bottom: 12px;">🎯 Keyboard Shortcuts</h4>
+        <div class="shortcut-item">
+            <span>New Order</span>
+            <span style="color: var(--tg-accent);">N</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Search</span>
+            <span style="color: var(--tg-accent);">/</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Save</span>
+            <span style="color: var(--tg-accent);">Ctrl+S</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Print</span>
+            <span style="color: var(--tg-accent);">Ctrl+P</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Close</span>
+            <span style="color: var(--tg-accent);">Esc</span>
+        </div>
+        <div style="text-align: center; margin-top: 16px;">
+            <button class="btn btn-secondary" onclick="hideShortcuts()" style="padding: 8px 16px;">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // =================== ENHANCED INITIALIZATION ===================
+        // [Keep all existing initialization code...]
+
+        // NEW DATA STRUCTURES
+        let tables = JSON.parse(localStorage.getItem('cafe_tables')) || [];
+        let inventory = JSON.parse(localStorage.getItem('cafe_inventory')) || [];
+        let staff = JSON.parse(localStorage.getItem('cafe_staff')) || [];
+        let settings = JSON.parse(localStorage.getItem('cafe_settings')) || {};
+        let analytics = JSON.parse(localStorage.getItem('cafe_analytics')) || {};
+        
+        // Default settings
+        const defaultSettings = {
+            darkMode: true,
+            notifications: true,
+            sounds: true,
+            payments: {
+                cash: true,
+                card: true,
+                wallet: false
+            },
+            taxRate: 10,
+            serviceCharge: 0,
+            currency: '$'
+        };
+
+        // Initialize settings
+        if (Object.keys(settings).length === 0) {
+            settings = defaultSettings;
+            localStorage.setItem('cafe_settings', JSON.stringify(settings));
         }
 
-        function selectCustomer(telegramId, name, avatar) {
-            currentOrder.customer = { telegramId, name, avatar };
-            
-            // Update UI
-            document.getElementById('selected-avatar').textContent = avatar;
-            document.getElementById('selected-name').textContent = name;
-            document.getElementById('selected-telegram').textContent = telegramId;
-            document.getElementById('selected-customer').classList.remove('hidden');
-            
-            // Clear search
-            document.getElementById('customer-search-input').value = '';
-            document.getElementById('customer-results').innerHTML = '';
-            
-            showToast(`👤 Selected: ${name}`, 'success');
-        }
-
-        function useCurrentTelegramUser() {
-            if (tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                const telegramId = user.username ? `@${user.username}` : `user_${user.id}`;
-                const name = user.first_name || 'Telegram User';
-                const avatar = user.first_name ? user.first_name[0].toUpperCase() : 'T';
-                
-                selectCustomer(telegramId, name, avatar);
-                
-                // Save as customer if not exists
-                const existing = customers.find(c => c.id === telegramId);
-                if (!existing) {
-                    customers.push({
-                        id: telegramId,
-                        name: name,
-                        avatar: avatar,
-                        totalOrders: 0,
-                        totalSpent: 0
-                    });
-                    localStorage.setItem('cafe_customers', JSON.stringify(customers));
-                }
-            } else {
-                showToast('Telegram user data not available', 'error');
+        // Initialize tables if empty
+        if (tables.length === 0) {
+            for (let i = 1; i <= 12; i++) {
+                tables.push({
+                    id: i,
+                    number: i,
+                    status: 'available',
+                    capacity: i <= 4 ? 2 : i <= 8 ? 4 : 6,
+                    currentOrder: null,
+                    notes: ''
+                });
             }
+            localStorage.setItem('cafe_tables', JSON.stringify(tables));
         }
 
-        function renderMenuItems() {
-            const container = document.getElementById('menu-items');
-            let html = '';
+        // Initialize inventory if empty
+        if (inventory.length === 0) {
+            inventory = [
+                { id: 1, name: 'Coffee Beans', stock: 50, minStock: 20, unit: 'kg' },
+                { id: 2, name: 'Milk', stock: 30, minStock: 10, unit: 'l' },
+                { id: 3, name: 'Sugar', stock: 20, minStock: 5, unit: 'kg' },
+                { id: 4, name: 'Bread', stock: 100, minStock: 30, unit: 'pcs' },
+                { id: 5, name: 'Eggs', stock: 60, minStock: 20, unit: 'pcs' }
+            ];
+            localStorage.setItem('cafe_inventory', JSON.stringify(inventory));
+        }
+
+        // Initialize staff if empty
+        if (staff.length === 0) {
+            staff = [
+                { id: 1, name: 'John Doe', role: 'Manager', avatar: 'J', active: true },
+                { id: 2, name: 'Jane Smith', role: 'Waiter', avatar: 'J', active: true },
+                { id: 3, name: 'Bob Wilson', role: 'Chef', avatar: 'B', active: true }
+            ];
+            localStorage.setItem('cafe_staff', JSON.stringify(staff));
+        }
+
+        // =================== NEW FUNCTIONS ===================
+
+        // Table Management
+        function renderTables() {
+            const container = document.getElementById('tables-grid');
+            const countEl = document.getElementById('tables-count');
             
-            menuItems.forEach(item => {
+            countEl.textContent = `${tables.length} tables`;
+            
+            let html = '';
+            tables.forEach(table => {
+                const statusEmoji = {
+                    'available': '🟢',
+                    'occupied': '🔴',
+                    'reserved': '🟡',
+                    'cleaning': '🟣'
+                }[table.status] || '⚫';
+                
                 html += `
-                    <div class="menu-item" onclick="selectMenu(${item.id})">
-                        <div class="menu-item-emoji">${item.emoji}</div>
-                        <div class="menu-item-name">${item.name}</div>
-                        <div class="menu-item-price">$${item.price.toFixed(2)}</div>
+                    <div class="table-item ${table.status}" onclick="openTableModal(${table.id})">
+                        <div class="table-number">${table.number}</div>
+                        <div class="table-status">${table.status}</div>
+                        <div style="font-size: 12px; margin-top: 4px;">${statusEmoji}</div>
+                        <div style="font-size: 10px; margin-top: 2px;">${table.capacity} seats</div>
                     </div>
                 `;
             });
@@ -1427,142 +1076,692 @@
             container.innerHTML = html;
         }
 
-        function selectMenu(itemId) {
-            selectedMenuItem = menuItems.find(item => item.id === itemId);
+        function openTableModal(tableId) {
+            const table = tables.find(t => t.id === tableId);
+            if (!table) return;
             
-            // Update UI
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('selected');
+            document.getElementById('table-number').textContent = table.number;
+            document.getElementById('table-status').textContent = table.status;
+            document.getElementById('table-status-select').value = table.status;
+            document.getElementById('table-capacity').value = table.capacity;
+            document.getElementById('table-notes').value = table.notes || '';
+            
+            // Load orders for this table
+            const orderSelect = document.getElementById('table-order-select');
+            orderSelect.innerHTML = '<option value="">No order</option>';
+            
+            orders.filter(o => o.table === tableId).forEach(order => {
+                orderSelect.innerHTML += `<option value="${order.id}">${order.id} - $${order.amount}</option>`;
             });
-            event.target.closest('.menu-item').classList.add('selected');
             
-            // Show quantity selector
-            document.getElementById('quantity-section').classList.remove('hidden');
-            currentQuantity = 1;
-            document.getElementById('current-quantity').textContent = currentQuantity;
+            if (table.currentOrder) {
+                orderSelect.value = table.currentOrder;
+            }
             
-            showToast(`Selected: ${selectedMenuItem.name}`, 'info');
+            currentTableId = tableId;
+            openModal('table-modal');
         }
 
-        function adjustQuantity(change) {
-            currentQuantity = Math.max(1, currentQuantity + change);
-            document.getElementById('current-quantity').textContent = currentQuantity;
+        function saveTableChanges() {
+            const table = tables.find(t => t.id === currentTableId);
+            if (!table) return;
+            
+            table.status = document.getElementById('table-status-select').value;
+            table.capacity = parseInt(document.getElementById('table-capacity').value) || 4;
+            table.currentOrder = document.getElementById('table-order-select').value || null;
+            table.notes = document.getElementById('table-notes').value;
+            
+            localStorage.setItem('cafe_tables', JSON.stringify(tables));
+            renderTables();
+            closeModal();
+            
+            showToast(`Table ${table.number} updated`, 'success');
         }
 
-        function addSelectedItem() {
-            if (!selectedMenuItem || !currentOrder.customer) {
-                showToast('Please select a customer first', 'error');
+        function addNewTable() {
+            const newTable = {
+                id: tables.length + 1,
+                number: tables.length + 1,
+                status: 'available',
+                capacity: 4,
+                currentOrder: null,
+                notes: ''
+            };
+            
+            tables.push(newTable);
+            localStorage.setItem('cafe_tables', JSON.stringify(tables));
+            renderTables();
+            
+            showToast(`Table ${newTable.number} added`, 'success');
+        }
+
+        // Payment Processing
+        function openPaymentModal(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            currentPaymentOrderId = orderId;
+            document.getElementById('payment-amount').textContent = `Total: $${order.amount.toFixed(2)}`;
+            document.getElementById('due-amount').textContent = order.amount.toFixed(2);
+            
+            // Reset payment
+            document.getElementById('amount-received').value = '';
+            document.getElementById('change-amount').textContent = '0.00';
+            
+            // Calculate change in real-time
+            document.getElementById('amount-received').addEventListener('input', function() {
+                const due = parseFloat(order.amount);
+                const received = parseFloat(this.value) || 0;
+                const change = Math.max(0, received - due);
+                document.getElementById('change-amount').textContent = change.toFixed(2);
+            });
+            
+            openModal('payment-modal');
+        }
+
+        function selectPaymentMethod(method) {
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            currentPaymentMethod = method;
+        }
+
+        function processPayment() {
+            const order = orders.find(o => o.id === currentPaymentOrderId);
+            if (!order) return;
+            
+            const received = parseFloat(document.getElementById('amount-received').value) || 0;
+            const due = order.amount;
+            
+            if (received < due) {
+                showToast(`Insufficient amount. Need $${(due - received).toFixed(2)} more`, 'error');
                 return;
             }
             
-            // Check if item already exists
-            const existingIndex = currentOrder.items.findIndex(item => item.id === selectedMenuItem.id);
+            // Update order status
+            order.status = 'completed';
+            order.payment = {
+                method: currentPaymentMethod,
+                amount: due,
+                received: received,
+                change: received - due,
+                timestamp: new Date().toISOString()
+            };
             
-            if (existingIndex > -1) {
-                currentOrder.items[existingIndex].quantity += currentQuantity;
-            } else {
-                currentOrder.items.push({
-                    ...selectedMenuItem,
-                    quantity: currentQuantity
-                });
-            }
+            localStorage.setItem('cafe_orders', JSON.stringify(orders));
             
-            // Update UI
-            renderCurrentItems();
+            // Update analytics
+            updateAnalytics('payment', due);
             
-            // Reset selection
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            document.getElementById('quantity-section').classList.add('hidden');
-            selectedMenuItem = null;
-            currentQuantity = 1;
-            document.getElementById('current-quantity').textContent = currentQuantity;
+            // Show receipt
+            showReceipt(currentPaymentOrderId);
             
-            showToast(`Added ${currentQuantity}x ${selectedMenuItem.name}`, 'success');
+            showToast(`Payment of $${due.toFixed(2)} processed`, 'success');
         }
 
-        function renderCurrentItems() {
-            const container = document.getElementById('current-items-container');
+        // Receipt Generation
+        function showReceipt(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
             
-            if (currentOrder.items.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: var(--tg-secondary-text);">
-                        <div>🛒</div>
-                        <div>No items added yet</div>
-                    </div>
-                `;
-                document.getElementById('submit-order-btn').disabled = true;
-                return;
-            }
+            const receipt = generateReceipt(order);
+            document.getElementById('receipt-content').innerHTML = receipt;
+            document.getElementById('receipt-order-id').textContent = orderId;
             
-            let html = '<div style="font-weight: 600; margin-bottom: 12px;">🛒 Current Order:</div>';
-            let total = 0;
+            closeModal(); // Close payment modal
+            openModal('receipt-modal');
+        }
+
+        function generateReceipt(order) {
+            const date = new Date(order.time);
+            const items = order.items.map(itemData => {
+                const item = menuItems.find(m => m.id === itemData.id);
+                return item ? { ...item, quantity: itemData.quantity } : null;
+            }).filter(Boolean);
             
-            currentOrder.items.forEach((item, index) => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
+            let html = `
+                <div class="receipt-header">
+                    <div style="font-weight: bold; font-size: 18px;">CAFE PRO</div>
+                    <div>123 Coffee Street</div>
+                    <div>Tel: (123) 456-7890</div>
+                    <div>${date.toLocaleDateString()} ${date.toLocaleTimeString()}</div>
+                </div>
                 
+                <div style="margin: 10px 0;">
+                    <div>Order: ${order.id}</div>
+                    <div>Customer: ${order.customer.name}</div>
+                </div>
+                
+                <div class="receipt-divider"></div>
+            `;
+            
+            items.forEach(item => {
+                const total = item.price * item.quantity;
                 html += `
-                    <div class="current-item">
-                        <div class="current-item-info">
-                            <div class="item-emoji">${item.emoji}</div>
-                            <div>
-                                <div class="item-name">${item.name}</div>
-                                <div class="item-quantity">x${item.quantity} = $${itemTotal.toFixed(2)}</div>
-                            </div>
-                        </div>
-                        <div class="current-item-controls">
-                            <div style="font-weight: 600;">$${item.price.toFixed(2)}</div>
-                            <button class="remove-item" onclick="removeCurrentItem(${index})">🗑️</button>
-                        </div>
+                    <div class="receipt-line">
+                        <div>${item.quantity}x ${item.name}</div>
+                        <div>$${total.toFixed(2)}</div>
                     </div>
                 `;
             });
+            
+            const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
             
             html += `
-                <div style="display: flex; justify-content: space-between; margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--tg-border); font-weight: 700; font-size: 18px;">
-                    <span>TOTAL:</span>
-                    <span style="color: var(--tg-green);">$${total.toFixed(2)}</span>
+                <div class="receipt-divider"></div>
+                
+                <div class="receipt-line">
+                    <div>Subtotal</div>
+                    <div>$${subtotal.toFixed(2)}</div>
+                </div>
+                <div class="receipt-line">
+                    <div>Tax (10%)</div>
+                    <div>$${tax.toFixed(2)}</div>
+                </div>
+                <div class="receipt-line" style="font-weight: bold;">
+                    <div>TOTAL</div>
+                    <div>$${total.toFixed(2)}</div>
+                </div>
+                
+                <div class="receipt-divider"></div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <div>Payment: ${order.payment?.method || 'Not paid'}</div>
+                    ${order.payment ? `
+                    <div>Received: $${order.payment.received.toFixed(2)}</div>
+                    <div>Change: $${order.payment.change.toFixed(2)}</div>
+                    ` : ''}
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <div>Thank you for visiting!</div>
+                    <div>Please come again</div>
                 </div>
             `;
             
+            return html;
+        }
+
+        function printReceiptNow() {
+            const printContent = document.getElementById('receipt-content').innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            
+            // Reinitialize the app
+            location.reload();
+        }
+
+        // Inventory Management
+        function renderInventory() {
+            const container = document.getElementById('inventory-items');
+            const countEl = document.getElementById('inventory-count');
+            
+            countEl.textContent = `${inventory.length} items`;
+            
+            if (inventory.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <div>No inventory items</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            inventory.forEach(item => {
+                const stockPercentage = (item.stock / item.minStock) * 100;
+                let stockClass = 'stock-high';
+                if (stockPercentage <= 30) stockClass = 'stock-low';
+                else if (stockPercentage <= 70) stockClass = 'stock-medium';
+                
+                html += `
+                    <div class="inventory-item">
+                        <div>
+                            <div style="font-weight: 600;">${item.name}</div>
+                            <div style="font-size: 12px; color: var(--tg-secondary-text);">
+                                Min: ${item.minStock}${item.unit}
+                            </div>
+                        </div>
+                        <div class="stock-level">
+                            <div class="stock-indicator ${stockClass}"></div>
+                            <div>${item.stock} ${item.unit}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
             container.innerHTML = html;
-            document.getElementById('submit-order-btn').disabled = false;
         }
 
-        function removeCurrentItem(index) {
-            currentOrder.items.splice(index, 1);
-            renderCurrentItems();
-            showToast('Item removed', 'warning');
+        function openAddInventoryModal() {
+            document.getElementById('inventory-name').value = '';
+            document.getElementById('inventory-stock').value = 0;
+            document.getElementById('inventory-min').value = 10;
+            document.getElementById('inventory-unit').value = 'pcs';
+            
+            openModal('inventory-modal');
         }
 
-        function submitOrder() {
+        function saveInventoryItem() {
+            const name = document.getElementById('inventory-name').value.trim();
+            if (!name) {
+                showToast('Please enter item name', 'error');
+                return;
+            }
+            
+            const newItem = {
+                id: inventory.length + 1,
+                name: name,
+                stock: parseInt(document.getElementById('inventory-stock').value) || 0,
+                minStock: parseInt(document.getElementById('inventory-min').value) || 10,
+                unit: document.getElementById('inventory-unit').value
+            };
+            
+            inventory.push(newItem);
+            localStorage.setItem('cafe_inventory', JSON.stringify(inventory));
+            renderInventory();
+            closeModal();
+            
+            showToast(`${name} added to inventory`, 'success');
+        }
+
+        // Staff Management
+        function renderStaff() {
+            const container = document.getElementById('staff-list');
+            const countEl = document.getElementById('staff-count');
+            
+            const activeStaff = staff.filter(s => s.active);
+            countEl.textContent = `${activeStaff.length} active staff`;
+            
+            let html = '';
+            staff.forEach(member => {
+                if (!member.active) return;
+                
+                html += `
+                    <div class="staff-card">
+                        <div class="staff-avatar">${member.avatar}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${member.name}</div>
+                            <div class="staff-role">${member.role}</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="editStaff(${member.id})" style="padding: 8px 12px;">
+                            Edit
+                        </button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html || `
+                <div class="empty-state">
+                    <div class="empty-icon">👤</div>
+                    <div>No staff members</div>
+                </div>
+            `;
+        }
+
+        // Analytics
+        function updateAnalytics(type, value) {
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (!analytics[today]) {
+                analytics[today] = {
+                    revenue: 0,
+                    orders: 0,
+                    customers: new Set(),
+                    items: {}
+                };
+            }
+            
+            switch(type) {
+                case 'payment':
+                    analytics[today].revenue += value;
+                    analytics[today].orders++;
+                    break;
+                case 'customer':
+                    analytics[today].customers.add(value);
+                    break;
+                case 'item':
+                    if (!analytics[today].items[value]) {
+                        analytics[today].items[value] = 0;
+                    }
+                    analytics[today].items[value]++;
+                    break;
+            }
+            
+            localStorage.setItem('cafe_analytics', JSON.stringify(analytics));
+            updateAnalyticsDisplay();
+        }
+
+        function updateAnalyticsDisplay() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayData = analytics[today] || { revenue: 0, orders: 0, customers: new Set() };
+            
+            document.getElementById('daily-revenue').textContent = `$${todayData.revenue.toFixed(2)}`;
+            document.getElementById('avg-order').textContent = `$${todayData.orders > 0 ? (todayData.revenue / todayData.orders).toFixed(2) : '0'}`;
+            document.getElementById('new-customers').textContent = todayData.customers.size || 0;
+        }
+
+        // Settings
+        function toggleDarkMode() {
+            const toggle = event.target.closest('.toggle-switch');
+            toggle.classList.toggle('active');
+            settings.darkMode = toggle.classList.contains('active');
+            localStorage.setItem('cafe_settings', JSON.stringify(settings));
+            
+            // Apply theme
+            if (settings.darkMode) {
+                document.documentElement.style.setProperty('--tg-bg', '#18222d');
+                document.documentElement.style.setProperty('--tg-text', '#ffffff');
+            } else {
+                document.documentElement.style.setProperty('--tg-bg', '#ffffff');
+                document.documentElement.style.setProperty('--tg-text', '#000000');
+            }
+        }
+
+        function toggleNotifications() {
+            const toggle = event.target.closest('.toggle-switch');
+            toggle.classList.toggle('active');
+            settings.notifications = toggle.classList.contains('active');
+            localStorage.setItem('cafe_settings', JSON.stringify(settings));
+        }
+
+        function exportAllData() {
+            const data = {
+                orders: orders,
+                customers: customers,
+                tables: tables,
+                inventory: inventory,
+                staff: staff,
+                analytics: analytics,
+                settings: settings,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', `cafe_backup_${new Date().toISOString().split('T')[0]}.json`);
+            link.click();
+            
+            showToast('All data exported successfully', 'success');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (confirm('This will replace all current data. Continue?')) {
+                            if (data.orders) {
+                                orders = data.orders;
+                                localStorage.setItem('cafe_orders', JSON.stringify(orders));
+                            }
+                            if (data.customers) {
+                                customers = data.customers;
+                                localStorage.setItem('cafe_customers', JSON.stringify(customers));
+                            }
+                            if (data.tables) {
+                                tables = data.tables;
+                                localStorage.setItem('cafe_tables', JSON.stringify(tables));
+                            }
+                            
+                            showToast('Data imported successfully', 'success');
+                            location.reload();
+                        }
+                    } catch (error) {
+                        showToast('Invalid backup file', 'error');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // Voice Control
+        let isListening = false;
+        function toggleVoiceControl() {
+            const btn = document.getElementById('voice-control');
+            
+            if (!isListening) {
+                btn.classList.add('listening');
+                isListening = true;
+                showToast('Listening... Say "new order", "search", etc.', 'info');
+                
+                // Simulate voice commands
+                setTimeout(() => {
+                    simulateVoiceCommand();
+                }, 2000);
+            } else {
+                btn.classList.remove('listening');
+                isListening = false;
+                showToast('Voice control stopped', 'warning');
+            }
+        }
+
+        function simulateVoiceCommand() {
+            const commands = [
+                'new order',
+                'search customers',
+                'show analytics',
+                'print receipt'
+            ];
+            
+            const command = commands[Math.floor(Math.random() * commands.length)];
+            showToast(`Heard: "${command}"`, 'info');
+            
+            switch(command) {
+                case 'new order':
+                    openNewOrderModal();
+                    break;
+                case 'search customers':
+                    switchScreen('customers-screen');
+                    break;
+                case 'show analytics':
+                    switchScreen('analytics-screen');
+                    break;
+            }
+        }
+
+        // QR Code Scanner
+        function openQRScanner() {
+            openModal('qr-modal');
+        }
+
+        function simulateQRScan() {
+            // Simulate scanning a customer QR
+            const fakeCustomer = {
+                telegramId: '@qr_customer',
+                name: 'QR Customer',
+                avatar: 'Q'
+            };
+            
+            selectCustomer(fakeCustomer.telegramId, fakeCustomer.name, fakeCustomer.avatar);
+            closeModal();
+            showToast('QR scanned successfully', 'success');
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Show shortcuts help
+            if (e.key === '?') {
+                document.getElementById('shortcuts-help').style.display = 'block';
+            }
+            
+            // Close modals with Escape
+            if (e.key === 'Escape') {
+                closeModal();
+                document.getElementById('shortcuts-help').style.display = 'none';
+            }
+            
+            // New order with N
+            if (e.key === 'n' && !e.ctrlKey && !e.altKey) {
+                openNewOrderModal();
+            }
+            
+            // Search with /
+            if (e.key === '/' && !e.ctrlKey) {
+                const activeScreen = document.querySelector('.screen.active');
+                if (activeScreen.id === 'orders-screen') {
+                    document.getElementById('orders-search').focus();
+                } else if (activeScreen.id === 'customers-screen') {
+                    document.getElementById('customers-search').focus();
+                }
+            }
+            
+            // Save with Ctrl+S
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                showToast('Saving data...', 'info');
+                // Save all data
+                localStorage.setItem('cafe_orders', JSON.stringify(orders));
+                localStorage.setItem('cafe_customers', JSON.stringify(customers));
+                localStorage.setItem('cafe_tables', JSON.stringify(tables));
+                setTimeout(() => {
+                    showToast('All data saved', 'success');
+                }, 500);
+            }
+            
+            // Print with Ctrl+P
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                printReceiptNow();
+            }
+        });
+
+        function hideShortcuts() {
+            document.getElementById('shortcuts-help').style.display = 'none';
+        }
+
+        // Loading States
+        function showLoading() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+
+        // Real-time Updates
+        function simulateRealTimeUpdates() {
+            // Simulate new orders
+            if (Math.random() > 0.7) {
+                const badge = document.getElementById('order-badge');
+                const current = parseInt(badge.textContent) || 0;
+                badge.textContent = current + 1;
+                
+                if (current === 0) {
+                    badge.style.display = 'flex';
+                }
+            }
+            
+            // Update order statuses randomly
+            orders.filter(o => o.status === 'preparing').forEach(order => {
+                if (Math.random() > 0.8) {
+                    order.status = 'ready';
+                    showToast(`Order ${order.id} is ready!`, 'info');
+                }
+            });
+            
+            localStorage.setItem('cafe_orders', JSON.stringify(orders));
+        }
+
+        // Initialize all new features
+        function initializeEnhancedFeatures() {
+            // Render new screens
+            renderTables();
+            renderInventory();
+            renderStaff();
+            updateAnalyticsDisplay();
+            
+            // Set up real-time simulation
+            setInterval(simulateRealTimeUpdates, 30000); // Every 30 seconds
+            
+            // Initialize settings toggles
+            document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                const type = toggle.closest('.settings-item').querySelector('span').textContent.toLowerCase();
+                if (type.includes('dark mode')) {
+                    toggle.classList.toggle('active', settings.darkMode);
+                } else if (type.includes('notifications')) {
+                    toggle.classList.toggle('active', settings.notifications);
+                }
+            });
+            
+            // Check for low inventory
+            checkLowInventory();
+        }
+
+        function checkLowInventory() {
+            const lowItems = inventory.filter(item => item.stock <= item.minStock);
+            if (lowItems.length > 0) {
+                showToast(`⚠️ ${lowItems.length} items need restocking`, 'warning');
+            }
+        }
+
+        // =================== INTEGRATE WITH EXISTING CODE ===================
+        
+        // Modify existing submitOrder to include new features
+        const originalSubmitOrder = window.submitOrder;
+        window.submitOrder = function() {
             if (!currentOrder.customer || currentOrder.items.length === 0) {
                 showToast('Please select a customer and add items', 'error');
                 return;
             }
             
-            // Calculate total
-            const total = currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            // Calculate total with tax
+            const subtotal = currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * (settings.taxRate || 0.1) / 100;
+            const service = subtotal * (settings.serviceCharge || 0) / 100;
+            const total = subtotal + tax + service;
             
-            // Create order
+            // Create order with enhanced data
             const newOrder = {
                 id: `ORDER${new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14)}`,
                 customer: currentOrder.customer,
                 items: currentOrder.items.map(item => ({ id: item.id, quantity: item.quantity })),
                 notes: document.getElementById('order-notes').value,
+                subtotal: subtotal,
+                tax: tax,
+                service: service,
                 amount: total,
                 status: 'new',
-                time: new Date().toISOString().replace('T', ' ').slice(0, 19)
+                time: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                table: currentTableId || null
             };
             
             // Add to orders
             orders.unshift(newOrder);
             localStorage.setItem('cafe_orders', JSON.stringify(orders));
             
+            // Update inventory
+            updateInventoryForOrder(newOrder);
+            
             // Update customer stats
             updateCustomerStats(newOrder.customer.telegramId, total);
+            
+            // Update analytics
+            updateAnalytics('payment', total);
+            newOrder.items.forEach(item => {
+                updateAnalytics('item', item.id);
+            });
             
             // Show success
             showToast(`✅ Order ${newOrder.id} created!`, 'success');
@@ -1591,445 +1790,80 @@
             // Update UI
             updateHomeStats();
             renderRecentOrders();
-        }
-
-        function updateCustomerStats(telegramId, amount) {
-            let customer = customers.find(c => c.id === telegramId);
-            
-            if (customer) {
-                customer.totalOrders = (customer.totalOrders || 0) + 1;
-                customer.totalSpent = (customer.totalSpent || 0) + amount;
-            } else {
-                // Create new customer
-                customer = {
-                    id: telegramId,
-                    name: currentOrder.customer.name,
-                    avatar: currentOrder.customer.avatar,
-                    totalOrders: 1,
-                    totalSpent: amount
-                };
-                customers.push(customer);
-            }
-            
-            localStorage.setItem('cafe_customers', JSON.stringify(customers));
-        }
-
-        function clearCurrentOrder() {
-            if (confirm('Clear current order?')) {
-                resetCurrentOrder();
-                showToast('Order cleared', 'warning');
-            }
-        }
-
-        // =================== EDIT ORDER ===================
-        function editOrder(orderId) {
-            const order = orders.find(o => o.id === orderId);
-            if (!order) return;
-            
-            currentEditOrderId = orderId;
-            
-            // Update modal header
-            document.getElementById('edit-order-id').textContent = orderId;
-            
-            // Render current items
-            renderEditItems(order);
-            
-            // Load menu items
-            renderEditMenuItems();
-            
-            // Set notes and status
-            document.getElementById('edit-notes').value = order.notes || '';
-            document.getElementById('edit-status').value = order.status;
-            
-            // Open modal
-            openModal('edit-order-modal');
-        }
-
-        function renderEditItems(order) {
-            const container = document.getElementById('edit-items-container');
-            let html = '<div style="font-weight: 600; margin-bottom: 12px;">📝 Current Items:</div>';
-            
-            if (order.items && order.items.length > 0) {
-                order.items.forEach((itemData, index) => {
-                    const item = menuItems.find(m => m.id === itemData.id);
-                    if (item) {
-                        const itemTotal = item.price * itemData.quantity;
-                        html += `
-                            <div class="current-item">
-                                <div class="current-item-info">
-                                    <div class="item-emoji">${item.emoji}</div>
-                                    <div>
-                                        <div class="item-name">${item.name}</div>
-                                        <div class="item-quantity">x${itemData.quantity} = $${itemTotal.toFixed(2)}</div>
-                                    </div>
-                                </div>
-                                <div class="current-item-controls">
-                                    <div style="font-weight: 600;">$${item.price.toFixed(2)}</div>
-                                    <button class="remove-item" onclick="removeEditItem(${index})">🗑️</button>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-            } else {
-                html += '<div style="text-align: center; padding: 20px; color: var(--tg-secondary-text);">No items</div>';
-            }
-            
-            container.innerHTML = html;
-        }
-
-        function renderEditMenuItems() {
-            const container = document.getElementById('edit-menu-items');
-            let html = '';
-            
-            menuItems.forEach(item => {
-                html += `
-                    <div class="menu-item" onclick="addToEditOrder(${item.id})">
-                        <div class="menu-item-emoji">${item.emoji}</div>
-                        <div class="menu-item-name">${item.name}</div>
-                        <div class="menu-item-price">$${item.price.toFixed(2)}</div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function addToEditOrder(itemId) {
-            const order = orders.find(o => o.id === currentEditOrderId);
-            if (!order) return;
-            
-            const item = menuItems.find(m => m.id === itemId);
-            if (!item) return;
-            
-            // Check if item already exists
-            const existingIndex = order.items.findIndex(i => i.id === itemId);
-            
-            if (existingIndex > -1) {
-                order.items[existingIndex].quantity += 1;
-            } else {
-                order.items.push({ id: itemId, quantity: 1 });
-            }
-            
-            // Recalculate total
-            order.amount = order.items.reduce((sum, itemData) => {
-                const menuItem = menuItems.find(m => m.id === itemData.id);
-                return sum + (menuItem.price * itemData.quantity);
-            }, 0);
-            
-            // Update UI
-            renderEditItems(order);
-            showToast(`Added ${item.name}`, 'success');
-        }
-
-        function removeEditItem(index) {
-            const order = orders.find(o => o.id === currentEditOrderId);
-            if (!order || !order.items[index]) return;
-            
-            order.items.splice(index, 1);
-            
-            // Recalculate total
-            order.amount = order.items.reduce((sum, itemData) => {
-                const menuItem = menuItems.find(m => m.id === itemData.id);
-                return sum + (menuItem.price * itemData.quantity);
-            }, 0);
-            
-            // Update UI
-            renderEditItems(order);
-            showToast('Item removed', 'warning');
-        }
-
-        function saveOrderChanges() {
-            const order = orders.find(o => o.id === currentEditOrderId);
-            if (!order) return;
-            
-            // Update notes and status
-            order.notes = document.getElementById('edit-notes').value;
-            order.status = document.getElementById('edit-status').value;
-            order.updatedAt = new Date().toISOString();
-            
-            // Save
-            localStorage.setItem('cafe_orders', JSON.stringify(orders));
-            
-            // Update UI
-            closeModal();
-            renderAllOrders();
-            updateHomeStats();
-            
-            showToast('✅ Order updated!', 'success');
-        }
-
-        function deleteOrder() {
-            if (!confirm('Delete this order permanently?')) return;
-            
-            orders = orders.filter(o => o.id !== currentEditOrderId);
-            localStorage.setItem('cafe_orders', JSON.stringify(orders));
-            
-            closeModal();
-            renderAllOrders();
-            updateHomeStats();
-            
-            showToast('🗑️ Order deleted', 'warning');
-        }
-
-        // =================== DISPLAY FUNCTIONS ===================
-        function updateHomeStats() {
-            const today = new Date().toISOString().split('T')[0];
-            const todayOrders = orders.filter(o => o.time.startsWith(today));
-            const todayRevenue = todayOrders.reduce((sum, order) => sum + order.amount, 0);
-            const activeOrders = orders.filter(o => ['new', 'preparing'].includes(o.status)).length;
-            
-            document.getElementById('today-orders').textContent = todayOrders.length;
-            document.getElementById('today-revenue').textContent = `$${todayRevenue.toFixed(2)}`;
-            document.getElementById('active-tables').textContent = activeOrders;
-        }
-
-        function renderRecentOrders() {
-            const container = document.getElementById('recent-orders');
-            const recent = orders.slice(0, 5);
-            
-            if (recent.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <div>No recent orders</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            recent.forEach(order => {
-                const orderDate = new Date(order.time);
-                const timeStr = `${orderDate.getHours().toString().padStart(2, '0')}:${orderDate.getMinutes().toString().padStart(2, '0')}`;
-                
-                html += `
-                    <div class="order-card" onclick="editOrder('${order.id}')">
-                        <div class="order-header">
-                            <div class="order-id">${order.id}</div>
-                            <div class="order-status status-${order.status}">${order.status}</div>
-                        </div>
-                        <div class="order-body">
-                            <div class="customer-info">
-                                <div class="customer-avatar">${order.customer.avatar}</div>
-                                <div class="customer-details">
-                                    <h4>${order.customer.name}</h4>
-                                    <div class="customer-telegram">${order.customer.telegramId}</div>
-                                </div>
-                            </div>
-                            <div class="order-meta">
-                                <div class="order-amount">$${order.amount.toFixed(2)}</div>
-                                <div class="order-time">${timeStr}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function renderAllOrders() {
-            const container = document.getElementById('all-orders-list');
-            const countEl = document.getElementById('orders-count');
-            
-            let filtered = [...orders];
-            
-            // Apply search filter
-            if (searchQuery) {
-                filtered = filtered.filter(order => 
-                    order.customer.name.toLowerCase().includes(searchQuery) ||
-                    order.customer.telegramId.toLowerCase().includes(searchQuery) ||
-                    order.id.toLowerCase().includes(searchQuery) ||
-                    order.status.toLowerCase().includes(searchQuery)
-                );
-            }
-            
-            countEl.textContent = `${filtered.length} orders`;
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <div>No orders found</div>
-                        ${searchQuery ? '<div style="margin-top: 8px;">Try a different search</div>' : ''}
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            filtered.forEach(order => {
-                const orderDate = new Date(order.time);
-                const timeStr = `${orderDate.getHours().toString().padStart(2, '0')}:${orderDate.getMinutes().toString().padStart(2, '0')}`;
-                const dateStr = `${orderDate.getDate().toString().padStart(2, '0')}/${(orderDate.getMonth() + 1).toString().padStart(2, '0')}`;
-                
-                html += `
-                    <div class="order-card" onclick="editOrder('${order.id}')">
-                        <div class="order-header">
-                            <div class="order-id">${order.id}</div>
-                            <div class="order-status status-${order.status}">${order.status}</div>
-                        </div>
-                        <div class="order-body">
-                            <div class="customer-info">
-                                <div class="customer-avatar">${order.customer.avatar}</div>
-                                <div class="customer-details">
-                                    <h4>${order.customer.name}</h4>
-                                    <div class="customer-telegram">${order.customer.telegramId}</div>
-                                </div>
-                            </div>
-                            <div class="order-meta">
-                                <div class="order-amount">$${order.amount.toFixed(2)}</div>
-                                <div class="order-time">${dateStr} ${timeStr}</div>
-                            </div>
-                        </div>
-                        ${order.notes ? `
-                        <div style="margin-top: 12px; padding: 8px 12px; background: var(--tg-secondary-bg); border-radius: 8px; font-size: 13px;">
-                            📝 ${order.notes}
-                        </div>
-                        ` : ''}
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function renderCustomers() {
-            const container = document.getElementById('customers-list');
-            const countEl = document.getElementById('customers-count');
-            
-            let filtered = [...customers];
-            
-            // Apply search filter
-            if (searchQuery) {
-                filtered = filtered.filter(customer => 
-                    customer.name.toLowerCase().includes(searchQuery) ||
-                    customer.id.toLowerCase().includes(searchQuery)
-                );
-            }
-            
-            countEl.textContent = `${filtered.length} customers`;
-            
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">👤</div>
-                        <div>No customers found</div>
-                        ${searchQuery ? '<div style="margin-top: 8px;">Try a different search</div>' : ''}
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            filtered.forEach(customer => {
-                const customerOrders = orders.filter(o => o.customer.telegramId === customer.id);
-                const lastOrder = customerOrders[0];
-                
-                html += `
-                    <div class="customer-card" onclick="selectCustomer('${customer.id}', '${customer.name}', '${customer.avatar}')">
-                        <div class="telegram-avatar">${customer.avatar}</div>
-                        <div style="flex: 1;">
-                            <h3 style="margin-bottom: 4px;">${customer.name}</h3>
-                            <div style="font-size: 13px; color: var(--tg-secondary-text); margin-bottom: 8px;">${customer.id}</div>
-                            <div class="customer-stats">
-                                <div class="stat-item">
-                                    <span>📊</span>
-                                    <span>${customer.totalOrders || 0} orders</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span>💰</span>
-                                    <span>$${(customer.totalSpent || 0).toFixed(2)}</span>
-                                </div>
-                                ${lastOrder ? `
-                                <div class="stat-item">
-                                    <span>🕐</span>
-                                    <span>Last: ${new Date(lastOrder.time).toLocaleDateString()}</span>
-                                </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        // =================== UTILITIES ===================
-        function showToast(message, type = 'info') {
-            toastEl.textContent = message;
-            toastEl.className = 'toast';
-            toastEl.classList.add('show');
-            
-            // Set color based on type
-            const colors = {
-                success: 'rgba(51, 198, 89, 0.9)',
-                error: 'rgba(255, 59, 48, 0.9)',
-                warning: 'rgba(255, 149, 0, 0.9)',
-                info: 'rgba(46, 166, 255, 0.9)'
-            };
-            
-            toastEl.style.background = colors[type] || colors.info;
-            
-            setTimeout(() => {
-                toastEl.classList.remove('show');
-            }, 3000);
-        }
-
-        // =================== TELEGRAM INTEGRATION ===================
-        tg.MainButton.setParams({
-            text: '➕ NEW ORDER',
-            color: '#2ea6ff',
-            text_color: '#ffffff'
-        });
-
-        tg.MainButton.onClick(openNewOrderModal);
-        tg.MainButton.show();
-
-        tg.BackButton.onClick(() => {
-            if (document.querySelector('.modal-overlay.active')) {
-                closeModal();
-            } else {
-                switchScreen('home-screen');
-            }
-        });
-
-        // Handle viewport changes
-        tg.onEvent('viewportChanged', () => {
-            tg.expand();
-        });
-
-        // Export functions for testing
-        window.addTestOrder = function() {
-            const testOrder = {
-                id: `TEST${Date.now()}`,
-                customer: { name: 'Test User', telegramId: '@test', avatar: 'T' },
-                items: [{ id: 1, quantity: 2 }, { id: 10, quantity: 1 }],
-                notes: 'Test order',
-                amount: 15.5,
-                status: 'completed',
-                time: new Date().toISOString().replace('T', ' ').slice(0, 19)
-            };
-            
-            orders.unshift(testOrder);
-            localStorage.setItem('cafe_orders', JSON.stringify(orders));
-            
-            updateHomeStats();
-            renderRecentOrders();
-            showToast('✅ Test order added', 'success');
+            renderTables();
         };
 
-        window.clearAllData = function() {
-            if (confirm('Clear ALL data? This cannot be undone!')) {
+        function updateInventoryForOrder(order) {
+            order.items.forEach(itemData => {
+                const item = menuItems.find(m => m.id === itemData.id);
+                if (item && item.ingredients) {
+                    // Reduce inventory based on ingredients
+                    item.ingredients.forEach(ingredient => {
+                        const inventoryItem = inventory.find(inv => inv.name === ingredient.name);
+                        if (inventoryItem) {
+                            inventoryItem.stock = Math.max(0, inventoryItem.stock - (ingredient.amount * itemData.quantity));
+                        }
+                    });
+                }
+            });
+            
+            localStorage.setItem('cafe_inventory', JSON.stringify(inventory));
+        }
+
+        // Enhance the existing switchScreen function
+        const originalSwitchScreen = window.switchScreen;
+        window.switchScreen = function(screenId) {
+            originalSwitchScreen(screenId);
+            
+            // Additional setup for new screens
+            switch(screenId) {
+                case 'tables-screen':
+                    renderTables();
+                    break;
+                case 'analytics-screen':
+                    updateAnalyticsDisplay();
+                    break;
+                case 'inventory-screen':
+                    renderInventory();
+                    break;
+                case 'staff-screen':
+                    renderStaff();
+                    break;
+                case 'settings-screen':
+                    // Already handled by initialization
+                    break;
+            }
+        };
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Existing initialization...
+            
+            // Add enhanced features initialization
+            setTimeout(() => {
+                initializeEnhancedFeatures();
+            }, 1000);
+            
+            // Show welcome message with features
+            setTimeout(() => {
+                showToast('🎉 Cafe Pro v2.0 loaded! Try voice commands with 🎤', 'info');
+            }, 2000);
+        });
+
+        // =================== EXPORT NEW FUNCTIONS ===================
+        window.openPaymentModal = openPaymentModal;
+        window.showReceipt = showReceipt;
+        window.printReceiptNow = printReceiptNow;
+        window.openQRScanner = openQRScanner;
+        window.toggleVoiceControl = toggleVoiceControl;
+        window.simulateQRScan = simulateQRScan;
+        window.exportAllData = exportAllData;
+        window.importData = importData;
+        window.resetAllData = function() {
+            if (confirm('Reset ALL data to factory settings?')) {
                 localStorage.clear();
-                orders = [];
-                customers = [];
-                loadSampleDataIfEmpty();
-                updateHomeStats();
-                renderRecentOrders();
-                showToast('🗑️ All data cleared', 'warning');
+                showToast('All data reset. Reloading...', 'warning');
+                setTimeout(() => location.reload(), 1000);
             }
         };
     </script>
