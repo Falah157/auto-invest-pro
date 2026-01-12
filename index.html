@@ -3,9 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Manager Mini App</title>
+    <title>Restaurant Order Manager - FULL FUNCTIONAL</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #3498db;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -21,37 +30,89 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
-        header {
-            text-align: center;
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 30px;
             padding: 20px;
             background: white;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
         }
         
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+        .header-title h1 {
+            color: var(--dark);
+            margin-bottom: 5px;
         }
         
-        .subtitle {
+        .header-title p {
             color: #7f8c8d;
-            font-size: 1.1rem;
         }
         
-        .app-container {
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 30px;
+        }
+        
+        .tab-btn {
+            padding: 12px 30px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab-btn i {
+            margin-right: 8px;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Card Layout */
+        .card-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
+            margin-bottom: 30px;
         }
         
-        @media (max-width: 900px) {
-            .app-container {
+        @media (max-width: 1100px) {
+            .card-container {
                 grid-template-columns: 1fr;
             }
         }
@@ -61,14 +122,24 @@
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
         }
         
         .card-title {
             font-size: 1.5rem;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         /* Form Styles */
@@ -76,14 +147,14 @@
             margin-bottom: 20px;
         }
         
-        label {
+        .form-label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #34495e;
+            color: var(--dark);
         }
         
-        input, select {
+        .form-control {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -92,23 +163,39 @@
             transition: border-color 0.3s;
         }
         
-        input:focus, select:focus {
+        .form-control:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: var(--primary);
         }
         
-        .items-container {
-            margin-bottom: 20px;
+        /* Items Table */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
         }
         
-        .item-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
+        .items-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
         }
         
+        .items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .items-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        /* Buttons */
         .btn {
             padding: 10px 20px;
             border: none;
@@ -122,7 +209,7 @@
         }
         
         .btn-primary {
-            background: #3498db;
+            background: var(--primary);
             color: white;
         }
         
@@ -131,7 +218,7 @@
         }
         
         .btn-success {
-            background: #2ecc71;
+            background: var(--success);
             color: white;
         }
         
@@ -139,8 +226,17 @@
             background: #27ae60;
         }
         
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+        
         .btn-danger {
-            background: #e74c3c;
+            background: var(--danger);
             color: white;
         }
         
@@ -153,7 +249,13 @@
             font-size: 0.9rem;
         }
         
-        /* Order Display Styles */
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+            padding: 15px;
+        }
+        
+        /* Orders List */
         .orders-container {
             max-height: 600px;
             overflow-y: auto;
@@ -165,7 +267,7 @@
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-            border-left: 5px solid #2ecc71;
+            border-left: 5px solid var(--success);
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             transition: transform 0.3s;
         }
@@ -181,27 +283,27 @@
             margin-bottom: 15px;
         }
         
-        .order-status {
-            font-size: 1.2rem;
+        .order-id {
             font-weight: 700;
+            color: var(--dark);
+            font-size: 1.1rem;
         }
         
-        .status-completed {
-            color: #2ecc71;
+        .order-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
         
-        .status-pending {
-            color: #f39c12;
-        }
-        
-        .status-cancelled {
-            color: #e74c3c;
-        }
+        .status-completed { background: #d5f4e6; color: #27ae60; }
+        .status-pending { background: #fdebd0; color: #e67e22; }
+        .status-cancelled { background: #fadbd8; color: #e74c3c; }
         
         .order-customer {
             font-size: 1.1rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--dark);
             margin-bottom: 15px;
         }
         
@@ -219,7 +321,7 @@
         .order-total {
             font-size: 1.3rem;
             font-weight: 700;
-            color: #2c3e50;
+            color: var(--dark);
             text-align: right;
             margin-top: 10px;
             padding-top: 10px;
@@ -240,35 +342,53 @@
             margin-top: 15px;
         }
         
-        .no-orders {
-            text-align: center;
-            padding: 40px 20px;
-            color: #7f8c8d;
-            font-size: 1.1rem;
+        /* Search & Filter */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
         
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        .search-box {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
         }
         
-        .emoji {
-            margin-right: 8px;
+        .filter-buttons {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
         }
         
-        .stats {
+        .filter-btn {
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Statistics */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
-            margin-top: 20px;
+            margin-bottom: 30px;
         }
         
-        .stat-box {
+        .stat-card {
             background: white;
             border-radius: 10px;
-            padding: 15px;
+            padding: 20px;
             text-align: center;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
         }
@@ -276,7 +396,7 @@
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
-            color: #3498db;
+            color: var(--primary);
         }
         
         .stat-label {
@@ -285,512 +405,1493 @@
             margin-top: 5px;
         }
         
-        footer {
+        /* Empty State */
+        .empty-state {
             text-align: center;
-            margin-top: 40px;
+            padding: 40px 20px;
             color: #7f8c8d;
-            font-size: 0.9rem;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
             padding: 20px;
         }
         
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
         }
         
-        .fade-in {
-            animation: fadeIn 0.5s ease forwards;
+        /* Alert */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .alert-success {
+            background: #d5f4e6;
+            color: #27ae60;
+            border: 1px solid #a3e4c0;
+        }
+        
+        .alert-error {
+            background: #fadbd8;
+            color: #e74c3c;
+            border: 1px solid #f5b7b1;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .receipt {
+                box-shadow: none !important;
+                border: 1px solid #000 !important;
+            }
+        }
+        
+        .receipt {
+            background: white;
+            padding: 30px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 20px;
+        }
+        
+        .receipt-items {
+            margin: 20px 0;
+        }
+        
+        .receipt-total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #000;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1><i class="fas fa-shopping-cart"></i> Order Manager Mini App</h1>
-            <p class="subtitle">Create, view, and manage your orders - All data saved locally in your browser</p>
+        <!-- Header -->
+        <header class="header">
+            <div class="header-title">
+                <h1><i class="fas fa-utensils"></i> Restaurant Order Manager</h1>
+                <p>Complete order management system - All data saved locally</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="print-all-btn">
+                    <i class="fas fa-print"></i> Print All Orders
+                </button>
+                <button class="btn btn-danger" id="clear-all-btn">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
         </header>
         
-        <div class="stats">
-            <div class="stat-box">
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
                 <div class="stat-value" id="total-orders">0</div>
                 <div class="stat-label">Total Orders</div>
             </div>
-            <div class="stat-box">
-                <div class="stat-value" id="completed-orders">0</div>
-                <div class="stat-label">Completed</div>
+            <div class="stat-card">
+                <div class="stat-value" id="today-orders">0</div>
+                <div class="stat-label">Today's Orders</div>
             </div>
-            <div class="stat-box">
-                <div class="stat-value" id="total-revenue">$0</div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-revenue">$0.00</div>
                 <div class="stat-label">Total Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pending-orders">0</div>
+                <div class="stat-label">Pending Orders</div>
             </div>
         </div>
         
-        <div class="app-container">
-            <!-- Order Creation Form -->
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-plus-circle"></i> Create New Order</h2>
-                
-                <form id="order-form">
-                    <div class="form-group">
-                        <label for="customer-name"><i class="fas fa-user"></i> Customer Name</label>
-                        <input type="text" id="customer-name" placeholder="Enter customer name" required>
+        <!-- Tabs -->
+        <div class="tabs no-print">
+            <button class="tab-btn active" data-tab="create-tab">
+                <i class="fas fa-plus-circle"></i> Create Order
+            </button>
+            <button class="tab-btn" data-tab="orders-tab">
+                <i class="fas fa-list"></i> View Orders
+            </button>
+            <button class="tab-btn" data-tab="search-tab">
+                <i class="fas fa-search"></i> Search Orders
+            </button>
+            <button class="tab-btn" data-tab="items-tab">
+                <i class="fas fa-cube"></i> Manage Items
+            </button>
+        </div>
+        
+        <!-- Alert Container -->
+        <div id="alert-container"></div>
+        
+        <!-- CREATE ORDER TAB -->
+        <div id="create-tab" class="tab-content active">
+            <div class="card-container">
+                <!-- Order Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-file-invoice"></i> New Order Details</h2>
+                        <span class="order-id" id="new-order-id">ORDER-0001</span>
                     </div>
                     
-                    <div class="form-group">
-                        <label><i class="fas fa-list"></i> Order Items</label>
-                        <div class="items-container" id="items-container">
-                            <!-- Items will be added here dynamically -->
-                            <div class="item-row">
-                                <select class="item-select">
-                                    <option value="coffee">☕ Coffee</option>
-                                    <option value="water">💧 Water</option>
-                                    <option value="icecream">🍦 Ice Cream</option>
-                                    <option value="pizza">🍕 Pizza</option>
-                                    <option value="burger">🍔 Burger</option>
-                                    <option value="fries">🍟 Fries</option>
-                                    <option value="cake">🍰 Cake</option>
-                                    <option value="beer">🍺 Beer</option>
-                                </select>
-                                <input type="number" class="item-quantity" min="1" value="1" placeholder="Qty">
-                                <input type="number" class="item-price" min="0" step="0.01" value="5.00" placeholder="Price">
-                                <button type="button" class="btn btn-danger btn-small remove-item"><i class="fas fa-times"></i></button>
-                            </div>
+                    <form id="order-form">
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-user"></i> Customer Name *</label>
+                            <input type="text" class="form-control" id="customer-name" placeholder="Enter customer name" required>
                         </div>
-                        <button type="button" class="btn btn-primary" id="add-item"><i class="fas fa-plus"></i> Add Item</button>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="order-status"><i class="fas fa-tag"></i> Order Status</label>
-                        <select id="order-status">
-                            <option value="completed">✅ Completed</option>
-                            <option value="pending">⏱️ Pending</option>
-                            <option value="cancelled">❌ Cancelled</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-success" style="width: 100%; padding: 15px;">
-                            <i class="fas fa-save"></i> Save Order to Database
+                        
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-phone"></i> Customer Phone (Optional)</label>
+                            <input type="tel" class="form-control" id="customer-phone" placeholder="Enter phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-map-marker-alt"></i> Table Number / Delivery</label>
+                            <input type="text" class="form-control" id="table-number" placeholder="e.g., Table 5 or Delivery" value="Table 1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-tag"></i> Order Status</label>
+                            <select class="form-control" id="order-status">
+                                <option value="pending">⏱️ Pending</option>
+                                <option value="preparing">👨‍🍳 Preparing</option>
+                                <option value="ready">✅ Ready</option>
+                                <option value="completed">✅ Completed</option>
+                                <option value="cancelled">❌ Cancelled</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-sticky-note"></i> Special Instructions</label>
+                            <textarea class="form-control" id="special-instructions" rows="3" placeholder="Any special requests or instructions"></textarea>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Order Items -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-list-ul"></i> Order Items</h2>
+                        <button type="button" class="btn btn-primary btn-small" id="add-item-btn">
+                            <i class="fas fa-plus"></i> Add Item
                         </button>
                     </div>
-                </form>
-            </div>
-            
-            <!-- Orders Display -->
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-history"></i> Recent Orders</h2>
-                
-                <div class="orders-container" id="orders-container">
-                    <!-- Orders will be displayed here -->
-                    <div class="no-orders" id="no-orders">
-                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                        <p>No orders yet. Create your first order!</p>
+                    
+                    <table class="items-table" id="items-table">
+                        <thead>
+                            <tr>
+                                <th width="40%">Item Name</th>
+                                <th width="20%">Quantity</th>
+                                <th width="20%">Price ($)</th>
+                                <th width="20%">Total</th>
+                                <th width="10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-tbody">
+                            <!-- Items will be added here -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="text-align: right; font-weight: bold;">Subtotal:</td>
+                                <td id="subtotal">$0.00</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" style="text-align: right; font-weight: bold;">Tax (10%):</td>
+                                <td id="tax-amount">$0.00</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" style="text-align: right; font-weight: bold;">TOTAL:</td>
+                                <td id="order-total" style="font-weight: bold; font-size: 1.2rem;">$0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success btn-block" id="save-order-btn">
+                            <i class="fas fa-save"></i> SAVE ORDER TO DATABASE
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
         
-        <footer>
-            <p>Order Manager Mini App | All data is saved in your browser's local storage</p>
-            <p id="storage-status">💾 Ready to save orders</p>
-            <button id="clear-storage" class="btn btn-danger btn-small" style="margin-top: 10px;">
-                <i class="fas fa-trash"></i> Clear All Data
-            </button>
-        </footer>
+        <!-- VIEW ORDERS TAB -->
+        <div id="orders-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-history"></i> All Orders</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="pending">Pending</button>
+                        <button class="filter-btn" data-filter="preparing">Preparing</button>
+                        <button class="filter-btn" data-filter="ready">Ready</button>
+                        <button class="filter-btn" data-filter="completed">Completed</button>
+                        <button class="filter-btn" data-filter="today">Today</button>
+                    </div>
+                </div>
+                
+                <div class="orders-container" id="orders-list">
+                    <!-- Orders will be loaded here -->
+                    <div class="empty-state" id="empty-orders">
+                        <i class="fas fa-inbox"></i>
+                        <p>No orders found. Create your first order!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SEARCH ORDERS TAB -->
+        <div id="search-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-search"></i> Search Orders</h2>
+                </div>
+                
+                <div class="search-container">
+                    <input type="text" class="search-box" id="search-input" placeholder="Search by customer name, order ID, phone, or items...">
+                    <button class="btn btn-primary" id="search-btn">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                
+                <div class="orders-container" id="search-results">
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <p>Enter search terms to find orders</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MANAGE ITEMS TAB -->
+        <div id="items-tab" class="tab-content">
+            <div class="card-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-cubes"></i> Available Items</h2>
+                        <button class="btn btn-primary btn-small" id="add-new-item-btn">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                    
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price ($)</th>
+                                <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="available-items">
+                            <!-- Items loaded from database -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-chart-bar"></i> Popular Items</h2>
+                    </div>
+                    <div id="popular-items">
+                        <!-- Will show popular items -->
+                        <div class="empty-state">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>No order data yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer no-print">
+            <p><i class="fas fa-database"></i> All data saved in browser's local storage</p>
+            <p id="storage-status">💾 Database ready</p>
+        </div>
+    </div>
+    
+    <!-- Print Modal -->
+    <div class="modal" id="print-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-print"></i> Print Receipt</h3>
+                <button class="btn btn-small" id="close-print-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="print-content">
+                <!-- Receipt content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancel-print">Cancel</button>
+                <button class="btn btn-primary" id="confirm-print">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Order Modal -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Order</h3>
+                <button class="btn btn-small" id="close-edit-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="edit-content">
+                <!-- Edit form will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancel-edit">Cancel</button>
+                <button class="btn btn-success" id="save-edit">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Item options with emojis and default prices
-        const itemOptions = [
-            { id: 'coffee', name: 'Coffee', emoji: '☕', price: 5.00 },
-            { id: 'water', name: 'Water', emoji: '💧', price: 3.00 },
-            { id: 'icecream', name: 'Ice Cream', emoji: '🍦', price: 4.50 },
-            { id: 'pizza', name: 'Pizza', emoji: '🍕', price: 12.00 },
-            { id: 'burger', name: 'Burger', emoji: '🍔', price: 8.50 },
-            { id: 'fries', name: 'Fries', emoji: '🍟', price: 4.00 },
-            { id: 'cake', name: 'Cake', emoji: '🍰', price: 6.50 },
-            { id: 'beer', name: 'Beer', emoji: '🍺', price: 5.50 }
-        ];
-
-        // Initialize orders array from local storage or empty array
-        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        // =============== DATABASE / STORAGE FUNCTIONS ===============
+        const DB_NAME = 'restaurantOrdersDB';
+        const ITEMS_DB = 'restaurantItemsDB';
         
-        // DOM Elements
-        const orderForm = document.getElementById('order-form');
-        const itemsContainer = document.getElementById('items-container');
-        const addItemBtn = document.getElementById('add-item');
-        const ordersContainer = document.getElementById('orders-container');
-        const noOrders = document.getElementById('no-orders');
-        const clearStorageBtn = document.getElementById('clear-storage');
-        const storageStatus = document.getElementById('storage-status');
-        const totalOrdersEl = document.getElementById('total-orders');
-        const completedOrdersEl = document.getElementById('completed-orders');
-        const totalRevenueEl = document.getElementById('total-revenue');
-
+        // Initialize databases
+        function initializeDatabase() {
+            if (!localStorage.getItem(DB_NAME)) {
+                localStorage.setItem(DB_NAME, JSON.stringify([]));
+            }
+            
+            if (!localStorage.getItem(ITEMS_DB)) {
+                // Default items
+                const defaultItems = [
+                    { id: 1, name: "☕ Coffee", price: 5.00, category: "Drinks", emoji: "☕" },
+                    { id: 2, name: "💧 Water", price: 3.00, category: "Drinks", emoji: "💧" },
+                    { id: 3, name: "🍦 Ice Cream", price: 4.50, category: "Dessert", emoji: "🍦" },
+                    { id: 4, name: "🍕 Pizza", price: 12.00, category: "Main", emoji: "🍕" },
+                    { id: 5, name: "🍔 Burger", price: 8.50, category: "Main", emoji: "🍔" },
+                    { id: 6, name: "🍟 Fries", price: 4.00, category: "Sides", emoji: "🍟" },
+                    { id: 7, name: "🍰 Cake", price: 6.50, category: "Dessert", emoji: "🍰" },
+                    { id: 8, name: "🍺 Beer", price: 5.50, category: "Drinks", emoji: "🍺" }
+                ];
+                localStorage.setItem(ITEMS_DB, JSON.stringify(defaultItems));
+            }
+            
+            updateStorageStatus();
+        }
+        
+        // Get all orders
+        function getAllOrders() {
+            return JSON.parse(localStorage.getItem(DB_NAME)) || [];
+        }
+        
+        // Save orders
+        function saveOrders(orders) {
+            localStorage.setItem(DB_NAME, JSON.stringify(orders));
+            updateStorageStatus();
+            updateStatistics();
+        }
+        
+        // Get all items
+        function getAllItems() {
+            return JSON.parse(localStorage.getItem(ITEMS_DB)) || [];
+        }
+        
+        // Save items
+        function saveItems(items) {
+            localStorage.setItem(ITEMS_DB, JSON.stringify(items));
+        }
+        
+        // Generate order ID
+        function generateOrderId() {
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}`;
+            const timeStr = `${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            return `ORDER-${dateStr}-${timeStr}`;
+        }
+        
+        // =============== UI FUNCTIONS ===============
+        let currentOrderItems = [];
+        let editingOrderId = null;
+        
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            // Add initial item row
-            addItemRow();
-            
-            // Load and display existing orders
-            displayOrders();
-            
-            // Update statistics
-            updateStatistics();
-            
-            // Set up event listeners
+            initializeDatabase();
             setupEventListeners();
+            loadAvailableItems();
+            updateNewOrderId();
+            updateStatistics();
+            loadOrders('all');
             
-            // Update storage status
-            updateStorageStatus();
+            // Add first item row
+            addItemRow();
         });
-
-        // Set up event listeners
+        
+        // Setup all event listeners
         function setupEventListeners() {
+            // Tab switching
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+            
             // Add item button
-            addItemBtn.addEventListener('click', addItemRow);
+            document.getElementById('add-item-btn').addEventListener('click', addItemRow);
             
-            // Form submission
-            orderForm.addEventListener('submit', handleFormSubmit);
+            // Save order button
+            document.getElementById('save-order-btn').addEventListener('click', saveOrder);
             
-            // Clear storage button
-            clearStorageBtn.addEventListener('click', clearAllData);
-            
-            // Listen for clicks on remove item buttons (delegated)
-            itemsContainer.addEventListener('click', function(e) {
-                if (e.target.closest('.remove-item')) {
-                    const itemRow = e.target.closest('.item-row');
-                    // Only remove if there's more than one item row
-                    if (document.querySelectorAll('.item-row').length > 1) {
-                        itemRow.remove();
-                    }
-                }
+            // Search button
+            document.getElementById('search-btn').addEventListener('click', searchOrders);
+            document.getElementById('search-input').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') searchOrders();
             });
             
-            // Listen for changes to item selects to update prices
-            itemsContainer.addEventListener('change', function(e) {
-                if (e.target.classList.contains('item-select')) {
-                    const selectedItemId = e.target.value;
-                    const itemRow = e.target.closest('.item-row');
-                    const priceInput = itemRow.querySelector('.item-price');
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    loadOrders(filter);
                     
-                    // Find the selected item and update price
-                    const selectedItem = itemOptions.find(item => item.id === selectedItemId);
+                    // Update active filter
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Add new item button
+            document.getElementById('add-new-item-btn').addEventListener('click', addNewItem);
+            
+            // Clear all button
+            document.getElementById('clear-all-btn').addEventListener('click', clearAllData);
+            
+            // Print all button
+            document.getElementById('print-all-btn').addEventListener('click', printAllOrders);
+            
+            // Modal close buttons
+            document.getElementById('close-print-modal').addEventListener('click', () => {
+                document.getElementById('print-modal').classList.remove('active');
+            });
+            
+            document.getElementById('close-edit-modal').addEventListener('click', () => {
+                document.getElementById('edit-modal').classList.remove('active');
+            });
+            
+            document.getElementById('cancel-print').addEventListener('click', () => {
+                document.getElementById('print-modal').classList.remove('active');
+            });
+            
+            document.getElementById('cancel-edit').addEventListener('click', () => {
+                document.getElementById('edit-modal').classList.remove('active');
+            });
+            
+            // Confirm print
+            document.getElementById('confirm-print').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Save edit
+            document.getElementById('save-edit').addEventListener('click', saveEditedOrder);
+        }
+        
+        // Switch tabs
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Load data for tab
+            if (tabId === 'orders-tab') {
+                loadOrders('all');
+            } else if (tabId === 'items-tab') {
+                loadAvailableItems();
+                loadPopularItems();
+            } else if (tabId === 'create-tab') {
+                updateNewOrderId();
+            }
+        }
+        
+        // Add item row to order form
+        function addItemRow(item = null) {
+            const tbody = document.getElementById('items-tbody');
+            const rowId = Date.now();
+            
+            const row = document.createElement('tr');
+            row.id = `item-row-${rowId}`;
+            
+            // Get available items for dropdown
+            const items = getAllItems();
+            const options = items.map(item => 
+                `<option value="${item.id}">${item.name} - $${item.price.toFixed(2)}</option>`
+            ).join('');
+            
+            row.innerHTML = `
+                <td>
+                    <select class="item-select form-control" onchange="updateItemPrice(${rowId})">
+                        <option value="">-- Custom Item --</option>
+                        ${options}
+                    </select>
+                    <input type="text" class="custom-item form-control" placeholder="Or type custom item name" style="margin-top: 5px; display: none;">
+                </td>
+                <td><input type="number" class="item-quantity form-control" value="1" min="1" onchange="updateItemTotal(${rowId})" oninput="updateItemTotal(${rowId})"></td>
+                <td><input type="number" class="item-price form-control" value="0.00" min="0" step="0.01" onchange="updateItemTotal(${rowId})" oninput="updateItemTotal(${rowId})"></td>
+                <td class="item-total">$0.00</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-small" onclick="removeItemRow(${rowId})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+            
+            // Add event listener for custom item toggle
+            const select = row.querySelector('.item-select');
+            const customInput = row.querySelector('.custom-item');
+            
+            select.addEventListener('change', function() {
+                if (this.value === '') {
+                    customInput.style.display = 'block';
+                    customInput.focus();
+                } else {
+                    customInput.style.display = 'none';
+                    // Set price from selected item
+                    const selectedItem = items.find(i => i.id == this.value);
                     if (selectedItem) {
-                        priceInput.value = selectedItem.price.toFixed(2);
+                        row.querySelector('.item-price').value = selectedItem.price.toFixed(2);
+                        updateItemTotal(rowId);
                     }
                 }
             });
-        }
-
-        // Add a new item row to the form
-        function addItemRow() {
-            const itemRow = document.createElement('div');
-            itemRow.className = 'item-row';
-            itemRow.innerHTML = `
-                <select class="item-select">
-                    ${itemOptions.map(item => 
-                        `<option value="${item.id}">${item.emoji} ${item.name}</option>`
-                    ).join('')}
-                </select>
-                <input type="number" class="item-quantity" min="1" value="1" placeholder="Qty">
-                <input type="number" class="item-price" min="0" step="0.01" value="5.00" placeholder="Price">
-                <button type="button" class="btn btn-danger btn-small remove-item"><i class="fas fa-times"></i></button>
-            `;
-            itemsContainer.appendChild(itemRow);
-        }
-
-        // Handle form submission
-        function handleFormSubmit(e) {
-            e.preventDefault();
             
-            // Get customer name and status
+            customInput.addEventListener('input', function() {
+                row.querySelector('.item-price').focus();
+            });
+            
+            // If item is provided (for edit), prefill
+            if (item) {
+                if (item.itemId) {
+                    select.value = item.itemId;
+                    select.dispatchEvent(new Event('change'));
+                } else {
+                    select.value = '';
+                    select.dispatchEvent(new Event('change'));
+                    customInput.value = item.name;
+                    row.querySelector('.item-price').value = item.price.toFixed(2);
+                }
+                row.querySelector('.item-quantity').value = item.quantity;
+                updateItemTotal(rowId);
+            }
+            
+            updateOrderTotal();
+        }
+        
+        // Update item price when dropdown changes
+        function updateItemPrice(rowId) {
+            const row = document.getElementById(`item-row-${rowId}`);
+            const select = row.querySelector('.item-select');
+            
+            if (select.value !== '') {
+                const items = getAllItems();
+                const selectedItem = items.find(i => i.id == select.value);
+                if (selectedItem) {
+                    row.querySelector('.item-price').value = selectedItem.price.toFixed(2);
+                    updateItemTotal(rowId);
+                }
+            }
+        }
+        
+        // Update item total
+        function updateItemTotal(rowId) {
+            const row = document.getElementById(`item-row-${rowId}`);
+            const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+            const price = parseFloat(row.querySelector('.item-price').value) || 0;
+            const total = quantity * price;
+            
+            row.querySelector('.item-total').textContent = `$${total.toFixed(2)}`;
+            updateOrderTotal();
+        }
+        
+        // Remove item row
+        function removeItemRow(rowId) {
+            const row = document.getElementById(`item-row-${rowId}`);
+            if (row) {
+                row.remove();
+                updateOrderTotal();
+            }
+        }
+        
+        // Update order total
+        function updateOrderTotal() {
+            let subtotal = 0;
+            
+            document.querySelectorAll('#items-tbody tr').forEach(row => {
+                const totalCell = row.querySelector('.item-total');
+                if (totalCell) {
+                    const total = parseFloat(totalCell.textContent.replace('$', '')) || 0;
+                    subtotal += total;
+                }
+            });
+            
+            const tax = subtotal * 0.10; // 10% tax
+            const total = subtotal + tax;
+            
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('tax-amount').textContent = `$${tax.toFixed(2)}`;
+            document.getElementById('order-total').textContent = `$${total.toFixed(2)}`;
+        }
+        
+        // Save order to database
+        function saveOrder() {
+            // Validate customer name
             const customerName = document.getElementById('customer-name').value.trim();
-            const status = document.getElementById('order-status').value;
+            if (!customerName) {
+                showAlert('Please enter customer name', 'error');
+                document.getElementById('customer-name').focus();
+                return;
+            }
             
-            // Get all items
-            const itemRows = document.querySelectorAll('.item-row');
+            // Get order items
             const items = [];
-            let total = 0;
+            let isValid = true;
             
-            itemRows.forEach(row => {
-                const itemSelect = row.querySelector('.item-select');
-                const itemId = itemSelect.value;
-                const itemName = itemSelect.options[itemSelect.selectedIndex].text;
-                const quantity = parseInt(row.querySelector('.item-quantity').value) || 1;
+            document.querySelectorAll('#items-tbody tr').forEach(row => {
+                const select = row.querySelector('.item-select');
+                const customInput = row.querySelector('.custom-item');
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
                 const price = parseFloat(row.querySelector('.item-price').value) || 0;
                 
-                items.push({
-                    id: itemId,
-                    name: itemName,
-                    quantity: quantity,
-                    price: price
-                });
+                if (quantity <= 0 || price <= 0) {
+                    isValid = false;
+                    return;
+                }
                 
-                total += quantity * price;
+                let itemName = '';
+                let itemId = null;
+                
+                if (select.value !== '') {
+                    // From dropdown
+                    const allItems = getAllItems();
+                    const selectedItem = allItems.find(i => i.id == select.value);
+                    if (selectedItem) {
+                        itemName = selectedItem.name;
+                        itemId = selectedItem.id;
+                    }
+                } else {
+                    // Custom item
+                    itemName = customInput.value.trim() || 'Custom Item';
+                }
+                
+                if (itemName) {
+                    items.push({
+                        name: itemName,
+                        quantity: quantity,
+                        price: price,
+                        total: quantity * price,
+                        itemId: itemId
+                    });
+                }
             });
             
-            // Validate
-            if (!customerName) {
-                alert('Please enter customer name');
-                return;
-            }
-            
             if (items.length === 0) {
-                alert('Please add at least one item');
+                showAlert('Please add at least one item to the order', 'error');
                 return;
             }
             
-            // Generate order ID and timestamp
-            const now = new Date();
-            const orderId = `ORDER${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            if (!isValid) {
+                showAlert('Please check all items have valid quantity and price', 'error');
+                return;
+            }
             
-            const timestamp = now.toISOString().replace('T', ' ').substring(0, 16);
+            // Calculate totals
+            const subtotal = items.reduce((sum, item) => sum + item.total, 0);
+            const tax = subtotal * 0.10;
+            const total = subtotal + tax;
             
             // Create order object
+            const orderId = editingOrderId || generateOrderId();
+            const now = new Date();
+            
             const order = {
                 id: orderId,
                 customer: customerName,
+                phone: document.getElementById('customer-phone').value.trim(),
+                table: document.getElementById('table-number').value.trim(),
+                status: document.getElementById('order-status').value,
+                instructions: document.getElementById('special-instructions').value.trim(),
                 items: items,
+                subtotal: subtotal,
+                tax: tax,
                 total: total,
-                status: status,
-                time: timestamp,
-                createdAt: now.getTime()
+                date: now.toISOString(),
+                timestamp: now.getTime(),
+                formattedDate: now.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
             };
             
-            // Add to orders array
-            orders.unshift(order); // Add to beginning
+            // Save to database
+            const orders = getAllOrders();
             
-            // Save to local storage
-            localStorage.setItem('orders', JSON.stringify(orders));
+            if (editingOrderId) {
+                // Update existing order
+                const index = orders.findIndex(o => o.id === editingOrderId);
+                if (index !== -1) {
+                    orders[index] = order;
+                    showAlert('Order updated successfully!', 'success');
+                }
+            } else {
+                // Add new order
+                orders.unshift(order);
+                showAlert('Order saved successfully!', 'success');
+            }
             
-            // Display the new order
-            displayOrders();
+            saveOrders(orders);
             
-            // Update statistics
-            updateStatistics();
+            // Reset form
+            resetOrderForm();
             
-            // Update storage status
-            updateStorageStatus();
-            
-            // Reset form (but keep one item row)
-            document.getElementById('customer-name').value = '';
-            document.getElementById('order-status').value = 'completed';
-            
-            // Remove all but first item row
-            const allItemRows = document.querySelectorAll('.item-row');
-            allItemRows.forEach((row, index) => {
-                if (index > 0) row.remove();
-            });
-            
-            // Reset first item row
-            const firstRow = document.querySelector('.item-row');
-            firstRow.querySelector('.item-select').value = 'coffee';
-            firstRow.querySelector('.item-quantity').value = '1';
-            firstRow.querySelector('.item-price').value = '5.00';
-            
-            // Show success message
-            alert(`Order created successfully!\nOrder ID: ${orderId}\nTotal: $${total.toFixed(2)}`);
+            // Switch to orders tab
+            switchTab('orders-tab');
         }
-
-        // Display all orders
-        function displayOrders() {
-            // Clear current display
-            ordersContainer.innerHTML = '';
+        
+        // Reset order form
+        function resetOrderForm() {
+            document.getElementById('customer-name').value = '';
+            document.getElementById('customer-phone').value = '';
+            document.getElementById('table-number').value = 'Table 1';
+            document.getElementById('order-status').value = 'pending';
+            document.getElementById('special-instructions').value = '';
             
-            // If no orders, show message
+            // Clear items
+            document.getElementById('items-tbody').innerHTML = '';
+            addItemRow();
+            
+            // Reset totals
+            updateOrderTotal();
+            
+            // Update order ID
+            updateNewOrderId();
+            
+            editingOrderId = null;
+        }
+        
+        // Update new order ID display
+        function updateNewOrderId() {
+            document.getElementById('new-order-id').textContent = generateOrderId();
+        }
+        
+        // Load orders with filter
+        function loadOrders(filter = 'all') {
+            const orders = getAllOrders();
+            const container = document.getElementById('orders-list');
+            
             if (orders.length === 0) {
-                ordersContainer.appendChild(noOrders);
-                noOrders.style.display = 'block';
+                container.innerHTML = `
+                    <div class="empty-state" id="empty-orders">
+                        <i class="fas fa-inbox"></i>
+                        <p>No orders found. Create your first order!</p>
+                    </div>
+                `;
                 return;
             }
             
-            // Hide no orders message
-            noOrders.style.display = 'none';
+            // Filter orders
+            let filteredOrders = [...orders];
             
-            // Sort orders by date (newest first)
-            const sortedOrders = [...orders].sort((a, b) => b.createdAt - a.createdAt);
-            
-            // Display each order
-            sortedOrders.forEach((order, index) => {
-                const orderCard = createOrderCard(order, index);
-                ordersContainer.appendChild(orderCard);
-            });
-        }
-
-        // Create an order card element
-        function createOrderCard(order, index) {
-            const card = document.createElement('div');
-            card.className = 'order-card fade-in';
-            
-            // Set border color based on status
-            let statusColor = '#2ecc71'; // Completed - green
-            let statusText = '✅ ORDER COMPLETED!';
-            let statusClass = 'status-completed';
-            let statusBadge = 'bg-success';
-            
-            if (order.status === 'pending') {
-                statusColor = '#f39c12'; // Pending - orange
-                statusText = '⏱️ ORDER PENDING';
-                statusClass = 'status-pending';
-                statusBadge = 'bg-warning';
-            } else if (order.status === 'cancelled') {
-                statusColor = '#e74c3c'; // Cancelled - red
-                statusText = '❌ ORDER CANCELLED';
-                statusClass = 'status-cancelled';
-                statusBadge = 'bg-danger';
+            if (filter === 'today') {
+                const today = new Date().toDateString();
+                filteredOrders = orders.filter(order => 
+                    new Date(order.date).toDateString() === today
+                );
+            } else if (filter !== 'all') {
+                filteredOrders = orders.filter(order => order.status === filter);
             }
             
-            // Apply border color
-            card.style.borderLeftColor = statusColor;
-            
-            // Create items list HTML
-            const itemsHtml = order.items.map(item => {
-                // Extract emoji from item name (emoji is first character)
-                const emoji = item.name.charAt(0);
-                const nameWithoutEmoji = item.name.substring(2); // Skip emoji and space
-                return `
-                    <div class="order-item">
-                        <div>${emoji} ${nameWithoutEmoji} x${item.quantity}</div>
-                        <div>$${(item.price * item.quantity).toFixed(2)}</div>
+            if (filteredOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-filter"></i>
+                        <p>No ${filter} orders found</p>
                     </div>
                 `;
-            }).join('');
+                return;
+            }
             
-            card.innerHTML = `
-                <div class="order-header">
-                    <div class="order-status ${statusClass}">${statusText}</div>
-                    <div class="status-badge" style="background: ${statusColor}; color: white;">${order.status.toUpperCase()}</div>
-                </div>
+            // Display orders
+            let html = '';
+            
+            filteredOrders.forEach(order => {
+                const statusClass = `status-${order.status}`;
+                const statusText = getStatusText(order.status);
                 
-                <div class="order-customer">
-                    <i class="fas fa-user"></i> Customer: ${order.customer}
-                </div>
+                const itemsHtml = order.items.map(item => `
+                    <div class="order-item">
+                        <div>${item.name} x${item.quantity}</div>
+                        <div>$${item.total.toFixed(2)}</div>
+                    </div>
+                `).join('');
                 
-                <div class="order-items">
-                    ${itemsHtml}
-                </div>
-                
-                <div class="order-total">
-                    💰 TOTAL: $${order.total.toFixed(2)}
-                </div>
-                
-                <div class="order-meta">
-                    <div><i class="fas fa-clock"></i> Time: ${order.time}</div>
-                    <div><i class="fas fa-hashtag"></i> ID: ${order.id}</div>
-                </div>
-                
-                <div class="order-actions">
-                    <button class="btn btn-primary btn-small toggle-status" data-index="${index}">
-                        <i class="fas fa-sync-alt"></i> Change Status
-                    </button>
-                    <button class="btn btn-danger btn-small delete-order" data-index="${index}">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
+                html += `
+                    <div class="order-card" data-order-id="${order.id}">
+                        <div class="order-header">
+                            <div class="order-id">${order.id}</div>
+                            <div class="order-status ${statusClass}">${statusText}</div>
+                        </div>
+                        
+                        <div class="order-customer">
+                            <i class="fas fa-user"></i> ${order.customer}
+                            ${order.phone ? ` · <i class="fas fa-phone"></i> ${order.phone}` : ''}
+                            ${order.table ? ` · <i class="fas fa-map-marker-alt"></i> ${order.table}` : ''}
+                        </div>
+                        
+                        ${order.instructions ? `
+                        <div class="order-instructions" style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 0.9rem;">
+                            <i class="fas fa-sticky-note"></i> ${order.instructions}
+                        </div>
+                        ` : ''}
+                        
+                        <div class="order-items">
+                            ${itemsHtml}
+                        </div>
+                        
+                        <div class="order-total">
+                            💰 TOTAL: $${order.total.toFixed(2)}
+                        </div>
+                        
+                        <div class="order-meta">
+                            <div><i class="fas fa-clock"></i> ${order.formattedDate}</div>
+                            <div><i class="fas fa-receipt"></i> Subtotal: $${order.subtotal.toFixed(2)} + Tax: $${order.tax.toFixed(2)}</div>
+                        </div>
+                        
+                        <div class="order-actions">
+                            <button class="btn btn-primary btn-small" onclick="editOrder('${order.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-warning btn-small" onclick="changeOrderStatus('${order.id}')">
+                                <i class="fas fa-sync-alt"></i> Change Status
+                            </button>
+                            <button class="btn btn-success btn-small" onclick="printReceipt('${order.id}')">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="deleteOrder('${order.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Get status display text
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': '⏱️ Pending',
+                'preparing': '👨‍🍳 Preparing',
+                'ready': '✅ Ready',
+                'completed': '✅ Completed',
+                'cancelled': '❌ Cancelled'
+            };
+            return statusMap[status] || status;
+        }
+        
+        // Edit order
+        function editOrder(orderId) {
+            const orders = getAllOrders();
+            const order = orders.find(o => o.id === orderId);
+            
+            if (!order) return;
+            
+            // Switch to create tab
+            switchTab('create-tab');
+            
+            // Fill form
+            document.getElementById('customer-name').value = order.customer;
+            document.getElementById('customer-phone').value = order.phone || '';
+            document.getElementById('table-number').value = order.table || 'Table 1';
+            document.getElementById('order-status').value = order.status;
+            document.getElementById('special-instructions').value = order.instructions || '';
+            document.getElementById('new-order-id').textContent = order.id;
+            
+            // Clear items and add order items
+            document.getElementById('items-tbody').innerHTML = '';
+            order.items.forEach(item => {
+                addItemRow(item);
+            });
+            
+            updateOrderTotal();
+            editingOrderId = orderId;
+            
+            showAlert('Editing order: ' + orderId, 'success');
+        }
+        
+        // Save edited order
+        function saveEditedOrder() {
+            saveOrder();
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+        
+        // Change order status
+        function changeOrderStatus(orderId) {
+            const orders = getAllOrders();
+            const orderIndex = orders.findIndex(o => o.id === orderId);
+            
+            if (orderIndex === -1) return;
+            
+            const statusOrder = ['pending', 'preparing', 'ready', 'completed', 'cancelled'];
+            const currentStatus = orders[orderIndex].status;
+            const currentIndex = statusOrder.indexOf(currentStatus);
+            const nextIndex = (currentIndex + 1) % statusOrder.length;
+            
+            orders[orderIndex].status = statusOrder[nextIndex];
+            saveOrders(orders);
+            loadOrders('all');
+            
+            showAlert(`Order ${orderId} status changed to ${getStatusText(statusOrder[nextIndex])}`, 'success');
+        }
+        
+        // Delete order
+        function deleteOrder(orderId) {
+            if (!confirm('Are you sure you want to delete this order?')) return;
+            
+            const orders = getAllOrders();
+            const filteredOrders = orders.filter(o => o.id !== orderId);
+            saveOrders(filteredOrders);
+            loadOrders('all');
+            
+            showAlert('Order deleted successfully', 'success');
+        }
+        
+        // Print receipt
+        function printReceipt(orderId) {
+            const orders = getAllOrders();
+            const order = orders.find(o => o.id === orderId);
+            
+            if (!order) return;
+            
+            const itemsHtml = order.items.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>$${item.total.toFixed(2)}</td>
+                </tr>
+            `).join('');
+            
+            const receiptHtml = `
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h2>RESTAURANT RECEIPT</h2>
+                        <p>Order ID: ${order.id}</p>
+                        <p>Date: ${order.formattedDate}</p>
+                        <p>Customer: ${order.customer}</p>
+                        ${order.phone ? `<p>Phone: ${order.phone}</p>` : ''}
+                        ${order.table ? `<p>Table: ${order.table}</p>` : ''}
+                        <p>Status: ${getStatusText(order.status)}</p>
+                    </div>
+                    
+                    <div class="receipt-items">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: left; border-bottom: 1px solid #000;">Item</th>
+                                    <th style="text-align: center; border-bottom: 1px solid #000;">Qty</th>
+                                    <th style="text-align: right; border-bottom: 1px solid #000;">Price</th>
+                                    <th style="text-align: right; border-bottom: 1px solid #000;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="receipt-total">
+                        <p>Subtotal: $${order.subtotal.toFixed(2)}</p>
+                        <p>Tax (10%): $${order.tax.toFixed(2)}</p>
+                        <p><strong>TOTAL: $${order.total.toFixed(2)}</strong></p>
+                    </div>
+                    
+                    ${order.instructions ? `
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed #000;">
+                        <p><strong>Special Instructions:</strong></p>
+                        <p>${order.instructions}</p>
+                    </div>
+                    ` : ''}
+                    
+                    <div style="text-align: center; margin-top: 30px; font-size: 0.9rem;">
+                        <p>Thank you for your order!</p>
+                        <p>Generated on ${new Date().toLocaleString()}</p>
+                    </div>
                 </div>
             `;
             
-            // Add event listeners to buttons
-            const toggleBtn = card.querySelector('.toggle-status');
-            const deleteBtn = card.querySelector('.delete-order');
-            
-            toggleBtn.addEventListener('click', function() {
-                toggleOrderStatus(index);
-            });
-            
-            deleteBtn.addEventListener('click', function() {
-                deleteOrder(index);
-            });
-            
-            return card;
+            document.getElementById('print-content').innerHTML = receiptHtml;
+            document.getElementById('print-modal').classList.add('active');
         }
-
-        // Toggle order status
-        function toggleOrderStatus(index) {
-            const order = orders[index];
+        
+        // Print all orders
+        function printAllOrders() {
+            const orders = getAllOrders();
             
-            // Cycle through statuses: completed -> pending -> cancelled -> completed
-            if (order.status === 'completed') {
-                order.status = 'pending';
-            } else if (order.status === 'pending') {
-                order.status = 'cancelled';
-            } else {
-                order.status = 'completed';
+            if (orders.length === 0) {
+                showAlert('No orders to print', 'error');
+                return;
             }
             
-            // Update in local storage
-            localStorage.setItem('orders', JSON.stringify(orders));
+            let receiptsHtml = '';
             
-            // Refresh display
-            displayOrders();
+            orders.forEach(order => {
+                const itemsHtml = order.items.map(item => `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>$${item.total.toFixed(2)}</td>
+                    </tr>
+                `).join('');
+                
+                receiptsHtml += `
+                    <div class="receipt" style="page-break-after: always; margin-bottom: 40px;">
+                        <div class="receipt-header">
+                            <h2>RESTAURANT RECEIPT</h2>
+                            <p>Order ID: ${order.id}</p>
+                            <p>Date: ${order.formattedDate}</p>
+                            <p>Customer: ${order.customer}</p>
+                            <p>Status: ${getStatusText(order.status)}</p>
+                        </div>
+                        
+                        <div class="receipt-items">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: left; border-bottom: 1px solid #000;">Item</th>
+                                        <th style="text-align: center; border-bottom: 1px solid #000;">Qty</th>
+                                        <th style="text-align: right; border-bottom: 1px solid #000;">Price</th>
+                                        <th style="text-align: right; border-bottom: 1px solid #000;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${itemsHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="receipt-total">
+                            <p>Subtotal: $${order.subtotal.toFixed(2)}</p>
+                            <p>Tax (10%): $${order.tax.toFixed(2)}</p>
+                            <p><strong>TOTAL: $${order.total.toFixed(2)}</strong></p>
+                        </div>
+                    </div>
+                `;
+            });
             
-            // Update statistics
-            updateStatistics();
-            
-            // Update storage status
-            updateStorageStatus();
+            document.getElementById('print-content').innerHTML = receiptsHtml;
+            document.getElementById('print-modal').classList.add('active');
         }
-
-        // Delete an order
-        function deleteOrder(index) {
-            if (confirm('Are you sure you want to delete this order?')) {
-                orders.splice(index, 1);
-                
-                // Update local storage
-                localStorage.setItem('orders', JSON.stringify(orders));
-                
-                // Refresh display
-                displayOrders();
-                
-                // Update statistics
-                updateStatistics();
-                
-                // Update storage status
-                updateStorageStatus();
+        
+        // Search orders
+        function searchOrders() {
+            const query = document.getElementById('search-input').value.trim().toLowerCase();
+            const orders = getAllOrders();
+            const container = document.getElementById('search-results');
+            
+            if (!query) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <p>Enter search terms to find orders</p>
+                    </div>
+                `;
+                return;
             }
+            
+            const results = orders.filter(order => {
+                return (
+                    order.customer.toLowerCase().includes(query) ||
+                    order.id.toLowerCase().includes(query) ||
+                    (order.phone && order.phone.includes(query)) ||
+                    order.items.some(item => item.name.toLowerCase().includes(query))
+                );
+            });
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <p>No orders found for "${query}"</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Display results (similar to loadOrders but with search results)
+            let html = '';
+            
+            results.forEach(order => {
+                const statusClass = `status-${order.status}`;
+                const statusText = getStatusText(order.status);
+                
+                const itemsHtml = order.items.map(item => `
+                    <div class="order-item">
+                        <div>${item.name} x${item.quantity}</div>
+                        <div>$${item.total.toFixed(2)}</div>
+                    </div>
+                `).join('');
+                
+                html += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-id">${order.id}</div>
+                            <div class="order-status ${statusClass}">${statusText}</div>
+                        </div>
+                        
+                        <div class="order-customer">
+                            <i class="fas fa-user"></i> ${order.customer}
+                        </div>
+                        
+                        <div class="order-items">
+                            ${itemsHtml}
+                        </div>
+                        
+                        <div class="order-total">
+                            💰 TOTAL: $${order.total.toFixed(2)}
+                        </div>
+                        
+                        <div class="order-meta">
+                            <div><i class="fas fa-clock"></i> ${order.formattedDate}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
         }
-
+        
+        // Load available items
+        function loadAvailableItems() {
+            const items = getAllItems();
+            const container = document.getElementById('available-items');
+            
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            <i class="fas fa-cube"></i>
+                            <p>No items found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            items.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>${item.category}</td>
+                        <td>
+                            <button class="btn btn-warning btn-small" onclick="editItem(${item.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="deleteItem(${item.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Load popular items
+        function loadPopularItems() {
+            const orders = getAllOrders();
+            const container = document.getElementById('popular-items');
+            
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>No order data yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Count item occurrences
+            const itemCounts = {};
+            orders.forEach(order => {
+                order.items.forEach(item => {
+                    const key = item.name;
+                    itemCounts[key] = (itemCounts[key] || 0) + item.quantity;
+                });
+            });
+            
+            // Convert to array and sort
+            const popularItems = Object.entries(itemCounts)
+                .map(([name, count]) => ({ name, count }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 5); // Top 5
+            
+            let html = '<div style="padding: 10px;">';
+            popularItems.forEach((item, index) => {
+                const width = Math.min(100, (item.count / popularItems[0].count) * 100);
+                html += `
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>${item.name}</span>
+                            <span style="font-weight: bold;">${item.count}</span>
+                        </div>
+                        <div style="background: #e0e0e0; height: 10px; border-radius: 5px;">
+                            <div style="background: var(--primary); height: 100%; width: ${width}%; border-radius: 5px;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+        
+        // Add new item
+        function addNewItem() {
+            const name = prompt('Enter item name (include emoji if desired):');
+            if (!name) return;
+            
+            const priceStr = prompt('Enter item price:', '5.00');
+            const price = parseFloat(priceStr);
+            if (isNaN(price) || price <= 0) {
+                showAlert('Invalid price', 'error');
+                return;
+            }
+            
+            const category = prompt('Enter category (Drinks, Main, Dessert, Sides):', 'Drinks');
+            
+            const items = getAllItems();
+            const newId = items.length > 0 ? Math.max(...items.map(i => i.id)) + 1 : 1;
+            
+            items.push({
+                id: newId,
+                name: name,
+                price: price,
+                category: category || 'Drinks',
+                emoji: name.charAt(0)
+            });
+            
+            saveItems(items);
+            loadAvailableItems();
+            showAlert('Item added successfully', 'success');
+        }
+        
+        // Edit item
+        function editItem(itemId) {
+            const items = getAllItems();
+            const item = items.find(i => i.id === itemId);
+            
+            if (!item) return;
+            
+            const newName = prompt('Edit item name:', item.name);
+            if (!newName) return;
+            
+            const newPriceStr = prompt('Edit item price:', item.price.toFixed(2));
+            const newPrice = parseFloat(newPriceStr);
+            if (isNaN(newPrice) || newPrice <= 0) {
+                showAlert('Invalid price', 'error');
+                return;
+            }
+            
+            const newCategory = prompt('Edit category:', item.category);
+            
+            item.name = newName;
+            item.price = newPrice;
+            item.category = newCategory || item.category;
+            item.emoji = newName.charAt(0);
+            
+            saveItems(items);
+            loadAvailableItems();
+            showAlert('Item updated successfully', 'success');
+        }
+        
+        // Delete item
+        function deleteItem(itemId) {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+            
+            const items = getAllItems();
+            const filteredItems = items.filter(i => i.id !== itemId);
+            saveItems(filteredItems);
+            loadAvailableItems();
+            showAlert('Item deleted successfully', 'success');
+        }
+        
         // Update statistics
         function updateStatistics() {
-            const totalOrders = orders.length;
-            const completedOrders = orders.filter(order => order.status === 'completed').length;
-            const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+            const orders = getAllOrders();
+            const today = new Date().toDateString();
             
-            totalOrdersEl.textContent = totalOrders;
-            completedOrdersEl.textContent = completedOrders;
-            totalRevenueEl.textContent = `$${totalRevenue.toFixed(2)}`;
-        }
-
-        // Update storage status message
-        function updateStorageStatus() {
             const totalOrders = orders.length;
-            if (totalOrders === 0) {
-                storageStatus.textContent = '💾 No orders saved. Create your first order!';
-                storageStatus.style.color = '#e74c3c';
+            const todayOrders = orders.filter(order => 
+                new Date(order.date).toDateString() === today
+            ).length;
+            
+            const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+            const pendingOrders = orders.filter(order => 
+                order.status === 'pending' || order.status === 'preparing'
+            ).length;
+            
+            document.getElementById('total-orders').textContent = totalOrders;
+            document.getElementById('today-orders').textContent = todayOrders;
+            document.getElementById('total-revenue').textContent = `$${totalRevenue.toFixed(2)}`;
+            document.getElementById('pending-orders').textContent = pendingOrders;
+        }
+        
+        // Update storage status
+        function updateStorageStatus() {
+            const orders = getAllOrders();
+            const statusEl = document.getElementById('storage-status');
+            
+            if (orders.length === 0) {
+                statusEl.innerHTML = '<i class="fas fa-database"></i> Database empty. No orders saved.';
+                statusEl.style.color = '#e74c3c';
             } else {
-                storageStatus.textContent = `💾 ${totalOrders} order${totalOrders !== 1 ? 's' : ''} saved to local database`;
-                storageStatus.style.color = '#2ecc71';
+                statusEl.innerHTML = `<i class="fas fa-database"></i> ${orders.length} orders saved in local database`;
+                statusEl.style.color = '#2ecc71';
             }
         }
-
+        
+        // Show alert
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alert-container');
+            const alertId = 'alert-' + Date.now();
+            
+            const alert = document.createElement('div');
+            alert.id = alertId;
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <div>${message}</div>
+                <button class="btn btn-small" onclick="document.getElementById('${alertId}').remove()">
+                    &times;
+                </button>
+            `;
+            
+            container.appendChild(alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (document.getElementById(alertId)) {
+                    document.getElementById(alertId).remove();
+                }
+            }, 5000);
+        }
+        
         // Clear all data
         function clearAllData() {
-            if (confirm('Are you sure you want to delete ALL orders? This cannot be undone.')) {
-                orders = [];
-                localStorage.removeItem('orders');
-                
-                // Refresh display
-                displayOrders();
-                
-                // Update statistics
-                updateStatistics();
-                
-                // Update storage status
-                updateStorageStatus();
-                
-                alert('All data has been cleared.');
-            }
+            if (!confirm('WARNING: This will delete ALL orders and items. Are you sure?')) return;
+            
+            localStorage.removeItem(DB_NAME);
+            localStorage.removeItem(ITEMS_DB);
+            
+            // Reinitialize
+            initializeDatabase();
+            resetOrderForm();
+            loadAvailableItems();
+            loadOrders('all');
+            
+            showAlert('All data has been cleared', 'success');
         }
     </script>
 </body>
