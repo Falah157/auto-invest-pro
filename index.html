@@ -3,1389 +3,795 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏗️ KANDITHEEMU ROAD PROJECT - WORKING SYSTEM</title>
+    <title>Order Manager Mini App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #2E7D32;
-            --secondary: #1565C0;
-            --accent: #FF9800;
-            --danger: #D32F2F;
-            --success: #388E3C;
-            --warning: #FFA000;
-            --dark: #263238;
-            --light: #F5F7FA;
-            --border: #CFD8DC;
-            --card-bg: white;
-            --text: #37474F;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: Arial, sans-serif;
-            background: var(--light);
-            color: var(--text);
-            padding-bottom: 80px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
         }
         
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 15px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
             margin-bottom: 10px;
         }
         
-        .container { padding: 15px; }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
         
         .card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .items-container {
+            margin-bottom: 20px;
+        }
+        
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
         }
         
         .btn {
-            padding: 10px 15px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
         }
         
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: var(--secondary); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-        
-        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        
-        .stat-box {
-            text-align: center;
-            padding: 10px;
-            background: var(--light);
-            border-radius: 8px;
+        .btn-primary {
+            background: #3498db;
+            color: white;
         }
         
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary);
+        .btn-primary:hover {
+            background: #2980b9;
         }
         
-        .stat-label {
-            font-size: 12px;
-            color: var(--text);
-            margin-top: 5px;
+        .btn-success {
+            background: #2ecc71;
+            color: white;
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
+        .btn-success:hover {
+            background: #27ae60;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+        
+        /* Order Display Styles */
+        .orders-container {
+            max-height: 600px;
             overflow-y: auto;
+            padding-right: 10px;
         }
         
-        .modal-content {
+        .order-card {
             background: white;
-            margin: 20px auto;
+            border-radius: 12px;
             padding: 20px;
-            border-radius: 10px;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
+            margin-bottom: 20px;
+            border-left: 5px solid #2ecc71;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
         }
         
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 5px;
+        .order-card:hover {
+            transform: translateY(-5px);
         }
         
-        .list-item {
-            padding: 10px;
-            border-bottom: 1px solid var(--border);
+        .order-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        
-        .status {
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .status-completed { background: #E8F5E9; color: var(--success); }
-        .status-pending { background: #FFF3E0; color: var(--warning); }
-        .status-delayed { background: #FFEBEE; color: var(--danger); }
-        .status-inprogress { background: #E3F2FD; color: var(--secondary); }
-        
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid var(--border);
-            display: flex;
-            padding: 10px;
-            z-index: 100;
-        }
-        
-        .nav-btn {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .nav-btn.active {
-            color: var(--primary);
-            font-weight: bold;
-        }
-        
-        .quick-action {
-            text-align: center;
-            padding: 15px 10px;
-            background: var(--light);
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        
-        .quick-action:hover {
-            background: #e0e0e0;
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background: var(--border);
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--primary);
-        }
-        
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .toast.show {
-            display: block;
-            animation: fadeIn 0.3s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         
-        .empty-state {
+        .order-status {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .status-completed {
+            color: #2ecc71;
+        }
+        
+        .status-pending {
+            color: #f39c12;
+        }
+        
+        .status-cancelled {
+            color: #e74c3c;
+        }
+        
+        .order-customer {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .order-items {
+            margin-bottom: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .order-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: right;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .order-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .no-orders {
             text-align: center;
-            padding: 30px;
-            color: #666;
+            padding: 40px 20px;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .emoji {
+            margin-right: 8px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3498db;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            padding: 20px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <div class="header-top">
-            <h2>🏗️ Kanditheemu Road Project</h2>
-            <div>
-                <span id="current-date"></span><br>
-                <small id="current-time"></small>
-            </div>
-        </div>
-        <div class="grid-4" id="quick-stats">
-            <!-- Stats will load here -->
-        </div>
-    </div>
-    
-    <!-- Main Container -->
     <div class="container">
-        <!-- Dashboard Tab -->
-        <div id="dashboard-tab">
-            <!-- Quick Actions -->
+        <header>
+            <h1><i class="fas fa-shopping-cart"></i> Order Manager Mini App</h1>
+            <p class="subtitle">Create, view, and manage your orders - All data saved locally in your browser</p>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="total-orders">0</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="completed-orders">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="total-revenue">$0</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+        </div>
+        
+        <div class="app-container">
+            <!-- Order Creation Form -->
             <div class="card">
-                <div class="section-title">🚀 Quick Actions</div>
-                <div class="grid-3">
-                    <div class="quick-action" onclick="openModal('daily-report-modal')">
-                        <div style="font-size: 24px;">📝</div>
-                        <div style="font-size: 12px; margin-top: 5px;">Daily Report</div>
+                <h2 class="card-title"><i class="fas fa-plus-circle"></i> Create New Order</h2>
+                
+                <form id="order-form">
+                    <div class="form-group">
+                        <label for="customer-name"><i class="fas fa-user"></i> Customer Name</label>
+                        <input type="text" id="customer-name" placeholder="Enter customer name" required>
                     </div>
-                    <div class="quick-action" onclick="openModal('material-modal')">
-                        <div style="font-size: 24px;">📦</div>
-                        <div style="font-size: 12px; margin-top: 5px;">Material Delivery</div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-list"></i> Order Items</label>
+                        <div class="items-container" id="items-container">
+                            <!-- Items will be added here dynamically -->
+                            <div class="item-row">
+                                <select class="item-select">
+                                    <option value="coffee">☕ Coffee</option>
+                                    <option value="water">💧 Water</option>
+                                    <option value="icecream">🍦 Ice Cream</option>
+                                    <option value="pizza">🍕 Pizza</option>
+                                    <option value="burger">🍔 Burger</option>
+                                    <option value="fries">🍟 Fries</option>
+                                    <option value="cake">🍰 Cake</option>
+                                    <option value="beer">🍺 Beer</option>
+                                </select>
+                                <input type="number" class="item-quantity" min="1" value="1" placeholder="Qty">
+                                <input type="number" class="item-price" min="0" step="0.01" value="5.00" placeholder="Price">
+                                <button type="button" class="btn btn-danger btn-small remove-item"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="add-item"><i class="fas fa-plus"></i> Add Item</button>
                     </div>
-                    <div class="quick-action" onclick="openModal('safety-modal')">
-                        <div style="font-size: 24px;">🛡️</div>
-                        <div style="font-size: 12px; margin-top: 5px;">Safety Check</div>
+                    
+                    <div class="form-group">
+                        <label for="order-status"><i class="fas fa-tag"></i> Order Status</label>
+                        <select id="order-status">
+                            <option value="completed">✅ Completed</option>
+                            <option value="pending">⏱️ Pending</option>
+                            <option value="cancelled">❌ Cancelled</option>
+                        </select>
                     </div>
-                    <div class="quick-action" onclick="openModal('worker-modal')">
-                        <div style="font-size: 24px;">👷</div>
-                        <div style="font-size: 12px; margin-top: 5px;">Worker Attendance</div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success" style="width: 100%; padding: 15px;">
+                            <i class="fas fa-save"></i> Save Order to Database
+                        </button>
                     </div>
-                    <div class="quick-action" onclick="openModal('progress-modal')">
-                        <div style="font-size: 24px;">📏</div>
-                        <div style="font-size: 12px; margin-top: 5px;">Progress Update</div>
-                    </div>
-                    <div class="quick-action" onclick="openModal('cost-modal')">
-                        <div style="font-size: 24px;">💰</div>
-                        <div style="font-size: 12px; margin-top: 5px;">Daily Cost</div>
-                    </div>
-                </div>
+                </form>
             </div>
             
-            <!-- Today's Tasks -->
+            <!-- Orders Display -->
             <div class="card">
-                <div class="section-title">📋 Today's Tasks</div>
-                <div id="todays-tasks">
-                    <!-- Tasks load here -->
-                </div>
-            </div>
-            
-            <!-- Recent Reports -->
-            <div class="card">
-                <div class="section-title">📊 Recent Reports</div>
-                <div id="recent-reports">
-                    <!-- Reports load here -->
+                <h2 class="card-title"><i class="fas fa-history"></i> Recent Orders</h2>
+                
+                <div class="orders-container" id="orders-container">
+                    <!-- Orders will be displayed here -->
+                    <div class="no-orders" id="no-orders">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>No orders yet. Create your first order!</p>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- Reports Tab -->
-        <div id="reports-tab" style="display: none;">
-            <div class="card">
-                <div class="section-title">📈 All Reports</div>
-                <button class="btn btn-primary" onclick="generateMonthlyReport()" style="width: 100%; margin-bottom: 15px;">
-                    📄 Generate Monthly Report
-                </button>
-                <div id="all-reports">
-                    <!-- All reports load here -->
-                </div>
-            </div>
-        </div>
-        
-        <!-- Materials Tab -->
-        <div id="materials-tab" style="display: none;">
-            <div class="card">
-                <div class="section-title">📦 Material Inventory</div>
-                <button class="btn btn-secondary" onclick="openModal('material-modal')" style="width: 100%; margin-bottom: 15px;">
-                    + Add Material Delivery
-                </button>
-                <div id="materials-list">
-                    <!-- Materials load here -->
-                </div>
-            </div>
-        </div>
-        
-        <!-- Financial Tab -->
-        <div id="financial-tab" style="display: none;">
-            <div class="card">
-                <div class="section-title">💰 Financial Summary</div>
-                <div class="grid-3">
-                    <div class="stat-box">
-                        <div class="stat-value" id="total-budget">$850,000</div>
-                        <div class="stat-label">Total Budget</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="total-spent">$245,300</div>
-                        <div class="stat-label">Spent to Date</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="budget-left">$604,700</div>
-                        <div class="stat-label">Remaining</div>
-                    </div>
-                </div>
-                <div style="margin-top: 15px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span>Budget Utilization</span>
-                        <span id="budget-percent">29%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="budget-progress" style="width: 29%"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="section-title">📅 Daily Costs</div>
-                <button class="btn btn-secondary" onclick="openModal('cost-modal')" style="width: 100%; margin-bottom: 15px;">
-                    + Add Daily Cost
-                </button>
-                <div id="daily-costs">
-                    <!-- Costs load here -->
-                </div>
-            </div>
-        </div>
-        
-        <!-- More Tab -->
-        <div id="more-tab" style="display: none;">
-            <div class="grid-2">
-                <div class="quick-action" onclick="exportData()">
-                    <div style="font-size: 24px;">📤</div>
-                    <div style="font-size: 12px; margin-top: 5px;">Export Data</div>
-                </div>
-                <div class="quick-action" onclick="backupData()">
-                    <div style="font-size: 24px;">💾</div>
-                    <div style="font-size: 12px; margin-top: 5px;">Backup</div>
-                </div>
-                <div class="quick-action" onclick="showHelp()">
-                    <div style="font-size: 24px;">❓</div>
-                    <div style="font-size: 12px; margin-top: 5px;">Help</div>
-                </div>
-                <div class="quick-action" onclick="showSettings()">
-                    <div style="font-size: 24px;">⚙️</div>
-                    <div style="font-size: 12px; margin-top: 5px;">Settings</div>
-                </div>
-            </div>
-            
-            <div class="card" style="margin-top: 15px;">
-                <div class="section-title">📞 Emergency Contacts</div>
-                <div class="list-item">
-                    <div>Project Manager</div>
-                    <button class="btn btn-secondary" onclick="callContact('Ahmed Rasheed')">📞 Call</button>
-                </div>
-                <div class="list-item">
-                    <div>Site Supervisor</div>
-                    <button class="btn btn-secondary" onclick="callContact('Ibrahim Mohamed')">📞 Call</button>
-                </div>
-                <div class="list-item">
-                    <div>Emergency Services</div>
-                    <button class="btn btn-danger" onclick="callContact('119')">🚨 Emergency</button>
-                </div>
-            </div>
-        </div>
+        <footer>
+            <p>Order Manager Mini App | All data is saved in your browser's local storage</p>
+            <p id="storage-status">💾 Ready to save orders</p>
+            <button id="clear-storage" class="btn btn-danger btn-small" style="margin-top: 10px;">
+                <i class="fas fa-trash"></i> Clear All Data
+            </button>
+        </footer>
     </div>
-    
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <button class="nav-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
-        <button class="nav-btn" onclick="switchTab('reports')">📝 Reports</button>
-        <button class="nav-btn" onclick="switchTab('materials')">📦 Materials</button>
-        <button class="nav-btn" onclick="switchTab('financial')">💰 Financial</button>
-        <button class="nav-btn" onclick="switchTab('more')">⋯ More</button>
-    </div>
-    
-    <!-- MODALS -->
-    
-    <!-- Daily Report Modal -->
-    <div id="daily-report-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 15px;">📝 Daily Site Report</h3>
-            
-            <div class="form-group">
-                <label class="form-label">Date</label>
-                <input type="date" class="form-input" id="report-date" value="">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Weather Condition</label>
-                <select class="form-select" id="report-weather">
-                    <option value="sunny">☀️ Sunny</option>
-                    <option value="cloudy">☁️ Cloudy</option>
-                    <option value="rainy">🌧️ Rainy</option>
-                    <option value="stormy">⛈️ Stormy</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Workers on Site</label>
-                <input type="number" class="form-input" id="report-workers" value="24">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Work Completed Today</label>
-                <textarea class="form-textarea" id="report-work" rows="3" placeholder="What work was done today?"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Materials Used</label>
-                <textarea class="form-textarea" id="report-materials" rows="2" placeholder="Materials used today"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Issues/Problems</label>
-                <textarea class="form-textarea" id="report-issues" rows="2" placeholder="Any issues or delays"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Meters Completed Today</label>
-                <input type="number" class="form-input" id="report-meters" placeholder="Enter meters completed">
-            </div>
-            
-            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveDailyReport()">
-                💾 Save Daily Report
-            </button>
-            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
-                Cancel
-            </button>
-        </div>
-    </div>
-    
-    <!-- Material Delivery Modal -->
-    <div id="material-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 15px;">📦 Material Delivery</h3>
-            
-            <div class="form-group">
-                <label class="form-label">Material Type</label>
-                <select class="form-select" id="material-type">
-                    <option value="cement">Cement (bags)</option>
-                    <option value="sand">Sand (m³)</option>
-                    <option value="gravel">Gravel (tons)</option>
-                    <option value="steel">Steel Bars</option>
-                    <option value="pipes">Drainage Pipes</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Quantity</label>
-                <input type="number" class="form-input" id="material-qty" placeholder="Enter quantity">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Supplier</label>
-                <input type="text" class="form-input" id="material-supplier" placeholder="Supplier name">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Delivery Date</label>
-                <input type="date" class="form-input" id="material-date" value="">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Cost</label>
-                <input type="number" class="form-input" id="material-cost" placeholder="Cost in USD">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Notes</label>
-                <textarea class="form-textarea" id="material-notes" rows="2" placeholder="Any notes"></textarea>
-            </div>
-            
-            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveMaterialDelivery()">
-                📦 Save Delivery Record
-            </button>
-            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
-                Cancel
-            </button>
-        </div>
-    </div>
-    
-    <!-- Safety Check Modal -->
-    <div id="safety-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 15px;">🛡️ Daily Safety Check</h3>
-            
-            <div class="form-group">
-                <label class="form-label">Date</label>
-                <input type="date" class="form-input" id="safety-date" value="">
-            </div>
-            
-            <div style="margin: 15px 0;">
-                <label style="font-weight: bold; display: block; margin-bottom: 10px;">Safety Checklist:</label>
-                
-                <div style="margin-bottom: 10px;">
-                    <input type="checkbox" id="safety-helmets">
-                    <label for="safety-helmets">All workers wearing helmets</label>
-                </div>
-                
-                <div style="margin-bottom: 10px;">
-                    <input type="checkbox" id="safety-signs">
-                    <label for="safety-signs">Safety signs properly placed</label>
-                </div>
-                
-                <div style="margin-bottom: 10px;">
-                    <input type="checkbox" id="safety-equipment">
-                    <label for="safety-equipment">Equipment in good condition</label>
-                </div>
-                
-                <div style="margin-bottom: 10px;">
-                    <input type="checkbox" id="safety-barriers">
-                    <label for="safety-barriers">Barricades in place</label>
-                </div>
-                
-                <div style="margin-bottom: 10px;">
-                    <input type="checkbox" id="safety-firstaid">
-                    <label for="safety-firstaid">First aid kit available</label>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Safety Issues Found</label>
-                <textarea class="form-textarea" id="safety-issues" rows="2" placeholder="Any safety issues"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Actions Taken</label>
-                <textarea class="form-textarea" id="safety-actions" rows="2" placeholder="Actions taken"></textarea>
-            </div>
-            
-            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveSafetyCheck()">
-                ✅ Complete Safety Check
-            </button>
-            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
-                Cancel
-            </button>
-        </div>
-    </div>
-    
-    <!-- Worker Attendance Modal -->
-    <div id="worker-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 15px;">👷 Worker Attendance</h3>
-            
-            <div class="form-group">
-                <label class="form-label">Date</label>
-                <input type="date" class="form-input" id="attendance-date" value="">
-            </div>
-            
-            <div style="margin: 15px 0;">
-                <label style="font-weight: bold; display: block; margin-bottom: 10px;">Mark Attendance:</label>
-                
-                <div id="worker-list">
-                    <!-- Worker list loads here -->
-                </div>
-                
-                <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="markAllPresent()">
-                    ✅ Mark All Present
-                </button>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Absent Workers (Names)</label>
-                <textarea class="form-textarea" id="absent-workers" rows="2" placeholder="Names of absent workers"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Daily Labor Cost</label>
-                <input type="number" class="form-input" id="labor-cost" placeholder="Total labor cost today">
-            </div>
-            
-            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveWorkerAttendance()">
-                👷 Save Attendance
-            </button>
-            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
-                Cancel
-            </button>
-        </div>
-    </div>
-    
-    <!-- Progress Update Modal -->
-    <div id="progress-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 15px;">📏 Progress Update</h3>
-            
-            <div class="form-group">
-                <label class="form-label">Date</label>
-                <input type="date" class="form-input" id="progress-date" value="">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Section</label>
-                <select class="form-select" id="progress-section">
-                    <option value="section1">Section 1 - School Road</option>
-                    <option value="section2">Section 2 - Market Road</option>
-                    <option value="section3">Section 3 - Residential</option>
-                    <option value="section4">Section 4 - Coastal</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Meters Completed Today</label>
-                <input type="number" class="form-input" id="progress-meters" placeholder="Enter meters">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Work Type</label>
-                <select class="form-select" id="progress-worktype">
-                    <option value="excavation">Excavation</option>
-                    <option value="drainage">Drainage Work</option>
-                    <option value="base">Road Base</option>
-                    <option value="paving">Paving</option>
-                    <option value="finishing">Finishing</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Photos Taken (Count)</label>
-                <input type="number" class="form-input" id="progress-photos" value="0">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Notes</label>
-                <textarea class="form-textarea" id="progress-notes" rows="2" placeholder="Progress notes"></textarea>
-            </div>
-            
-            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveProgressUpdate()">
-                📈 Save Progress Update
-            </button>
-            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
-                Cancel
-            </button>
-        </div>
-    </div>
-    
-    <!-- Daily Cost Modal -->
-    <div id="cost-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 15px;">💰 Daily Cost Entry</h3>
-            
-            <div class="form-group">
-                <label class="form-label">Date</label>
-                <input type="date" class="form-input" id="cost-date" value="">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Cost Type</label>
-                <select class="form-select" id="cost-type">
-                    <option value="labor">Labor</option>
-                    <option value="materials">Materials</option>
-                    <option value="equipment">Equipment</option>
-                    <option value="fuel">Fuel</option>
-                    <option value="transport">Transport</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Amount (USD)</label>
-                <input type="number" class="form-input" id="cost-amount" placeholder="Enter amount">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Description</label>
-                <textarea class="form-textarea" id="cost-description" rows="2" placeholder="What is this cost for?"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Paid To</label>
-                <input type="text" class="form-input" id="cost-paidto" placeholder="Who was paid?">
-            </div>
-            
-            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="saveDailyCost()">
-                💰 Save Cost Entry
-            </button>
-            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeModal()">
-                Cancel
-            </button>
-        </div>
-    </div>
-    
-    <!-- Toast Notification -->
-    <div id="toast" class="toast"></div>
-    
+
     <script>
-        // ============== APP DATA ==============
-        let appData = {
-            project: {
-                name: "Kanditheemu Road Project",
-                budget: 850000,
-                spent: 245300,
-                progress: 29,
-                safetyScore: 98
-            },
-            dailyReports: [],
-            materials: [],
-            safetyChecks: [],
-            workerAttendance: [],
-            progressUpdates: [],
-            dailyCosts: [],
-            tasks: []
-        };
+        // Item options with emojis and default prices
+        const itemOptions = [
+            { id: 'coffee', name: 'Coffee', emoji: '☕', price: 5.00 },
+            { id: 'water', name: 'Water', emoji: '💧', price: 3.00 },
+            { id: 'icecream', name: 'Ice Cream', emoji: '🍦', price: 4.50 },
+            { id: 'pizza', name: 'Pizza', emoji: '🍕', price: 12.00 },
+            { id: 'burger', name: 'Burger', emoji: '🍔', price: 8.50 },
+            { id: 'fries', name: 'Fries', emoji: '🍟', price: 4.00 },
+            { id: 'cake', name: 'Cake', emoji: '🍰', price: 6.50 },
+            { id: 'beer', name: 'Beer', emoji: '🍺', price: 5.50 }
+        ];
+
+        // Initialize orders array from local storage or empty array
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
         
-        // ============== INITIALIZE APP ==============
+        // DOM Elements
+        const orderForm = document.getElementById('order-form');
+        const itemsContainer = document.getElementById('items-container');
+        const addItemBtn = document.getElementById('add-item');
+        const ordersContainer = document.getElementById('orders-container');
+        const noOrders = document.getElementById('no-orders');
+        const clearStorageBtn = document.getElementById('clear-storage');
+        const storageStatus = document.getElementById('storage-status');
+        const totalOrdersEl = document.getElementById('total-orders');
+        const completedOrdersEl = document.getElementById('completed-orders');
+        const totalRevenueEl = document.getElementById('total-revenue');
+
+        // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            loadAppData();
-            updateDateTime();
-            setInterval(updateDateTime, 60000);
-            loadDashboard();
+            // Add initial item row
+            addItemRow();
             
-            // Set today's date in all date fields
-            const today = new Date().toISOString().split('T')[0];
-            document.querySelectorAll('input[type="date"]').forEach(input => {
-                if (!input.value) input.value = today;
-            });
+            // Load and display existing orders
+            displayOrders();
+            
+            // Update statistics
+            updateStatistics();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Update storage status
+            updateStorageStatus();
         });
-        
-        function loadAppData() {
-            const saved = localStorage.getItem('kanditheemuAppData');
-            if (saved) {
-                appData = JSON.parse(saved);
-            } else {
-                // Create sample data for first-time users
-                appData.dailyReports = [
-                    {
-                        id: 1,
-                        date: new Date().toISOString().split('T')[0],
-                        weather: "sunny",
-                        workers: 24,
-                        work: "Completed drainage work near school, laid 50m pipes",
-                        materials: "Used 20 cement bags",
-                        issues: "Minor delay due to rain",
-                        meters: 85,
-                        timestamp: new Date().toISOString()
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Add item button
+            addItemBtn.addEventListener('click', addItemRow);
+            
+            // Form submission
+            orderForm.addEventListener('submit', handleFormSubmit);
+            
+            // Clear storage button
+            clearStorageBtn.addEventListener('click', clearAllData);
+            
+            // Listen for clicks on remove item buttons (delegated)
+            itemsContainer.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-item')) {
+                    const itemRow = e.target.closest('.item-row');
+                    // Only remove if there's more than one item row
+                    if (document.querySelectorAll('.item-row').length > 1) {
+                        itemRow.remove();
                     }
-                ];
-                
-                appData.materials = [
-                    {
-                        id: 1,
-                        type: "cement",
-                        quantity: 100,
-                        supplier: "Maldives Cement Co.",
-                        date: new Date().toISOString().split('T')[0],
-                        cost: 2500,
-                        notes: "Good quality"
+                }
+            });
+            
+            // Listen for changes to item selects to update prices
+            itemsContainer.addEventListener('change', function(e) {
+                if (e.target.classList.contains('item-select')) {
+                    const selectedItemId = e.target.value;
+                    const itemRow = e.target.closest('.item-row');
+                    const priceInput = itemRow.querySelector('.item-price');
+                    
+                    // Find the selected item and update price
+                    const selectedItem = itemOptions.find(item => item.id === selectedItemId);
+                    if (selectedItem) {
+                        priceInput.value = selectedItem.price.toFixed(2);
                     }
-                ];
-                
-                appData.tasks = [
-                    { id: 1, title: "Morning site inspection", time: "07:30", status: "pending" },
-                    { id: 2, title: "Check material deliveries", time: "09:00", status: "completed" },
-                    { id: 3, title: "Safety checklist", time: "10:00", status: "inprogress" },
-                    { id: 4, title: "Progress measurement", time: "14:00", status: "pending" },
-                    { id: 5, title: "Submit daily report", time: "16:00", status: "pending" }
-                ];
-                
-                saveAppData();
-            }
-        }
-        
-        function saveAppData() {
-            localStorage.setItem('kanditheemuAppData', JSON.stringify(appData));
-        }
-        
-        // ============== UI FUNCTIONS ==============
-        function switchTab(tab) {
-            // Hide all tabs
-            document.getElementById('dashboard-tab').style.display = 'none';
-            document.getElementById('reports-tab').style.display = 'none';
-            document.getElementById('materials-tab').style.display = 'none';
-            document.getElementById('financial-tab').style.display = 'none';
-            document.getElementById('more-tab').style.display = 'none';
-            
-            // Show selected tab
-            document.getElementById(tab + '-tab').style.display = 'block';
-            
-            // Update nav buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Load tab data
-            switch(tab) {
-                case 'dashboard':
-                    loadDashboard();
-                    break;
-                case 'reports':
-                    loadReports();
-                    break;
-                case 'materials':
-                    loadMaterials();
-                    break;
-                case 'financial':
-                    loadFinancial();
-                    break;
-                case 'more':
-                    // Nothing to load
-                    break;
-            }
-        }
-        
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            
-            // Load data if needed
-            if (modalId === 'worker-modal') {
-                loadWorkerList();
-            }
-        }
-        
-        function closeModal() {
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.style.display = 'none';
-            });
-            
-            // Clear form fields
-            document.querySelectorAll('.form-input, .form-textarea').forEach(input => {
-                if (input.type !== 'date') input.value = '';
+                }
             });
         }
-        
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast show';
-            
-            // Add color based on type
-            if (type === 'success') toast.style.background = '#388E3C';
-            else if (type === 'error') toast.style.background = '#D32F2F';
-            else if (type === 'warning') toast.style.background = '#FFA000';
-            else toast.style.background = '#263238';
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-        
-        // ============== DATA LOADING ==============
-        function loadDashboard() {
-            updateStats();
-            loadTasks();
-            loadRecentReports();
-        }
-        
-        function updateStats() {
-            const today = new Date().toISOString().split('T')[0];
-            
-            // Calculate today's workers
-            const todayAttendance = appData.workerAttendance.find(a => a.date === today);
-            const workersToday = todayAttendance ? todayAttendance.presentCount : 24;
-            
-            // Calculate today's progress
-            const todayProgress = appData.progressUpdates
-                .filter(p => p.date === today)
-                .reduce((sum, p) => sum + (parseInt(p.meters) || 0), 0);
-            
-            // Calculate today's cost
-            const todayCost = appData.dailyCosts
-                .filter(c => c.date === today)
-                .reduce((sum, c) => sum + (parseFloat(c.amount) || 0), 0);
-            
-            // Update stats display
-            document.getElementById('quick-stats').innerHTML = `
-                <div class="stat-box">
-                    <div class="stat-value">${workersToday}</div>
-                    <div class="stat-label">Workers Today</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value">${todayProgress}m</div>
-                    <div class="stat-label">Today's Progress</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value">$${todayCost.toLocaleString()}</div>
-                    <div class="stat-label">Today's Cost</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value">${appData.project.progress}%</div>
-                    <div class="stat-label">Overall Progress</div>
-                </div>
+
+        // Add a new item row to the form
+        function addItemRow() {
+            const itemRow = document.createElement('div');
+            itemRow.className = 'item-row';
+            itemRow.innerHTML = `
+                <select class="item-select">
+                    ${itemOptions.map(item => 
+                        `<option value="${item.id}">${item.emoji} ${item.name}</option>`
+                    ).join('')}
+                </select>
+                <input type="number" class="item-quantity" min="1" value="1" placeholder="Qty">
+                <input type="number" class="item-price" min="0" step="0.01" value="5.00" placeholder="Price">
+                <button type="button" class="btn btn-danger btn-small remove-item"><i class="fas fa-times"></i></button>
             `;
+            itemsContainer.appendChild(itemRow);
         }
-        
-        function loadTasks() {
-            const container = document.getElementById('todays-tasks');
-            container.innerHTML = '';
+
+        // Handle form submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
             
-            appData.tasks.forEach(task => {
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div>
-                            <div style="font-weight: bold;">${task.title}</div>
-                            <div style="font-size: 12px; color: #666;">${task.time}</div>
-                        </div>
-                        <span class="status status-${task.status}">${task.status}</span>
-                    </div>
-                `;
-            });
-        }
-        
-        function loadRecentReports() {
-            const container = document.getElementById('recent-reports');
-            container.innerHTML = '';
+            // Get customer name and status
+            const customerName = document.getElementById('customer-name').value.trim();
+            const status = document.getElementById('order-status').value;
             
-            const recentReports = appData.dailyReports.slice(0, 3);
+            // Get all items
+            const itemRows = document.querySelectorAll('.item-row');
+            const items = [];
+            let total = 0;
             
-            if (recentReports.length === 0) {
-                container.innerHTML = '<div class="empty-state">No reports yet</div>';
-                return;
-            }
-            
-            recentReports.forEach(report => {
-                const date = new Date(report.date).toLocaleDateString();
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div>
-                            <div style="font-weight: bold;">${date} - Daily Report</div>
-                            <div style="font-size: 12px; color: #666;">${report.work.substring(0, 50)}...</div>
-                        </div>
-                        <button class="btn btn-secondary" onclick="viewReport(${report.id})">View</button>
-                    </div>
-                `;
-            });
-        }
-        
-        function loadReports() {
-            const container = document.getElementById('all-reports');
-            container.innerHTML = '';
-            
-            if (appData.dailyReports.length === 0) {
-                container.innerHTML = '<div class="empty-state">No reports yet</div>';
-                return;
-            }
-            
-            appData.dailyReports.forEach(report => {
-                const date = new Date(report.date).toLocaleDateString();
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div>
-                            <div style="font-weight: bold;">${date} - Daily Report</div>
-                            <div style="font-size: 12px; color: #666;">Workers: ${report.workers} | Weather: ${report.weather}</div>
-                        </div>
-                        <button class="btn btn-secondary" onclick="viewReport(${report.id})">View</button>
-                    </div>
-                `;
-            });
-        }
-        
-        function loadMaterials() {
-            const container = document.getElementById('materials-list');
-            container.innerHTML = '';
-            
-            if (appData.materials.length === 0) {
-                container.innerHTML = '<div class="empty-state">No materials recorded yet</div>';
-                return;
-            }
-            
-            appData.materials.forEach(material => {
-                const date = new Date(material.date).toLocaleDateString();
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div>
-                            <div style="font-weight: bold;">${material.type.toUpperCase()}</div>
-                            <div style="font-size: 12px; color: #666;">Qty: ${material.quantity} | ${date}</div>
-                        </div>
-                        <div>
-                            <span style="font-weight: bold;">$${material.cost}</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-        
-        function loadFinancial() {
-            // Update budget display
-            const spent = appData.dailyCosts.reduce((sum, cost) => sum + (parseFloat(cost.amount) || 0), 0);
-            const remaining = appData.project.budget - spent;
-            const percent = ((spent / appData.project.budget) * 100).toFixed(1);
-            
-            document.getElementById('total-spent').textContent = '$' + spent.toLocaleString();
-            document.getElementById('budget-left').textContent = '$' + remaining.toLocaleString();
-            document.getElementById('budget-percent').textContent = percent + '%';
-            document.getElementById('budget-progress').style.width = percent + '%';
-            
-            // Load daily costs
-            const container = document.getElementById('daily-costs');
-            container.innerHTML = '';
-            
-            const recentCosts = appData.dailyCosts.slice(0, 5);
-            
-            if (recentCosts.length === 0) {
-                container.innerHTML = '<div class="empty-state">No costs recorded yet</div>';
-                return;
-            }
-            
-            recentCosts.forEach(cost => {
-                const date = new Date(cost.date).toLocaleDateString();
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div>
-                            <div style="font-weight: bold;">${date} - ${cost.type}</div>
-                            <div style="font-size: 12px; color: #666;">${cost.description}</div>
-                        </div>
-                        <div>
-                            <span style="font-weight: bold; color: #D32F2F;">$${cost.amount}</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-        
-        function loadWorkerList() {
-            const container = document.getElementById('worker-list');
-            container.innerHTML = '';
-            
-            // Sample worker list
-            const workers = [
-                "Ahmed Rasheed", "Ibrahim Mohamed", "Ali Hussain", "Mohamed Saleem",
-                "Hassan Ahmed", "Abdulla Jameel", "Fareed Ibrahim", "Shafiu Ahmed"
-            ];
-            
-            workers.forEach(worker => {
-                container.innerHTML += `
-                    <div style="margin-bottom: 8px; display: flex; align-items: center;">
-                        <input type="checkbox" id="worker-${worker.replace(/\s+/g, '-')}" checked>
-                        <label for="worker-${worker.replace(/\s+/g, '-')}" style="margin-left: 8px;">${worker}</label>
-                    </div>
-                `;
-            });
-        }
-        
-        // ============== DATA SAVING ==============
-        function saveDailyReport() {
-            const report = {
-                id: Date.now(),
-                date: document.getElementById('report-date').value,
-                weather: document.getElementById('report-weather').value,
-                workers: parseInt(document.getElementById('report-workers').value) || 0,
-                work: document.getElementById('report-work').value,
-                materials: document.getElementById('report-materials').value,
-                issues: document.getElementById('report-issues').value,
-                meters: parseInt(document.getElementById('report-meters').value) || 0,
-                timestamp: new Date().toISOString()
-            };
-            
-            appData.dailyReports.unshift(report);
-            
-            // Mark daily report task as completed
-            const reportTask = appData.tasks.find(t => t.title.includes('daily report'));
-            if (reportTask) reportTask.status = 'completed';
-            
-            saveAppData();
-            closeModal();
-            loadDashboard();
-            showToast('✅ Daily report saved successfully!', 'success');
-        }
-        
-        function saveMaterialDelivery() {
-            const material = {
-                id: Date.now(),
-                type: document.getElementById('material-type').value,
-                quantity: parseInt(document.getElementById('material-qty').value) || 0,
-                supplier: document.getElementById('material-supplier').value,
-                date: document.getElementById('material-date').value,
-                cost: parseFloat(document.getElementById('material-cost').value) || 0,
-                notes: document.getElementById('material-notes').value
-            };
-            
-            appData.materials.unshift(material);
-            
-            // Add to daily costs
-            appData.dailyCosts.unshift({
-                id: Date.now(),
-                date: material.date,
-                type: 'materials',
-                amount: material.cost,
-                description: `Material: ${material.type}, Qty: ${material.quantity}`,
-                paidTo: material.supplier
-            });
-            
-            saveAppData();
-            closeModal();
-            showToast('📦 Material delivery recorded!', 'success');
-            
-            if (document.getElementById('materials-tab').style.display !== 'none') {
-                loadMaterials();
-            }
-        }
-        
-        function saveSafetyCheck() {
-            const safety = {
-                id: Date.now(),
-                date: document.getElementById('safety-date').value,
-                helmets: document.getElementById('safety-helmets').checked,
-                signs: document.getElementById('safety-signs').checked,
-                equipment: document.getElementById('safety-equipment').checked,
-                barriers: document.getElementById('safety-barriers').checked,
-                firstaid: document.getElementById('safety-firstaid').checked,
-                issues: document.getElementById('safety-issues').value,
-                actions: document.getElementById('safety-actions').value,
-                timestamp: new Date().toISOString()
-            };
-            
-            appData.safetyChecks.unshift(safety);
-            
-            // Mark safety task as completed
-            const safetyTask = appData.tasks.find(t => t.title.includes('Safety'));
-            if (safetyTask) safetyTask.status = 'completed';
-            
-            saveAppData();
-            closeModal();
-            showToast('🛡️ Safety check completed!', 'success');
-        }
-        
-        function saveWorkerAttendance() {
-            const attendance = {
-                id: Date.now(),
-                date: document.getElementById('attendance-date').value,
-                presentCount: countPresentWorkers(),
-                absent: document.getElementById('absent-workers').value,
-                cost: parseFloat(document.getElementById('labor-cost').value) || 0,
-                timestamp: new Date().toISOString()
-            };
-            
-            appData.workerAttendance.unshift(attendance);
-            
-            // Add labor cost
-            if (attendance.cost > 0) {
-                appData.dailyCosts.unshift({
-                    id: Date.now(),
-                    date: attendance.date,
-                    type: 'labor',
-                    amount: attendance.cost,
-                    description: `Daily wages for ${attendance.presentCount} workers`,
-                    paidTo: 'Workers'
+            itemRows.forEach(row => {
+                const itemSelect = row.querySelector('.item-select');
+                const itemId = itemSelect.value;
+                const itemName = itemSelect.options[itemSelect.selectedIndex].text;
+                const quantity = parseInt(row.querySelector('.item-quantity').value) || 1;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                
+                items.push({
+                    id: itemId,
+                    name: itemName,
+                    quantity: quantity,
+                    price: price
                 });
+                
+                total += quantity * price;
+            });
+            
+            // Validate
+            if (!customerName) {
+                alert('Please enter customer name');
+                return;
             }
             
-            saveAppData();
-            closeModal();
-            loadDashboard(); // Update stats
-            showToast('👷 Worker attendance saved!', 'success');
-        }
-        
-        function saveProgressUpdate() {
-            const progress = {
-                id: Date.now(),
-                date: document.getElementById('progress-date').value,
-                section: document.getElementById('progress-section').value,
-                meters: parseInt(document.getElementById('progress-meters').value) || 0,
-                workType: document.getElementById('progress-worktype').value,
-                photos: parseInt(document.getElementById('progress-photos').value) || 0,
-                notes: document.getElementById('progress-notes').value,
-                timestamp: new Date().toISOString()
-            };
-            
-            appData.progressUpdates.unshift(progress);
-            
-            // Update overall progress (simplified)
-            appData.project.progress = Math.min(100, appData.project.progress + 1);
-            
-            // Mark progress task as completed
-            const progressTask = appData.tasks.find(t => t.title.includes('progress'));
-            if (progressTask) progressTask.status = 'completed';
-            
-            saveAppData();
-            closeModal();
-            loadDashboard();
-            showToast('📈 Progress update saved!', 'success');
-        }
-        
-        function saveDailyCost() {
-            const cost = {
-                id: Date.now(),
-                date: document.getElementById('cost-date').value,
-                type: document.getElementById('cost-type').value,
-                amount: parseFloat(document.getElementById('cost-amount').value) || 0,
-                description: document.getElementById('cost-description').value,
-                paidTo: document.getElementById('cost-paidto').value,
-                timestamp: new Date().toISOString()
-            };
-            
-            appData.dailyCosts.unshift(cost);
-            
-            // Update total spent
-            appData.project.spent += cost.amount;
-            
-            saveAppData();
-            closeModal();
-            showToast('💰 Cost entry saved!', 'success');
-            
-            if (document.getElementById('financial-tab').style.display !== 'none') {
-                loadFinancial();
+            if (items.length === 0) {
+                alert('Please add at least one item');
+                return;
             }
-        }
-        
-        // ============== UTILITY FUNCTIONS ==============
-        function updateDateTime() {
+            
+            // Generate order ID and timestamp
             const now = new Date();
-            document.getElementById('current-date').textContent = 
-                now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            document.getElementById('current-time').textContent = 
-                now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        }
-        
-        function markAllPresent() {
-            document.querySelectorAll('#worker-list input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = true;
+            const orderId = `ORDER${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            const timestamp = now.toISOString().replace('T', ' ').substring(0, 16);
+            
+            // Create order object
+            const order = {
+                id: orderId,
+                customer: customerName,
+                items: items,
+                total: total,
+                status: status,
+                time: timestamp,
+                createdAt: now.getTime()
+            };
+            
+            // Add to orders array
+            orders.unshift(order); // Add to beginning
+            
+            // Save to local storage
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            // Display the new order
+            displayOrders();
+            
+            // Update statistics
+            updateStatistics();
+            
+            // Update storage status
+            updateStorageStatus();
+            
+            // Reset form (but keep one item row)
+            document.getElementById('customer-name').value = '';
+            document.getElementById('order-status').value = 'completed';
+            
+            // Remove all but first item row
+            const allItemRows = document.querySelectorAll('.item-row');
+            allItemRows.forEach((row, index) => {
+                if (index > 0) row.remove();
             });
+            
+            // Reset first item row
+            const firstRow = document.querySelector('.item-row');
+            firstRow.querySelector('.item-select').value = 'coffee';
+            firstRow.querySelector('.item-quantity').value = '1';
+            firstRow.querySelector('.item-price').value = '5.00';
+            
+            // Show success message
+            alert(`Order created successfully!\nOrder ID: ${orderId}\nTotal: $${total.toFixed(2)}`);
         }
-        
-        function countPresentWorkers() {
-            let count = 0;
-            document.querySelectorAll('#worker-list input[type="checkbox"]').forEach(checkbox => {
-                if (checkbox.checked) count++;
-            });
-            return count;
-        }
-        
-        function viewReport(id) {
-            const report = appData.dailyReports.find(r => r.id === id);
-            if (report) {
-                alert(
-                    `📝 DAILY REPORT\n\n` +
-                    `Date: ${report.date}\n` +
-                    `Weather: ${report.weather}\n` +
-                    `Workers: ${report.workers}\n` +
-                    `Progress: ${report.meters} meters\n\n` +
-                    `Work Completed:\n${report.work}\n\n` +
-                    `Materials Used:\n${report.materials}\n\n` +
-                    `Issues:\n${report.issues}`
-                );
+
+        // Display all orders
+        function displayOrders() {
+            // Clear current display
+            ordersContainer.innerHTML = '';
+            
+            // If no orders, show message
+            if (orders.length === 0) {
+                ordersContainer.appendChild(noOrders);
+                noOrders.style.display = 'block';
+                return;
             }
-        }
-        
-        function generateMonthlyReport() {
-            const today = new Date();
-            const month = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
             
-            const monthlyReports = appData.dailyReports.filter(report => {
-                const reportDate = new Date(report.date);
-                return reportDate.getMonth() === today.getMonth() && 
-                       reportDate.getFullYear() === today.getFullYear();
+            // Hide no orders message
+            noOrders.style.display = 'none';
+            
+            // Sort orders by date (newest first)
+            const sortedOrders = [...orders].sort((a, b) => b.createdAt - a.createdAt);
+            
+            // Display each order
+            sortedOrders.forEach((order, index) => {
+                const orderCard = createOrderCard(order, index);
+                ordersContainer.appendChild(orderCard);
             });
+        }
+
+        // Create an order card element
+        function createOrderCard(order, index) {
+            const card = document.createElement('div');
+            card.className = 'order-card fade-in';
             
-            const totalMeters = monthlyReports.reduce((sum, r) => sum + (r.meters || 0), 0);
-            const totalCost = appData.dailyCosts
-                .filter(c => {
-                    const costDate = new Date(c.date);
-                    return costDate.getMonth() === today.getMonth() && 
-                           costDate.getFullYear() === today.getFullYear();
-                })
-                .reduce((sum, c) => sum + (c.amount || 0), 0);
+            // Set border color based on status
+            let statusColor = '#2ecc71'; // Completed - green
+            let statusText = '✅ ORDER COMPLETED!';
+            let statusClass = 'status-completed';
+            let statusBadge = 'bg-success';
             
-            const report = `
-📊 MONTHLY REPORT - ${month}
-
-Summary:
-• Days worked: ${monthlyReports.length}
-• Total progress: ${totalMeters} meters
-• Total cost: $${totalCost.toLocaleString()}
-• Average daily progress: ${Math.round(totalMeters / monthlyReports.length)} meters/day
-• Average daily cost: $${Math.round(totalCost / monthlyReports.length).toLocaleString()}/day
-
-Project Status:
-• Overall progress: ${appData.project.progress}%
-• Budget used: ${((appData.project.spent / appData.project.budget) * 100).toFixed(1)}%
-• Remaining budget: $${(appData.project.budget - appData.project.spent).toLocaleString()}
-
-Safety Record:
-• Safety checks completed: ${appData.safetyChecks.length}
-• No major incidents reported
-
-Recommendations:
-1. Continue current work pace
-2. Monitor material stock levels
-3. Plan for upcoming milestones
+            if (order.status === 'pending') {
+                statusColor = '#f39c12'; // Pending - orange
+                statusText = '⏱️ ORDER PENDING';
+                statusClass = 'status-pending';
+                statusBadge = 'bg-warning';
+            } else if (order.status === 'cancelled') {
+                statusColor = '#e74c3c'; // Cancelled - red
+                statusText = '❌ ORDER CANCELLED';
+                statusClass = 'status-cancelled';
+                statusBadge = 'bg-danger';
+            }
+            
+            // Apply border color
+            card.style.borderLeftColor = statusColor;
+            
+            // Create items list HTML
+            const itemsHtml = order.items.map(item => {
+                // Extract emoji from item name (emoji is first character)
+                const emoji = item.name.charAt(0);
+                const nameWithoutEmoji = item.name.substring(2); // Skip emoji and space
+                return `
+                    <div class="order-item">
+                        <div>${emoji} ${nameWithoutEmoji} x${item.quantity}</div>
+                        <div>$${(item.price * item.quantity).toFixed(2)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            card.innerHTML = `
+                <div class="order-header">
+                    <div class="order-status ${statusClass}">${statusText}</div>
+                    <div class="status-badge" style="background: ${statusColor}; color: white;">${order.status.toUpperCase()}</div>
+                </div>
+                
+                <div class="order-customer">
+                    <i class="fas fa-user"></i> Customer: ${order.customer}
+                </div>
+                
+                <div class="order-items">
+                    ${itemsHtml}
+                </div>
+                
+                <div class="order-total">
+                    💰 TOTAL: $${order.total.toFixed(2)}
+                </div>
+                
+                <div class="order-meta">
+                    <div><i class="fas fa-clock"></i> Time: ${order.time}</div>
+                    <div><i class="fas fa-hashtag"></i> ID: ${order.id}</div>
+                </div>
+                
+                <div class="order-actions">
+                    <button class="btn btn-primary btn-small toggle-status" data-index="${index}">
+                        <i class="fas fa-sync-alt"></i> Change Status
+                    </button>
+                    <button class="btn btn-danger btn-small delete-order" data-index="${index}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
             `;
             
-            alert(report);
-            showToast('📄 Monthly report generated!', 'success');
-        }
-        
-        function exportData() {
-            const dataStr = JSON.stringify(appData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            // Add event listeners to buttons
+            const toggleBtn = card.querySelector('.toggle-status');
+            const deleteBtn = card.querySelector('.delete-order');
             
-            const exportFileDefaultName = `kanditheemu-project-data-${new Date().toISOString().split('T')[0]}.json`;
+            toggleBtn.addEventListener('click', function() {
+                toggleOrderStatus(index);
+            });
             
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
+            deleteBtn.addEventListener('click', function() {
+                deleteOrder(index);
+            });
             
-            showToast('📤 Data exported successfully!', 'success');
+            return card;
         }
-        
-        function backupData() {
-            saveAppData();
-            showToast('💾 Data backed up successfully!', 'success');
+
+        // Toggle order status
+        function toggleOrderStatus(index) {
+            const order = orders[index];
+            
+            // Cycle through statuses: completed -> pending -> cancelled -> completed
+            if (order.status === 'completed') {
+                order.status = 'pending';
+            } else if (order.status === 'pending') {
+                order.status = 'cancelled';
+            } else {
+                order.status = 'completed';
+            }
+            
+            // Update in local storage
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            // Refresh display
+            displayOrders();
+            
+            // Update statistics
+            updateStatistics();
+            
+            // Update storage status
+            updateStorageStatus();
         }
-        
-        function showHelp() {
-            alert(
-                '🆘 HELP & GUIDE\n\n' +
-                '1. DAILY REPORT: Record daily work, weather, materials\n' +
-                '2. MATERIAL DELIVERY: Log incoming materials with costs\n' +
-                '3. SAFETY CHECK: Complete daily safety inspection\n' +
-                '4. WORKER ATTENDANCE: Mark worker attendance and calculate wages\n' +
-                '5. PROGRESS UPDATE: Record meters completed\n' +
-                '6. DAILY COST: Track all project expenses\n\n' +
-                '📱 ALL DATA IS SAVED AUTOMATICALLY!\n' +
-                '💾 Works offline\n' +
-                '📤 Export data anytime'
-            );
-        }
-        
-        function showSettings() {
-            alert('⚙️ SETTINGS\n\nData is stored locally in your browser.\nTo clear data, use browser settings.\nTo backup, use Export feature.');
-        }
-        
-        function callContact(name) {
-            if (confirm(`Call ${name}?`)) {
-                showToast(`📞 Calling ${name}...`, 'info');
-                // In real app: window.location.href = `tel:${number}`;
+
+        // Delete an order
+        function deleteOrder(index) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                orders.splice(index, 1);
+                
+                // Update local storage
+                localStorage.setItem('orders', JSON.stringify(orders));
+                
+                // Refresh display
+                displayOrders();
+                
+                // Update statistics
+                updateStatistics();
+                
+                // Update storage status
+                updateStorageStatus();
             }
         }
-        
-        // ============== WINDOW EXPORTS ==============
-        window.switchTab = switchTab;
-        window.openModal = openModal;
-        window.closeModal = closeModal;
-        window.saveDailyReport = saveDailyReport;
-        window.saveMaterialDelivery = saveMaterialDelivery;
-        window.saveSafetyCheck = saveSafetyCheck;
-        window.saveWorkerAttendance = saveWorkerAttendance;
-        window.saveProgressUpdate = saveProgressUpdate;
-        window.saveDailyCost = saveDailyCost;
-        window.markAllPresent = markAllPresent;
-        window.viewReport = viewReport;
-        window.generateMonthlyReport = generateMonthlyReport;
-        window.exportData = exportData;
-        window.backupData = backupData;
-        window.showHelp = showHelp;
-        window.showSettings = showSettings;
-        window.callContact = callContact;
+
+        // Update statistics
+        function updateStatistics() {
+            const totalOrders = orders.length;
+            const completedOrders = orders.filter(order => order.status === 'completed').length;
+            const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+            
+            totalOrdersEl.textContent = totalOrders;
+            completedOrdersEl.textContent = completedOrders;
+            totalRevenueEl.textContent = `$${totalRevenue.toFixed(2)}`;
+        }
+
+        // Update storage status message
+        function updateStorageStatus() {
+            const totalOrders = orders.length;
+            if (totalOrders === 0) {
+                storageStatus.textContent = '💾 No orders saved. Create your first order!';
+                storageStatus.style.color = '#e74c3c';
+            } else {
+                storageStatus.textContent = `💾 ${totalOrders} order${totalOrders !== 1 ? 's' : ''} saved to local database`;
+                storageStatus.style.color = '#2ecc71';
+            }
+        }
+
+        // Clear all data
+        function clearAllData() {
+            if (confirm('Are you sure you want to delete ALL orders? This cannot be undone.')) {
+                orders = [];
+                localStorage.removeItem('orders');
+                
+                // Refresh display
+                displayOrders();
+                
+                // Update statistics
+                updateStatistics();
+                
+                // Update storage status
+                updateStorageStatus();
+                
+                alert('All data has been cleared.');
+            }
+        }
     </script>
 </body>
 </html>
